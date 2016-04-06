@@ -1,0 +1,27 @@
+
+
+
+body {
+    background-color: white;
+}
+
+h1 {
+    font-family: sans-serif;
+
+}
+
+/*canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    width: 800px;
+    height: 600px;
+    position: absolute;
+    top: 0;
+    bottom: 10%;
+    left: 0;
+    right: 0;
+    //background-color: lightgray;
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}*/

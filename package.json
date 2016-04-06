@@ -1,0 +1,21 @@
+{
+  "name": "tobijs",
+  "version": "1.0.0",
+  "description": "Tobi game engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "engine",
+    "javascript"
+  ],
+  "author": "Tobias Ulrich",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^1.0.0",
+    "grunt-contrib-uglify": "^1.0.1"
+  }
+}
