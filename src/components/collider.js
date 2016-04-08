@@ -112,7 +112,7 @@ tobi.Collider = Class.extend( function() {
 
 this.debugDraw = function(context, color) {
 
-  if (color === undefined) color = 'black';
+  if (color === undefined) color = 'red';
 
   var points = this.shape.getPoints();
   var i = points.length;

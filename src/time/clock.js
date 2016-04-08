@@ -27,8 +27,9 @@ tobi.Clock = function(game) {
   this.timeStep = 1000 / this.fpsDesired;
 
   // lag
+  this.accumalator = 0;
   this.accumulatorMax = this.timeStep * 10;
-  this.accumulatorUpdateDelta = 0;
+  this.accumulatorDelta = this.timeStep;
 
   this.updateStart = 0;
   this.updateLast = 0;
@@ -38,7 +39,7 @@ tobi.Clock = function(game) {
   this.deltaTime = 0;
 
 
-  this._lag = 0;
+
   this._lastFpsUpdate = 0;
   this._framesThisSecond = 0;
 
@@ -53,13 +54,18 @@ start : function() {
 
 },
 
-refresh : function() {
+refresh: function() {
 
   var previousDateNow = this.time;
 
   this.time = Date.now();
 
  this.elapsed_mili = this.time - previousDateNow;
+
+ //this.currentTime =  this.previousTime = window.performance.now();
+ //this.deltaTime = 0;
+ //this.elapsed = 0;
+ //this._framesThisSecond = 0;
 
 },
 
@@ -92,7 +98,7 @@ update : function(timestamp) {
   this.elapsed = this.currentTime - this.previousTime;
 
   // delta time in  seconds
-  this.deltaTime = this.elapsed / 1000.0;
+  this.deltaTime = 0; //this.elapsed / 1000.0;
 
 
 
@@ -108,11 +114,18 @@ update : function(timestamp) {
   }
 
   // Track acumulate time
-  this._lag += this.elapsed; //Math.max(Math.min(this.timeStep * 3, this.elapsed), 0); //timestamp - this._lastTimeStamp;
-  this._lag = Math.min(this._lag, this.accumulatorMax);
 
-  this.updateDelta = this.timeStep // interpolation = this.elapsed (deltatime); // or step
-  this.accumulatorUpdateDelta = this.updateDelta; // interpolation = Math.max(this.updateDelta, this.updateAverage);
+
+  //this.accumalator += this.elapsed; //Math.max(Math.min(this.timeStep * 3, this.elapsed), 0); //timestamp - this._lastTimeStamp;
+  this.accumalator += Math.max(Math.min(this.timeStep * 3, this.elapsed),0);
+
+  this.accumulatorDelta = this.timeStep; //, this.updateAverage);
+
+  //console.log(this.accumalator + " " + this.updateAverage);
+  //this._lag = Math.min(this._lag, this.accumulatorMax);
+
+  //  this.updateDelta = this.timeStep // interpolation = this.elapsed (deltatime); // or step
+  //this.accumulatorUpdateDelta = this.updateDelta; // interpolation = Math.max(this.updateDelta, this.updateAverage);
 
   // FPS Update
   this.fpsUpdate(timestamp);

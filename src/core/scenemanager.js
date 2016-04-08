@@ -96,6 +96,8 @@ setupScene : function(sceneName) {
   this.onDestroyCallback = this.scenes[sceneName]['destroy'] || null;
   this.current_scene_name = sceneName;
 
+  this.game.clock.refresh();
+
   this.current_scene.camera = this.game.world.camera;
 
   this.game.instance.scene = this.current_scene;

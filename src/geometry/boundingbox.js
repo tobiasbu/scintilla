@@ -73,11 +73,11 @@ setup : function(pos, scale, rotation, anchor, width, height) {
 
 },
 
-setBySprite : function(sprite, position, scale, rotation) {
+/*setBySprite : function(sprite, position, scale, rotation) {
 
-    this.set(x,y,sprite.width,sprite.height,sprite.xorigin,sprite.yorigin,xscale,yscale,theta);
+    //this.set(position,scale,rotation,);
 
-},
+}*/
 
 setByGameObject : function(gameObject, local) {
 
@@ -115,6 +115,14 @@ setByGameObject : function(gameObject, local) {
 
   return this;
 
+
+},
+
+setByPosition : function(position) {
+
+  this.min.set(position.x,position.y);
+  this.max.set(position.x+1,position.y+1)
+  this.box.set(position.x,position.y,1,1);
 
 },
 

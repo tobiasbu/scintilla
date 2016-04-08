@@ -58,7 +58,10 @@ start : function() {
                 return self.updateRequestAnimationFrame(time);
             };
 
+
             this._timeOutCallback = window.requestAnimationFrame(this._onLoopingCallback, this.game.canvas);
+
+
         }
 
 },

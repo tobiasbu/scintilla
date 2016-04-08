@@ -12,7 +12,7 @@ this._gameObject = null;
 this.constructor = function() {
   this.type = null;
   this.source = null;
-  this.frame = new tobi.Rect(0,0,0,0);
+  this.frame = new tobi.Rect(0,0,1,1);
   this.alpha = 1;
 }
 
@@ -30,11 +30,14 @@ this.setFrame = function(x,y,width,height) {
 
 this.setImage = function(image,changeFrame) {
 
-  this.source = image;
+  if (changeFrame === undefined) changeFrame = false;
 
-  if (changeFrame) {
+  if (this.source != image)
+    this.source = image;
+
+  if (changeFrame)
       this.setFrame(0,0,this.source.width,this.source.height);
-  }
+
 
 }
 

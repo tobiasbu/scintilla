@@ -24,7 +24,10 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
 
   // float
   this.timeMode = false;
-  this.deltaTime = 0;
+
+  // time
+  this._spiraling = 0;
+  this._lastFrameCount = 0;
 
 
   //objects
@@ -227,58 +230,55 @@ tobi.Game.prototype = {
 
       this.clock.update(time);
 
-      var numUpdateSteps = 0;
+      if (this._spiraling > 1) {
 
-      while (this.clock._lag >= this.clock.accumulatorUpdateDelta) {
-          //update(timestep);
+          this.clock.deltaTime = 0;
+          this._spiraling = 0;
+          this.clock.accumalator = 0;
 
+          this.render(this.clock.accumulatorDelta);
 
+      } else {
 
-          this.clock.updateStart = window.performance.now();
+      var countFrames = 0;
 
-          this.scene.preUpdate();
-          this.scene.update(this.clock.timeStep_mili);
-          this.input.update();
-          this.universe.preUpdate(this.clock.timeStep_mili);
+      while (this.clock.accumalator >= this.clock.accumulatorDelta) {
 
+        //  this.clock.updateStart = window.performance.now();
 
-          //this.world.camera.update();
+          this.clock.deltaTime = Math.min(this.clock.accumalator,this.clock.accumulatorDelta) / 1000;
 
-          this.universe.update(this.clock.timeStep_mili);
-          this.physics.update();
-          this.sound.update();
+          this.logic(this.clock.deltaTime);
 
-          this.universe._updateTransform();
+          //this.clock.updateLast =  window.performance.now();
+        //  this.clock.updateAverage = this.clock.updateLast - this.clock.updateStart;
 
-          this.clock.updateLast =  window.performance.now();
-          this.clock.updateAverage = this.clock.updateLast - this.clock.updateStart;
+          this.clock.accumalator -= this.clock.accumulatorDelta;
 
-          this.clock._lag -= this.clock.accumulatorUpdateDelta;
+          countFrames++;
 
-          if (++numUpdateSteps >= 240) { // SPIRAL
+          this.clock.refresh();
+
+          if (countFrames >= 240) { // SPIRAL
               //panic();
-              this.clock._lag = 0;
+              this.clock.accumalator = 0;
+
               break;
           }
       }
 
+        if (countFrames > this._lastFrameCount)
+           this._spiraling++;
+       else if (countFrames < this._lastFrameCount)
+          this._spiraling = 0;
 
-      this.context.setTransform(1, 0, 0, 1, 0, 0);
-      this.context.globalCompositeOperation = 'source-over';
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.context.fillStyle = this.universe.backgroundColor;
-      this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-      this.scene.render();
-      this.universe.render();
+          this._lastFrameCount = countFrames;
 
-      if (this.debug != null) {
-
-        this.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.debug.test();
-        //console.log("asdasd");
+            this.render(this.clock.accumalator/this.clock.accumulatorDelta);
 
       }
-      //this.instance.draw();
+
+
 
     }
 
@@ -300,6 +300,45 @@ tobi.Game.prototype = {
 
 
 
+
+  },
+
+  logic : function(timeStep) {
+
+    this.scene.preUpdate();
+    this.scene.update(timeStep);
+    this.input.update();
+    this.universe.preUpdate(timeStep);
+
+
+    //this.world.camera.update();
+
+    this.universe.update(timeStep);
+    this.physics.update();
+    this.sound.update();
+
+    this.universe._updateTransform();
+
+
+  },
+
+  render : function(time) {
+
+    this.context.setTransform(1, 0, 0, 1, 0, 0);
+    this.context.globalCompositeOperation = 'source-over';
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.fillStyle = this.universe.backgroundColor;
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.scene.render();
+    this.universe.render();
+
+    if (this.debug != null) {
+
+      this.context.setTransform(1, 0, 0, 1, 0, 0);
+      this.debug.test();
+      //console.log("asdasd");
+
+    }
 
   },
 

@@ -89,13 +89,15 @@ this.preUpdate = function (time) {
 
 this._updateTransform = function() {
 
-  if (!this.active)
+  if (!this.active || this._selfDestroy)
     return;
 
   this.updateTransform();
 
   if (this.component['render']) {
     this.bounds.setByGameObject(this,false);
+  } else {
+    this.bounds.setByPosition(this.position);
   }
 
 
@@ -117,7 +119,7 @@ this._updateTransform = function() {
 
       this.children[i].z = i;
 
-      if (this.children[i].component['render']) {
+      //if (this.children[i].component['render']) {
 
         // calculate the local bounds of node
           var bb =  this.children[i].bounds;
@@ -129,7 +131,7 @@ this._updateTransform = function() {
          maxY = maxY > bb.max.y ? maxY : bb.max.y;
 
 
-      }
+      //}
 
   }
 
