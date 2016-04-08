@@ -1,4 +1,4 @@
-![Alt text](https://raw.githubusercontent.com/kaltkaffee/tobiJS/master/example/images/tobijs_splash.png)
+![Alt text](https://raw.githubusercontent.com/kaltkaffee/tobiJS/master/dist/images/tobijs_splash.png)
 # tobiJS
 
 2D Game framework for HTML5 ~ good as a good dog. 
