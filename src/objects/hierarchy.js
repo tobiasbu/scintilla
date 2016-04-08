@@ -1,9 +1,9 @@
 
 // Hierarchy Tree of instances
-// Instance is a node of the Hierarchy tree
+// Instance is a children of the Hierarchy tree
 tobi.Hierarchy = tobi.Transform.extend(function() {
 
-this.nodes = [];
+this.children = [];
 //tobi.Transform.call(this);
 
 //if (newTransform)
@@ -15,106 +15,113 @@ this.constructor = function() {
 
 };
 
-this.addNode = function(node) {
+this.addChild = function(child) {
 
-  return this.addNodeAt(node,this.nodes.length);
+  return this.addChildAt(child,this.children.length);
 
 };
 
-this.addNodeAt = function(node,index) {
+this.addChildAt = function(child,index) {
 
-      if(index >= 0 && index <= this.nodes.length)
+      if(index >= 0 && index <= this.children.length)
       {
-          if(node.parent)
+          if(child.parent)
           {
-              node.parent.removeNode(node);
+              child.parent.removeChild(child);
           }
 
-          node.parent = this;
+          child.parent = this;
 
+          this.children.splice(index, 0, child);
 
-          this.nodes.splice(index, 0, node);
-
-          // automatic sort depth
-          if (this['_updateDepth'])
-            this._updateDepth();
+          this._changeDepth = true;
 
           //if(this.stage)child.setStageReference(this.stage);
 
-          return node;
+          return child;
       }
       else
       {
-          throw new Error(node + 'addChildAt: The index '+ index +' supplied is out of bounds ' + this.children.length);
+          throw new Error(child + 'addChildAt: The index '+ index +' supplied is out of bounds ' + this.children.length);
       }
 
 
 };
 
-this.removeNode = function(node)
+this.removeChild = function(child)
 {
-    var index = this.nodes.indexOf( node );
+    var index = this.children.indexOf( child );
 
     if(index === -1) return;
 
-    return this.removeNodeAt( index );
+    return this.removeChildAt( index );
 };
 
-this.removeNodeAt = function(index)
+this.removeChildAt = function(index)
 {
-  var node = this.getNodeAt( index );
+  var child = this.getChildAt( index );
 
-  node.parent = undefined;
-  this.nodes.splice( index, 1 );
-  return node;
+  child.parent = undefined;
+  this.children.splice( index, 1 );
+  return child;
 
 };
 
-this.getNodeAt = function(index)
+
+this.getChildAt = function(index)
 {
-    if (index < 0 || index >= this.nodes.length)
+    if (index < 0 || index >= this.children.length)
     {
         throw new Error('getChildAt: Supplied index '+ index +' does not exist in the child list, or the supplied DisplayObject must be a child of the caller');
     }
-    return this.nodes[index];
+    return this.children[index];
 
 };
 
 
-this._cycleUpdate = function(time) {
+this.preUpdate = function(time) {
 
-  for (var i = 0; i < this.nodes.length; i++)
+  for (var i = 0; i < this.children.length; i++)
   {
-
-      if (this.nodes[i]['_cycleUpdate'])
-        this.nodes[i]._cycleUpdate(time);
+        this.children[i].preUpdate(time);
 
   }
 
 };
 
-this._cycleUpdateTransform = function() {
+this.update = function() {
 
-  for (var i = 0; i < this.nodes.length; i++)
+  for (var i = 0; i < this.children.length; i++)
   {
 
-      this.nodes[i].updateTransform();
+        this.children[i].update();
 
-      if (this.nodes[i]['_cycleUpdateTransform'])
-        this.nodes[i]._cycleUpdateTransform();
 
   }
 
 
 };
 
-this._cycleRender = function() {
+this._updateTransform = function() {
 
-  for (var i = 0; i < this.nodes.length; i++)
+
+
+  for (var i = 0; i < this.children.length; i++)
   {
 
-    if (this.nodes[i]['_cycleRender'])
-      this.nodes[i]._cycleRender(this.game.context);
+      this.children[i]._updateTransform();
+
+  }
+
+
+};
+
+this.render = function() {
+
+  for (var i = 0; i < this.children.length; i++)
+  {
+
+      this.children[i].render(this.game.context);
 
   }
 };

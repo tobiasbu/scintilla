@@ -4,8 +4,10 @@ tobi.Clock = function(game) {
 
   this.game = game;
 
+  // START TIME
   this.startTime = 0;
 
+  // date now
   this.time = 0;
 
   this.currentTime = 0;
@@ -14,18 +16,24 @@ tobi.Clock = function(game) {
   this.elapsed = 0;
   this.elapsed_mili = 0;
 
+  // FOR TIME OUT MODE
+  this.timeOut_toCall = 0;
+  this.timeOut_expected = 0;
+
+  // FPS
   this.fps = 60;
   this.fpsDesired = 60;
-  this.timeStep_mili = 1.0 / this.fpsDesired;
-  this.timeStep = 1000.0 / this.fpsDesired;
+  this.timeStep_mili = 1 / this.fpsDesired;
+  this.timeStep = 1000 / this.fpsDesired;
 
+  // lag
   this.accumulatorMax = this.timeStep * 10;
   this.accumulatorUpdateDelta = 0;
-
 
   this.updateStart = 0;
   this.updateLast = 0;
   this.updateAverage = 0;
+  this.updateDelta = 0;
 
   this.deltaTime = 0;
 
@@ -38,7 +46,7 @@ tobi.Clock = function(game) {
 
 tobi.Clock.prototype = {
 
-init : function() {
+start : function() {
 
   this.startTime = Date.now();
   this.time = Date.now();
@@ -72,6 +80,8 @@ update : function(timestamp) {
          return false;
   }
 
+
+
   // set prev
   this.previousTime = this.currentTime;
 
@@ -84,10 +94,25 @@ update : function(timestamp) {
   // delta time in  seconds
   this.deltaTime = this.elapsed / 1000.0;
 
+
+
+  if (this.game.updateGameMethod._isTimeOutMode)
+  {
+
+
+      this.timeOut_toCall = Math.floor(Math.max(0, (1000.0 / this.fpsDesired) - (this.timeOut_expected - time)));
+
+      // time when the next call is expected if using timers
+      this.timeOut_expected = time + this.timeOut_toCall;
+
+  }
+
   // Track acumulate time
   this._lag += this.elapsed; //Math.max(Math.min(this.timeStep * 3, this.elapsed), 0); //timestamp - this._lastTimeStamp;
   this._lag = Math.min(this._lag, this.accumulatorMax);
-  this.accumulatorUpdateDelta = Math.max(this.elapsed, this.updateAverage);
+
+  this.updateDelta = this.timeStep // interpolation = this.elapsed (deltatime); // or step
+  this.accumulatorUpdateDelta = this.updateDelta; // interpolation = Math.max(this.updateDelta, this.updateAverage);
 
   // FPS Update
   this.fpsUpdate(timestamp);

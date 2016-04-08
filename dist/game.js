@@ -18,9 +18,9 @@ myLoadingScene.preload = function() {
   myGame.load.image('bullet',"images/bullet.png");
   myGame.load.image('ship',"images/ship.png");
   myGame.load.image('enemy',"images/enemy.png");
-    myGame.load.image('enemy2',"images/enemy0.png");
+  myGame.load.image('enemy2',"images/enemy0.png");
   myGame.load.image('explosion',"images/explosion.png");
-    myGame.load.image('life',"images/life.png");
+  myGame.load.image('life',"images/life.png");
 
   myGame.load.audio('explosionPlayer', "sounds/explosion.wav");
   myGame.load.audio('explosion', "sounds/explosion2.wav");
@@ -97,8 +97,6 @@ myLoadingScene.start = function() {
   var anim3 = myGame.animationCache.add('explosion','misc','boom');
   anim3.addStrip(0,0,160,160,10,10);
 
-
-
 }
 
 myLoadingScene.render = function() {
@@ -120,12 +118,13 @@ this.start = function() {
   spr.tileScale.set(1,1);
   this.position.set(400,300);
   this.controller = null;
+  this.setDepth(-2);
 
 }
 
 this.update = function() {
 
-  this.component['render'].tilePosition.move(0,1.5);
+  this.component['render'].tilePosition.move(0,1.25);
 
   if (this.controller.state == "title") {
     this.angle += 0.1;
@@ -147,6 +146,7 @@ this.start = function() {
   this.name = 'star';
   this.addComponent('sprite','star');
   this.reset();
+  this.setDepth(-1);
 
 
 }
@@ -156,20 +156,19 @@ this.update = function() {
   this.position.move(0,this.speed);
 
   if (this.position.y > 630)
-    this.selfDestroy();
-
-}
+    this.destroy(true);
+  }
 
 this.reset = function() {
 
-  var s = tobi.Math.randomRange(0.25,0.65);
+  var s = tobi.Math.randomRange(0.15,0.65);
   var a = tobi.Math.randomRange(0.3,0.5)
   var x = tobi.Math.randomRange(0,800)
 
   this.scale.set(s,s);
   this.component['render'].alpha = a;
   this.position.set(x,-64);
-  this.speed = tobi.Math.randomRange(2,4);
+  this.speed = tobi.Math.randomRange(3,6);
 
 }
 
@@ -191,7 +190,13 @@ var explosion = tobi.GameObject.extend(function() {
     var rand = tobi.Math.randomRange(0.75,0.85);
     this.scale.set(rand);
     this.angle = tobi.Math.irandomRange(0,360);
-    this.anim.playAndDestroy();
+    this.anim.play();
+
+  }
+
+  this.onAnimationEnd = function() {
+
+    this.destroy(true);
 
   }
 
@@ -217,7 +222,7 @@ var playerBullet = tobi.GameObject.extend(function() {
     this.position.move(0,-this.speed);
 
     if (this.position.y < -32)
-      this.selfDestroy();
+      this.destroy(true);
 
   }
 
@@ -225,14 +230,16 @@ var playerBullet = tobi.GameObject.extend(function() {
 
 var enemyBulletObj = tobi.GameObject.extend(function() {
 
+    // /this.player = null;
+
   this.start = function() {
 
     this.name = 'enemyBullet';
-    this.player = null;
+
     this.addComponent('sprite','enemyBullet')
     var col = this.addComponent('collider',['rectangle',18,18])
     this.speed = 5;
-    this.setDepth(2);
+    this.setDepth(3);
 
   }
 
@@ -241,7 +248,7 @@ var enemyBulletObj = tobi.GameObject.extend(function() {
     this.position.move(0,this.speed);
 
     if (this.position.y > 600+32)
-      this.selfDestroy();
+      this.destroy(true);
 
   }
 
@@ -265,9 +272,7 @@ var enemy = tobi.GameObject.extend(function() {
 
     this.setDepth(2);
 
-    this.speed = tobi.Math.randomRange(2,3.5)
-
-
+    this.speed = tobi.Math.randomRange(2.5,4);
   }
 
   this.update = function() {
@@ -275,7 +280,7 @@ var enemy = tobi.GameObject.extend(function() {
     this.position.y += this.speed;
 
     if (this.position.y > 600+60) {
-      this.selfDestroy();
+      this.destroy(true);
     }
 
   }
@@ -284,8 +289,8 @@ var enemy = tobi.GameObject.extend(function() {
 
     if (collider.name == "bullet") {
         myGame.sound.play('explosion',0.75);
-    collider.selfDestroy();
-    this.selfDestroy();
+    collider.destroy(true);
+    this.destroy(true);
     var explo = myGame.instance.addFromPool("explosion");
     explo.position.x = this.position.x;
     explo.position.y = this.position.y;
@@ -310,7 +315,7 @@ var enemy2Obj = enemy.extend(function() {
     col.offset.y = -15;
 
    var anim = this.addComponent("animation");
-    //anim.remove("move");
+    anim.remove("move");
     anim.addFromCache('enemies','move2');
     anim.setState('move2');
     anim.play(true);
@@ -318,7 +323,7 @@ var enemy2Obj = enemy.extend(function() {
 
     this.setDepth(2);
 
-    this.speed = tobi.Math.randomRange(1,2.5);
+    this.speed = tobi.Math.randomRange(2.5,3.5);
 
   }
 
@@ -327,7 +332,7 @@ var enemy2Obj = enemy.extend(function() {
     this.stepBullet = 0;
     this.nextBullet = 1;
     this.bulletCount = 0;
-    this.speed = tobi.Math.randomRange(1.5,2.5);
+    this.speed = tobi.Math.randomRange(2.5,3.5);
 
   }
 
@@ -336,7 +341,7 @@ var enemy2Obj = enemy.extend(function() {
     this.position.y += this.speed;
 
     if (this.position.y > 600+60) {
-      this.selfDestroy();
+      this.destroy(true);
     }
 
     this.stepBullet += myGame.clock.deltaTime / this.nextBullet;
@@ -439,18 +444,27 @@ if (  this.state == "playing") {
 
     var movingX = 0;
     var movingY = 0;
-    this.s = 1;
+    var angle = 0;
 
-  if (this.game.input.keyboard.press(tobi.KeyCode.D))
+
+  if (this.game.input.keyboard.press(tobi.KeyCode.D)) {
     movingX = 1;
-  if (this.game.input.keyboard.press(tobi.KeyCode.A))
+    angle = 2;
+
+  }
+  if (this.game.input.keyboard.press(tobi.KeyCode.A)) {
     movingX = -1;
+    angle = -2;
+
+  }
   if (this.game.input.keyboard.press(tobi.KeyCode.S))
     movingY = 1;
   if (this.game.input.keyboard.press(tobi.KeyCode.W))
       movingY = -1;
 
     this.position.move(this.speed*movingX,this.speed*movingY);
+    this.angle = angle;
+
 
     this.stepBullet += myGame.clock.deltaTime;
 
@@ -495,7 +509,7 @@ this.onCollision = function(collider) {
 
   if (!this.dead && !this.invulnerable) {
     if (collider.name == "enemy" || collider.name == "enemyBullet") {
-      collider.selfDestroy();
+      collider.destroy(true);
      myGame.sound.play('explosionPlayer',0.85);
     var explo0 = myGame.instance.addFromPool("explosion");
     explo0.position.copy(this.position);
@@ -573,7 +587,7 @@ var gameController = tobi.GameObject.extend(function() {
 
   this.start = function() {
 
-    this.state = "title"
+    this.state = "title";
 
     this.name = 'controller';
     music.play('title',1,true);
@@ -723,10 +737,6 @@ var gameController = tobi.GameObject.extend(function() {
 
       }
 
-
-
-
-
     }
   }
 
@@ -798,8 +808,13 @@ myScene.start = function() {
 var controller = myGame.instance.create(gameController,0,0);
 var bg0 = myGame.instance.create(bg,0,0);
 
+bg0.controller = controller;
+controller.bg = bg0;
 
 myGame.pool.clearAll();
+
+console.log("start");
+
 
 myGame.pool.add("bullet",playerBullet,20);
 myGame.pool.add("enemy",enemy,30);
@@ -808,19 +823,25 @@ myGame.pool.add("enemyBullet",enemyBulletObj,20);
 myGame.pool.add("explosion",explosion,15);
 myGame.pool.add("star",starObj,20);
 
+
+
+
 for (var i = 0; i < 8; i++) {
 
 var x = tobi.Math.randomRange(0,800);
 var y = tobi.Math.randomRange(0,600);
-var star = myGame.instance.addFromPool('star');
+var star = myGame.instance.addFromPool("star");
+
+
+
 star.position.set(x,y);
 
 
 }
 
 
-bg0.controller = controller;
-controller.bg = bg0;
+
+
 
 }
 

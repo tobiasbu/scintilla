@@ -11,15 +11,14 @@ tobi.GameObject = tobi.Instance.extend(function() {
 
     this.super(null,null,name);
     //tobi.Instance.call(this,null,null,name,false);
-
-
     this.origin.set(0.5,0.5);
 
   }
 
   this.start = function() {};
   this.update = function() {};
-  this.destroy = function() {};
+
+  //this.onDestroy = function() {};
 
 
   this.addComponent = function(name, args) {
@@ -86,20 +85,29 @@ tobi.GameObject = tobi.Instance.extend(function() {
 
   }
 
-  this._updateComponents = function(time) {
 
-    // update animation
-      if (this.component['animation']) {
-          this.component['animation']._update(time);
-      }
+  this.removeComponent = function(name) {
 
-    // update collider
-    if (this.component['collider']) {
-        this.component['collider']._update();
+    if (this.component[name]) {
+
+        //this.component[name].destroy();
+        delete this.component[name];
+
     }
 
   }
 
+  this.removeAllComponents = function() {
+
+    for (var property in this.component) {
+
+      this.removeComponent(property);
+
+    }
+
+  }
+
+  
 
 
 

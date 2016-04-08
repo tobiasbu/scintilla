@@ -64,6 +64,9 @@ for (var i = 0; i < colliadables.length; i++) {
     var objA = colliadables[i];
     var shapeA = objA.shape;
 
+    if (objA._gameObject._selfDestroy || !objA._gameObject.active)
+      continue;
+
     var jit = i + 1;
 
     if (jit >= colliadables.length)
@@ -73,6 +76,9 @@ for (var i = 0; i < colliadables.length; i++) {
 
       var objB = colliadables[j];
       var shapeB = objB.shape;
+
+      if (objB._gameObject._selfDestroy || !objB._gameObject.active)
+        continue;
 
       // AABB check of the shapes
     if (objB.bounds.box.intersects(objA.bounds.box)) {

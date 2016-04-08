@@ -16,14 +16,18 @@ addFromPool : function(containerName, node) {
 
   var obj = this.game.pool.pull(containerName);
 
-  if (obj.component['collider'])
+  if (obj.component['collider']) {
     this.game.physics.addColliderObj(obj.component.collider);
 
-  obj._selfDestroy = false;
+  }
 
-  if (obj != null)
-    return node.addNode(obj);
-  else
+  obj._selfDestroy = false;
+  obj.z = node.children.length;
+
+  if (obj != null) {
+    obj = node.addChild(obj);
+    return obj;
+  } else
       return null;
 
 },
@@ -37,8 +41,8 @@ add : function(gameObject, node) {
     return;
   }
 
-  gameObject = node.addNode(gameObject);
-
+  gameObject = node.addChild(gameObject);
+  gameObject.z = node.children.length;
 
   return gameObject;
 
@@ -58,12 +62,10 @@ create : function(gameObject, x, y, node) {
 
   }
 
-  //obj.depth = node.nodes.length;
+  obj.z = node.children.length;
   obj.game = this.game;
 
-   obj = node.addNode(obj);
-
-
+   obj = node.addChild(obj);
 
   var xx = 0;
   var yy = 0;
@@ -90,12 +92,13 @@ create : function(gameObject, x, y, node) {
 
 },
 
+/*
 createClone : function(gameObject, x, y, node) {
 
     var obj = cloner.shallow.copy(gameObject);
     return this.create(obj,x,y,node);
 
-}
+}*/
 
 
 

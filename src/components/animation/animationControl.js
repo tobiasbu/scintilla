@@ -7,7 +7,6 @@ this.animations = {};
 this.currentAnimation = null;
 
 this.loop = false;
-this.destroyOnEnd = false;
 this.isPlaying = false;
 this.isPaused = true;
 
@@ -106,15 +105,6 @@ tobi.AnimationControl.prototype = {
 
   },
 
-  playAndDestroy : function() {
-
-    this.loop = false;
-    this.isPlaying = true;
-    this.isPaused = false;
-    this.destroyOnEnd = true;
-
-  },
-
   pause : function() {
 
     this.isPaused = true;
@@ -129,7 +119,7 @@ tobi.AnimationControl.prototype = {
 
   },
 
-  _update : function(time) {
+  update : function(time) {
 
     // if not paused and we have a valid animation
 	if (!this.isPaused && this._currentAnimObj != null)	{
@@ -158,10 +148,10 @@ tobi.AnimationControl.prototype = {
           this.isPaused = true;
         }
 
-        if (this.destroyOnEnd) {
+        if (this._gameObject["onAnimationEnd"]) {
 
 
-          this._gameObject.selfDestroy();
+          this._gameObject.onAnimationEnd();
 
         }
 

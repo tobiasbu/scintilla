@@ -4,53 +4,76 @@
 tobi.Instance = tobi.Hierarchy.extend(function() {
 
 // private
+this.game = null;
+this.name = "instance";
+this.z = 0;
+this.depth = 0;
+this.visible = true;
+this.active = true;
 this._selfDestroy = false;
 this._changeDepth = false;
 var _keepAlive = false;
 
-this.constructor = function(game,parent,name) {
 
-//tobi.Hierarchy.call(this,newTransform);
+this.constructor = function(game,parent,name) {
 
 this.super();
 
-
 this.game = game;
 this.name = name;
-this.depth = 0;
 
-this.visible = true;
 
 }
 
-this._cycleUpdate = function (time) {
+this.preUpdate = function (time) {
+
+
+    if (!this.active) {
+      return;
+    }
 
 
 
-  var destroyList = [];
+    if (this.component['animation'])
+        this.component['animation'].update(time);
 
-    for (var i = 0; i < this.nodes.length; i++)
+
+
+
+    for (var i = 0; i < this.children.length; i++)
     {
+      this.children[i].z = i;
+      this.children[i].preUpdate(time);
 
-       if (this.nodes[i]['update']) // call update of childrens
-        this.nodes[i].update();
+        /*if (this.children[i].active) {
 
-        if (this.nodes[i]['_updateComponents'])
-          this.nodes[i]._updateComponents(time);
+          this.children[i].z = i;
 
-        if (!this.nodes[i]._selfDestroy) {
+           if (this.children[i]['update']) // call update of childrens
+            this.children[i].update();
 
-        if (this.nodes[i]['_cycleUpdate']) // call the childrens
-         this.nodes[i]._cycleUpdate(time);
 
-       } else {
-          destroyList.push(this.nodes[i]);
-          continue;
-       }
+
+
+            //if (this.children[i]['_cycleUpdate']) // call the childrens
+             this.children[i]._cycleUpdate(time);
+
+           if (this.children[i]._selfDestroy)
+              destroyList.push(this.children[i]);
+
+
+       } else
+       continue;*/
+
      }
 
-     for (var i = 0; i < destroyList.length; i++)
-        destroyList[i]._onDestroy();
+     /*for (var i = 0; i < destroyList.length; i++) {
+         if (destroyList[i]._keepAlive)
+          destroyList[i]._poolBack();
+         else
+          destroyList[i]._destroy();
+      }
+
 
 
      if (this._changeDepth) {
@@ -58,11 +81,23 @@ this._cycleUpdate = function (time) {
           this.parent._updateDepth();
         }
         this._changeDepth = false;
-      }
+      }*/
 
 };
 
-this._cycleUpdateTransform = function() {
+
+
+this._updateTransform = function() {
+
+  if (!this.active)
+    return;
+
+  this.updateTransform();
+
+  if (this.component['render']) {
+    this.bounds.setByGameObject(this,false);
+  }
+
 
   var minX = Infinity;
   var minY = Infinity;
@@ -76,70 +111,93 @@ this._cycleUpdateTransform = function() {
     maxY = this.bounds.max.y;
   }
 
-  for (var i = 0; i < this.nodes.length; i++) {
+  for (var i = 0; i < this.children.length; i++) {
 
-    this.nodes[i].updateTransform();
+    this.children[i]._updateTransform();
 
-    if (this.nodes[i]['_cycleUpdateTransform'])
-      this.nodes[i]._cycleUpdateTransform();
+      this.children[i].z = i;
 
-    if (this.nodes[i].component['render']) {
+      if (this.children[i].component['render']) {
 
-      // calculate the local bounds of node
-        var bb =  this.nodes[i].bounds.setByGameObject(this.nodes[i],false);
+        // calculate the local bounds of node
+          var bb =  this.children[i].bounds;
 
-       //calculate the global bounds of the group
-       minX = minX < bb.min.x ? minX : bb.min.x;
-       minY = minY < bb.min.y ? minY : bb.min.y;
-       maxX = maxX > bb.max.x ? maxX : bb.max.x;
-       maxY = maxY > bb.max.y ? maxY : bb.max.y;
+         //calculate the global bounds of group object
+         minX = minX < bb.min.x ? minX : bb.min.x;
+         minY = minY < bb.min.y ? minY : bb.min.y;
+         maxX = maxX > bb.max.x ? maxX : bb.max.x;
+         maxY = maxY > bb.max.y ? maxY : bb.max.y;
 
 
-    }
-
+      }
 
   }
 
   this.globalBounds.set(minX,minY,maxX,maxY);
 
-
-
 }
 
-this._cycleRender = function(context) {
+this.render = function(context) {
 
-  if (this._selfDestroy) {
+
+  if (!this.visible || this._selfDestroy)
     return;
+
+  if (this.component['render']) {
+    if (this.game.camera.view.intersects(this.bounds.box)) {
+
+      //  if (this.component['collider'])
+        //  this.component['collider'].debugDraw(context,'red');
+
+          this.component['render'].render(context);
+          this.game.camera.instancesInView++;
+    }
   }
+
+  if (this['freelyrender']) {
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    this.freelyrender(context);
+  }
+
+  if (this.children.length === 0)
+    return;
+
 
   var i = 0;
 
-   while (i < this.nodes.length)
+   while (i < this.children.length)
    {
-     if (this.nodes[i]['_cycleRender'])
-        this.nodes[i]._cycleRender(context);
 
-        //console.log("asdasd");
+     this.children[i].render(context);
 
 
-        if (this.game.camera.view.intersects(this.nodes[i].bounds.box)) {
+     /*if (this.children[i].visible && !this.children[i]._selfDestroy) {
 
-          /*if (this.nodes[i].component['collider']) {
-             this.nodes[i].component['collider'].debugDraw(context,'red');
+     if (this.children[i]['_cycleRender'])
+        this.children[i]._cycleRender(context);
 
-          }*/
+        if (this.game.camera.view.intersects(this.children[i].bounds.box)) {
 
-        if (this.nodes[i].component['render']) { // if is gameobject
-            this.nodes[i].component['render'].render(context);
+          if (this.children[i].component['collider']) {
+             this.children[i].component['collider'].debugDraw(context,'red');
+
+          }
+
+        if (this.children[i].component['render']) { // if is gameobject
+            this.children[i].component['render'].render(context);
             this.game.camera.instancesInView++;
        }
 
-    }
+     }
 
-    if (this.nodes[i]['freelyrender']) {
+
+
+    if (this.children[i]['freelyrender']) {
       context.setTransform(1, 0, 0, 1, 0, 0);
-      this.nodes[i].freelyrender(context);
+      this.children[i].freelyrender(context);
     }
+  }*/
+
 
     i++;
    }
@@ -148,24 +206,51 @@ this._cycleRender = function(context) {
 
 this._updateDepth = function() { // sort ascending
 
-  var sortProperty = 'depth';
-
-  this.nodes.sort(
+  this.children.sort(
     function(a, b) {
 
-      if (a[sortProperty] < b[sortProperty])
-      {
-          return -1;
-      }
-      else if (a[sortProperty] > b[sortProperty])
-      {
-          return 1;
+      if (a.depth > b.depth) {
+
+        return 1;
+
+      } else if (a.depth < b.depth) {
+
+        return -1;
+
       } else {
-          return 0;
+
+        if (a.z > b.z) {
+          return 1;
+        } else {
+          return -1;
+        }
+
+
       }
 
+      /*  if (a.z > b.z) {
+
+          if (a.depth < b.depth) {
+            return -1;
+          } else {
+            return 1;
+          }
+
+        } else {
+
+          if (a.depth > b.depth) {
+            return 1;
+          } else {
+            return - 1;
+          }
+
+        }*/
+
+
     }
-  );
+    );
+
+
 
   this._changeDepth  = false;
 
@@ -179,86 +264,126 @@ this.setDepth = function(depth) {
 
 };
 
-this.selfDestroy = function(keepalive) {
+this.setActive = function(flag) {
 
-  if (keepalive === undefined) keepalive = false;
+  if (flag === undefined) flag = true;
 
-  this._selfDestroy = true;
-  _keepAlive = keepalive;
-
-};
-
-this._removeAll = function() {
-
-  if (this.nodes.length === 0)
-   {
-       return;
-   }
-
-   do
-    {
-
-      if (this.nodes[0].component['collider'])
-          this.game.physics.removeColliderObj(this.nodes[0].component.collider);
-
-        if (!_keepAlive) {
-          if (this.nodes[0]['destroy'])
-          {
-              this.nodes[0].destroy();
-          }
-
-          if (this.pool) {
-
-            this.game.pool.pushBack(this.nodes[0]);
-
-          }
-
-        }
-
-         this.removeNode(this.nodes[0]);
-
-    }
-    while (this.nodes.length > 0);
+  this.visible = flag;
+  this.active = flag;
 
 }
 
-this._onDestroy = function() {
+// set destroy process
+// if keepAlive is true, it will set to the pool
+this.destroy = function(keepAlive) {
+
+if (keepAlive === undefined) keepAlive = false;
+
+this._selfDestroy = true;
+_keepAlive = keepAlive;
+
+
+}
+
+this._garbage = function() {
+
+  if (_keepAlive)
+   this._poolBack();
+  else
+   this._destroy();
+
+}
+
+// internal method to destroy object
+this._destroy = function() {
 
   if (this.game === null) return;
+
+  this._selfDestroy = true;
+
+  // last call
+  if (this["onDestroy"])
+    this.onDestroy();
+
+  // remove the parent
+  if (this.parent)
+    this.parent.removeChild(this);
+
+  // remove components
+  if (this.component['collider'])
+      this.game.physics.removeColliderObj(this.component.collider);
+
+    this.removeAllComponents();
+
+    // remove transform
+    this.destroyTransform();
+
+    var i = this.children.length;
+
+   while (i--)
+   {
+       this.children[i]._destroy();
+   }
+
+
+   this.setActive(false);
+   this.game = null;
+   this.parent = null;
+
+}
+
+this.destroyAllChilds = function() {
+
+  var i = this.children.length;
+
+  while (i--)
+  {
+      this.children[i]._destroy();
+  }
+
+}
+
+// internal method to pooled objects
+this._poolBack = function(callOnDestroy) {
+
+  if (this.pool == null) {
+
+    //its not pooled? no problem,
+    this.pool = this.name;
+
+  }
+
+  if (callOnDestroy === undefined) callOnDestroy = true;
+
+  if (this.parent)
+  {
+      this.parent.removeChild(this);
+  }
+
+  this.parent = null;
+
+  if (callOnDestroy) {
+    if (this["onDestroy"])
+      this.onDestroy();
+  }
 
   if (this.component['collider'])
       this.game.physics.removeColliderObj(this.component.collider);
 
-  // need to destoy me?
-  if (!_keepAlive) {
 
-    if (typeof this.destroy == 'function')
-    {
-      this.destroy();
-    }
+    this.game.pool.pushBack(this);
 
-    // return to pool if gameObject have
-    if (this.pool) {
 
-      this.game.pool.pushBack(this);
+    var i = this.children.length;
 
-    }
-  }
-
-  this._removeAll();
-  //this._selfDestroy = false;
-  //this.game = null;
-
-  if (this.parent)
+  while (i--)
   {
-      this.parent.removeNode(this);
+      this.children[i]._poolBack(callOnDestroy);
   }
 
-   //this.game = null;
+  //this._selfDestroy = false;
 
-  }
-
-
+}
 
 });
 
@@ -266,7 +391,7 @@ this._onDestroy = function() {
 Object.defineProperty(tobi.Instance.prototype, "length", {
 
     get: function() {
-        return this.nodes.length;
+        return this.children.length;
     }
 
 });

@@ -6,8 +6,8 @@ tobi.UpdateGame = function(game, timeout) {
 
 this.game = game;
 this.isRunning = false;
-this.timeOutMode = timeout;
-this._usingTimeout = false;
+this.setTimeOutMode = timeout;
+this._isTimeOutMode = false;
 
   var vendors = [
        'ms',
@@ -31,30 +31,31 @@ this._timeOutCallback = null;
 
 tobi.UpdateGame.prototype = {
 
-init : function() {
+start : function() {
 
   this.isRunning = true;
 
   var self = this;
 
-        if (!window.requestAnimationFrame || this.timeOutMode)
+        if (!window.requestAnimationFrame || this.setTimeOutMode)
         {
-            this._usingTimeout = true;
+            this._isTimeOutMode = true;
 
             this._onLoopingCallback = function () {
                 return self.updateTimeout();
             };
 
-            this._timeOutCallback = window.setTimeout(this._onLoopingCallback, 1000 / 60);
+            this._timeOutCallback = window.setTimeout(this._onLoopingCallback, 0);
+
+
         }
         else
         {
 
-
-            this._usingTimeout = false;
+            this._isTimeOutMode = false;
 
             this._onLoopingCallback = function (time) {
-                return self.updateRequest(time);
+                return self.updateRequestAnimationFrame(time);
             };
 
             this._timeOutCallback = window.requestAnimationFrame(this._onLoopingCallback, this.game.canvas);
@@ -62,7 +63,7 @@ init : function() {
 
 },
 
-updateRequest : function(time) {
+updateRequestAnimationFrame : function(time) {
 
   this.game.update(time);
 
@@ -74,13 +75,14 @@ updateTimeout : function() {
 
   this.game.update(Date.now());
 
-  //this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.time.timeToCall);
+
+  this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.clock.timeOut_toCall);
 
 },
 
 stop: function () {
 
-        if (this._usingTimeout)
+        if (this._isTimeOutMode)
         {
             clearTimeout(this._timeOutCallback);
         }

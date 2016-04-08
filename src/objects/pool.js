@@ -21,9 +21,6 @@ this.add = function(container,gameObject,size) {
   if (this.poolList[container] === undefined)
     this.poolList[container] = [];
 
-
-
-
   // add objects to the pool
   for (var i = 0; i < size; i++) {
 
@@ -33,8 +30,12 @@ this.add = function(container,gameObject,size) {
 
     obj.game = this.game;
 
+
+
     if (obj['start'])
       obj.start();
+
+
 
     obj.pool = container;
 
@@ -83,7 +84,13 @@ this.pushBack = function(obj) {
 
   if (obj.pool != null) {
 
-    this.poolList[obj.pool].push(obj);
+    var container = obj.pool;
+
+    // register if necessary
+    if (this.poolList[container] === undefined)
+      this.poolList[container] = [];
+
+    this.poolList[container].push(obj);
 
 
   } else
@@ -111,6 +118,8 @@ this.clearAll = function() {
 
        }
   }
+
+  this.poolList = {};
 
 }
 

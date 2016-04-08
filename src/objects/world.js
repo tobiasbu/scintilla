@@ -3,7 +3,8 @@
 tobi.World = tobi.Instance.extend(function() {
 
   this.game = null;
-
+  this.camera = null;
+  this.worldBounds = null;
 
   this.constructor = function(game) {
 
@@ -18,6 +19,90 @@ tobi.World = tobi.Instance.extend(function() {
 
   }
 
+  this.preUpdate = function(time) {
+
+
+    this.camera.update();
+
+
+    for (var i = 0; i < this.children.length; i++)
+    {
+        this.children[i].preUpdate(time);
+        this.children[i].z = i;
+
+
+
+    }
+
+
+
+  }
+
+  this.update = function(time) {
+
+
+      var destroyList = [];
+
+    for (var i = 0; i < this.children.length; i++)
+    {
+
+
+        this.children[i].update();
+
+
+        if (this.children[i].component['collider']) {
+            this.children[i].component['collider'].update();
+        }
+
+        if (this.children[i]._selfDestroy) {
+          destroyList.push(this.children[i]);
+        }
+
+    }
+
+    for (var i = 0; i < destroyList.length; i++) {
+      destroyList[i]._garbage();
+    }
+
+    // automatic sort depth
+    if (this._changeDepth) {
+      this._updateDepth();
+      this._changeDepth = false;
+    }
+
+  }
+
+  this._updateTransform = function() {
+
+    this.updateTransform();
+
+
+    for (var i = 0; i < this.children.length; i++)
+    {
+
+      this.children[i]._updateTransform();
+
+    }
+
+  }
+
+  this.render = function(context) {
+
+    var i = 0;
+
+    while (i < this.children.length)
+    {
+
+      this.children[i].render(context);
+
+      i++;
+
+    }
+
+  }
+
+
+
 });
 
 //tobi.World.prototype = Object.create(tobi.Instance.prototype);
@@ -30,7 +115,7 @@ tobi.World.prototype.start = function() {
   this.camera.root = this;
   this.game.camera = this.camera;
 
-  this.game.universe.addNode(this);
+  this.game.universe.addChild(this);
 
   //console.log(this.game.universe);
 

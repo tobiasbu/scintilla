@@ -2,7 +2,6 @@
 tobi.Transform = Class.extend(function(){
 
 // private:
-var _id = -1;
 var _cosSin = new tobi.Vector(0,0);
 var _oldRotation = -2;
 
@@ -38,8 +37,6 @@ this.updateTransform = function() {
 var a, b, c, d, x, y;
 var wt = this.matrix;
 var pt = this.parent.matrix;
-
-//if (!this.customTransform) {
 
   this.rotation = this.angle * tobi.Math.degToRad;
 
@@ -105,8 +102,18 @@ var pt = this.parent.matrix;
   this.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
   this.worldRotation = Math.atan2(-wt.c, wt.d);
 
+  }
 
+  this.destroyTransform = function() {
 
+    delete this.position;
+    delete this.scale;
+    delete this.matrix;
+    delete this.worldPosition;
+    delete this.worldScale;
+    delete this.origin;
+    delete this.bounds;
+    delete this.globalBounds;
 
   }
 

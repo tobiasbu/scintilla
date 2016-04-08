@@ -119,7 +119,7 @@ clearCurrentScene : function() {
           this.game.cache.clear();
     }
 
-    this.game.world._removeAll();
+    this.game.world.destroyAllChilds();
 
   }
 

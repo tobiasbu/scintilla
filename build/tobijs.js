@@ -140,7 +140,6 @@ Polygon : 3
 tobi.Transform = Class.extend(function(){
 
 // private:
-var _id = -1;
 var _cosSin = new tobi.Vector(0,0);
 var _oldRotation = -2;
 
@@ -176,8 +175,6 @@ this.updateTransform = function() {
 var a, b, c, d, x, y;
 var wt = this.matrix;
 var pt = this.parent.matrix;
-
-//if (!this.customTransform) {
 
   this.rotation = this.angle * tobi.Math.degToRad;
 
@@ -243,8 +240,18 @@ var pt = this.parent.matrix;
   this.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
   this.worldRotation = Math.atan2(-wt.c, wt.d);
 
+  }
 
+  this.destroyTransform = function() {
 
+    delete this.position;
+    delete this.scale;
+    delete this.matrix;
+    delete this.worldPosition;
+    delete this.worldScale;
+    delete this.origin;
+    delete this.bounds;
+    delete this.globalBounds;
 
   }
 
@@ -314,10 +321,10 @@ var pt = this.parent.matrix;
 //tobi.Transform.prototype.updateTransform = tobi.Transform.prototype._updateTransform;
 ;
 // Hierarchy Tree of instances
-// Instance is a node of the Hierarchy tree
+// Instance is a children of the Hierarchy tree
 tobi.Hierarchy = tobi.Transform.extend(function() {
 
-this.nodes = [];
+this.children = [];
 //tobi.Transform.call(this);
 
 //if (newTransform)
@@ -329,106 +336,113 @@ this.constructor = function() {
 
 };
 
-this.addNode = function(node) {
+this.addChild = function(child) {
 
-  return this.addNodeAt(node,this.nodes.length);
+  return this.addChildAt(child,this.children.length);
 
 };
 
-this.addNodeAt = function(node,index) {
+this.addChildAt = function(child,index) {
 
-      if(index >= 0 && index <= this.nodes.length)
+      if(index >= 0 && index <= this.children.length)
       {
-          if(node.parent)
+          if(child.parent)
           {
-              node.parent.removeNode(node);
+              child.parent.removeChild(child);
           }
 
-          node.parent = this;
+          child.parent = this;
 
+          this.children.splice(index, 0, child);
 
-          this.nodes.splice(index, 0, node);
-
-          // automatic sort depth
-          if (this['_updateDepth'])
-            this._updateDepth();
+          this._changeDepth = true;
 
           //if(this.stage)child.setStageReference(this.stage);
 
-          return node;
+          return child;
       }
       else
       {
-          throw new Error(node + 'addChildAt: The index '+ index +' supplied is out of bounds ' + this.children.length);
+          throw new Error(child + 'addChildAt: The index '+ index +' supplied is out of bounds ' + this.children.length);
       }
 
 
 };
 
-this.removeNode = function(node)
+this.removeChild = function(child)
 {
-    var index = this.nodes.indexOf( node );
+    var index = this.children.indexOf( child );
 
     if(index === -1) return;
 
-    return this.removeNodeAt( index );
+    return this.removeChildAt( index );
 };
 
-this.removeNodeAt = function(index)
+this.removeChildAt = function(index)
 {
-  var node = this.getNodeAt( index );
+  var child = this.getChildAt( index );
 
-  node.parent = undefined;
-  this.nodes.splice( index, 1 );
-  return node;
+  child.parent = undefined;
+  this.children.splice( index, 1 );
+  return child;
 
 };
 
-this.getNodeAt = function(index)
+
+this.getChildAt = function(index)
 {
-    if (index < 0 || index >= this.nodes.length)
+    if (index < 0 || index >= this.children.length)
     {
         throw new Error('getChildAt: Supplied index '+ index +' does not exist in the child list, or the supplied DisplayObject must be a child of the caller');
     }
-    return this.nodes[index];
+    return this.children[index];
 
 };
 
 
-this._cycleUpdate = function(time) {
+this.preUpdate = function(time) {
 
-  for (var i = 0; i < this.nodes.length; i++)
+  for (var i = 0; i < this.children.length; i++)
   {
-
-      if (this.nodes[i]['_cycleUpdate'])
-        this.nodes[i]._cycleUpdate(time);
+        this.children[i].preUpdate(time);
 
   }
 
 };
 
-this._cycleUpdateTransform = function() {
+this.update = function() {
 
-  for (var i = 0; i < this.nodes.length; i++)
+  for (var i = 0; i < this.children.length; i++)
   {
 
-      this.nodes[i].updateTransform();
+        this.children[i].update();
 
-      if (this.nodes[i]['_cycleUpdateTransform'])
-        this.nodes[i]._cycleUpdateTransform();
 
   }
 
 
 };
 
-this._cycleRender = function() {
+this._updateTransform = function() {
 
-  for (var i = 0; i < this.nodes.length; i++)
+
+
+  for (var i = 0; i < this.children.length; i++)
   {
 
-    if (this.nodes[i]['_cycleRender'])
-      this.nodes[i]._cycleRender(this.game.context);
+      this.children[i]._updateTransform();
+
+  }
+
+
+};
+
+this.render = function() {
+
+  for (var i = 0; i < this.children.length; i++)
+  {
+
+      this.children[i].render(this.game.context);
 
   }
 };
@@ -515,53 +529,76 @@ update : function() {
 tobi.Instance = tobi.Hierarchy.extend(function() {
 
 // private
+this.game = null;
+this.name = "instance";
+this.z = 0;
+this.depth = 0;
+this.visible = true;
+this.active = true;
 this._selfDestroy = false;
 this._changeDepth = false;
 var _keepAlive = false;
 
-this.constructor = function(game,parent,name) {
 
-//tobi.Hierarchy.call(this,newTransform);
+this.constructor = function(game,parent,name) {
 
 this.super();
 
-
 this.game = game;
 this.name = name;
-this.depth = 0;
 
-this.visible = true;
 
 }
 
-this._cycleUpdate = function (time) {
+this.preUpdate = function (time) {
+
+
+    if (!this.active) {
+      return;
+    }
 
 
 
-  var destroyList = [];
+    if (this.component['animation'])
+        this.component['animation'].update(time);
 
-    for (var i = 0; i < this.nodes.length; i++)
+
+
+
+    for (var i = 0; i < this.children.length; i++)
     {
+      this.children[i].z = i;
+      this.children[i].preUpdate(time);
 
-       if (this.nodes[i]['update']) // call update of childrens
-        this.nodes[i].update();
+        /*if (this.children[i].active) {
 
-        if (this.nodes[i]['_updateComponents'])
-          this.nodes[i]._updateComponents(time);
+          this.children[i].z = i;
 
-        if (!this.nodes[i]._selfDestroy) {
+           if (this.children[i]['update']) // call update of childrens
+            this.children[i].update();
 
-        if (this.nodes[i]['_cycleUpdate']) // call the childrens
-         this.nodes[i]._cycleUpdate(time);
 
-       } else {
-          destroyList.push(this.nodes[i]);
-          continue;
-       }
+
+
+            //if (this.children[i]['_cycleUpdate']) // call the childrens
+             this.children[i]._cycleUpdate(time);
+
+           if (this.children[i]._selfDestroy)
+              destroyList.push(this.children[i]);
+
+
+       } else
+       continue;*/
+
      }
 
-     for (var i = 0; i < destroyList.length; i++)
-        destroyList[i]._onDestroy();
+     /*for (var i = 0; i < destroyList.length; i++) {
+         if (destroyList[i]._keepAlive)
+          destroyList[i]._poolBack();
+         else
+          destroyList[i]._destroy();
+      }
+
 
 
      if (this._changeDepth) {
@@ -569,11 +606,23 @@ this._cycleUpdate = function (time) {
           this.parent._updateDepth();
         }
         this._changeDepth = false;
-      }
+      }*/
 
 };
 
-this._cycleUpdateTransform = function() {
+
+
+this._updateTransform = function() {
+
+  if (!this.active)
+    return;
+
+  this.updateTransform();
+
+  if (this.component['render']) {
+    this.bounds.setByGameObject(this,false);
+  }
+
 
   var minX = Infinity;
   var minY = Infinity;
@@ -587,70 +636,93 @@ this._cycleUpdateTransform = function() {
     maxY = this.bounds.max.y;
   }
 
-  for (var i = 0; i < this.nodes.length; i++) {
+  for (var i = 0; i < this.children.length; i++) {
 
-    this.nodes[i].updateTransform();
+    this.children[i]._updateTransform();
 
-    if (this.nodes[i]['_cycleUpdateTransform'])
-      this.nodes[i]._cycleUpdateTransform();
+      this.children[i].z = i;
 
-    if (this.nodes[i].component['render']) {
+      if (this.children[i].component['render']) {
 
-      // calculate the local bounds of node
-        var bb =  this.nodes[i].bounds.setByGameObject(this.nodes[i],false);
+        // calculate the local bounds of node
+          var bb =  this.children[i].bounds;
 
-       //calculate the global bounds of the group
-       minX = minX < bb.min.x ? minX : bb.min.x;
-       minY = minY < bb.min.y ? minY : bb.min.y;
-       maxX = maxX > bb.max.x ? maxX : bb.max.x;
-       maxY = maxY > bb.max.y ? maxY : bb.max.y;
+         //calculate the global bounds of group object
+         minX = minX < bb.min.x ? minX : bb.min.x;
+         minY = minY < bb.min.y ? minY : bb.min.y;
+         maxX = maxX > bb.max.x ? maxX : bb.max.x;
+         maxY = maxY > bb.max.y ? maxY : bb.max.y;
 
 
-    }
-
+      }
 
   }
 
   this.globalBounds.set(minX,minY,maxX,maxY);
 
-
-
 }
 
-this._cycleRender = function(context) {
+this.render = function(context) {
 
-  if (this._selfDestroy) {
+
+  if (!this.visible || this._selfDestroy)
     return;
+
+  if (this.component['render']) {
+    if (this.game.camera.view.intersects(this.bounds.box)) {
+
+      //  if (this.component['collider'])
+        //  this.component['collider'].debugDraw(context,'red');
+
+          this.component['render'].render(context);
+          this.game.camera.instancesInView++;
+    }
   }
+
+  if (this['freelyrender']) {
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    this.freelyrender(context);
+  }
+
+  if (this.children.length === 0)
+    return;
+
 
   var i = 0;
 
-   while (i < this.nodes.length)
+   while (i < this.children.length)
    {
-     if (this.nodes[i]['_cycleRender'])
-        this.nodes[i]._cycleRender(context);
 
-        //console.log("asdasd");
+     this.children[i].render(context);
 
 
-        if (this.game.camera.view.intersects(this.nodes[i].bounds.box)) {
+     /*if (this.children[i].visible && !this.children[i]._selfDestroy) {
 
-          /*if (this.nodes[i].component['collider']) {
-             this.nodes[i].component['collider'].debugDraw(context,'red');
+     if (this.children[i]['_cycleRender'])
+        this.children[i]._cycleRender(context);
 
-          }*/
+        if (this.game.camera.view.intersects(this.children[i].bounds.box)) {
 
-        if (this.nodes[i].component['render']) { // if is gameobject
-            this.nodes[i].component['render'].render(context);
+          if (this.children[i].component['collider']) {
+             this.children[i].component['collider'].debugDraw(context,'red');
+
+          }
+
+        if (this.children[i].component['render']) { // if is gameobject
+            this.children[i].component['render'].render(context);
             this.game.camera.instancesInView++;
        }
 
-    }
+     }
 
-    if (this.nodes[i]['freelyrender']) {
+
+
+    if (this.children[i]['freelyrender']) {
       context.setTransform(1, 0, 0, 1, 0, 0);
-      this.nodes[i].freelyrender(context);
+      this.children[i].freelyrender(context);
     }
+  }*/
+
 
     i++;
    }
@@ -659,24 +731,51 @@ this._cycleRender = function(context) {
 
 this._updateDepth = function() { // sort ascending
 
-  var sortProperty = 'depth';
-
-  this.nodes.sort(
+  this.children.sort(
     function(a, b) {
 
-      if (a[sortProperty] < b[sortProperty])
-      {
-          return -1;
-      }
-      else if (a[sortProperty] > b[sortProperty])
-      {
-          return 1;
+      if (a.depth > b.depth) {
+
+        return 1;
+
+      } else if (a.depth < b.depth) {
+
+        return -1;
+
       } else {
-          return 0;
+
+        if (a.z > b.z) {
+          return 1;
+        } else {
+          return -1;
+        }
+
+
       }
 
+      /*  if (a.z > b.z) {
+
+          if (a.depth < b.depth) {
+            return -1;
+          } else {
+            return 1;
+          }
+
+        } else {
+
+          if (a.depth > b.depth) {
+            return 1;
+          } else {
+            return - 1;
+          }
+
+        }*/
+
+
     }
-  );
+    );
+
+
 
   this._changeDepth  = false;
 
@@ -690,86 +789,126 @@ this.setDepth = function(depth) {
 
 };
 
-this.selfDestroy = function(keepalive) {
+this.setActive = function(flag) {
 
-  if (keepalive === undefined) keepalive = false;
+  if (flag === undefined) flag = true;
 
-  this._selfDestroy = true;
-  _keepAlive = keepalive;
-
-};
-
-this._removeAll = function() {
-
-  if (this.nodes.length === 0)
-   {
-       return;
-   }
-
-   do
-    {
-
-      if (this.nodes[0].component['collider'])
-          this.game.physics.removeColliderObj(this.nodes[0].component.collider);
-
-        if (!_keepAlive) {
-          if (this.nodes[0]['destroy'])
-          {
-              this.nodes[0].destroy();
-          }
-
-          if (this.pool) {
-
-            this.game.pool.pushBack(this.nodes[0]);
-
-          }
-
-        }
-
-         this.removeNode(this.nodes[0]);
-
-    }
-    while (this.nodes.length > 0);
+  this.visible = flag;
+  this.active = flag;
 
 }
 
-this._onDestroy = function() {
+// set destroy process
+// if keepAlive is true, it will set to the pool
+this.destroy = function(keepAlive) {
+
+if (keepAlive === undefined) keepAlive = false;
+
+this._selfDestroy = true;
+_keepAlive = keepAlive;
+
+
+}
+
+this._garbage = function() {
+
+  if (_keepAlive)
+   this._poolBack();
+  else
+   this._destroy();
+
+}
+
+// internal method to destroy object
+this._destroy = function() {
 
   if (this.game === null) return;
+
+  this._selfDestroy = true;
+
+  // last call
+  if (this["onDestroy"])
+    this.onDestroy();
+
+  // remove the parent
+  if (this.parent)
+    this.parent.removeChild(this);
+
+  // remove components
+  if (this.component['collider'])
+      this.game.physics.removeColliderObj(this.component.collider);
+
+    this.removeAllComponents();
+
+    // remove transform
+    this.destroyTransform();
+
+    var i = this.children.length;
+
+   while (i--)
+   {
+       this.children[i]._destroy();
+   }
+
+
+   this.setActive(false);
+   this.game = null;
+   this.parent = null;
+
+}
+
+this.destroyAllChilds = function() {
+
+  var i = this.children.length;
+
+  while (i--)
+  {
+      this.children[i]._destroy();
+  }
+
+}
+
+// internal method to pooled objects
+this._poolBack = function(callOnDestroy) {
+
+  if (this.pool == null) {
+
+    //its not pooled? no problem,
+    this.pool = this.name;
+
+  }
+
+  if (callOnDestroy === undefined) callOnDestroy = true;
+
+  if (this.parent)
+  {
+      this.parent.removeChild(this);
+  }
+
+  this.parent = null;
+
+  if (callOnDestroy) {
+    if (this["onDestroy"])
+      this.onDestroy();
+  }
 
   if (this.component['collider'])
       this.game.physics.removeColliderObj(this.component.collider);
 
-  // need to destoy me?
-  if (!_keepAlive) {
 
-    if (typeof this.destroy == 'function')
-    {
-      this.destroy();
-    }
+    this.game.pool.pushBack(this);
 
-    // return to pool if gameObject have
-    if (this.pool) {
 
-      this.game.pool.pushBack(this);
+    var i = this.children.length;
 
-    }
-  }
-
-  this._removeAll();
-  //this._selfDestroy = false;
-  //this.game = null;
-
-  if (this.parent)
+  while (i--)
   {
-      this.parent.removeNode(this);
+      this.children[i]._poolBack(callOnDestroy);
   }
 
-   //this.game = null;
+  //this._selfDestroy = false;
 
-  }
-
-
+}
 
 });
 
@@ -777,7 +916,7 @@ this._onDestroy = function() {
 Object.defineProperty(tobi.Instance.prototype, "length", {
 
     get: function() {
-        return this.nodes.length;
+        return this.children.length;
     }
 
 });
@@ -1137,7 +1276,6 @@ this.animations = {};
 this.currentAnimation = null;
 
 this.loop = false;
-this.destroyOnEnd = false;
 this.isPlaying = false;
 this.isPaused = true;
 
@@ -1236,15 +1374,6 @@ tobi.AnimationControl.prototype = {
 
   },
 
-  playAndDestroy : function() {
-
-    this.loop = false;
-    this.isPlaying = true;
-    this.isPaused = false;
-    this.destroyOnEnd = true;
-
-  },
-
   pause : function() {
 
     this.isPaused = true;
@@ -1259,7 +1388,7 @@ tobi.AnimationControl.prototype = {
 
   },
 
-  _update : function(time) {
+  update : function(time) {
 
     // if not paused and we have a valid animation
 	if (!this.isPaused && this._currentAnimObj != null)	{
@@ -1288,10 +1417,10 @@ tobi.AnimationControl.prototype = {
           this.isPaused = true;
         }
 
-        if (this.destroyOnEnd) {
+        if (this._gameObject["onAnimationEnd"]) {
 
 
-          this._gameObject.selfDestroy();
+          this._gameObject.onAnimationEnd();
 
         }
 
@@ -1395,7 +1524,7 @@ tobi.Collider = Class.extend( function() {
 
   };
 
-  this._update = function() {
+  this.update = function() {
 
     var calc = false;
 
@@ -2487,9 +2616,10 @@ tobi.Game.prototype = {
 
     this.config = config;
 
-    if (config['debug'] === undefined)
+    if (config['debug'])
     {
-        this.config.debugMode = false;
+        this.debugMode = config['debug'];
+
     }
 
     if (config['width'])
@@ -2583,13 +2713,13 @@ tobi.Game.prototype = {
     if (this.debugMode)
       this.debug = new tobi.Debug(this);
 
-    this.clock.init();
+    this.clock.start();
     this.input.init();
     this.sound.start();
     this.world.start();
 
     this.updateGameMethod = new tobi.UpdateGame(this,this.timeMode);
-    this.updateGameMethod.init();
+    this.updateGameMethod.start();
 
 
 
@@ -2633,22 +2763,23 @@ tobi.Game.prototype = {
       while (this.clock._lag >= this.clock.accumulatorUpdateDelta) {
           //update(timestep);
 
+
+
           this.clock.updateStart = window.performance.now();
 
           this.scene.preUpdate();
-
-
           this.scene.update(this.clock.timeStep_mili);
-          this.world.camera.update();
+          this.input.update();
+          this.universe.preUpdate(this.clock.timeStep_mili);
 
-          this.universe._cycleUpdate(this.clock.timeStep_mili);
+
+          //this.world.camera.update();
+
+          this.universe.update(this.clock.timeStep_mili);
           this.physics.update();
           this.sound.update();
-          this.input.update();
-          this.universe._cycleUpdateTransform();
 
-
-          //this.clock._lag -= this.clock.timeStep;
+          this.universe._updateTransform();
 
           this.clock.updateLast =  window.performance.now();
           this.clock.updateAverage = this.clock.updateLast - this.clock.updateStart;
@@ -2662,18 +2793,20 @@ tobi.Game.prototype = {
           }
       }
 
+
       this.context.setTransform(1, 0, 0, 1, 0, 0);
       this.context.globalCompositeOperation = 'source-over';
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.context.fillStyle = this.universe.backgroundColor;
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.scene.render();
-      this.universe._cycleRender();
+      this.universe.render();
 
-      if (this.debug) {
+      if (this.debug != null) {
 
         this.context.setTransform(1, 0, 0, 1, 0, 0);
         this.debug.test();
+        //console.log("asdasd");
 
       }
       //this.instance.draw();
@@ -3338,7 +3471,7 @@ clearCurrentScene : function() {
           this.game.cache.clear();
     }
 
-    this.game.world._removeAll();
+    this.game.world.destroyAllChilds();
 
   }
 
@@ -4484,7 +4617,7 @@ this._onKeyDown = null;
 this._onKeyUp = null;
 this._onKeyPress = null;
 
-this.reset();
+
 
 }
 
@@ -4508,6 +4641,8 @@ reset : function() {
 init : function() {
 
   var self = this;
+
+  this.reset();
 
     this._onKeyDown = function (event) {
            return self.processKeyDown(event);
@@ -5084,14 +5219,18 @@ addFromPool : function(containerName, node) {
 
   var obj = this.game.pool.pull(containerName);
 
-  if (obj.component['collider'])
+  if (obj.component['collider']) {
     this.game.physics.addColliderObj(obj.component.collider);
 
-  obj._selfDestroy = false;
+  }
 
-  if (obj != null)
-    return node.addNode(obj);
-  else
+  obj._selfDestroy = false;
+  obj.z = node.children.length;
+
+  if (obj != null) {
+    obj = node.addChild(obj);
+    return obj;
+  } else
       return null;
 
 },
@@ -5105,8 +5244,8 @@ add : function(gameObject, node) {
     return;
   }
 
-  gameObject = node.addNode(gameObject);
-
+  gameObject = node.addChild(gameObject);
+  gameObject.z = node.children.length;
 
   return gameObject;
 
@@ -5126,12 +5265,10 @@ create : function(gameObject, x, y, node) {
 
   }
 
-  //obj.depth = node.nodes.length;
+  obj.z = node.children.length;
   obj.game = this.game;
 
-   obj = node.addNode(obj);
-
-
+   obj = node.addChild(obj);
 
   var xx = 0;
   var yy = 0;
@@ -5158,12 +5295,13 @@ create : function(gameObject, x, y, node) {
 
 },
 
+/*
 createClone : function(gameObject, x, y, node) {
 
     var obj = cloner.shallow.copy(gameObject);
     return this.create(obj,x,y,node);
 
-}
+}*/
 
 
 
@@ -5184,15 +5322,14 @@ tobi.GameObject = tobi.Instance.extend(function() {
 
     this.super(null,null,name);
     //tobi.Instance.call(this,null,null,name,false);
-
-
     this.origin.set(0.5,0.5);
 
   }
 
   this.start = function() {};
   this.update = function() {};
-  this.destroy = function() {};
+
+  //this.onDestroy = function() {};
 
 
   this.addComponent = function(name, args) {
@@ -5259,20 +5396,29 @@ tobi.GameObject = tobi.Instance.extend(function() {
 
   }
 
-  this._updateComponents = function(time) {
 
-    // update animation
-      if (this.component['animation']) {
-          this.component['animation']._update(time);
-      }
+  this.removeComponent = function(name) {
 
-    // update collider
-    if (this.component['collider']) {
-        this.component['collider']._update();
+    if (this.component[name]) {
+
+        //this.component[name].destroy();
+        delete this.component[name];
+
     }
 
   }
 
+  this.removeAllComponents = function() {
+
+    for (var property in this.component) {
+
+      this.removeComponent(property);
+
+    }
+
+  }
+
+  
 
 
 
@@ -5371,9 +5517,6 @@ this.add = function(container,gameObject,size) {
   if (this.poolList[container] === undefined)
     this.poolList[container] = [];
 
-
-
-
   // add objects to the pool
   for (var i = 0; i < size; i++) {
 
@@ -5383,8 +5526,12 @@ this.add = function(container,gameObject,size) {
 
     obj.game = this.game;
 
+
+
     if (obj['start'])
       obj.start();
+
+
 
     obj.pool = container;
 
@@ -5433,7 +5580,13 @@ this.pushBack = function(obj) {
 
   if (obj.pool != null) {
 
-    this.poolList[obj.pool].push(obj);
+    var container = obj.pool;
+
+    // register if necessary
+    if (this.poolList[container] === undefined)
+      this.poolList[container] = [];
+
+    this.poolList[container].push(obj);
 
 
   } else
@@ -5461,6 +5614,8 @@ this.clearAll = function() {
 
        }
   }
+
+  this.poolList = {};
 
 }
 
@@ -5493,7 +5648,8 @@ this.backgroundColor = "rgb(231, 231, 231)";
 tobi.World = tobi.Instance.extend(function() {
 
   this.game = null;
-
+  this.camera = null;
+  this.worldBounds = null;
 
   this.constructor = function(game) {
 
@@ -5508,6 +5664,90 @@ tobi.World = tobi.Instance.extend(function() {
 
   }
 
+  this.preUpdate = function(time) {
+
+
+    this.camera.update();
+
+
+    for (var i = 0; i < this.children.length; i++)
+    {
+        this.children[i].preUpdate(time);
+        this.children[i].z = i;
+
+
+
+    }
+
+
+
+  }
+
+  this.update = function(time) {
+
+
+      var destroyList = [];
+
+    for (var i = 0; i < this.children.length; i++)
+    {
+
+
+        this.children[i].update();
+
+
+        if (this.children[i].component['collider']) {
+            this.children[i].component['collider'].update();
+        }
+
+        if (this.children[i]._selfDestroy) {
+          destroyList.push(this.children[i]);
+        }
+
+    }
+
+    for (var i = 0; i < destroyList.length; i++) {
+      destroyList[i]._garbage();
+    }
+
+    // automatic sort depth
+    if (this._changeDepth) {
+      this._updateDepth();
+      this._changeDepth = false;
+    }
+
+  }
+
+  this._updateTransform = function() {
+
+    this.updateTransform();
+
+
+    for (var i = 0; i < this.children.length; i++)
+    {
+
+      this.children[i]._updateTransform();
+
+    }
+
+  }
+
+  this.render = function(context) {
+
+    var i = 0;
+
+    while (i < this.children.length)
+    {
+
+      this.children[i].render(context);
+
+      i++;
+
+    }
+
+  }
+
+
+
 });
 
 //tobi.World.prototype = Object.create(tobi.Instance.prototype);
@@ -5520,7 +5760,7 @@ tobi.World.prototype.start = function() {
   this.camera.root = this;
   this.game.camera = this.camera;
 
-  this.game.universe.addNode(this);
+  this.game.universe.addChild(this);
 
   //console.log(this.game.universe);
 
@@ -6133,6 +6373,9 @@ for (var i = 0; i < colliadables.length; i++) {
     var objA = colliadables[i];
     var shapeA = objA.shape;
 
+    if (objA._gameObject._selfDestroy || !objA._gameObject.active)
+      continue;
+
     var jit = i + 1;
 
     if (jit >= colliadables.length)
@@ -6142,6 +6385,9 @@ for (var i = 0; i < colliadables.length; i++) {
 
       var objB = colliadables[j];
       var shapeB = objB.shape;
+
+      if (objB._gameObject._selfDestroy || !objB._gameObject.active)
+        continue;
 
       // AABB check of the shapes
     if (objB.bounds.box.intersects(objA.bounds.box)) {
@@ -6980,8 +7226,10 @@ tobi.Clock = function(game) {
 
   this.game = game;
 
+  // START TIME
   this.startTime = 0;
 
+  // date now
   this.time = 0;
 
   this.currentTime = 0;
@@ -6990,18 +7238,24 @@ tobi.Clock = function(game) {
   this.elapsed = 0;
   this.elapsed_mili = 0;
 
+  // FOR TIME OUT MODE
+  this.timeOut_toCall = 0;
+  this.timeOut_expected = 0;
+
+  // FPS
   this.fps = 60;
   this.fpsDesired = 60;
-  this.timeStep_mili = 1.0 / this.fpsDesired;
-  this.timeStep = 1000.0 / this.fpsDesired;
+  this.timeStep_mili = 1 / this.fpsDesired;
+  this.timeStep = 1000 / this.fpsDesired;
 
+  // lag
   this.accumulatorMax = this.timeStep * 10;
   this.accumulatorUpdateDelta = 0;
-
 
   this.updateStart = 0;
   this.updateLast = 0;
   this.updateAverage = 0;
+  this.updateDelta = 0;
 
   this.deltaTime = 0;
 
@@ -7014,7 +7268,7 @@ tobi.Clock = function(game) {
 
 tobi.Clock.prototype = {
 
-init : function() {
+start : function() {
 
   this.startTime = Date.now();
   this.time = Date.now();
@@ -7048,6 +7302,8 @@ update : function(timestamp) {
          return false;
   }
 
+
+
   // set prev
   this.previousTime = this.currentTime;
 
@@ -7060,10 +7316,25 @@ update : function(timestamp) {
   // delta time in  seconds
   this.deltaTime = this.elapsed / 1000.0;
 
+
+
+  if (this.game.updateGameMethod._isTimeOutMode)
+  {
+
+
+      this.timeOut_toCall = Math.floor(Math.max(0, (1000.0 / this.fpsDesired) - (this.timeOut_expected - time)));
+
+      // time when the next call is expected if using timers
+      this.timeOut_expected = time + this.timeOut_toCall;
+
+  }
+
   // Track acumulate time
   this._lag += this.elapsed; //Math.max(Math.min(this.timeStep * 3, this.elapsed), 0); //timestamp - this._lastTimeStamp;
   this._lag = Math.min(this._lag, this.accumulatorMax);
-  this.accumulatorUpdateDelta = Math.max(this.elapsed, this.updateAverage);
+
+  this.updateDelta = this.timeStep // interpolation = this.elapsed (deltatime); // or step
+  this.accumulatorUpdateDelta = this.updateDelta; // interpolation = Math.max(this.updateDelta, this.updateAverage);
 
   // FPS Update
   this.fpsUpdate(timestamp);
@@ -7175,8 +7446,8 @@ tobi.UpdateGame = function(game, timeout) {
 
 this.game = game;
 this.isRunning = false;
-this.timeOutMode = timeout;
-this._usingTimeout = false;
+this.setTimeOutMode = timeout;
+this._isTimeOutMode = false;
 
   var vendors = [
        'ms',
@@ -7200,30 +7471,31 @@ this._timeOutCallback = null;
 
 tobi.UpdateGame.prototype = {
 
-init : function() {
+start : function() {
 
   this.isRunning = true;
 
   var self = this;
 
-        if (!window.requestAnimationFrame || this.timeOutMode)
+        if (!window.requestAnimationFrame || this.setTimeOutMode)
         {
-            this._usingTimeout = true;
+            this._isTimeOutMode = true;
 
             this._onLoopingCallback = function () {
                 return self.updateTimeout();
             };
 
-            this._timeOutCallback = window.setTimeout(this._onLoopingCallback, 1000 / 60);
+            this._timeOutCallback = window.setTimeout(this._onLoopingCallback, 0);
+
+
         }
         else
         {
 
-
-            this._usingTimeout = false;
+            this._isTimeOutMode = false;
 
             this._onLoopingCallback = function (time) {
-                return self.updateRequest(time);
+                return self.updateRequestAnimationFrame(time);
             };
 
             this._timeOutCallback = window.requestAnimationFrame(this._onLoopingCallback, this.game.canvas);
@@ -7231,7 +7503,7 @@ init : function() {
 
 },
 
-updateRequest : function(time) {
+updateRequestAnimationFrame : function(time) {
 
   this.game.update(time);
 
@@ -7243,13 +7515,14 @@ updateTimeout : function() {
 
   this.game.update(Date.now());
 
-  //this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.time.timeToCall);
+
+  this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.clock.timeOut_toCall);
 
 },
 
 stop: function () {
 
-        if (this._usingTimeout)
+        if (this._isTimeOutMode)
         {
             clearTimeout(this._timeOutCallback);
         }

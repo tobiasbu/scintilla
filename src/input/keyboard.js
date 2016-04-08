@@ -16,7 +16,7 @@ this._onKeyDown = null;
 this._onKeyUp = null;
 this._onKeyPress = null;
 
-this.reset();
+
 
 }
 
@@ -40,6 +40,8 @@ reset : function() {
 init : function() {
 
   var self = this;
+
+  this.reset();
 
     this._onKeyDown = function (event) {
            return self.processKeyDown(event);

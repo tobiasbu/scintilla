@@ -85,9 +85,10 @@ tobi.Game.prototype = {
 
     this.config = config;
 
-    if (config['debug'] === undefined)
+    if (config['debug'])
     {
-        this.config.debugMode = false;
+        this.debugMode = config['debug'];
+
     }
 
     if (config['width'])
@@ -181,13 +182,13 @@ tobi.Game.prototype = {
     if (this.debugMode)
       this.debug = new tobi.Debug(this);
 
-    this.clock.init();
+    this.clock.start();
     this.input.init();
     this.sound.start();
     this.world.start();
 
     this.updateGameMethod = new tobi.UpdateGame(this,this.timeMode);
-    this.updateGameMethod.init();
+    this.updateGameMethod.start();
 
 
 
@@ -231,22 +232,23 @@ tobi.Game.prototype = {
       while (this.clock._lag >= this.clock.accumulatorUpdateDelta) {
           //update(timestep);
 
+
+
           this.clock.updateStart = window.performance.now();
 
           this.scene.preUpdate();
-
-
           this.scene.update(this.clock.timeStep_mili);
-          this.world.camera.update();
+          this.input.update();
+          this.universe.preUpdate(this.clock.timeStep_mili);
 
-          this.universe._cycleUpdate(this.clock.timeStep_mili);
+
+          //this.world.camera.update();
+
+          this.universe.update(this.clock.timeStep_mili);
           this.physics.update();
           this.sound.update();
-          this.input.update();
-          this.universe._cycleUpdateTransform();
 
-
-          //this.clock._lag -= this.clock.timeStep;
+          this.universe._updateTransform();
 
           this.clock.updateLast =  window.performance.now();
           this.clock.updateAverage = this.clock.updateLast - this.clock.updateStart;
@@ -260,18 +262,20 @@ tobi.Game.prototype = {
           }
       }
 
+
       this.context.setTransform(1, 0, 0, 1, 0, 0);
       this.context.globalCompositeOperation = 'source-over';
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.context.fillStyle = this.universe.backgroundColor;
       this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
       this.scene.render();
-      this.universe._cycleRender();
+      this.universe.render();
 
-      if (this.debug) {
+      if (this.debug != null) {
 
         this.context.setTransform(1, 0, 0, 1, 0, 0);
         this.debug.test();
+        //console.log("asdasd");
 
       }
       //this.instance.draw();

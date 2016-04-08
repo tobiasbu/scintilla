@@ -86,7 +86,7 @@ tobi.Collider = Class.extend( function() {
 
   };
 
-  this._update = function() {
+  this.update = function() {
 
     var calc = false;
 
