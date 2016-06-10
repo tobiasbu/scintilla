@@ -1,5 +1,10 @@
 
-var myGame = new tobi.Game({width:800,height:600, parent:"putTheGameHere"});
+var VIEW = {
+  w : 640,
+  h : 480
+}
+
+var myGame = new tobi.Game({width:VIEW.w,height:VIEW.h, parent:"putTheGameHere"});
 
 var myLoadingScene = new tobi.Scene(myGame);
 var myScene = new tobi.Scene(myGame);
@@ -51,9 +56,9 @@ this.progress = myGame.load.progress;
 
 myLoadingScene.loadingRender = function() {
 
-//myGame.draw.sprite('splash',400,300-24,'center','center');
-myGame.draw.rectangle(400-50,300-8,100,16,this.rectColorBG);
-myGame.draw.rectangle(400-50,300-8,100*this.progress,16,this.rectColor);
+//myGame.draw.sprite('splash',VIEW.w / 2,VIEW.h / 2-24,'center','center');
+myGame.draw.rectangle(VIEW.w / 2-50,VIEW.h / 2-8,100,16,this.rectColorBG);
+myGame.draw.rectangle(VIEW.w / 2-50,VIEW.h / 2-8,100*this.progress,16,this.rectColor);
 
 }
 
@@ -102,7 +107,7 @@ myLoadingScene.start = function() {
 myLoadingScene.render = function() {
 
 myGame.draw.alpha(this.alpha);
-myGame.draw.sprite('splash',400,300-16,[0.5,0.5]);
+myGame.draw.sprite('splash',VIEW.w / 2,VIEW.h / 2-16,[0.5,0.5]);
 myGame.draw.alpha(1);
 
 
@@ -114,9 +119,9 @@ this.start = function() {
 
   this.origin.set(0.5,0.5);
   this.name = 'bg';
-  var spr = this.addComponent('tiledSprite',['starfield',800+600,600+800]);
+  var spr = this.addComponent('tiledSprite',['starfield',VIEW.w+VIEW.h,VIEW.h+VIEW.w]);
   spr.tileScale.set(1,1);
-  this.position.set(400,300);
+  this.position.set(VIEW.w / 2,VIEW.h / 2);
   this.controller = null;
   this.setDepth(-2);
 
@@ -155,7 +160,7 @@ this.update = function() {
 
   this.position.move(0,this.speed);
 
-  if (this.position.y > 630)
+  if (this.position.y > VIEW.h + 30)
     this.destroy(true);
   }
 
@@ -163,7 +168,7 @@ this.reset = function() {
 
   var s = tobi.Math.randomRange(0.15,0.65);
   var a = tobi.Math.randomRange(0.3,0.5)
-  var x = tobi.Math.randomRange(0,800)
+  var x = tobi.Math.randomRange(0,VIEW.w)
 
   this.scale.set(s,s);
   this.component['render'].alpha = a;
@@ -247,7 +252,7 @@ var enemyBulletObj = tobi.GameObject.extend(function() {
 
     this.position.move(0,this.speed);
 
-    if (this.position.y > 600+32)
+    if (this.position.y > VIEW.h+32)
       this.destroy(true);
 
   }
@@ -279,7 +284,7 @@ var enemy = tobi.GameObject.extend(function() {
 
     this.position.y += this.speed;
 
-    if (this.position.y > 600+60) {
+    if (this.position.y > VIEW.h+60) {
       this.destroy(true);
     }
 
@@ -340,7 +345,7 @@ var enemy2Obj = enemy.extend(function() {
 
     this.position.y += this.speed;
 
-    if (this.position.y > 600+60) {
+    if (this.position.y > VIEW.h+60) {
       this.destroy(true);
     }
 
@@ -388,7 +393,7 @@ this.start = function() {
 
   this.name = 'player';
   this.state = "intro";
-  this.position.set(400,650);
+  this.position.set(VIEW.w / 2,VIEW.h + 75);
 
   var anim = this.addComponent('animation');
 
@@ -405,6 +410,8 @@ this.start = function() {
 this.update = function() {
 
 if (  this.state == "playing") {
+
+
 
   if (this.invulnerable) {
 
@@ -465,6 +472,17 @@ if (  this.state == "playing") {
     this.position.move(this.speed*movingX,this.speed*movingY);
     this.angle = angle;
 
+    // LIMIT position
+    if (this.position.x+this.component['render'].frame.width*0.5 > VIEW.w)
+      this.position.x = VIEW.w-this.component['render'].frame.width*0.5;
+    else if (this.position.x < this.component['render'].frame.width*0.5)
+        this.position.x = this.component['render'].frame.width*0.5;
+
+    if (this.position.y < this.component['render'].frame.height*0.5 )
+      this.position.y = this.component['render'].frame.height*0.5;
+    else if (this.position.y > VIEW.h-this.component['render'].frame.height*0.5)
+        this.position.y = VIEW.h-this.component['render'].frame.height*0.5;
+
 
     this.stepBullet += myGame.clock.deltaTime;
 
@@ -484,7 +502,7 @@ if (  this.state == "playing") {
     }
   } else {
 
-    if (this.position.y > 500) {
+    if (this.position.y > VIEW.h - 100) {
 
       this.position.move(0,-3);
 
@@ -495,7 +513,7 @@ if (  this.state == "playing") {
 
 } else if (this.state != "gameover") {
 
-  if (this.position.y > 500)
+  if (this.position.y > VIEW.h - 100)
     this.position.move(0,-2);
   else {
     this.state = "playing";
@@ -533,7 +551,7 @@ this.die = function() {
 
   }
 
-  this.position.set(400,650)
+  this.position.set(VIEW.w / 2,VIEW.h + 50)
   this.invulnerableTime = 2;
   this.invulnerable = true;
   this.dead = true;
@@ -595,8 +613,8 @@ var gameController = tobi.GameObject.extend(function() {
 
     this.player = null;
 
-    this.vec = new tobi.Vector(400,300);
-    this.logo = new tobi.Vector(400,200);
+    this.vec = new tobi.Vector(VIEW.w / 2,VIEW.h / 2);
+    this.logo = new tobi.Vector(VIEW.w / 2,150);
 
     this.lerpTime = 0;
     this.oldAngle = 0;
@@ -654,11 +672,11 @@ var gameController = tobi.GameObject.extend(function() {
 
       if (this.bg !== undefined)
       this.bg.angle = tobi.Math.lerpAngle(this.oldAngle, 0, t);
-      /*var focus = tobi.Vector.lerp(this.vec,new tobi.Vector(400,300),  t);
+      /*var focus = tobi.Vector.lerp(this.vec,new tobi.Vector(VIEW.w / 2,VIEW.h / 2),  t);
       myGame.camera.angle = angle;
       myGame.camera.setFocus(focus);*/
 
-      this.logo.y = tobi.Math.lerp(200,-120,t);
+      this.logo.y = tobi.Math.lerp(150,-120,t);
 
     } else if (this.state == "playing") {
 
@@ -673,7 +691,7 @@ var gameController = tobi.GameObject.extend(function() {
 
             if (this.generateTime2 > 1) {
 
-              var x = tobi.Math.irandomRange(32,800-64);
+              var x = tobi.Math.irandomRange(32,VIEW.w-64);
 
               this.generateTimeNext2 = tobi.Math.randomRange(0.8,1.5);
                 this.generateTime2 = 0;
@@ -689,7 +707,7 @@ var gameController = tobi.GameObject.extend(function() {
 
         if (this.generateTime > 1) {
 
-          var x = tobi.Math.irandomRange(32,800-64);
+          var x = tobi.Math.irandomRange(32,VIEW.w-64);
 
           this.generateTimeNext = tobi.Math.randomRange(0.65,1.25);
             this.generateTime = 0;
@@ -751,19 +769,19 @@ var gameController = tobi.GameObject.extend(function() {
     if (this.state == "title") {
 
       myGame.draw.font("Verdana", 12)
-      myGame.draw.text("tobiJS - alpha test v0.1 - 2016",16,600-32,'white');
-      myGame.draw.text("github.com/kaltkaffee/tobiJS",16,600-16,'white');
+      myGame.draw.text("tobiJS - alpha test v0.2 - 2016",16,VIEW.h-32,'white');
+      myGame.draw.text("github.com/tobiasbu/tobiJS",16,VIEW.h-16,'white');
 
       var txt = "Music by: Eduardo Luiz Beise Ulrich"
       var size = myGame.context.measureText(txt);
-      myGame.draw.text(txt,800-size.width - 16,600-16,'white');
+      myGame.draw.text(txt,VIEW.w-size.width - 16,VIEW.h-16,'white');
 
       myGame.draw.font("Verdana", 20)
       txt = "PRESS ENTER TO START"
       size = myGame.context.measureText(txt);
 
 
-      myGame.draw.text(txt,400-size.width/2,400,'white');
+      myGame.draw.text(txt,VIEW.w / 2-size.width/2,VIEW.w / 2,'white');
 
     } else if (this.state == "playing") {
 
@@ -771,7 +789,7 @@ var gameController = tobi.GameObject.extend(function() {
 
         myGame.draw.font("Verdana", 20);
         var text = "Score: " + this.player.score;
-        myGame.draw.text(text,800-200,40,'white');
+        myGame.draw.text(text,VIEW.w-200,40,'white');
 
         for (var lf = 0; lf < this.player.lifes; lf++) {
 
@@ -786,11 +804,11 @@ var gameController = tobi.GameObject.extend(function() {
       if (this.trigger == 2) {
       myGame.draw.font("Verdana", 40);
       var size = context.measureText("GAME OVER");
-      myGame.draw.text("GAME OVER",400-size.width/2,280-20,'white');
+      myGame.draw.text("GAME OVER",VIEW.w / 2-size.width/2,(VIEW.h / 2) - 20,'white');
       myGame.draw.font("Verdana", 20);
       var text = "Score: " + this.player.score;
       size = context.measureText(text);
-      myGame.draw.text(text,400-size.width/2,350-10,'white');
+      myGame.draw.text(text,VIEW.w / 2-size.width/2,(VIEW.h / 2) + 20,'white');
     }
 
     }
@@ -828,8 +846,8 @@ myGame.pool.add("star",starObj,20);
 
 for (var i = 0; i < 8; i++) {
 
-var x = tobi.Math.randomRange(0,800);
-var y = tobi.Math.randomRange(0,600);
+var x = tobi.Math.randomRange(0,VIEW.w);
+var y = tobi.Math.randomRange(0,VIEW.h);
 var star = myGame.instance.addFromPool("star");
 
 
