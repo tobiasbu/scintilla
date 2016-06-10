@@ -4,7 +4,28 @@ var VIEW = {
   h : 480
 }
 
-var myGame = new tobi.Game({width:VIEW.w,height:VIEW.h, parent:"putTheGameHere"});
+var myGame = new tobi.Game({width:VIEW.w,height:VIEW.h, parent:"canvas-container"});
+
+window.addEventListener("resize", OnResizeCalled, false);
+
+function OnResizeCalled() {
+
+  /*var gameWidth = document.getElementById('canvas-container').clientWidth;//window.innerWidth;
+  var gameHeight =   document.getElementById('canvas-container').clientHeight; //window.innerHeight;
+  var scaleToFitX = gameWidth / VIEW.w;
+  var scaleToFitY = gameHeight / VIEW.h;
+
+  var currentScreenRatio = gameWidth / gameHeight;
+  var optimalRatio = Math.min(scaleToFitX, scaleToFitY);
+
+  if (currentScreenRatio >= 1.77 && currentScreenRatio <= 1.79) {
+      myGame.canvas.style.width = gameWidth + "px";
+      myGame.canvas.style.height = gameHeight + "px";
+  }  else {
+      myGame.canvas.style.width = VIEW.w * optimalRatio + "px";
+      myGame.canvas.style.height = VIEW.h * optimalRatio + "px";
+  }*/
+}
 
 var myLoadingScene = new tobi.Scene(myGame);
 var myScene = new tobi.Scene(myGame);
@@ -606,6 +627,8 @@ var gameController = tobi.GameObject.extend(function() {
   this.start = function() {
 
     this.state = "title";
+    this.alphaStart = 1;
+    this.alphaStartTrg = 0;
 
     this.name = 'controller';
     music.play('title',1,true);
@@ -644,6 +667,26 @@ var gameController = tobi.GameObject.extend(function() {
       this.vec.rotateAround(rotate * tobi.Math.degToRad,new tobi.Vector(0,0));
 
       myGame.camera.setFocus(this.vec);*/
+
+      if (this.alphaStartTrg == 0) {
+
+        if (this.alphaStart > 0.5)
+          this.alphaStart -=  myGame.clock.deltaTime;
+        else {
+            this.alphaStart = 0.5;
+            this.alphaStartTrg = 1;
+        }
+
+      } else if (this.alphaStartTrg == 1) {
+
+        if (this.alphaStart < 1)
+          this.alphaStart +=  myGame.clock.deltaTime;
+        else {
+            this.alphaStart = 1;
+            this.alphaStartTrg = 0;
+        }
+
+      }
 
       if (myGame.input.keyboard.pressed(tobi.KeyCode.Enter)) {
         this.state = "startgame";
@@ -781,7 +824,9 @@ var gameController = tobi.GameObject.extend(function() {
       size = myGame.context.measureText(txt);
 
 
+      myGame.draw.alpha(this.alphaStart);
       myGame.draw.text(txt,VIEW.w / 2-size.width/2,VIEW.w / 2,'white');
+      myGame.draw.alpha(1);
 
     } else if (this.state == "playing") {
 
