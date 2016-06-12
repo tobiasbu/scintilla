@@ -1,11 +1,11 @@
 ![Alt text](https://raw.githubusercontent.com/kaltkaffee/tobiJS/master/dist/images/tobijs_splash.png)
 # tobiJS
 
-2D Game framework for HTML5 ~ good as a good dog. 
+2D Game framework for HTML5 ~ good as a good dog.
 
-Alpha test: [play here](http://tobiasbu.github.io/dist/index.html)
+Alpha test: [play here](http://tobiasbu.github.io/website/portfolio/untitled-space/)
 
-I'm a OO programmer and now I'm learning Javascript. 
+I'm a OO programmer and now I'm learning Javascript.
 A lot of stuff of this repository was written learning and reading in others frameworks like Phaser, melonJS, PIXI and others.
 For a while the code is mess.
 
