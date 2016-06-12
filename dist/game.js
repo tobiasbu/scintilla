@@ -475,19 +475,19 @@ if (  this.state == "playing") {
     var angle = 0;
 
 
-  if (this.game.input.keyboard.press(tobi.KeyCode.D)) {
+  if (this.game.input.keyboard.press(tobi.KeyCode.Right)) {
     movingX = 1;
     angle = 2;
 
   }
-  if (this.game.input.keyboard.press(tobi.KeyCode.A)) {
+  if (this.game.input.keyboard.press(tobi.KeyCode.Left)) {
     movingX = -1;
     angle = -2;
 
   }
-  if (this.game.input.keyboard.press(tobi.KeyCode.S))
+  if (this.game.input.keyboard.press(tobi.KeyCode.Down))
     movingY = 1;
-  if (this.game.input.keyboard.press(tobi.KeyCode.W))
+  if (this.game.input.keyboard.press(tobi.KeyCode.Up))
       movingY = -1;
 
     this.position.move(this.speed*movingX,this.speed*movingY);

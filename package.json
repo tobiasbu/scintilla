@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobiasbu/tobiJS.git"
+  },
   "keywords": [
     "game",
     "engine",
@@ -14,8 +18,8 @@
   "author": "Tobias Ulrich",
   "license": "ISC",
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-concat": "^1.0.0",
+    "grunt": "^1.0.1",
+    "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-uglify": "^1.0.1"
   }
 }

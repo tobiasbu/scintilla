@@ -77,6 +77,8 @@ processKeyUp : function(event) {
 
    var key = event.keyCode;
 
+   event.preventDefault();
+
    if (!this.active)
     return;
 
@@ -89,6 +91,8 @@ processKeyUp : function(event) {
 processKeyPress : function(event) { // commom characters
 
    var key = event.keyCode;
+
+   event.preventDefault();
 
    if (!this.active)
     return;
@@ -105,6 +109,8 @@ processKeyDown : function(event) { // commom characters
 
    var key = event.keyCode;
 
+   event.preventDefault();
+
    if (!this.active)
     return;
 
@@ -116,6 +122,8 @@ processKeyDown : function(event) { // commom characters
     this._keyLock[key] = tobi.KeyEvent.PRESS;
     this._keys[key] = true;
     this.lastkey = key;
+
+
 
 },
 

@@ -2772,21 +2772,11 @@ tobi.Game.prototype = {
           this._spiraling = 0;
           this.clock.accumalator = 0;
 
-          this.render();
+          this.render(this.clock.accumulatorDelta);
 
       } else {
 
       var countFrames = 0;
-
-           //this.updatesThisFrame = Math.floor(this.clock.accumalator / this.clock.timeStep);
-
-         /*if (this.forceSingleUpdate)
-         {
-             this.updatesThisFrame = Math.min(1, this.updatesThisFrame);
-         }*/
-
-
-
 
       while (this.clock.accumalator >= this.clock.accumulatorDelta) {
 
@@ -4742,6 +4732,8 @@ processKeyUp : function(event) {
 
    var key = event.keyCode;
 
+   event.preventDefault();
+
    if (!this.active)
     return;
 
@@ -4754,6 +4746,8 @@ processKeyUp : function(event) {
 processKeyPress : function(event) { // commom characters
 
    var key = event.keyCode;
+
+   event.preventDefault();
 
    if (!this.active)
     return;
@@ -4770,6 +4764,8 @@ processKeyDown : function(event) { // commom characters
 
    var key = event.keyCode;
 
+   event.preventDefault();
+
    if (!this.active)
     return;
 
@@ -4781,6 +4777,8 @@ processKeyDown : function(event) { // commom characters
     this._keyLock[key] = tobi.KeyEvent.PRESS;
     this._keys[key] = true;
     this.lastkey = key;
+
+
 
 },
 
