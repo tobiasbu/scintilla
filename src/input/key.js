@@ -64,14 +64,9 @@ tobi.Key.prototype = {
         if (!this._enabled)
             return;
 
-
-        
-
         if (this.press)
         {
-
             this.pressDuration = this.game.time.time - this.timeout;
-
         }
         else
         {
@@ -86,7 +81,7 @@ tobi.Key.prototype = {
         {
             this._event = tobi.KeyEvent.RELEASE;
         }
-        else
+        else 
         {
             this._event = tobi.KeyEvent.NONE;
         }

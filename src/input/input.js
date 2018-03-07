@@ -25,6 +25,12 @@ update : function() {
   this.keyboard.update();
   this.mouse.update();
 
+},
+
+reset : function()
+{
+  this.keyboard.reset();
+  this.mouse.reset();
 }
 
 
