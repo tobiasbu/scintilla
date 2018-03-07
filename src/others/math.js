@@ -84,7 +84,7 @@ angleBetween : function(x0,y0,x1,y1) {
 
 tobi.Math.degToRad = Math.PI / 180;
 tobi.Math.radToDeg = 180 / Math.PI;
-tobi.Math.PI2 = Math.PI * 2;
+tobi.Math.TAU = Math.PI * 2;
 
 tobi.Math.toDegree = function(radians) {
 

@@ -1,6 +1,6 @@
 /**
 * @author       Tobias Beise Ulrich
-* @license     Thinking about
+* @license      MIT
 *
 * @overview
 *
@@ -8,20 +8,18 @@
 *
 * v1.0.0
 *
-* tobiasbu.wordpress.com
+* tobiasbu.github.io
 *
 * tobiJS is simple 2D game engine for HTML5 games.
 * The first version is only for browsers based in canvas.
 *
-* Actually I learning Javascript language and this is my start point.
-*
 */
 
 /**
-* @namespace tobiJS
+* @namespace tobi
 */
 var tobi = tobi || {
-  VERSION: '1.0'
+  VERSION: '1.2'
 };
 
 tobi.ShapeType = {
