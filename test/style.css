@@ -1,0 +1,13 @@
+
+:root {
+    background-color: white;
+    font-family: sans-serif;
+    font-size: 16px;
+    line-height: 1.6em;
+}
+
+.wrapper
+{
+    padding: 0 calc(50% - 400px);
+    margin: 0 auto;
+}

@@ -86,8 +86,6 @@ create : function(gameObject, x, y, node) {
         this.game.physics.addColliderObj(obj.component.collider);
 
 
-  console.log(obj);
-
   return obj;
 
 },

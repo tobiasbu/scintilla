@@ -64,14 +64,33 @@ tobi.Key.prototype = {
         if (!this._enabled)
             return;
 
+
+        
+
         if (this.press)
         {
+
             this.pressDuration = this.game.time.time - this.timeout;
+
         }
         else
         {
             this.releaseDuration = this.game.time.time - this.timeout;
         }
+
+        if (this.press && this.pressDuration == 0)
+        {
+            this._event = tobi.KeyEvent.PRESSED;
+        } 
+        else if (this.release && this.releaseDuration == 0)
+        {
+            this._event = tobi.KeyEvent.RELEASE;
+        }
+        else
+        {
+            this._event = tobi.KeyEvent.NONE;
+        }
+        
     },
 
     isPressing: function()
@@ -135,8 +154,7 @@ tobi.Key.prototype.constructor = tobi.Key;
 
 tobi.KeyEvent = {
     NONE : 0,
-    PRESS : 1,
-    PRESSED : 2,
-    RELEASE : 3,
-  };
+    PRESSED : 1,
+    RELEASE : 2,
+};
   

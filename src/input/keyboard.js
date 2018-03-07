@@ -5,12 +5,13 @@ tobi.Keyboard = function(game) {
 this.game = game;
 this.context = game.context;
 this.active = true;
-this._keys = [];
+//this._keys = [];
 this._keyMapping = new tobi.Map();
-this._keyLock = [];
-this._keyLockPressed = [];
-this._keyDownDuration = [];
-this.lastkey = null;
+this._keyWatch = new tobi.Map();
+//this._keyLock = [];
+//this._keyLockPressed = [];
+//this._keyDownDuration = [];
+this.lastKey = null;
 
 //callbacks
 this._onKeyDown = null;
@@ -26,11 +27,12 @@ tobi.Keyboard.prototype = {
 reset : function() {
 
   this._keyMapping.clear();
-  /*for (var prop in tobi.KeyCode){
+  this._keyWatch.clear();
+  for (var prop in tobi.KeyCode){
 
-    this._keyMapping.set(prop,{isPressed: false;});
+    this._keyMapping.set(prop, new tobi.Key(prop,this.game));
 
-    if (tobi.KeyCode.hasOwnProperty(prop)) {
+    /*if (tobi.KeyCode.hasOwnProperty(prop)) {
 
       
 
@@ -39,8 +41,8 @@ reset : function() {
           this._keyLock[value] = tobi.KeyEvent.NONE;
           this._keyLockPressed[value] = tobi.KeyEvent.NONE;
           this._keyDownDuration[value] = 0;
-    }
-  }*/
+    }*/
+  }
 
 },
 
@@ -58,22 +60,14 @@ init : function() {
        return self.processKeyUp(event);
    };
 
-   /*this._onKeyPress = function (event) {
-       return self.processKeyPress(event);
-   };*/
-
   window.addEventListener('keydown', this._onKeyDown, false);
   window.addEventListener('keyup', this._onKeyUp, false);
-  //window.addEventListener('keypress', this._onKeyPress, false);
-
 },
 
 stop : function() {
 
   window.removeEventListener('keydown', this._onKeyDown);
   window.removeEventListener('keyup', this._onKeyUp);
-  //window.removeEventListener('keypress', this._onKeyPress);
-
   this._onKeyDown = null;
   this._onKeyUp = null;
   this._onKeyPress = null;
@@ -90,9 +84,12 @@ processKeyUp : function(event) {
    if (!this.active)
     return;
 
-    this._keyLock[key] = tobi.KeyEvent.RELEASE;
+    var keyObj = this._keyMapping.get(key);
+    keyObj.onKeyUp();
+
+    /*this._keyLock[key] = tobi.KeyEvent.RELEASE;
     this._keyLockPressed[key] = tobi.KeyEvent.NONE;
-    this._keys[key] = false;
+    this._keys[key] = false;*/
 
 },
 
@@ -105,27 +102,23 @@ processKeyDown : function(event) { // commom characters
   if (!this.active)
    return;
 
-   this.lastkey = key;
+   this.lastKey = key;
 
-  
+  var keyObj = this._keyMapping.get(key);
+  keyObj.onKeyDown();
 
-  if (!_keyMapping.hasKey(key))
+  if (!this._keyWatch.hasKey(keyObj))
   {
-    var keyStatus = {
-      status: tobi.KeyEvent.PRESS,
-      lock: tobi.KeyEvent.PRESSED,
-      phase: 0
-    };
-  
-    _keyMapping.set(key, keyStatus);
+    this._keyWatch.set(key, keyObj);
   }
 
-  this._keys[key] = true;
+
 
   
 
 
    //_keyMapping[]
+   //this._keys[key] = true;
   /* if (this._keyLockPressed[key] != tobi.KeyEvent.PRESSED && this._keyLockPressed[key] != tobi.KeyEvent.PRESS) {
      this._keyLockPressed[key] = tobi.KeyEvent.PRESSED;
      this._keyDownDuration[key] = 1;
@@ -139,7 +132,7 @@ processKeyDown : function(event) { // commom characters
 
 },
 
-processKeyPress : function(event) { // commom characters
+/*processKeyPress : function(event) { // commom characters
 
    var key = event.keyCode;
 
@@ -154,7 +147,7 @@ processKeyPress : function(event) { // commom characters
 
 
 
-},
+},*/
 
 update : function() {
 
@@ -174,23 +167,23 @@ update : function() {
         }
     }*/
 
-    for(var prop in _keyMapping)
+    for(var prop in this._keyWatch)
     {
-
+        prop.update();
     }
 
 },
 
 pressed : function(keycode) {
 
-  var keyLock = false;
+  /*var keyLock = false;
 
 if (this._keyLockPressed[keycode] == tobi.KeyEvent.PRESSED) {
 		keyLock = true;
     this._keyLockPressed[keycode] = tobi.KeyEvent.PRESS;
   }
 
-	var hit = this._keys[keycode] && keyLock;
+	var hit = this._keys[keycode] && keyLock;*/
 
 	return hit;
 
@@ -198,7 +191,7 @@ if (this._keyLockPressed[keycode] == tobi.KeyEvent.PRESSED) {
 
 release : function(keycode) {
 
-  var keyLock = false;
+  /*var keyLock = false;
 
 	if (this._keyLock[keycode] ==  tobi.KeyEvent.PRESSED ||
     this._keyLock[keycode] ==  tobi.KeyEvent.PRESS ||
@@ -211,13 +204,21 @@ release : function(keycode) {
 
 	this._keyLock[keycode] = tobi.KeyEvent.NONE;
 
-	return hit;
+	return hit;*/
 
 },
 
 press : function(keycode) {
 
-  var keyLock = false;
+
+  var key = this._keyWatch.get(keycode);
+
+  if (key === undefined)
+    return false;
+
+  return key.status;
+
+  /*var keyLock = false;
 
   if (this._keyLock[keycode] ==  tobi.KeyEvent.RELEASE ||
     this._keyLock[keycode] ==  tobi.KeyEvent.NONE)
@@ -227,7 +228,7 @@ press : function(keycode) {
 
   var hit = this._keys[keycode] && keyLock;
 
-  return hit;
+  return hit;*/
 
 }
 
