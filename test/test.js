@@ -1,5 +1,37 @@
 
 
+var VIEW = {
+    w : 640,
+    h : 480
+}
+
+var config = {
+    width: 640,
+    height: 480,
+    parent: "canvas-container",
+    debug: true
+};
+  
+  var game = new tobi.Game(config);
+  var scene = game.scene.new('scene');
+
+  scene.update = function() {
+
+    if (game.input.keyboard.pressed(tobi.KeyCode.Space)) 
+    {
+        //console.log("pressed")
+    }
+
+    if (game.input.keyboard.release(tobi.KeyCode.Space)) 
+    {
+        console.log("release")
+    }
+
+
+  }
+
+  game.scene.set('scene');
+
 Tester = function() {
 
   

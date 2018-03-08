@@ -7,8 +7,18 @@
     color: rgb(15,18,25);
 }
 
+.body
+{
+    font-size: 98%;
+}
+
 .wrapper
 {
     padding: 0 calc(50% - 400px);
     margin: 0 auto;
 }
+
+#test-name {
+    text-align: center;
+}
+

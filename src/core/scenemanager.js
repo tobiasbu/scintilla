@@ -2,7 +2,7 @@
 tobi.SceneManager = function(game) {
 
 this.game = game;
-this.scenes = {};
+this._scenes = new tobi.Map();
 
 this.current_scene_name = '';
 this.change_scene = null;
@@ -37,7 +37,23 @@ add : function (sceneName,scene) {
 
 
   if (newScene != null)
-    this.scenes[sceneName] = newScene;
+    this._scenes.set(sceneName,newScene);
+
+},
+
+new : function(sceneName)
+{
+
+  if (this._scenes.has(sceneName))
+  {
+    throw "Could not create new Scene. The scene name \"" + name + "\" already exists."; 
+    return null;
+  }
+  
+  var newScene = new tobi.Scene(this.game);
+  this._scenes.set(sceneName,newScene);
+
+  return newScene;
 
 },
 
@@ -86,17 +102,17 @@ setupScene : function(sceneName) {
 
 
 
-  this.current_scene = this.scenes[sceneName];
-  this.onStartCallback = this.scenes[sceneName]['start'] || null;
-  this.onLoadingCallback = this.scenes[sceneName]['loading'] || null;
-  this.onLoadingRenderCallback = this.scenes[sceneName]['loadingRender'] || null;
-  this.onPreloadCallback = this.scenes[sceneName]['preload'] || null;
-  this.onUpdateCallback = this.scenes[sceneName]['update'] || null;
-  this.onRenderCallback = this.scenes[sceneName]['render'] || null;
-  this.onDestroyCallback = this.scenes[sceneName]['destroy'] || null;
+  this.current_scene = this._scenes.get(sceneName);
+  this.onStartCallback = this.current_scene['start'] || null;
+  this.onLoadingCallback = this.current_scene['loading'] || null;
+  this.onLoadingRenderCallback = this.current_scene['loadingRender'] || null;
+  this.onPreloadCallback = this.current_scene['preload'] || null;
+  this.onUpdateCallback = this.current_scene['update'] || null;
+  this.onRenderCallback = this.current_scene['render'] || null;
+  this.onDestroyCallback = this.current_scene['destroy'] || null;
   this.current_scene_name = sceneName;
 
-  this.game.clock.refresh();
+  this.game.time.refresh();
 
   this.current_scene.camera = this.game.world.camera;
 

@@ -1,6 +1,6 @@
 
 
-tobi.Clock = function(game) {
+tobi.Time = function(game) {
 
   this.game = game;
 
@@ -45,7 +45,7 @@ tobi.Clock = function(game) {
 
 }
 
-tobi.Clock.prototype = {
+tobi.Time.prototype = {
 
 start : function() {
 
@@ -128,7 +128,8 @@ update : function(timestamp) {
   //this.accumulatorUpdateDelta = this.updateDelta; // interpolation = Math.max(this.updateDelta, this.updateAverage);
 
   // FPS Update
-  this.fpsUpdate(timestamp);
+  if (this.game.debugMode)
+    this.fpsUpdate(timestamp);
 
   return true;
 
@@ -228,4 +229,4 @@ fpsUpdate : function(timestamp) {
 
 }
 
-tobi.Clock.prototype.constructor = tobi.Clock;
+tobi.Time.prototype.constructor = tobi.Time;

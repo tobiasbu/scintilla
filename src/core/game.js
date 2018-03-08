@@ -41,7 +41,7 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
   this.universe = null;
   this.world = null;
   this.input = null;
-  this.clock = null;
+  this.time = null;
   this.component = null;
   this.instance = null;
   this.animationCache = null;
@@ -104,51 +104,10 @@ tobi.Game.prototype = {
         this.height = config['height'];
     }
 
-        /*if (config['renderer'])
-        {
-            this.renderType = config['renderer'];
-        }*/
-
     if (config['parent'])
     {
         this.parent = config['parent'];
     }
-
-        /*if (config['transparent'] !== undefined)
-        {
-            this.transparent = config['transparent'];
-        }*/
-
-        /*if (config['antialias'] !== undefined)
-        {
-            this.antialias = config['antialias'];
-        }
-
-        if (config['resolution'])
-        {
-            this.resolution = config['resolution'];
-        }
-
-        if (config['preserveDrawingBuffer'] !== undefined)
-        {
-            this.preserveDrawingBuffer = config['preserveDrawingBuffer'];
-        }
-
-        if (config['physicsConfig'])
-        {
-            this.physicsConfig = config['physicsConfig'];
-        }*/
-
-    /*var seed = [(Date.now() * Math.random()).toString()];
-
-    if (config['seed'])
-    {
-        seed = config['seed'];
-    }
-
-    this.rnd = new Phaser.RandomDataGenerator(seed);*/
-
-
 
   },
   /**
@@ -169,7 +128,7 @@ tobi.Game.prototype = {
 
     this.cache = new tobi.Cache(this);
     this.load = new tobi.LoadManager(this);
-    this.clock = new tobi.Clock(this);
+    this.time = new tobi.Time(this);
     this.universe = new tobi.Universe(this);
     this.world = new tobi.World(this);
     this.draw = new tobi.Draw(this);
@@ -185,7 +144,7 @@ tobi.Game.prototype = {
     if (this.debugMode)
       this.debug = new tobi.Debug(this);
 
-    this.clock.start();
+    this.time.start();
     this.input.init();
     this.sound.start();
     this.world.start();
@@ -202,20 +161,7 @@ tobi.Game.prototype = {
     console.log("tobiJS Created!");
 
   },
-
-  /*run : function() {
-
-
-  //  if (  this.load.checkAssets()) {
-      //this.interval = setInterval(function(){ me.update() },1000/60);
-    //  this.interval = setTimeout(function(){me.update()}, 1000/60);
-    //} else {
-    //  console.log("Can not initialize the game. Failed to download game assets.");
-    //}
-
-  },*/
-
-
+  
   /**
     * core game loop
     *
@@ -228,40 +174,40 @@ tobi.Game.prototype = {
 
 
 
-      this.clock.update(time);
+      this.time.update(time);
 
       if (this._spiraling > 1) {
 
-          this.clock.deltaTime = 0;
+          this.time.deltaTime = 0;
           this._spiraling = 0;
-          this.clock.accumalator = 0;
+          this.time.accumalator = 0;
 
-          this.render(this.clock.accumulatorDelta);
+          this.render(this.time.accumulatorDelta);
 
       } else {
 
       var countFrames = 0;
 
-      while (this.clock.accumalator >= this.clock.accumulatorDelta) {
+      while (this.time.accumalator >= this.time.accumulatorDelta) {
 
-        //  this.clock.updateStart = window.performance.now();
+        //  this.time.updateStart = window.performance.now();
 
-          this.clock.deltaTime = Math.min(this.clock.accumalator,this.clock.accumulatorDelta) / 1000;
+          this.time.deltaTime = Math.min(this.time.accumalator,this.time.accumulatorDelta) / 1000;
 
-          this.logic(this.clock.deltaTime);
+          this.logic(this.time.deltaTime);
 
-          //this.clock.updateLast =  window.performance.now();
-        //  this.clock.updateAverage = this.clock.updateLast - this.clock.updateStart;
+          //this.time.updateLast =  window.performance.now();
+        //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
 
-          this.clock.accumalator -= this.clock.accumulatorDelta;
+          this.time.accumalator -= this.time.accumulatorDelta;
 
           countFrames++;
 
-          this.clock.refresh();
+          this.time.refresh();
 
           if (countFrames >= 240) { // SPIRAL
               //panic();
-              this.clock.accumalator = 0;
+              this.time.accumalator = 0;
 
               break;
           }
@@ -274,7 +220,7 @@ tobi.Game.prototype = {
 
           this._lastFrameCount = countFrames;
 
-            this.render(this.clock.accumalator/this.clock.accumulatorDelta);
+            this.render(this.time.accumalator/this.time.accumulatorDelta);
 
       }
 
@@ -361,7 +307,7 @@ tobi.Game.prototype = {
     this.universe = null;
     this.world = null;
     this.input = null;
-    this.clock = null;
+    this.time = null;
     this.component = null;
     this.instance = null;
     this.animationCache = null;

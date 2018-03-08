@@ -1,14 +1,16 @@
 
 
-tobi.Key = function(game, keycode) {
+tobi.Key = function(keycode, game) {
 
     this.game = game;
-    this._enabled = true;
-    this.keyCode = keycode;    
+    this.keyCode = keycode; 
+
+    this._enabled = true;       
     this.status = false;
-    this._event = tobi.KeyEvent.NONE;
     this.press = false;
     this.release = false;
+
+    this._event = tobi.KeyEvent.NONE;
 
     this.pressTime = 0;
     this.pressDuration = -2500;
@@ -54,34 +56,48 @@ tobi.Key.prototype = {
 
         // set press time duration
         this.releaseTime = this.game.time.time;
-        this.pressDuration = this.game.time.time - this.releaseTime;
+        this.pressDuration = this.game.time.time - this.pressTime;
         this.releaseDuration = 0;
 
     },
 
-    update: function()
+    update : function()
     {
         if (!this._enabled)
             return;
 
+  
+
         if (this.press)
         {
-            this.pressDuration = this.game.time.time - this.timeout;
+            this.pressDuration = this.game.time.time - this.pressTime;
+            
         }
         else
         {
-            this.releaseDuration = this.game.time.time - this.timeout;
+            this.releaseDuration = this.game.time.time - this.releaseTime;
         }
 
-        if (this.press && this.pressDuration == 0)
+
+        if (this.press)
         {
-            this._event = tobi.KeyEvent.PRESSED;
-        } 
-        else if (this.release && this.releaseDuration == 0)
-        {
-            this._event = tobi.KeyEvent.RELEASE;
+            if (this.pressDuration == 0)
+            {
+                this._event = tobi.KeyEvent.PRESSED;
+            }
+
+        } else {
+
+            if (this.releaseDuration == 0)
+            {
+                this._event = tobi.KeyEvent.RELEASED;
+            } else {
+                this._event = tobi.KeyEvent.IDLE;
+            }
+
         }
-        else 
+
+        if (this._event == tobi.KeyEvent.IDLE)
         {
             this._event = tobi.KeyEvent.NONE;
         }
@@ -100,7 +116,7 @@ tobi.Key.prototype = {
 
     isReleased: function()
     {
-        return (this.release && this.releaseDuration == 0)
+        return (!this.press && this.releaseDuration == 0)
     },
 
     event: function()
@@ -111,7 +127,7 @@ tobi.Key.prototype = {
     reset: function()
     {   
         this.status = false;
-        this.event = tobi.KeyEvent.NONE;
+        this._event = tobi.KeyEvent.NONE;
         this.press = false;
         this.release = false;
     
@@ -148,8 +164,9 @@ Object.defineProperty(tobi.Key.prototype, "enabled", {
 tobi.Key.prototype.constructor = tobi.Key;
 
 tobi.KeyEvent = {
-    NONE : 0,
+    NONE : -1,
+    IDLE: 0,
     PRESSED : 1,
-    RELEASE : 2,
+    RELEASED : 2,
 };
   

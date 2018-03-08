@@ -8,6 +8,7 @@ this.active = true;
 //this._keys = [];
 this._keyMapping = new tobi.Map();
 this._keyWatch = new tobi.Map();
+this._keyGarbage = [];
 //this._keyLock = [];
 //this._keyLockPressed = [];
 //this._keyDownDuration = [];
@@ -28,10 +29,13 @@ reset : function() {
 
   this._keyMapping.clear();
   this._keyWatch.clear();
+  this._keyGarbage = [];
   for (var prop in tobi.KeyCode){
 
-    this._keyMapping.set(prop, new tobi.Key(prop,this.game));
-
+    if (tobi.KeyCode.hasOwnProperty(prop)) {
+      var value = tobi.KeyCode[prop];
+      this._keyMapping.set(value, new tobi.Key(value,this.game));
+    }
     /*if (tobi.KeyCode.hasOwnProperty(prop)) {
 
       
@@ -93,7 +97,7 @@ processKeyUp : function(event) {
 
 },
 
-processKeyDown : function(event) { // commom characters
+processKeyDown : function(event) { 
 
   var key = event.keyCode;
 
@@ -107,7 +111,7 @@ processKeyDown : function(event) { // commom characters
   var keyObj = this._keyMapping.get(key);
   keyObj.onKeyDown();
 
-  if (!this._keyWatch.hasKey(keyObj))
+  if (!this._keyWatch.has(key))
   {
     this._keyWatch.set(key, keyObj);
   }
@@ -167,9 +171,39 @@ update : function() {
         }
     }*/
 
-    for(var prop in this._keyWatch)
+    /*var keys = this._keyMapping.keys();
+    for (var key in keys)
     {
-        prop.update();
+      if (keys.hasOwnProperty(key)) {
+
+        var value = this._keyMapping.get(key);
+        value.update();
+
+      }
+    }*/
+
+   var keys = this._keyWatch.keys();
+    for (var key in keys)
+    {
+      //console.log("UPDATE")
+
+      if (keys.hasOwnProperty(key)) {
+
+          var value = this._keyWatch.get(key);
+          value.update();
+
+          if (value.event() == tobi.KeyEvent.IDLE)
+          {
+             // value.reset();
+              this._keyGarbage.push(key);
+          }
+      }
+    }
+
+    if (this._keyGarbage.length > 0)
+    {
+      this._keyWatch.deleteByIndexedArray(this._keyGarbage);
+      this._keyGarbage.splice(0, this._keyGarbage.length)
     }
 
 },
@@ -185,7 +219,18 @@ if (this._keyLockPressed[keycode] == tobi.KeyEvent.PRESSED) {
 
 	var hit = this._keys[keycode] && keyLock;*/
 
-	return hit;
+  //return hit;
+
+  return this._keyMapping.get(keycode).isPressed();
+  
+ /* if (this._keyMapping.has(keycode))
+  {
+    
+  } 
+  else 
+  {
+    return false;
+  }*/
 
 },
 
@@ -204,17 +249,18 @@ release : function(keycode) {
 
 	this._keyLock[keycode] = tobi.KeyEvent.NONE;
 
-	return hit;*/
+  return hit;*/
+  return this._keyMapping.get(keycode).isReleased();
 
 },
 
 press : function(keycode) {
 
 
-  var key = this._keyWatch.get(keycode);
+  /*var key = this._keyWatch.get(keycode);
 
   if (key === undefined)
-    return false;
+    return false;*/
 
   return key.status;
 

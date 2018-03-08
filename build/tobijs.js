@@ -1,27 +1,25 @@
 /**
 * @author       Tobias Beise Ulrich
-* @license     Thinking about
+* @license      MIT
 *
 * @overview
 *
 * --- tobiJS ---
 *
-* v1.0.0
+* v0.2.0
 *
-* tobiasbu.wordpress.com
+* tobiasbu.github.io
 *
 * tobiJS is simple 2D game engine for HTML5 games.
 * The first version is only for browsers based in canvas.
 *
-* Actually I learning Javascript language and this is my start point.
-*
 */
 
 /**
-* @namespace tobiJS
+* @namespace tobi
 */
 var tobi = tobi || {
-  VERSION: '1.0'
+  VERSION: '0.2.0'
 };
 
 tobi.ShapeType = {
@@ -1239,7 +1237,7 @@ get : function() {
 tobi.AnimationCache = function(game) {
 
 this.game = game;
-this.map = new tobi.Multimap();
+//this.map = new tobi.Multimap();
 
 }
 
@@ -1258,13 +1256,13 @@ add : function(spritesheet,container,name) {
 
 
 
-  return this.map.set(container,name,animation);
+  //return this.map.set(container,name,animation);
 
 },
 
 get : function(container,name) {
 
-  return this.map.getValue(container,name);
+ // return this.map.getValue(container,name);
 
 }
 
@@ -2577,7 +2575,7 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
   this.universe = null;
   this.world = null;
   this.input = null;
-  this.clock = null;
+  this.time = null;
   this.component = null;
   this.instance = null;
   this.animationCache = null;
@@ -2640,51 +2638,10 @@ tobi.Game.prototype = {
         this.height = config['height'];
     }
 
-        /*if (config['renderer'])
-        {
-            this.renderType = config['renderer'];
-        }*/
-
     if (config['parent'])
     {
         this.parent = config['parent'];
     }
-
-        /*if (config['transparent'] !== undefined)
-        {
-            this.transparent = config['transparent'];
-        }*/
-
-        /*if (config['antialias'] !== undefined)
-        {
-            this.antialias = config['antialias'];
-        }
-
-        if (config['resolution'])
-        {
-            this.resolution = config['resolution'];
-        }
-
-        if (config['preserveDrawingBuffer'] !== undefined)
-        {
-            this.preserveDrawingBuffer = config['preserveDrawingBuffer'];
-        }
-
-        if (config['physicsConfig'])
-        {
-            this.physicsConfig = config['physicsConfig'];
-        }*/
-
-    /*var seed = [(Date.now() * Math.random()).toString()];
-
-    if (config['seed'])
-    {
-        seed = config['seed'];
-    }
-
-    this.rnd = new Phaser.RandomDataGenerator(seed);*/
-
-
 
   },
   /**
@@ -2705,7 +2662,7 @@ tobi.Game.prototype = {
 
     this.cache = new tobi.Cache(this);
     this.load = new tobi.LoadManager(this);
-    this.clock = new tobi.Clock(this);
+    this.time = new tobi.Time(this);
     this.universe = new tobi.Universe(this);
     this.world = new tobi.World(this);
     this.draw = new tobi.Draw(this);
@@ -2721,7 +2678,7 @@ tobi.Game.prototype = {
     if (this.debugMode)
       this.debug = new tobi.Debug(this);
 
-    this.clock.start();
+    this.time.start();
     this.input.init();
     this.sound.start();
     this.world.start();
@@ -2738,20 +2695,7 @@ tobi.Game.prototype = {
     console.log("tobiJS Created!");
 
   },
-
-  /*run : function() {
-
-
-  //  if (  this.load.checkAssets()) {
-      //this.interval = setInterval(function(){ me.update() },1000/60);
-    //  this.interval = setTimeout(function(){me.update()}, 1000/60);
-    //} else {
-    //  console.log("Can not initialize the game. Failed to download game assets.");
-    //}
-
-  },*/
-
-
+  
   /**
     * core game loop
     *
@@ -2764,40 +2708,40 @@ tobi.Game.prototype = {
 
 
 
-      this.clock.update(time);
+      this.time.update(time);
 
       if (this._spiraling > 1) {
 
-          this.clock.deltaTime = 0;
+          this.time.deltaTime = 0;
           this._spiraling = 0;
-          this.clock.accumalator = 0;
+          this.time.accumalator = 0;
 
-          this.render(this.clock.accumulatorDelta);
+          this.render(this.time.accumulatorDelta);
 
       } else {
 
       var countFrames = 0;
 
-      while (this.clock.accumalator >= this.clock.accumulatorDelta) {
+      while (this.time.accumalator >= this.time.accumulatorDelta) {
 
-        //  this.clock.updateStart = window.performance.now();
+        //  this.time.updateStart = window.performance.now();
 
-          this.clock.deltaTime = Math.min(this.clock.accumalator,this.clock.accumulatorDelta) / 1000;
+          this.time.deltaTime = Math.min(this.time.accumalator,this.time.accumulatorDelta) / 1000;
 
-          this.logic(this.clock.deltaTime);
+          this.logic(this.time.deltaTime);
 
-          //this.clock.updateLast =  window.performance.now();
-        //  this.clock.updateAverage = this.clock.updateLast - this.clock.updateStart;
+          //this.time.updateLast =  window.performance.now();
+        //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
 
-          this.clock.accumalator -= this.clock.accumulatorDelta;
+          this.time.accumalator -= this.time.accumulatorDelta;
 
           countFrames++;
 
-          this.clock.refresh();
+          this.time.refresh();
 
           if (countFrames >= 240) { // SPIRAL
               //panic();
-              this.clock.accumalator = 0;
+              this.time.accumalator = 0;
 
               break;
           }
@@ -2810,7 +2754,7 @@ tobi.Game.prototype = {
 
           this._lastFrameCount = countFrames;
 
-            this.render(this.clock.accumalator/this.clock.accumulatorDelta);
+            this.render(this.time.accumalator/this.time.accumulatorDelta);
 
       }
 
@@ -2897,7 +2841,7 @@ tobi.Game.prototype = {
     this.universe = null;
     this.world = null;
     this.input = null;
-    this.clock = null;
+    this.time = null;
     this.component = null;
     this.instance = null;
     this.animationCache = null;
@@ -3272,13 +3216,13 @@ tobi.Scene = function(game) {
 tobi.Scene.prototype = {
 
 
-preload : function() {},
+/*preload : function() {},
 loading : function() {},
 loadingRender : function() {},
 start : function() {},
 update : function() {},
 render : function() {},
-destroy : function() {},
+destroy : function() {},*/
 
 _update : function() {
 
@@ -3398,7 +3342,7 @@ this.height = height;
 tobi.SceneManager = function(game) {
 
 this.game = game;
-this.scenes = {};
+this._scenes = new tobi.Map();
 
 this.current_scene_name = '';
 this.change_scene = null;
@@ -3433,7 +3377,23 @@ add : function (sceneName,scene) {
 
 
   if (newScene != null)
-    this.scenes[sceneName] = newScene;
+    this._scenes.set(sceneName,newScene);
+
+},
+
+new : function(sceneName)
+{
+
+  if (this._scenes.has(sceneName))
+  {
+    throw "Could not create new Scene. The scene name \"" + name + "\" already exists."; 
+    return null;
+  }
+  
+  var newScene = new tobi.Scene(this.game);
+  this._scenes.set(sceneName,newScene);
+
+  return newScene;
 
 },
 
@@ -3482,17 +3442,17 @@ setupScene : function(sceneName) {
 
 
 
-  this.current_scene = this.scenes[sceneName];
-  this.onStartCallback = this.scenes[sceneName]['start'] || null;
-  this.onLoadingCallback = this.scenes[sceneName]['loading'] || null;
-  this.onLoadingRenderCallback = this.scenes[sceneName]['loadingRender'] || null;
-  this.onPreloadCallback = this.scenes[sceneName]['preload'] || null;
-  this.onUpdateCallback = this.scenes[sceneName]['update'] || null;
-  this.onRenderCallback = this.scenes[sceneName]['render'] || null;
-  this.onDestroyCallback = this.scenes[sceneName]['destroy'] || null;
+  this.current_scene = this._scenes.get(sceneName);
+  this.onStartCallback = this.current_scene['start'] || null;
+  this.onLoadingCallback = this.current_scene['loading'] || null;
+  this.onLoadingRenderCallback = this.current_scene['loadingRender'] || null;
+  this.onPreloadCallback = this.current_scene['preload'] || null;
+  this.onUpdateCallback = this.current_scene['update'] || null;
+  this.onRenderCallback = this.current_scene['render'] || null;
+  this.onDestroyCallback = this.current_scene['destroy'] || null;
   this.current_scene_name = sceneName;
 
-  this.game.clock.refresh();
+  this.game.time.refresh();
 
   this.current_scene.camera = this.game.world.camera;
 
@@ -4408,219 +4368,6 @@ get : function() {
 
 });
 ;
-tobi.Draw = function(game) {
-
-this.game = game;
-this.cache = game.cache;
-this.context = game.context;
-
-}
-
-tobi.Draw.prototype = {
-
-font : function(fontname,size) {
-
-this.context.font = size + "px " + fontname;
-
-},
-
-text : function(text,x,y,color) {
-
-  if (color === undefined) color = 'black';
-
-  this.context.fillStyle = color;
-  this.context.fillText(text, x, y);
-
-},
-
-sprite : function(tag, x, y, anchor) {
-
-    var img = this.cache.getAsset('images',tag);
-
-    if (img != null) {
-
-
-      if (anchor === undefined) {
-        anchor[0] = 0;
-        anchor[1] = 0;
-      }
-
-
-
-      var ctx = this.context;
-
-    ctx.save();
-
-    ctx.translate(x-img.width*anchor[0], y-img.height*anchor[1]);
-
-   ctx.drawImage(img,
-          0,
-          0,
-          img.width,
-          img.height);
-
-
-    ctx.restore();
-
-  }
-
-},
-
-spriteTransformed : function(tag, x, y, xscale, yscale, angle) {
-
-
-},
-
-rectangle : function (x, y, width, height, color) {
-
-  this.context.fillStyle=color;
-  this.context.fillRect(x,y,width,height);
-
-},
-
-outlineRectangle : function (x,y,width,height,color,outlineWidth) {
-
-  this.context.beginPath();
-  this.context.lineWidth=outlineWidth;
-  this.context.setLineDash([6]);
-  this.context.strokeStyle=color;
-  this.context.rect(x,y,width,height);
-  this.context.stroke();
-
-},
-
-alpha : function(a) {
-
-  this.context.globalAlpha = a;
-
-},
-
-color : function(color) {
-
-  this.context.fillStyle = color;
-
-},
-
-boundingbox : function(bb,color) {
-
-if (color === undefined)
-  color = 'black';
-  this.context.setTransform(1,0,0,1,0,0);
- this.outlineRectangle(bb.min.x,bb.min.y,bb.max.x-bb.min.x,bb.max.y-bb.min.y,color,2);
-
-}
-
-
-
-}
-
-tobi.Draw.prototype.constructor = tobi.Draw;
-;
-/**
-* Image that holds image data.
-* @class Image
-* @constructor
-*/
-tobi.Image = function(source) {
-
-  this.width = 100;
-  this.height = 100;
-  this.isLoaded = false;
-  this.source = source;
-  this.imageUrl = null;
-
-  if (!source) {
-    return;
-  }
-
-  if ((this.source.complete || this.source.getContext) && this.source.width && this.source.height) {
-
-      this.isLoaded = true;
-      this.width = this.source.naturalWidth || this.source.width;
-      this.height = this.source.naturalHeight || this.source.height;
-
-  }
-
-    return this;
-}
-
-tobi.Image.prototype = {
-
-
-
-}
-
-tobi.Image.prototype.constructor = tobi.Image;
-
-tobi.Image.load = function(path) {
-
-
-
-
-}
-
-tobi.Image.onload = function(image) {
-
-}
-;
-tobi.textureCache = {};
-tobi.textureCacheID = 0;
-
-tobi.Texture = function(source,scaleMode) {
-
-this.source = source;
-this.loaded = false;
-this.width = source.width;
-this.height = source.height;
-this.isTiling = false;
-
-
-  if (!source)
-  {
-      return;
-  }
-
-
-/*if ((this.source.complete || this.source.getContext) && this.source.width && this.source.height)
-{
-    this.loaded = true;
-    this.width = this.source.naturalWidth || this.source.width;
-    this.height = this.source.naturalHeight || this.source.height;
-}*/
-
-}
-
-tobi.Texture.prototype.constructor = tobi.Texture;
-
-tobi.Texture.createFromCanvas = function(canvas) {
-
-  if (!canvas._id)
-    {
-        canvas._id = 'canvas_' + tobi.textureCacheID++;
-    }
-
-  if (canvas.width === 0)
-  {
-        canvas.width = 1;
-  }
-
-  if (canvas.height === 0)
-  {
-        canvas.height = 1;
-  }
-
-  var texture = tobi.textureCache[canvas._id];
-
-  if (!texture)
-  {
-      texture = new tobi.Texture(canvas);
-      tobi.textureCache[canvas._id] = texture;
-  }
-
-    return texture;
-
-}
-;
 
 tobi.Input = function(game) {
 
@@ -4647,6 +4394,12 @@ update : function() {
   this.keyboard.update();
   this.mouse.update();
 
+},
+
+reset : function()
+{
+  this.keyboard.reset();
+  this.mouse.reset();
 }
 
 
@@ -4655,16 +4408,191 @@ update : function() {
 tobi.Input.prototype.constructor = tobi.Input;
 ;
 
+tobi.Key = function(keycode, game) {
+
+    this.game = game;
+    this.keyCode = keycode; 
+
+    this._enabled = true;       
+    this.status = false;
+    this.press = false;
+    this.release = false;
+
+    this._event = tobi.KeyEvent.NONE;
+
+    this.pressTime = 0;
+    this.pressDuration = -2500;
+    this.releaseTime = 0;
+    this.releaseDuration = -2500;
+
+}
+
+tobi.Key.prototype = {
+
+    onKeyDown: function()
+    {
+        if (!this._enabled)
+            return;
+
+        if (this.press)
+            return;
+
+        // set key properties
+        this.status = true;
+        this.press = true;
+        this.release = false;
+
+        // set press time duration
+        this.pressTime = this.game.time.time;
+        this.pressDuration = 0;
+        this.releaseDuration = this.game.time.time - this.releaseTime;
+    
+    },
+
+    onKeyUp: function()
+    {
+        if (!this._enabled)
+            return;
+
+        if (this.release)
+            return;
+
+        // set key properties
+        this.status = false;
+        this.press = false;
+        this.release = true;
+
+        // set press time duration
+        this.releaseTime = this.game.time.time;
+        this.pressDuration = this.game.time.time - this.pressTime;
+        this.releaseDuration = 0;
+
+    },
+
+    update : function()
+    {
+        if (!this._enabled)
+            return;
+
+  
+
+        if (this.press)
+        {
+            this.pressDuration = this.game.time.time - this.pressTime;
+            
+        }
+        else
+        {
+            this.releaseDuration = this.game.time.time - this.releaseTime;
+        }
+
+
+        if (this.press)
+        {
+            if (this.pressDuration == 0)
+            {
+                this._event = tobi.KeyEvent.PRESSED;
+            }
+
+        } else {
+
+            if (this.releaseDuration == 0)
+            {
+                this._event = tobi.KeyEvent.RELEASED;
+            } else {
+                this._event = tobi.KeyEvent.IDLE;
+            }
+
+        }
+
+        if (this._event == tobi.KeyEvent.IDLE)
+        {
+            this._event = tobi.KeyEvent.NONE;
+        }
+        
+    },
+
+    isPressing: function()
+    {
+        return this.status;
+    },
+
+    isPressed: function()
+    {
+        return (this.press && this.pressDuration == 0);
+    },
+
+    isReleased: function()
+    {
+        return (!this.press && this.releaseDuration == 0)
+    },
+
+    event: function()
+    {
+        return this._event;
+    },
+
+    reset: function()
+    {   
+        this.status = false;
+        this._event = tobi.KeyEvent.NONE;
+        this.press = false;
+        this.release = false;
+    
+        this.pressTime = 0;
+        this.pressDuration = -2500;
+        this.releaseTime = 0;
+        this.releaseDuration = -2500;
+    }
+};
+
+Object.defineProperty(tobi.Key.prototype, "enabled", {
+
+    get: function () {
+
+        return this._enabled;
+
+    },
+
+    set: function (value) {
+
+        value = !!value;
+
+        if (value !== this._enabled)
+        {
+            if (!value)
+                this.reset(false);
+
+            this._enabled = value;
+        }
+    }
+
+});
+
+tobi.Key.prototype.constructor = tobi.Key;
+
+tobi.KeyEvent = {
+    NONE : -1,
+    IDLE: 0,
+    PRESSED : 1,
+    RELEASED : 2,
+};
+  
+;
+
 tobi.Keyboard = function(game) {
 
 this.game = game;
 this.context = game.context;
 this.active = true;
-this._keys = [];
-this._keyLock = [];
-this._keyLockPressed = [];
-this._keyDownDuration = [];
-this.lastkey = null;
+//this._keys = [];
+this._keyMapping = new tobi.Map();
+this._keyWatch = new tobi.Map();
+this._keyGarbage = [];
+//this._keyLock = [];
+//this._keyLockPressed = [];
+//this._keyDownDuration = [];
+this.lastKey = null;
 
 //callbacks
 this._onKeyDown = null;
@@ -4679,15 +4607,25 @@ tobi.Keyboard.prototype = {
 
 reset : function() {
 
+  this._keyMapping.clear();
+  this._keyWatch.clear();
+  this._keyGarbage = [];
   for (var prop in tobi.KeyCode){
+
     if (tobi.KeyCode.hasOwnProperty(prop)) {
+      var value = tobi.KeyCode[prop];
+      this._keyMapping.set(value, new tobi.Key(value,this.game));
+    }
+    /*if (tobi.KeyCode.hasOwnProperty(prop)) {
+
+      
 
           var value = tobi.KeyCode[prop];
           this._keys[value] = false;
           this._keyLock[value] = tobi.KeyEvent.NONE;
           this._keyLockPressed[value] = tobi.KeyEvent.NONE;
           this._keyDownDuration[value] = 0;
-    }
+    }*/
   }
 
 },
@@ -4706,26 +4644,19 @@ init : function() {
        return self.processKeyUp(event);
    };
 
-   /*this._onKeyPress = function (event) {
-       return self.processKeyPress(event);
-   };*/
-
   window.addEventListener('keydown', this._onKeyDown, false);
   window.addEventListener('keyup', this._onKeyUp, false);
-  //window.addEventListener('keypress', this._onKeyPress, false);
-
 },
 
 stop : function() {
 
   window.removeEventListener('keydown', this._onKeyDown);
   window.removeEventListener('keyup', this._onKeyUp);
-  //window.removeEventListener('keypress', this._onKeyPress);
-
   this._onKeyDown = null;
   this._onKeyUp = null;
   this._onKeyPress = null;
 
+  this._keyMapping.clear();
 },
 
 processKeyUp : function(event) {
@@ -4737,13 +4668,55 @@ processKeyUp : function(event) {
    if (!this.active)
     return;
 
-    this._keyLock[key] = tobi.KeyEvent.RELEASE;
+    var keyObj = this._keyMapping.get(key);
+    keyObj.onKeyUp();
+
+    /*this._keyLock[key] = tobi.KeyEvent.RELEASE;
     this._keyLockPressed[key] = tobi.KeyEvent.NONE;
-    this._keys[key] = false;
+    this._keys[key] = false;*/
 
 },
 
-processKeyPress : function(event) { // commom characters
+processKeyDown : function(event) { 
+
+  var key = event.keyCode;
+
+  event.preventDefault();
+
+  if (!this.active)
+   return;
+
+   this.lastKey = key;
+
+  var keyObj = this._keyMapping.get(key);
+  keyObj.onKeyDown();
+
+  if (!this._keyWatch.has(key))
+  {
+    this._keyWatch.set(key, keyObj);
+  }
+
+
+
+  
+
+
+   //_keyMapping[]
+   //this._keys[key] = true;
+  /* if (this._keyLockPressed[key] != tobi.KeyEvent.PRESSED && this._keyLockPressed[key] != tobi.KeyEvent.PRESS) {
+     this._keyLockPressed[key] = tobi.KeyEvent.PRESSED;
+     this._keyDownDuration[key] = 1;
+   }
+
+   this._keyLock[key] = tobi.KeyEvent.PRESS;
+   this._keys[key] = true;
+   */
+
+
+
+},
+
+/*processKeyPress : function(event) { // commom characters
 
    var key = event.keyCode;
 
@@ -4758,33 +4731,11 @@ processKeyPress : function(event) { // commom characters
 
 
 
-},
-
-processKeyDown : function(event) { // commom characters
-
-   var key = event.keyCode;
-
-   event.preventDefault();
-
-   if (!this.active)
-    return;
-
-    if (this._keyLockPressed[key] != tobi.KeyEvent.PRESSED && this._keyLockPressed[key] != tobi.KeyEvent.PRESS) {
-      this._keyLockPressed[key] = tobi.KeyEvent.PRESSED;
-      this._keyDownDuration[key] = 1;
-    }
-
-    this._keyLock[key] = tobi.KeyEvent.PRESS;
-    this._keys[key] = true;
-    this.lastkey = key;
-
-
-
-},
+},*/
 
 update : function() {
 
-  for (var prop in tobi.KeyCode){
+  /*for (var prop in tobi.KeyCode){
     if (tobi.KeyCode.hasOwnProperty(prop)) {
 
       var value = tobi.KeyCode[prop];
@@ -4798,31 +4749,74 @@ update : function() {
         } else {
           continue;
         }
+    }*/
+
+    /*var keys = this._keyMapping.keys();
+    for (var key in keys)
+    {
+      if (keys.hasOwnProperty(key)) {
+
+        var value = this._keyMapping.get(key);
+        value.update();
+
+      }
+    }*/
+
+   var keys = this._keyWatch.keys();
+    for (var key in keys)
+    {
+      //console.log("UPDATE")
+
+      if (keys.hasOwnProperty(key)) {
+
+          var value = this._keyWatch.get(key);
+          value.update();
+
+          if (value.event() == tobi.KeyEvent.IDLE)
+          {
+             // value.reset();
+              this._keyGarbage.push(key);
+          }
+      }
     }
-  }
 
-
+    if (this._keyGarbage.length > 0)
+    {
+      this._keyWatch.deleteByIndexedArray(this._keyGarbage);
+      this._keyGarbage.splice(0, this._keyGarbage.length)
+    }
 
 },
 
 pressed : function(keycode) {
 
-  var keyLock = false;
+  /*var keyLock = false;
 
 if (this._keyLockPressed[keycode] == tobi.KeyEvent.PRESSED) {
 		keyLock = true;
     this._keyLockPressed[keycode] = tobi.KeyEvent.PRESS;
   }
 
-	var hit = this._keys[keycode] && keyLock;
+	var hit = this._keys[keycode] && keyLock;*/
 
-	return hit;
+  //return hit;
+
+  return this._keyMapping.get(keycode).isPressed();
+  
+ /* if (this._keyMapping.has(keycode))
+  {
+    
+  } 
+  else 
+  {
+    return false;
+  }*/
 
 },
 
 release : function(keycode) {
 
-  var keyLock = false;
+  /*var keyLock = false;
 
 	if (this._keyLock[keycode] ==  tobi.KeyEvent.PRESSED ||
     this._keyLock[keycode] ==  tobi.KeyEvent.PRESS ||
@@ -4835,13 +4829,22 @@ release : function(keycode) {
 
 	this._keyLock[keycode] = tobi.KeyEvent.NONE;
 
-	return hit;
+  return hit;*/
+  return this._keyMapping.get(keycode).isReleased();
 
 },
 
 press : function(keycode) {
 
-  var keyLock = false;
+
+  /*var key = this._keyWatch.get(keycode);
+
+  if (key === undefined)
+    return false;*/
+
+  return key.status;
+
+  /*var keyLock = false;
 
   if (this._keyLock[keycode] ==  tobi.KeyEvent.RELEASE ||
     this._keyLock[keycode] ==  tobi.KeyEvent.NONE)
@@ -4851,7 +4854,7 @@ press : function(keycode) {
 
   var hit = this._keys[keycode] && keyLock;
 
-  return hit;
+  return hit;*/
 
 }
 
@@ -4861,114 +4864,107 @@ press : function(keycode) {
 
 tobi.Keyboard.prototype.constructor = tobi.Keyboard;
 
-tobi.KeyEvent = {
-  NONE : 0,
-  PRESS : 1,
-  PRESSED : 2,
-  RELEASE : 3,
-};
-
 tobi.KeyCode = {
-Backspace: 8,
-Tab: 9,
-Enter: 13,
-Shift: 16,
-Ctrl: 17,
-Alt: 18,
-Pause: 19,
-CapsLock: 20,
-Escape: 27,
-Space:32,
-PageUp: 33,
-PageDown: 34,
-End: 35,
-Home: 36,
-Left: 37,
-Up: 38,
-Right: 39,
-Down: 40,
-Insert: 45,
-Delete:	46,
-Num0: 48,
-Num1: 49,
-Num2: 50,
-Num3: 51,
-Num4: 52,
-Num5:	53,
-Num6: 54,
-Num7: 55,
-Num8: 56,
-Num9: 57,
-A: 65,
-B: 66,
-C: 67,
-D: 68,
-E: 69,
-F: 70,
-G: 71,
-H: 72,
-I: 73,
-J: 74,
-K: 75,
-L: 76,
-M: 77,
-N: 78,
-O: 79,
-P: 80,
-Q: 81,
-R: 82,
-S: 83,
-T: 84,
-U: 85,
-V: 86,
-W: 87,
-X: 88,
-Y: 89,
-Z: 90,
-LSystem: 91,
-RSystem: 92,
-SelectK:	93,
-Numpad0: 96,
-Numpad1: 97,
-Numpad2: 98,
-Numpad3: 99,
-Numpad4: 100,
-Numpad5: 101,
-Numpad6: 102,
-Numpad7: 103,
-Numpad8: 104,
-Numpad9: 105,
-Multiply: 106,
-Add: 107,
-Subtract: 109,
-DecimalPoint: 110,
-Divide: 111,
-F1:	112,
-F2:	113,
-F3:	114,
-F4:	115,
-F5:	116,
-F6:	117,
-F7:	118,
-F8:	119,
-F9:	120,
-F10: 121,
-F11: 122,
-F12: 123,
-NumLock: 144,
-ScrollLock: 145,
-SemiColon: 186,
-Equal: 187,
-Comma: 188,
-Dash: 189,
-Period:	190,
-Slash: 191,
-LBraket: 219,
-BackSlash: 220,
-RBracket: 221,
-Quote: 222,
-};
-;
+  Backspace: 8,
+  Tab: 9,
+  Enter: 13,
+  Shift: 16,
+  Ctrl: 17,
+  Alt: 18,
+  Pause: 19,
+  CapsLock: 20,
+  Escape: 27,
+  Space:32,
+  PageUp: 33,
+  PageDown: 34,
+  End: 35,
+  Home: 36,
+  Left: 37,
+  Up: 38,
+  Right: 39,
+  Down: 40,
+  Insert: 45,
+  Delete:	46,
+  Num0: 48,
+  Num1: 49,
+  Num2: 50,
+  Num3: 51,
+  Num4: 52,
+  Num5:	53,
+  Num6: 54,
+  Num7: 55,
+  Num8: 56,
+  Num9: 57,
+  A: 65,
+  B: 66,
+  C: 67,
+  D: 68,
+  E: 69,
+  F: 70,
+  G: 71,
+  H: 72,
+  I: 73,
+  J: 74,
+  K: 75,
+  L: 76,
+  M: 77,
+  N: 78,
+  O: 79,
+  P: 80,
+  Q: 81,
+  R: 82,
+  S: 83,
+  T: 84,
+  U: 85,
+  V: 86,
+  W: 87,
+  X: 88,
+  Y: 89,
+  Z: 90,
+  LSystem: 91,
+  RSystem: 92,
+  SelectK:	93,
+  Numpad0: 96,
+  Numpad1: 97,
+  Numpad2: 98,
+  Numpad3: 99,
+  Numpad4: 100,
+  Numpad5: 101,
+  Numpad6: 102,
+  Numpad7: 103,
+  Numpad8: 104,
+  Numpad9: 105,
+  Multiply: 106,
+  Add: 107,
+  Subtract: 109,
+  DecimalPoint: 110,
+  Divide: 111,
+  F1:	112,
+  F2:	113,
+  F3:	114,
+  F4:	115,
+  F5:	116,
+  F6:	117,
+  F7:	118,
+  F8:	119,
+  F9:	120,
+  F10: 121,
+  F11: 122,
+  F12: 123,
+  NumLock: 144,
+  ScrollLock: 145,
+  SemiColon: 186,
+  Equal: 187,
+  Comma: 188,
+  Dash: 189,
+  Period:	190,
+  Slash: 191,
+  LBraket: 219,
+  BackSlash: 220,
+  RBracket: 221,
+  Quote: 222,
+  };
+  ;
 
 tobi.Mouse = function(game) {
 
@@ -5351,8 +5347,6 @@ create : function(gameObject, x, y, node) {
         this.game.physics.addColliderObj(obj.component.collider);
 
 
-  console.log(obj);
-
   return obj;
 
 },
@@ -5556,7 +5550,7 @@ tobi.GameObject.prototype.draw = function(context) {
     return clone;
 
   },*/
-;
+;;
 tobi.Pool = Class.extend(function() {
 
 this.poolList = {};
@@ -5959,7 +5953,7 @@ test : function() {
   this.game.draw.alpha(0.5);
   this.game.draw.rectangle(0,0,this.game.width,(14 * 4)+ 16,this.bgcolor);
   this.game.draw.alpha(1);
-  this.drawLine("FPS: " + Math.round(this.game.clock.fps) + " / 60");
+  this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
   this.drawLine("Instances in view: " + this.game.camera.instancesInView);
   this.drawLine("Instances count " + this.game.world.length);
   this.drawLine("Colliders count " + this.game.physics.length);
@@ -6075,7 +6069,7 @@ angleBetween : function(x0,y0,x1,y1) {
 
 tobi.Math.degToRad = Math.PI / 180;
 tobi.Math.radToDeg = 180 / Math.PI;
-tobi.Math.PI2 = Math.PI * 2;
+tobi.Math.TAU = Math.PI * 2;
 
 tobi.Math.toDegree = function(radians) {
 
@@ -6672,6 +6666,255 @@ tobi.SAT.Response.prototype.clear = function() {
   this.indexShapeB = -1;
   return this;
 };
+;
+tobi.Draw = function(game) {
+
+this.game = game;
+this.cache = game.cache;
+this.context = game.context;
+
+}
+
+tobi.Draw.prototype = {
+
+font : function(fontname,size) {
+
+this.context.font = size + "px " + fontname;
+
+},
+
+text : function(text,x,y,color) {
+
+  if (color === undefined) color = 'black';
+
+  this.context.fillStyle = color;
+  this.context.fillText(text, x, y);
+
+},
+
+sprite : function(tag, x, y, anchor) {
+
+    var img = this.cache.getAsset('images',tag);
+
+    if (img != null) {
+
+
+      if (anchor === undefined) {
+        anchor[0] = 0;
+        anchor[1] = 0;
+      }
+
+
+
+      var ctx = this.context;
+
+    ctx.save();
+
+    ctx.translate(x-img.width*anchor[0], y-img.height*anchor[1]);
+
+   ctx.drawImage(img,
+          0,
+          0,
+          img.width,
+          img.height);
+
+
+    ctx.restore();
+
+  }
+
+},
+
+spriteTransformed : function(tag, x, y, xscale, yscale, angle) {
+
+
+},
+
+rectangle : function (x, y, width, height, color) {
+
+  this.context.fillStyle=color;
+  this.context.fillRect(x,y,width,height);
+
+},
+
+outlineRectangle : function (x,y,width,height,color,outlineWidth) {
+
+  this.context.beginPath();
+  this.context.lineWidth=outlineWidth;
+  this.context.setLineDash([6]);
+  this.context.strokeStyle=color;
+  this.context.rect(x,y,width,height);
+  this.context.stroke();
+
+},
+
+alpha : function(a) {
+
+  this.context.globalAlpha = a;
+
+},
+
+color : function(color) {
+
+  this.context.fillStyle = color;
+
+},
+
+boundingbox : function(bb,color) {
+
+if (color === undefined)
+  color = 'black';
+  this.context.setTransform(1,0,0,1,0,0);
+ this.outlineRectangle(bb.min.x,bb.min.y,bb.max.x-bb.min.x,bb.max.y-bb.min.y,color,2);
+
+}
+
+
+
+}
+
+tobi.Draw.prototype.constructor = tobi.Draw;
+;
+/**
+* Image that holds image data.
+* @class Image
+* @constructor
+*/
+tobi.Image = function(source) {
+
+  this.width = 100;
+  this.height = 100;
+  this.isLoaded = false;
+  this.source = source;
+  this.imageUrl = null;
+
+  if (!source) {
+    return;
+  }
+
+  if ((this.source.complete || this.source.getContext) && this.source.width && this.source.height) {
+
+      this.isLoaded = true;
+      this.width = this.source.naturalWidth || this.source.width;
+      this.height = this.source.naturalHeight || this.source.height;
+
+  }
+
+    return this;
+}
+
+tobi.Image.prototype = {
+
+
+
+}
+
+tobi.Image.prototype.constructor = tobi.Image;
+
+tobi.Image.load = function(path) {
+
+
+
+
+}
+
+tobi.Image.onload = function(image) {
+
+}
+;;
+
+tobi.RenderLayer = function(game,name) {
+
+    this.name = name;
+    this.game = game;
+    this.__renderers = [];
+
+}
+
+tobi.RenderLayer.prototype = {
+
+    // Add renderable components
+    add : function(renderer) {
+    
+        
+    
+    },
+
+    remove : function(renderer)
+    {
+
+    },
+
+    removeAt : function(index)
+    {
+
+    },
+
+    get : function(index)
+    {
+
+    }
+
+}
+
+tobi.RenderLayer.prototype.constructor = tobi.RenderLayer;;
+tobi.textureCache = {};
+tobi.textureCacheID = 0;
+
+tobi.Texture = function(source,scaleMode) {
+
+this.source = source;
+this.loaded = false;
+this.width = source.width;
+this.height = source.height;
+this.isTiling = false;
+
+
+  if (!source)
+  {
+      return;
+  }
+
+
+/*if ((this.source.complete || this.source.getContext) && this.source.width && this.source.height)
+{
+    this.loaded = true;
+    this.width = this.source.naturalWidth || this.source.width;
+    this.height = this.source.naturalHeight || this.source.height;
+}*/
+
+}
+
+tobi.Texture.prototype.constructor = tobi.Texture;
+
+tobi.Texture.createFromCanvas = function(canvas) {
+
+  if (!canvas._id)
+    {
+        canvas._id = 'canvas_' + tobi.textureCacheID++;
+    }
+
+  if (canvas.width === 0)
+  {
+        canvas.width = 1;
+  }
+
+  if (canvas.height === 0)
+  {
+        canvas.height = 1;
+  }
+
+  var texture = tobi.textureCache[canvas._id];
+
+  if (!texture)
+  {
+      texture = new tobi.Texture(canvas);
+      tobi.textureCache[canvas._id] = texture;
+  }
+
+    return texture;
+
+}
 ;
 tobi.Sound = Class.extend(function() {
 
@@ -7284,7 +7527,7 @@ get : function() {
 });
 ;
 
-tobi.Clock = function(game) {
+tobi.Time = function(game) {
 
   this.game = game;
 
@@ -7329,7 +7572,7 @@ tobi.Clock = function(game) {
 
 }
 
-tobi.Clock.prototype = {
+tobi.Time.prototype = {
 
 start : function() {
 
@@ -7412,7 +7655,8 @@ update : function(timestamp) {
   //this.accumulatorUpdateDelta = this.updateDelta; // interpolation = Math.max(this.updateDelta, this.updateAverage);
 
   // FPS Update
-  this.fpsUpdate(timestamp);
+  if (this.game.debugMode)
+    this.fpsUpdate(timestamp);
 
   return true;
 
@@ -7512,7 +7756,7 @@ fpsUpdate : function(timestamp) {
 
 }
 
-tobi.Clock.prototype.constructor = tobi.Clock;
+tobi.Time.prototype.constructor = tobi.Time;
 ;
 
 tobi.UpdateGame = function(game, timeout) {
@@ -7594,7 +7838,7 @@ updateTimeout : function() {
   this.game.update(Date.now());
 
 
-  this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.clock.timeOut_toCall);
+  this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.time.timeOut_toCall);
 
 },
 
@@ -7811,23 +8055,29 @@ var cloner = (function (O) {'use strict';
 ;
 
 
-// Multimap simple class
-tobi.Multimap = function() {
+// Map simple class
+tobi.Map = function() 
+{
   this._content = {};
 }
 
-tobi.Multimap.prototype = {
+tobi.Map.prototype = {
 
 
-  set : function(key, tag, value) {
+  /* 
+  Add or set value to the map
+  key = keyName
+  value = value
+  */
+  set : function(key, value) {
 
     if (this._content[key] === undefined) { // create key
         this._content[key] = {};
     }
 
-        this._content[key][tag] = value;
+        this._content[key] = value;
 
-        return this._content[key][tag];
+        return this._content[key];
 
         //console.log("added " + key + " = " + value);
   },
@@ -7836,42 +8086,39 @@ tobi.Multimap.prototype = {
        return this._content[key];
   },
 
-  getValue : function(key,tag) {
-    return this._content[key][tag];
+  keys : function()
+  {
+    return this._content;
   },
 
-  hasKey : function(key) {
+  has : function(key) {
       return this._content.hasOwnProperty(key);
-  },
-
-  hasTagInKey : function(key,tag) {
-
-    if (this._content[key][tag])
-      return true;
-
-    return false;
-
   },
 
   delete : function(key) {
 
     if (!this.hasKey(key))
-      return;
+      return false;
 
-      for (var tag in this._content[key]) {
+      delete this._content[key];
 
-         delete this._content[key][tag];
+      return true;
+  },
 
-      }
+  deleteAt : function(key) {
+
+    if (!this.hasTagInKey(key))
+      return false;
+
+     delete this._content[key];
 
   },
 
-  deleteAt : function(key,tag) {
-
-    if (!this.hasTagInKey(key,tag))
-      return;
-
-     delete this._content[key][tag];
+  deleteByIndexedArray : function (array)
+  {
+    for (var i = 0; i < array.length; i++) {
+      delete this._content[array[i]];
+    }
 
   },
 
@@ -7879,13 +8126,15 @@ tobi.Multimap.prototype = {
 
     for (var property in this._content) {
 
-         for (var tag in this._content[property]) {
+      delete this._content[property];
 
-            delete this._content[property][tag];
-
-         }
     }
 
+  },
+
+  size : function()
+  {
+    return Object.keys(_contents).length;
   }
 
 }

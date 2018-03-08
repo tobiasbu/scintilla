@@ -79,7 +79,7 @@ updateTimeout : function() {
   this.game.update(Date.now());
 
 
-  this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.clock.timeOut_toCall);
+  this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.time.timeOut_toCall);
 
 },
 

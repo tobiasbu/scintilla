@@ -6,7 +6,7 @@
 *
 * --- tobiJS ---
 *
-* v1.2.0
+* v0.2.0
 *
 * tobiasbu.github.io
 *
@@ -19,7 +19,7 @@
 * @namespace tobi
 */
 var tobi = tobi || {
-  VERSION: '1.2.0'
+  VERSION: '0.2.0'
 };
 
 tobi.ShapeType = {

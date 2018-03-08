@@ -2,7 +2,7 @@
 tobi.AnimationCache = function(game) {
 
 this.game = game;
-this.map = new tobi.Multimap();
+//this.map = new tobi.Multimap();
 
 }
 
@@ -21,13 +21,13 @@ add : function(spritesheet,container,name) {
 
 
 
-  return this.map.set(container,name,animation);
+  //return this.map.set(container,name,animation);
 
 },
 
 get : function(container,name) {
 
-  return this.map.getValue(container,name);
+ // return this.map.getValue(container,name);
 
 }
 

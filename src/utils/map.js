@@ -32,8 +32,12 @@ tobi.Map.prototype = {
        return this._content[key];
   },
 
+  keys : function()
+  {
+    return this._content;
+  },
 
-  hasKey : function(key) {
+  has : function(key) {
       return this._content.hasOwnProperty(key);
   },
 
@@ -53,6 +57,14 @@ tobi.Map.prototype = {
       return false;
 
      delete this._content[key];
+
+  },
+
+  deleteByIndexedArray : function (array)
+  {
+    for (var i = 0; i < array.length; i++) {
+      delete this._content[array[i]];
+    }
 
   },
 

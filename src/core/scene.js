@@ -31,13 +31,13 @@ tobi.Scene = function(game) {
 tobi.Scene.prototype = {
 
 
-preload : function() {},
+/*preload : function() {},
 loading : function() {},
 loadingRender : function() {},
 start : function() {},
 update : function() {},
 render : function() {},
-destroy : function() {},
+destroy : function() {},*/
 
 _update : function() {
 

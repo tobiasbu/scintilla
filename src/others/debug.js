@@ -24,7 +24,7 @@ test : function() {
   this.game.draw.alpha(0.5);
   this.game.draw.rectangle(0,0,this.game.width,(14 * 4)+ 16,this.bgcolor);
   this.game.draw.alpha(1);
-  this.drawLine("FPS: " + Math.round(this.game.clock.fps) + " / 60");
+  this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
   this.drawLine("Instances in view: " + this.game.camera.instancesInView);
   this.drawLine("Instances count " + this.game.world.length);
   this.drawLine("Colliders count " + this.game.physics.length);
