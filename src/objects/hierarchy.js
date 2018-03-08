@@ -116,15 +116,6 @@ this._updateTransform = function() {
 
 };
 
-this.render = function() {
-
-  for (var i = 0; i < this.children.length; i++)
-  {
-
-      this.children[i].render(this.game.context);
-
-  }
-};
 
 
 });

@@ -38,6 +38,7 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
   this.scene = null;
   this.sound = null;
   this.draw = null;
+  this.render = null;
   this.universe = null;
   this.world = null;
   this.input = null;
@@ -132,6 +133,7 @@ tobi.Game.prototype = {
     this.universe = new tobi.Universe(this);
     this.world = new tobi.World(this);
     this.draw = new tobi.Draw(this);
+    this.render = new tobi.Render(this, this.canvas, this.context);
     this.scene = new tobi.SceneManager(this);
     this.input = new tobi.Input(this);
     this.instance = new tobi.Creator(this,this.world);
@@ -182,7 +184,7 @@ tobi.Game.prototype = {
           this._spiraling = 0;
           this.time.accumalator = 0;
 
-          this.render(this.time.accumulatorDelta);
+          this.render._render(this.time.accumulatorDelta);
 
       } else {
 
@@ -220,7 +222,7 @@ tobi.Game.prototype = {
 
           this._lastFrameCount = countFrames;
 
-            this.render(this.time.accumalator/this.time.accumulatorDelta);
+            this.render._render(this.time.accumalator/this.time.accumulatorDelta);
 
       }
 
@@ -268,27 +270,6 @@ tobi.Game.prototype = {
 
   },
 
-  render : function(time) {
-
-    this.context.setTransform(1, 0, 0, 1, 0, 0);
-    this.context.globalCompositeOperation = 'source-over';
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.context.fillStyle = this.universe.backgroundColor;
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.scene.render();
-    this.universe.render();
-
-    if (this.debug != null) {
-
-      this.context.setTransform(1, 0, 0, 1, 0, 0);
-      this.debug.test();
-      //console.log("asdasd");
-
-    }
-
-  },
-
-
   destroy : function() {
 
     this.updateGameMethod.destroy();
@@ -308,6 +289,7 @@ tobi.Game.prototype = {
     this.world = null;
     this.input = null;
     this.time = null;
+    this.render = null;
     this.component = null;
     this.instance = null;
     this.animationCache = null;

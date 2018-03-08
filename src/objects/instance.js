@@ -139,7 +139,7 @@ this._updateTransform = function() {
 
 }
 
-this.render = function(context) {
+/*this.render = function(context) {
 
 
   if (!this.visible || this._selfDestroy)
@@ -172,39 +172,10 @@ this.render = function(context) {
 
      this.children[i].render(context);
 
-
-     /*if (this.children[i].visible && !this.children[i]._selfDestroy) {
-
-     if (this.children[i]['_cycleRender'])
-        this.children[i]._cycleRender(context);
-
-        if (this.game.camera.view.intersects(this.children[i].bounds.box)) {
-
-          if (this.children[i].component['collider']) {
-             this.children[i].component['collider'].debugDraw(context,'red');
-
-          }
-
-        if (this.children[i].component['render']) { // if is gameobject
-            this.children[i].component['render'].render(context);
-            this.game.camera.instancesInView++;
-       }
-
-     }
-
-
-
-    if (this.children[i]['freelyrender']) {
-      context.setTransform(1, 0, 0, 1, 0, 0);
-      this.children[i].freelyrender(context);
-    }
-  }*/
-
-
     i++;
    }
 
-};
+};*/
 
 this._updateDepth = function() { // sort ascending
 

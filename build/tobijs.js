@@ -27,6 +27,7 @@ Rect : 1,
 Circle : 2,
 Polygon : 3
 }
+
 ;/*
 	ExtendJS 0.2.3
 	More info at http://extendjs.org
@@ -435,15 +436,6 @@ this._updateTransform = function() {
 
 };
 
-this.render = function() {
-
-  for (var i = 0; i < this.children.length; i++)
-  {
-
-      this.children[i].render(this.game.context);
-
-  }
-};
 
 
 });
@@ -662,7 +654,7 @@ this._updateTransform = function() {
 
 }
 
-this.render = function(context) {
+/*this.render = function(context) {
 
 
   if (!this.visible || this._selfDestroy)
@@ -695,39 +687,10 @@ this.render = function(context) {
 
      this.children[i].render(context);
 
-
-     /*if (this.children[i].visible && !this.children[i]._selfDestroy) {
-
-     if (this.children[i]['_cycleRender'])
-        this.children[i]._cycleRender(context);
-
-        if (this.game.camera.view.intersects(this.children[i].bounds.box)) {
-
-          if (this.children[i].component['collider']) {
-             this.children[i].component['collider'].debugDraw(context,'red');
-
-          }
-
-        if (this.children[i].component['render']) { // if is gameobject
-            this.children[i].component['render'].render(context);
-            this.game.camera.instancesInView++;
-       }
-
-     }
-
-
-
-    if (this.children[i]['freelyrender']) {
-      context.setTransform(1, 0, 0, 1, 0, 0);
-      this.children[i].freelyrender(context);
-    }
-  }*/
-
-
     i++;
    }
 
-};
+};*/
 
 this._updateDepth = function() { // sort ascending
 
@@ -951,6 +914,157 @@ if (parent != null) {
 
 
 //}
+;
+
+tobi.RenderLayer = function(game,name) {
+
+    this.name = name;
+    this.game = game;
+    this.__enable = true;
+    this.__renderers = [];
+    this.__isDirty = true;
+
+}
+
+tobi.RenderLayer.prototype = {
+
+    // Add renderable components
+    add : function(renderer) {
+    
+        if (renderer === undefined)
+            return;
+
+        this.__renderers.push(renderer);
+        this.renderer.__renderLayer = this;
+        this.__isDirty = true;
+
+    },
+
+    remove : function(renderer)
+    {
+        var index = this.__renderers.indexOf(renderer);
+
+        if(index === -1)
+            return;
+
+        return this.removeChildAt(index);
+    },
+
+    removeAt : function(index)
+    {
+        var child = this.getChildAt(index);
+        this.__renderers.splice( index, 1 );
+        return child;
+    },
+
+    at : function(index)
+    {
+        if (index < 0 || index >= this.__renderers.length)
+        {
+            throw new Error('RenderLayer.at: Renderer at '+ index +' does not exist in the render layer list: \"' + name + "\".");
+        }
+        return this.__renderers[index];
+
+    },
+
+    render : function()
+    {
+        if (!this.__enable)
+            return;
+
+        if (this.__isDirty)
+        {
+            this._updateDepth();
+            this.__isDirty = false;
+        }
+
+
+        for (var i = 0; i < this.__renderers.length; i++)
+        {
+            this.__renderers[i].render(this.game.context);
+        }
+    },
+
+    clear : function()
+    {
+        this.__renderers.splice(0, this.__renderers.length);
+    },
+
+    _updateDepth : function() { // sort ascending
+
+        this.__renderers.sort(
+
+          function(a, b) {
+      
+            if (a.depth > b.depth) {
+      
+              return 1;
+      
+            } else if (a.depth < b.depth) {
+      
+              return -1;
+      
+            } else {
+      
+              if (a.z > b.z) {
+                return 1;
+              } else {
+                return -1;
+              }
+      
+      
+            }
+          });
+
+          
+    }
+
+
+
+}
+tobi.RenderLayer.prototype.constructor = tobi.RenderLayer;
+
+
+Object.defineProperty(tobi.RenderLayer.prototype, "length", {
+
+    get: function() {
+        return this.__renderers.length;
+    }
+
+});
+
+Object.defineProperty(tobi.RenderLayer.prototype, "name", {
+
+    get: function() {
+        return this.__renderers.name;
+    }
+
+});
+
+Object.defineProperty(tobi.RenderLayer.prototype, "enable", {
+
+    get: function() {
+        return this.__enable;
+    },
+
+    set: function(value) {
+
+            value = !!value;
+    
+        if (value !== this._enabled)
+        {
+            //if (!value)
+            //    this.reset();
+
+            this._enabled = value;
+        }
+    }
+    
+
+});
+
+
+
 ;
 /**
  * Create a Canvas object.
@@ -2231,23 +2345,319 @@ tobi.Cache.prototype = {
 
 }
 ;
-/* Base Class
-*
-* explanation: why?
-* i'm in fact a OO programmer and I fall in big problem right now (01/04/2016)
-* i learning javascript but i really want the 'class' and 'inheritance'.
-* yes, i can do this in js using 'prototypes'. but...
-* since i created the GameObject class, a generic class for the user create his game entities
-* i noticed that will we have a problem when instantiate the GameObjects in the world game.
-* need to change everything
-*
-*
-* Update: 02/04/2016
-*
-*/
+tobi.Dispatcher = Class.extend(function() {
 
 
+this.dispatch = function() {
+
+
+}
+
+});
+;
 /**
+* Main class of engine. Holds all main data.
+* @class Game
+* @constructor
+*/
+tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
+
+  /**
+  * @property {string|HTMLElement} parent - The Games DOM parent.
+  * @default
+  */
+  this.parent = 'body';
+  this.width = 800;
+  this.height = 600;
+
+  // object
+  this.config = null;
+
+  // boolean
+  this.systemInited = false;
+  this.isRunning = false;
+  this.debugMode = false;
+
+  // float
+  this.timeMode = false;
+
+  // time
+  this._spiraling = 0;
+  this._lastFrameCount = 0;
+
+
+  //objects
+  this.debug = null;
+  this.cache = null;
+  this.load = null;
+  this.canvas = null;
+  this.scene = null;
+  this.sound = null;
+  this.draw = null;
+  this.render = null;
+  this.universe = null;
+  this.world = null;
+  this.input = null;
+  this.time = null;
+  this.component = null;
+  this.instance = null;
+  this.animationCache = null;
+  this.updateGameMethod = null;
+  this.pool = null;
+
+  this.context = null;
+
+  //parse config
+  if (arguments.length === 1 && typeof arguments[0] === 'object')
+   {
+
+     this.parseConfiguration(arguments[0]);
+
+   }
+   else
+   {
+       if (typeof width !== 'undefined')
+        this.width = width;
+
+       if (typeof height !== 'undefined')
+        this.height = height;
+
+      if (typeof timeOutMode !== 'undefined')
+        this.timeMode = timeOutMode;
+
+        if (typeof debugMode !== 'undefined')
+        this.debugMode = debugMode;
+   }
+
+
+  this.init();
+
+  return this;
+
+}
+
+
+tobi.Game.prototype = {
+
+
+
+  parseConfiguration : function(config) {
+
+    this.config = config;
+
+    if (config['debug'])
+    {
+        this.debugMode = config['debug'];
+
+    }
+
+    if (config['width'])
+    {
+        this.width = config['width'];
+    }
+
+    if (config['height'])
+    {
+        this.height = config['height'];
+    }
+
+    if (config['parent'])
+    {
+        this.parent = config['parent'];
+    }
+
+  },
+  /**
+    * Initialize engine
+    *
+    * @method tobiJS.Game#init()
+    * @protected
+    */
+  init : function() {
+
+    if (this.systemInited)
+        return;
+
+
+
+    this.canvas = tobi.Canvas.create(this.parent,this.width,this.height);
+    this.context = this.canvas.getContext("2d", { alpha: false });
+
+    this.cache = new tobi.Cache(this);
+    this.load = new tobi.LoadManager(this);
+    this.time = new tobi.Time(this);
+    this.universe = new tobi.Universe(this);
+    this.world = new tobi.World(this);
+    this.draw = new tobi.Draw(this);
+    this.render = new tobi.Render(this, this.canvas, this.context);
+    this.scene = new tobi.SceneManager(this);
+    this.input = new tobi.Input(this);
+    this.instance = new tobi.Creator(this,this.world);
+    this.component = new tobi.GameComponents(this);
+    this.animationCache = new tobi.AnimationCache(this);
+    this.sound = new tobi.SoundManager(this);
+    this.pool = new tobi.Pool(this);
+    this.physics = new tobi.Physics(this);
+
+    if (this.debugMode)
+      this.debug = new tobi.Debug(this);
+
+    this.time.start();
+    this.input.init();
+    this.sound.start();
+    this.world.start();
+
+    this.updateGameMethod = new tobi.UpdateGame(this,this.timeMode);
+    this.updateGameMethod.start();
+
+
+
+    this.systemInited = true;
+    this.isRunning = true;
+
+
+    console.log("tobiJS Created!");
+
+  },
+  
+  /**
+    * core game loop
+    *
+    * @method tobiJS.Game#update()
+    * @protected
+    */
+  update : function(time) {
+
+    if (this.systemInited) {
+
+
+
+      this.time.update(time);
+
+      if (this._spiraling > 1) {
+
+          this.time.deltaTime = 0;
+          this._spiraling = 0;
+          this.time.accumalator = 0;
+
+          this.render._render(this.time.accumulatorDelta);
+
+      } else {
+
+      var countFrames = 0;
+
+      while (this.time.accumalator >= this.time.accumulatorDelta) {
+
+        //  this.time.updateStart = window.performance.now();
+
+          this.time.deltaTime = Math.min(this.time.accumalator,this.time.accumulatorDelta) / 1000;
+
+          this.logic(this.time.deltaTime);
+
+          //this.time.updateLast =  window.performance.now();
+        //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
+
+          this.time.accumalator -= this.time.accumulatorDelta;
+
+          countFrames++;
+
+          this.time.refresh();
+
+          if (countFrames >= 240) { // SPIRAL
+              //panic();
+              this.time.accumalator = 0;
+
+              break;
+          }
+      }
+
+        if (countFrames > this._lastFrameCount)
+           this._spiraling++;
+       else if (countFrames < this._lastFrameCount)
+          this._spiraling = 0;
+
+          this._lastFrameCount = countFrames;
+
+            this.render._render(this.time.accumalator/this.time.accumulatorDelta);
+
+      }
+
+
+
+    }
+
+      //GI.context.fillRect(0, 0, GI.current_room.width, GI.current_room.height);
+
+        /*var instances = this.current_scene.instances;
+
+        //
+
+        instances.forEach( function(instance, value) {
+
+            instance.draw();
+            //console.log("asdasd");
+
+
+        })*/
+
+
+
+
+
+
+  },
+
+  logic : function(timeStep) {
+
+    this.scene.preUpdate();
+    this.scene.update(timeStep);
+    this.input.update();
+    this.universe.preUpdate(timeStep);
+
+
+    //this.world.camera.update();
+
+    this.universe.update(timeStep);
+    this.physics.update();
+    this.sound.update();
+
+    this.universe._updateTransform();
+
+
+  },
+
+  destroy : function() {
+
+    this.updateGameMethod.destroy();
+    this.physics.destroy();
+    this.universe.destroy();
+    this.sound.destroy();
+    this.input.destroy();
+
+    this.debug = null;
+    this.cache = null;
+    this.load = null;
+    this.canvas = null;
+    this.scene = null;
+    this.sound = null;
+    this.draw = null;
+    this.universe = null;
+    this.world = null;
+    this.input = null;
+    this.time = null;
+    this.render = null;
+    this.component = null;
+    this.instance = null;
+    this.animationCache = null;
+    this.updateGameMethod = null;
+
+
+  },
+
+}
+
+tobi.Game.prototype.constructor = tobi.Game;
+;/**
  * Extend a class prototype with the provided mixin descriptors.
  * Designed as a faster replacement for John Resig's Simple Inheritance.
  * @name extend
@@ -2522,337 +2932,6 @@ tobi._extend = function(dest,source) {
   };
 })();
 */
-;
-tobi.Dispatcher = Class.extend(function() {
-
-
-this.dispatch = function() {
-
-
-}
-
-});
-;
-/**
-* Main class of engine. Holds all main data.
-* @class Game
-* @constructor
-*/
-tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
-
-  /**
-  * @property {string|HTMLElement} parent - The Games DOM parent.
-  * @default
-  */
-  this.parent = 'body';
-  this.width = 800;
-  this.height = 600;
-
-  // object
-  this.config = null;
-
-  // boolean
-  this.systemInited = false;
-  this.isRunning = false;
-  this.debugMode = false;
-
-  // float
-  this.timeMode = false;
-
-  // time
-  this._spiraling = 0;
-  this._lastFrameCount = 0;
-
-
-  //objects
-  this.debug = null;
-  this.cache = null;
-  this.load = null;
-  this.canvas = null;
-  this.scene = null;
-  this.sound = null;
-  this.draw = null;
-  this.universe = null;
-  this.world = null;
-  this.input = null;
-  this.time = null;
-  this.component = null;
-  this.instance = null;
-  this.animationCache = null;
-  this.updateGameMethod = null;
-  this.pool = null;
-
-  this.context = null;
-
-  //parse config
-  if (arguments.length === 1 && typeof arguments[0] === 'object')
-   {
-
-     this.parseConfiguration(arguments[0]);
-
-   }
-   else
-   {
-       if (typeof width !== 'undefined')
-        this.width = width;
-
-       if (typeof height !== 'undefined')
-        this.height = height;
-
-      if (typeof timeOutMode !== 'undefined')
-        this.timeMode = timeOutMode;
-
-        if (typeof debugMode !== 'undefined')
-        this.debugMode = debugMode;
-   }
-
-
-  this.init();
-
-  return this;
-
-}
-
-
-tobi.Game.prototype = {
-
-
-
-  parseConfiguration : function(config) {
-
-    this.config = config;
-
-    if (config['debug'])
-    {
-        this.debugMode = config['debug'];
-
-    }
-
-    if (config['width'])
-    {
-        this.width = config['width'];
-    }
-
-    if (config['height'])
-    {
-        this.height = config['height'];
-    }
-
-    if (config['parent'])
-    {
-        this.parent = config['parent'];
-    }
-
-  },
-  /**
-    * Initialize engine
-    *
-    * @method tobiJS.Game#init()
-    * @protected
-    */
-  init : function() {
-
-    if (this.systemInited)
-        return;
-
-
-
-    this.canvas = tobi.Canvas.create(this.parent,this.width,this.height);
-    this.context = this.canvas.getContext("2d", { alpha: false });
-
-    this.cache = new tobi.Cache(this);
-    this.load = new tobi.LoadManager(this);
-    this.time = new tobi.Time(this);
-    this.universe = new tobi.Universe(this);
-    this.world = new tobi.World(this);
-    this.draw = new tobi.Draw(this);
-    this.scene = new tobi.SceneManager(this);
-    this.input = new tobi.Input(this);
-    this.instance = new tobi.Creator(this,this.world);
-    this.component = new tobi.GameComponents(this);
-    this.animationCache = new tobi.AnimationCache(this);
-    this.sound = new tobi.SoundManager(this);
-    this.pool = new tobi.Pool(this);
-    this.physics = new tobi.Physics(this);
-
-    if (this.debugMode)
-      this.debug = new tobi.Debug(this);
-
-    this.time.start();
-    this.input.init();
-    this.sound.start();
-    this.world.start();
-
-    this.updateGameMethod = new tobi.UpdateGame(this,this.timeMode);
-    this.updateGameMethod.start();
-
-
-
-    this.systemInited = true;
-    this.isRunning = true;
-
-
-    console.log("tobiJS Created!");
-
-  },
-  
-  /**
-    * core game loop
-    *
-    * @method tobiJS.Game#update()
-    * @protected
-    */
-  update : function(time) {
-
-    if (this.systemInited) {
-
-
-
-      this.time.update(time);
-
-      if (this._spiraling > 1) {
-
-          this.time.deltaTime = 0;
-          this._spiraling = 0;
-          this.time.accumalator = 0;
-
-          this.render(this.time.accumulatorDelta);
-
-      } else {
-
-      var countFrames = 0;
-
-      while (this.time.accumalator >= this.time.accumulatorDelta) {
-
-        //  this.time.updateStart = window.performance.now();
-
-          this.time.deltaTime = Math.min(this.time.accumalator,this.time.accumulatorDelta) / 1000;
-
-          this.logic(this.time.deltaTime);
-
-          //this.time.updateLast =  window.performance.now();
-        //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
-
-          this.time.accumalator -= this.time.accumulatorDelta;
-
-          countFrames++;
-
-          this.time.refresh();
-
-          if (countFrames >= 240) { // SPIRAL
-              //panic();
-              this.time.accumalator = 0;
-
-              break;
-          }
-      }
-
-        if (countFrames > this._lastFrameCount)
-           this._spiraling++;
-       else if (countFrames < this._lastFrameCount)
-          this._spiraling = 0;
-
-          this._lastFrameCount = countFrames;
-
-            this.render(this.time.accumalator/this.time.accumulatorDelta);
-
-      }
-
-
-
-    }
-
-      //GI.context.fillRect(0, 0, GI.current_room.width, GI.current_room.height);
-
-        /*var instances = this.current_scene.instances;
-
-        //
-
-        instances.forEach( function(instance, value) {
-
-            instance.draw();
-            //console.log("asdasd");
-
-
-        })*/
-
-
-
-
-
-
-  },
-
-  logic : function(timeStep) {
-
-    this.scene.preUpdate();
-    this.scene.update(timeStep);
-    this.input.update();
-    this.universe.preUpdate(timeStep);
-
-
-    //this.world.camera.update();
-
-    this.universe.update(timeStep);
-    this.physics.update();
-    this.sound.update();
-
-    this.universe._updateTransform();
-
-
-  },
-
-  render : function(time) {
-
-    this.context.setTransform(1, 0, 0, 1, 0, 0);
-    this.context.globalCompositeOperation = 'source-over';
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.context.fillStyle = this.universe.backgroundColor;
-    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.scene.render();
-    this.universe.render();
-
-    if (this.debug != null) {
-
-      this.context.setTransform(1, 0, 0, 1, 0, 0);
-      this.debug.test();
-      //console.log("asdasd");
-
-    }
-
-  },
-
-
-  destroy : function() {
-
-    this.updateGameMethod.destroy();
-    this.physics.destroy();
-    this.universe.destroy();
-    this.sound.destroy();
-    this.input.destroy();
-
-    this.debug = null;
-    this.cache = null;
-    this.load = null;
-    this.canvas = null;
-    this.scene = null;
-    this.sound = null;
-    this.draw = null;
-    this.universe = null;
-    this.world = null;
-    this.input = null;
-    this.time = null;
-    this.component = null;
-    this.instance = null;
-    this.animationCache = null;
-    this.updateGameMethod = null;
-
-
-  },
-
-}
-
-tobi.Game.prototype.constructor = tobi.Game;
 ;
 // Class AssetManager
 tobi.LoadManager = function(game) {
@@ -4549,9 +4628,7 @@ tobi.Key.prototype = {
 Object.defineProperty(tobi.Key.prototype, "enabled", {
 
     get: function () {
-
         return this._enabled;
-
     },
 
     set: function (value) {
@@ -4561,7 +4638,7 @@ Object.defineProperty(tobi.Key.prototype, "enabled", {
         if (value !== this._enabled)
         {
             if (!value)
-                this.reset(false);
+                this.reset();
 
             this._enabled = value;
         }
@@ -6775,6 +6852,87 @@ if (color === undefined)
 
 tobi.Draw.prototype.constructor = tobi.Draw;
 ;
+tobi.Font = function(source) {
+
+    this.fontFamily = null;
+
+};
+
+tobi.Render = function(game, canvas, context) {
+
+    this.game = game;
+    this.canvas = canvas;
+    this.context = context;
+    this.__enable = true;
+    this.__renderLayers = [];
+    this.__renderLayersMap = new tobi.Map();
+    this.add('default');
+}
+
+tobi.Render.prototype = {
+
+    add : function(name)
+    {
+        if (this.contains(name))
+        {
+            throw new Error("Render.add: There is already a RenderLayer called: \"" +  name + "\".");
+        }
+       
+        this.__renderLayersMap.set(name, this.__renderLayers.length);
+        this.__renderLayers.push(new tobi.RenderLayer(game, name));
+    },
+
+    remove : function(name)
+    {
+        if (typeof name !== 'string')
+            throw new Error("Render.remove: The value name is not a string.");
+
+        if (name === "default")
+            throw new Error("Render.remove: You can not remove the \"default\" layer.");
+
+        if (!this.__renderLayersMap.has(name))
+            throw new Error("Render.remove: Could not remove layer. There is no layer named \"" + name + "\".");
+
+        var index = this.__renderLayersMap.get(name);
+        this.__renderLayers.splice(index, 1);
+        this.__renderLayersMap.delete(name);
+    },
+
+    contains : function(name)
+    {
+        if (typeof name !== 'string')
+            throw new Error("Render.contains: The value name is not a string.");
+
+        return this.__renderLayers.indexOf(name) > -1;
+    },
+
+    _render : function()
+    {
+        if (!this.__enable)
+            return;
+
+        this.game.context.setTransform(1, 0, 0, 1, 0, 0);
+        this.game.context.globalCompositeOperation = 'source-over';
+        this.game.context.clearRect(0, 0, this.canvas.width, this.game.height);
+        //this.game.context.fillStyle = this.universe.backgroundColor;
+        this.game.context.fillRect(0, 0, this.canvas.width, this.game.height);
+
+        for (var i = 0; i < this.__renderLayers.length; i++)
+        {
+            if (this.__renderLayers[i].enable)
+            {
+                this.__renderLayers[i].render();
+            }
+        }
+    }
+
+    
+
+}
+
+tobi.Render.prototype.constructor = tobi.Render;
+
+;
 /**
 * Image that holds image data.
 * @class Image
@@ -6821,43 +6979,7 @@ tobi.Image.load = function(path) {
 tobi.Image.onload = function(image) {
 
 }
-;;
-
-tobi.RenderLayer = function(game,name) {
-
-    this.name = name;
-    this.game = game;
-    this.__renderers = [];
-
-}
-
-tobi.RenderLayer.prototype = {
-
-    // Add renderable components
-    add : function(renderer) {
-    
-        
-    
-    },
-
-    remove : function(renderer)
-    {
-
-    },
-
-    removeAt : function(index)
-    {
-
-    },
-
-    get : function(index)
-    {
-
-    }
-
-}
-
-tobi.RenderLayer.prototype.constructor = tobi.RenderLayer;;
+;
 tobi.textureCache = {};
 tobi.textureCacheID = 0;
 
@@ -8095,9 +8217,20 @@ tobi.Map.prototype = {
       return this._content.hasOwnProperty(key);
   },
 
+  remove : function(key) {
+
+    if (!this.has(key))
+      return null;
+
+    var prop =  this._content[key];
+    delete this._content[key];
+    return prop;
+
+  },
+
   delete : function(key) {
 
-    if (!this.hasKey(key))
+    if (!this.has(key))
       return false;
 
       delete this._content[key];
@@ -8107,8 +8240,8 @@ tobi.Map.prototype = {
 
   deleteAt : function(key) {
 
-    if (!this.hasTagInKey(key))
-      return false;
+    //if (!this.hasTagInKey(key))
+    //  return false;
 
      delete this._content[key];
 
@@ -8138,6 +8271,8 @@ tobi.Map.prototype = {
   }
 
 }
+
+tobi.Map.prototype.constructor = tobi.Map;
 ;
 tobi.Utils = {
 

@@ -1,20 +1,3 @@
-
-/* Base Class
-*
-* explanation: why?
-* i'm in fact a OO programmer and I fall in big problem right now (01/04/2016)
-* i learning javascript but i really want the 'class' and 'inheritance'.
-* yes, i can do this in js using 'prototypes'. but...
-* since i created the GameObject class, a generic class for the user create his game entities
-* i noticed that will we have a problem when instantiate the GameObjects in the world game.
-* need to change everything
-*
-*
-* Update: 02/04/2016
-*
-*/
-
-
 /**
  * Extend a class prototype with the provided mixin descriptors.
  * Designed as a faster replacement for John Resig's Simple Inheritance.

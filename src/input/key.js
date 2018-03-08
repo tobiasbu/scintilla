@@ -141,9 +141,7 @@ tobi.Key.prototype = {
 Object.defineProperty(tobi.Key.prototype, "enabled", {
 
     get: function () {
-
         return this._enabled;
-
     },
 
     set: function (value) {
@@ -153,7 +151,7 @@ Object.defineProperty(tobi.Key.prototype, "enabled", {
         if (value !== this._enabled)
         {
             if (!value)
-                this.reset(false);
+                this.reset();
 
             this._enabled = value;
         }

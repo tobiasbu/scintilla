@@ -41,9 +41,20 @@ tobi.Map.prototype = {
       return this._content.hasOwnProperty(key);
   },
 
+  remove : function(key) {
+
+    if (!this.has(key))
+      return null;
+
+    var prop =  this._content[key];
+    delete this._content[key];
+    return prop;
+
+  },
+
   delete : function(key) {
 
-    if (!this.hasKey(key))
+    if (!this.has(key))
       return false;
 
       delete this._content[key];
@@ -53,8 +64,8 @@ tobi.Map.prototype = {
 
   deleteAt : function(key) {
 
-    if (!this.hasTagInKey(key))
-      return false;
+    //if (!this.hasTagInKey(key))
+    //  return false;
 
      delete this._content[key];
 
@@ -84,3 +95,5 @@ tobi.Map.prototype = {
   }
 
 }
+
+tobi.Map.prototype.constructor = tobi.Map;

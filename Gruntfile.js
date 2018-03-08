@@ -12,7 +12,7 @@ module.exports = function(grunt) {
       },
       dist: {
         // the files to concatenate
-        src: ['src/tobi.js', 'src/core/extend.js', 'src/core/renderable.js', 'src/objects/transform.js','src/objects/hierarchy.js','src/objects/instance.js',  'src/**/*.js'],
+        src: ['src/tobi.js', 'src/core/extend.js', 'src/core/renderable.js', 'src/objects/transform.js','src/objects/hierarchy.js','src/objects/instance.js', 'src/render/renderlayer.js', 'src/**/*.js'],
         // the location of the resulting JS file
         dest: 'build/<%= pkg.name %>.js'
       }
