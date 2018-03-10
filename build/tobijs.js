@@ -1176,25 +1176,43 @@ tobi.File = Class.extend(function() {
 
     }
 
-    this.onLoad = function()
+    this.onLoad = function(event)
     {
-        console.log("LOADED");
+        this.reset();
+
+        if (event.target && event.target.status !== 200)
+            this.loader.next(this, true);
+        else
+            this.loader.next(this, false);
+
     }
 
     this.onError = function()
     {
-        console.log("ERROR");
+        this.reset();
+
+        this.loader.next(this, true);
+    }
+
+    this.onProgress = function(event)
+    {
+        if (event.lengthComputable)
+        {
+            this.loadedBytes = event.loaded;
+            this.totalBytes = event.total;
+
+            this.progress = Math.min((this.loadedBytes / this.totalBytes), 1);
+
+            //this.loader.emit('fileprogress', this, this.progress);
+        }
     }
 
     this.onDone = function()
     {
-        console.log("DONE");
+     
     }
 
-    this.onProgress = function()
-    {
-        console.log("PROGRESS");
-    }
+
 
     this.reset = function()
     {
@@ -3438,7 +3456,7 @@ preUpdate : function() {
             this.onUpdateCallback.call(this.current_scene, this.game);
         }
 
-        this.current_scene._update();
+        //this.current_scene._update();
 
       } else {
 
@@ -4641,8 +4659,24 @@ update : function() {
       }
     }*/
 
-   var keys = this._keyWatch.keys();
-    for (var key in keys)
+   //var keyswatch = this._keyWatch; //.keys();
+
+    var self = this;
+
+   this._keyWatch.each(function (key, value) {
+      //var value = this._keyWatch.get(key);
+      value.update();
+
+      //console.log(value);
+
+      if (value.event() == tobi.KeyEvent.IDLE)
+      {
+      
+        // value.reset();
+          self._keyGarbage.push(key);
+      }
+   });
+    /*for (var key in keys)
     {
       //console.log("UPDATE")
 
@@ -4657,7 +4691,7 @@ update : function() {
               this._keyGarbage.push(key);
           }
       }
-    }
+    }*/
 
     if (this._keyGarbage.length > 0)
     {
@@ -5149,10 +5183,15 @@ tobi.LoadManager = function(game) {
   this.game = game;
   this.cache = game.cache;
 
-  this._fileQueue = [];
+  this._filesQueue = [];
   this._filesCount = 0;
-  this._filesLoaded = 0;
-  this._fileErrorCount = 0;
+
+  this._successFiles = [];
+  this._successCount = 0;
+
+  this._failedCount = 0;
+  this._failedFiles = [];
+
   this.isDownloading = false;
   this._totalFiles = 0;
 
@@ -5181,7 +5220,7 @@ tobi.LoadManager.prototype = {
 
 
 
-  queueAsset : function(type, tag, path, elements) {
+  /*queueAsset : function(type, tag, path, elements) {
 
     var file = {
       type:type,
@@ -5205,25 +5244,25 @@ tobi.LoadManager.prototype = {
 
     if (fileIndex > -1)
     {
-           var currentFile = this._fileQueue[fileIndex];
+           var currentFile = this._filesQueue[fileIndex];
 
            if (!currentFile.loading && !currentFile.loaded)
            {
-               this._fileQueue[fileIndex] = file;
+               this._filesQueue[fileIndex] = file;
            }
            else
            {
-               this._fileQueue.push(file);
+               this._filesQueue.push(file);
                this._filesCount++;
            }
     }
     else if (fileIndex === -1)
     {
-      this._fileQueue.push(file);
+      this._filesQueue.push(file);
       this._filesCount++;
     }
 
-  },
+  },*/
 
 
   setPath : function(path)
@@ -5259,21 +5298,21 @@ tobi.LoadManager.prototype = {
 
     if (fileIndex > -1)
     {
-           var currentFile = this._fileQueue[fileIndex];
+           var currentFile = this._filesQueue[fileIndex];
 
            if (!currentFile.loading && !currentFile.loaded)
            {
-               this._fileQueue[fileIndex] = asset;
+               this._filesQueue[fileIndex] = asset;
            }
            else
            {
-               this._fileQueue.push(asset);
+               this._filesQueue.push(asset);
                this._filesCount++;
            }
     }
     else if (fileIndex === -1)
     {
-      this._fileQueue.push(asset);
+      this._filesQueue.push(asset);
       this._filesCount++;
     }
   },
@@ -5294,9 +5333,9 @@ tobi.LoadManager.prototype = {
 
     var found = -1;
 
-        for (var i = 0; i < this._fileQueue.length; i++)
+        for (var i = 0; i < this._filesQueue.length; i++)
         {
-            var file = this._fileQueue[i];
+            var file = this._filesQueue[i];
 
             if (file.type === type && file.name === tag)
             {
@@ -5318,8 +5357,8 @@ tobi.LoadManager.prototype = {
 
     this.isDownloading = false;
     this._filesCount = 0;
-    this._filesLoaded = 0;
-    this._fileQueue.length = 0;
+    this._successCount = 0;
+    this._filesQueue.length = 0;
     this._fileErrorCount = 0;
     this.progress = 0
     this.state = LOADER_STATE.IDLE;
@@ -5337,11 +5376,10 @@ tobi.LoadManager.prototype = {
 
     this.progress = 0;
     this.state = LOADER_STATE.LOADING;
-    this._filesCount = this._fileQueue.length;
+    this._filesCount = this._filesQueue.length;
 
     if (this._filesCount === 0)
     {
-      console.log("NO FILE");
       this.end();
     }
     else
@@ -5364,11 +5402,9 @@ tobi.LoadManager.prototype = {
   processFileQueue : function() {
 
 
-    for (var i = 0; i < this._fileQueue.length; i++) {
+    for (var i = 0; i < this._filesQueue.length; i++) {
 
-      var file = this._fileQueue[i];
-
-      console.log(file);
+      var file = this._filesQueue[i];
 
       if (file.state === LOADER_STATE.FINISHED ||
          file.state === LOADER_STATE.PENDING) // && this.inflight.size < this.maxParallelDownloads))
@@ -5385,25 +5421,18 @@ tobi.LoadManager.prototype = {
 
   },
 
-  /*loadFile : function(file) {
-
-
-    /*switch (file.type) {
-
-      case 'image': this.loadImageFile(file); break;
-      case 'audio': {
-
-        // must check if audio tag or webaudio
-        if (this.game.sound.webAudio)
-          this.loadAudioFile(file);
-
-
-        break;
+  next : function(concludedFile, hasError)
+  {
+      if (hasError)
+      {
+          this._failedFiles.push(concludedFile);
+          this._failedCount++;
+      } else {
+          this._successFiles.push(concludedFile);
+          this._successCount++;
       }
-
-    }
-
-  },*/
+      
+  },
 
   loadImageFile : function(file) {
 
@@ -5525,7 +5554,7 @@ tobi.LoadManager.prototype = {
       this._fileErrorCount++;
     } else {
       file.loaded = true;
-      this._filesLoaded++;
+      this._successCount++;
     }
 
     this.updateProgress();
@@ -5549,7 +5578,7 @@ tobi.LoadManager.prototype = {
   downloadIsDone : function() {
 
 
-    return (this._fileQueue.length == (this._filesLoaded + this._fileErrorCount));
+    return (this._filesQueue.length == (this._successCount + this._fileErrorCount));
 
   },
 
@@ -5561,9 +5590,9 @@ tobi.LoadManager.prototype = {
 
     if (this._filesCount != 0)
     {
-      this.progress = 1 - (this._filesLoadedCount / this._filesCount);
+      this.progress = 1 - (this._successCountCount / this._filesCount);
     }
-     //progress = parseFloat(this._filesLoaded) / parseFloat(this._filesCount);
+     //progress = parseFloat(this._successCount) / parseFloat(this._filesCount);
 
 
 
@@ -5574,7 +5603,7 @@ tobi.LoadManager.prototype = {
 
   totalQueuedFiles: function () {
 
-        return this._filesCount - this._filesLoaded;
+        return this._filesCount - this._successCount;
 
   }
 
@@ -5669,6 +5698,8 @@ tobi.XHR = {
 
         if (a === undefined)
             out = this.createSettings(); // : Extend(global);
+        // else
+            // do something cool
 
         if (b)
         {
@@ -8084,6 +8115,164 @@ get : function() {
 });
 ;
 
+
+// Map simple class
+tobi.Map = function() 
+{
+  this._content = {};
+  this._size = 0;
+}
+
+tobi.Map.prototype = {
+
+
+  /* 
+  Add or set value to the map
+  key = keyName
+  value = value
+  */
+  set : function(key, value) {
+
+    if (!this.has(key))
+    {
+        this._size++;
+    }
+
+    this._content[key] = value;
+    
+    return this;
+
+  },
+
+  get : function(key) {
+      if (this.has(key))
+      {
+        return this._content[key];
+      }
+      else
+      {
+        return null;
+      }
+  },
+
+  has : function(key) {
+    return (this._content.hasOwnProperty(key));
+  },
+
+  contains : function(value)
+  {
+    for (var key in this._content)
+    {
+      if (entries[key] === value)
+      {
+        return true;
+      } else
+        continue;
+    }
+
+    return false;
+  },
+
+  keys : function()
+  {
+    return Object.keys(this._content);
+  },
+
+  values : function()
+  {
+    var values = [];
+    var content = this._content;
+
+    for (var key in content)
+      values.push(entries[key]);
+        
+    return values;
+  },
+
+  remove : function(key) {
+
+    if (!this.has(key))
+      return null;
+
+    var prop =  this._content[key];
+    delete this._content[key];
+    this._size--;
+    return prop;
+
+  },
+
+  delete : function(key) {
+
+    if (!this.has(key))
+      return false;
+
+      delete this._content[key];
+      this._size--;
+
+      return true;
+  },
+
+  deleteAt : function(key) {
+
+    //if (!this.hasTagInKey(key))
+    //  return false;
+      this._size--;
+     delete this._content[key];
+
+  },
+
+  deleteByIndexedArray : function (array)
+  {
+    for (var i = 0; i < array.length; i++) {
+      delete this._content[array[i]];
+      this._size--;
+    }
+
+  },
+
+
+  clear : function() {
+
+    for (var property in this._content) {
+
+      delete this._content[property];
+      
+
+    }
+
+    this._size = 0;
+
+  },
+
+  size : function()
+  {
+    return this._size;
+  },
+
+  slowSize : function()
+  {
+    return Object.keys(_contents).length;
+  },
+
+  each : function(callback)
+  {
+    var content = this._content;
+
+    for (var property in content) {
+
+      if (callback(property, content[property]) === false)
+          break;
+      
+    }
+
+    return this;
+  }
+
+}
+
+tobi.Map.prototype.constructor = tobi.Map;
+;;
+
 tobi.Time = function(game) {
 
   this.game = game;
@@ -8615,105 +8804,6 @@ var cloner = (function (O) {'use strict';
   };
 
 }(Object));
-;
-
-
-// Map simple class
-tobi.Map = function() 
-{
-  this._content = {};
-}
-
-tobi.Map.prototype = {
-
-
-  /* 
-  Add or set value to the map
-  key = keyName
-  value = value
-  */
-  set : function(key, value) {
-
-    if (this._content[key] === undefined) { // create key
-        this._content[key] = {};
-    }
-
-        this._content[key] = value;
-
-        return this._content[key];
-
-        //console.log("added " + key + " = " + value);
-  },
-
-  get : function(key) {
-       return this._content[key];
-  },
-
-  keys : function()
-  {
-    return this._content;
-  },
-
-  has : function(key) {
-      return this._content.hasOwnProperty(key);
-  },
-
-  remove : function(key) {
-
-    if (!this.has(key))
-      return null;
-
-    var prop =  this._content[key];
-    delete this._content[key];
-    return prop;
-
-  },
-
-  delete : function(key) {
-
-    if (!this.has(key))
-      return false;
-
-      delete this._content[key];
-
-      return true;
-  },
-
-  deleteAt : function(key) {
-
-    //if (!this.hasTagInKey(key))
-    //  return false;
-
-     delete this._content[key];
-
-  },
-
-  deleteByIndexedArray : function (array)
-  {
-    for (var i = 0; i < array.length; i++) {
-      delete this._content[array[i]];
-    }
-
-  },
-
-  clear : function() {
-
-    for (var property in this._content) {
-
-      delete this._content[property];
-
-    }
-
-  },
-
-  size : function()
-  {
-    return Object.keys(_contents).length;
-  }
-
-}
-
-tobi.Map.prototype.constructor = tobi.Map;
 ;
 tobi.Utils = {
 

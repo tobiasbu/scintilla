@@ -53,6 +53,8 @@ tobi.XHR = {
 
         if (a === undefined)
             out = this.createSettings(); // : Extend(global);
+        // else
+            // do something cool
 
         if (b)
         {

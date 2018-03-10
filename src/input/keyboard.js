@@ -182,8 +182,24 @@ update : function() {
       }
     }*/
 
-   var keys = this._keyWatch.keys();
-    for (var key in keys)
+   //var keyswatch = this._keyWatch; //.keys();
+
+    var self = this;
+
+   this._keyWatch.each(function (key, value) {
+      //var value = this._keyWatch.get(key);
+      value.update();
+
+      //console.log(value);
+
+      if (value.event() == tobi.KeyEvent.IDLE)
+      {
+      
+        // value.reset();
+          self._keyGarbage.push(key);
+      }
+   });
+    /*for (var key in keys)
     {
       //console.log("UPDATE")
 
@@ -198,7 +214,7 @@ update : function() {
               this._keyGarbage.push(key);
           }
       }
-    }
+    }*/
 
     if (this._keyGarbage.length > 0)
     {

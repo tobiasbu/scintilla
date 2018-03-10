@@ -217,7 +217,7 @@ preUpdate : function() {
             this.onUpdateCallback.call(this.current_scene, this.game);
         }
 
-        this.current_scene._update();
+        //this.current_scene._update();
 
       } else {
 

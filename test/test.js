@@ -17,27 +17,27 @@ var config = {
 
 scene.preload = function()
 {
-    game.load.setPath('assets/')
-    game.load.image('test','img/block.png');
+    //game.load.setPath('assets/')
+    //game.load.image('test','img/block.png');
 }
 
 scene.render = function() {
 
-    myGame.draw.sprite('test',VIEW.w / 2,VIEW.h / 2-16,[0.5,0.5]);
+    game.draw.sprite('test',VIEW.w / 2,VIEW.h / 2-16,[0.5,0.5]);
     
 }
 
   scene.update = function() {
 
-    /*if (game.input.keyboard.pressed(tobi.KeyCode.Space)) 
+    if (game.input.keyboard.pressed(tobi.KeyCode.Space)) 
     {
-        //console.log("pressed")
+        console.log("pressed")
     }
 
     if (game.input.keyboard.release(tobi.KeyCode.Space)) 
     {
         console.log("release")
-    }*/
+    }
 
 
   }

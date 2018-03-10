@@ -74,25 +74,43 @@ tobi.File = Class.extend(function() {
 
     }
 
-    this.onLoad = function()
+    this.onLoad = function(event)
     {
-        console.log("LOADED");
+        this.reset();
+
+        if (event.target && event.target.status !== 200)
+            this.loader.next(this, true);
+        else
+            this.loader.next(this, false);
+
     }
 
     this.onError = function()
     {
-        console.log("ERROR");
+        this.reset();
+
+        this.loader.next(this, true);
+    }
+
+    this.onProgress = function(event)
+    {
+        if (event.lengthComputable)
+        {
+            this.loadedBytes = event.loaded;
+            this.totalBytes = event.total;
+
+            this.progress = Math.min((this.loadedBytes / this.totalBytes), 1);
+
+            //this.loader.emit('fileprogress', this, this.progress);
+        }
     }
 
     this.onDone = function()
     {
-        console.log("DONE");
+     
     }
 
-    this.onProgress = function()
-    {
-        console.log("PROGRESS");
-    }
+
 
     this.reset = function()
     {
