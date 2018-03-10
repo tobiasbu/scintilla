@@ -39,52 +39,6 @@ update : function() {},
 render : function() {},
 destroy : function() {},*/
 
-_update : function() {
-
-  //this.quadtree.clear();
-  //this.quadtree.insert(this.viewBox);
-  //this.quadtree.insert(this.instances);
-
-
-  /*var destroyList = [];
-
-
-  for (var i = 0; i < this.instances.length; i++) {
-    if (!this.instances[i]._selfDestroy) {
-      this.instances[i].update();
-      this.instances[i].bounds.setByGameObject(this.instances[i]);
-    } else {
-      destroyList.push(i);
-    }
-  }
-
-  for (var i = destroyList.length-1; i >= 0; i--) {
-
-    var index = destroyList[i];
-
-    if (this.instances[index]['destroy'])
-      this.instances[index].destroy();
-
-      this.instances.splice( index, 1 );
-
-  }*/
-
-  /*for (var i = this.instances.length-1; i >= 0; i--) {
-
-    if (this.instances[i]._selfDestroy) {
-        if (this.instances[i]['destroy'])
-          this.instances[i].destroy();
-
-      this.instances.splice( i, 1 );
-      //this.instanceDestroy(this.instances[i]);
-    }
-
-  }*/
-
-
-
-},
-
 _draw : function() {
 
   self.game.context.font ="12px Verdana";

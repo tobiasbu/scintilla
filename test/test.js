@@ -6,8 +6,8 @@ var VIEW = {
 }
 
 var config = {
-    width: 640,
-    height: 480,
+    width: VIEW.w,
+    height: VIEW.h,
     parent: "canvas-container",
     debug: true
 };
@@ -15,9 +15,21 @@ var config = {
   var game = new tobi.Game(config);
   var scene = game.scene.new('scene');
 
+scene.preload = function()
+{
+    game.load.setPath('assets/')
+    game.load.image('test','img/block.png');
+}
+
+scene.render = function() {
+
+    myGame.draw.sprite('test',VIEW.w / 2,VIEW.h / 2-16,[0.5,0.5]);
+    
+}
+
   scene.update = function() {
 
-    if (game.input.keyboard.pressed(tobi.KeyCode.Space)) 
+    /*if (game.input.keyboard.pressed(tobi.KeyCode.Space)) 
     {
         //console.log("pressed")
     }
@@ -25,7 +37,7 @@ var config = {
     if (game.input.keyboard.release(tobi.KeyCode.Space)) 
     {
         console.log("release")
-    }
+    }*/
 
 
   }

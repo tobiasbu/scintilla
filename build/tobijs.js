@@ -1066,6 +1066,147 @@ Object.defineProperty(tobi.RenderLayer.prototype, "enable", {
 
 
 ;
+tobi.Injector = Class.extend(function() {
+
+    this.list = {};
+
+    this.inject = function(toObj)
+    {
+        for (var key in this.list)
+        {
+            toObj[key] = this.list[key];
+        }
+    }
+
+    this.register = function(key, func)
+    {
+        this.list[key] = func;
+    }
+
+    this.destroy = function()
+    {
+        this.list = {};
+    }
+
+});;
+var AssetTypeHandler = new tobi.Injector();
+
+var LOADER_STATE = {
+    NONE : 0,
+    IDLE : 1,
+    PENDING : 2,
+    LOADING : 3,
+    PROCESSING : 4,
+    ERROR : 5,
+    FINISHED : 6,
+    DONE : 7, 
+};
+tobi.File = Class.extend(function() {
+
+    this.constructor = function(config) {
+
+        this.type = tobi.Utils.getValue(config, 'type', null);
+        this.tag = tobi.Utils.getValue(config, 'tag', null);
+
+        if (this.type == null || this.tag == null)
+        {
+            throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
+        }
+
+        this.url = tobi.Utils.getValue(config, 'url', null);
+
+        if (this.url === undefined)
+            this.url = tobi.Utils.getValue(config, 'path', '') + this.tag + '.' + GetFastValue(config, 'ext', '');
+        else
+            this.url = tobi.Utils.getValue(config, 'path', '').concat(this.url);
+
+        this.xhrSettings = tobi.XHR.createSettings(tobi.Utils.getValue(config, 'responseType', undefined));
+        
+        if (tobi.Utils.getValue(config, 'xhrSettings', false))
+            this.xhrSettings = tobi.XHR.merge(this.xhrSettings, tobi.Utils.getValue(config, 'xhrSettings', {}));
+
+        
+        console.log(this.xhrSettings);
+
+        this.loader = null;
+        this.state = LOADER_STATE.PENDING;
+        this.totalBytes = 0;
+        this.loadedBytes = 0;
+        this.progress = 0;
+        this.data = null;
+        this.source = null;
+        this.xhrRequest = null;
+        this.config = tobi.Utils.getValue(config,'config',{});
+
+        // callbacks
+        //loaded: false,
+        //error: false,
+        //loading:false,
+
+    }
+
+
+    this.load = function(gameLoader)
+    {
+        this.loader = gameLoader;
+
+
+        if (this.state === LOADER_STATE.FINISHED)
+        {
+            this.onDone();
+
+            loader.nextFile(this);
+        }
+        else
+        {
+           
+
+            this.source = tobi.Utils.getURL(this.url, gameLoader.baseURL);
+
+            
+            if (this.source.indexOf('data:') === 0 || this.source == null)
+            {
+                console.warn("Loader.File.load: unsupported URI.");
+            }
+            else
+            {
+                this.xhrRequest = tobi.XHR.createFileRequest(this, gameLoader.xhr);
+            }
+        }
+
+    }
+
+    this.onLoad = function()
+    {
+        console.log("LOADED");
+    }
+
+    this.onError = function()
+    {
+        console.log("ERROR");
+    }
+
+    this.onDone = function()
+    {
+        console.log("DONE");
+    }
+
+    this.onProgress = function()
+    {
+        console.log("PROGRESS");
+    }
+
+    this.reset = function()
+    {
+        this.xhrRequest.onload = undefined;
+        this.xhrRequest.onerror = undefined;
+        this.xhrRequest.onprogress = undefined;
+    }
+
+
+});
+
+;
 /**
  * Create a Canvas object.
  * @function Canvas
@@ -2345,6 +2486,42 @@ tobi.Cache.prototype = {
 
 }
 ;
+tobi.Config = Class.extend(function() {
+
+this.constructor = function(config)
+{
+    if (config === undefined) 
+        config = {};
+
+    var callback = tobi.Utils.getValue;
+    var callback_2 = tobi.Utils.getPropertyValue;
+
+    // view and canvas
+    this.width = callback(config, 'width', 640);
+    this.height = callback(config, 'height', 480);
+    this.parent = callback(config, 'parent', null);
+    this.debug =  callback(config, 'debug', false);
+    
+    // loader
+    this.loader = {
+        baseURL : callback_2(config, 'loader.baseURL', ''),
+        path : callback_2(config, 'loader.path', ''),
+        responseType : callback_2(config, 'loader.responseType', ''),
+        async : callback_2(config, 'loader.async', true),
+    }
+       /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
+        this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
+        this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
+        
+        this.loaderUser = GetValue(config, 'loader.user', '');
+        this.loaderPassword = GetValue(config, 'loader.password', '');
+this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
+
+
+}
+    
+    
+});;
 tobi.Dispatcher = Class.extend(function() {
 
 
@@ -2360,7 +2537,7 @@ this.dispatch = function() {
 * @class Game
 * @constructor
 */
-tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
+tobi.Game = function (config) {
 
   /**
   * @property {string|HTMLElement} parent - The Games DOM parent.
@@ -2371,7 +2548,7 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
   this.height = 600;
 
   // object
-  this.config = null;
+  this.config = new tobi.Config(config);
 
   // boolean
   this.systemInited = false;
@@ -2407,8 +2584,9 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
 
   this.context = null;
 
+  this.parseConfiguration(this.config);
   //parse config
-  if (arguments.length === 1 && typeof arguments[0] === 'object')
+ /* if (arguments.length === 1 && typeof arguments[0] === 'object')
    {
 
      this.parseConfiguration(arguments[0]);
@@ -2427,10 +2605,10 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
 
         if (typeof debugMode !== 'undefined')
         this.debugMode = debugMode;
-   }
+   }*/
 
 
-  this.init();
+   this.init();
 
   return this;
 
@@ -2443,7 +2621,7 @@ tobi.Game.prototype = {
 
   parseConfiguration : function(config) {
 
-    this.config = config;
+    //this.config = config;
 
     if (config['debug'])
     {
@@ -2933,336 +3111,6 @@ tobi._extend = function(dest,source) {
 })();
 */
 ;
-// Class AssetManager
-tobi.LoadManager = function(game) {
-
-  this.game = game;
-  this.cache = game.cache;
-
-  this._fileQueue = [];
-  this._fileCount = 0;
-  this._fileLoadedCount = 0;
-  this._fileErrorCount = 0;
-  this.isDownloading = false;
-
-  this.progress = 0;
-
-};
-
-tobi.LoadManager.prototype = {
-
-  queueAsset : function(type, tag, path, elements) {
-
-    var file = {
-      type:type,
-      tag:tag,
-      url:path,
-      data:null,
-      loaded: false,
-      error: false,
-      loading:false,
-    };
-
-    if (elements)
-    {
-        for (var prop in elements)
-        {
-            file[prop] = elements[prop];
-        }
-    }
-
-    var fileIndex = this.getAssetQueueIndex(type, tag);
-
-    if (fileIndex > -1)
-    {
-           var currentFile = this._fileQueue[fileIndex];
-
-           if (!currentFile.loading && !currentFile.loaded)
-           {
-               this._fileQueue[fileIndex] = file;
-           }
-           else
-           {
-               this._fileQueue.push(file);
-               this._fileCount++;
-           }
-    }
-    else if (fileIndex === -1)
-    {
-      this._fileQueue.push(file);
-      this._fileCount++;
-    }
-
-  },
-
-  image : function(tag,path) {
-
-      this.queueAsset('image',tag,path);
-
-  },
-
-  audio : function(tag,path) {
-
-      this.queueAsset('audio',tag,path,{ buffer: null, autoDecode: true });
-
-  },
-
-  getAssetQueueIndex : function(type,tag) {
-
-    var found = -1;
-
-        for (var i = 0; i < this._fileQueue.length; i++)
-        {
-            var file = this._fileQueue[i];
-
-            if (file.type === type && file.name === tag)
-            {
-                found = i;
-
-                // An already loaded/loading file may be superceded.
-                if (!file.loaded && !file.loading)
-                {
-                    break;
-                }
-            }
-        }
-
-        return found;
-
-  },
-
-  reset : function() {
-
-    this.isDownloading = false;
-    this._fileCount = 0;
-    this._fileLoadedCount = 0;
-    this._fileQueue.length = 0;
-    this._fileErrorCount = 0;
-    this.progress = 0
-
-
-  },
-
-  startDownload : function() {
-
-    if (this.isDownloading)
-    {
-           return;
-    }
-
-    this.isDownloading = true;
-
-    this.processFileQueue();
-
-  },
-
-  endDownload : function() {
-
-    this.isDownloading = false;
-    this.updateProgress();
-    this.game.scene.preloadComplete();
-
-  },
-
-  processFileQueue : function() {
-
-    for (var i = 0; i < this._fileQueue.length; i++) {
-
-      var file = this._fileQueue[i];
-      file.loading = true;
-
-      this.downloadFile(file);
-
-
-
-    }
-
-  },
-
-  downloadFile : function(file) {
-
-    switch (file.type) {
-
-      case 'image': this.loadImageFile(file); break;
-      case 'audio': {
-
-        // must check if audio tag or webaudio
-        if (this.game.sound.webAudio)
-          this.loadAudioFile(file);
-
-
-        break;
-      }
-
-    }
-
-  },
-
-  loadImageFile : function(file) {
-
-
-
-    var self = this;
-
-    file.data = new Image();
-    file.data.name = file.tag;
-
-    file.data.addEventListener("load", function() {
-          self.fileLogComplete(file);
-    }, false);
-
-    file.data.addEventListener("error", function() {
-          self.fileLogError(file);
-    }, false);
-
-    file.data.src = file.url;
-
-  /*  file.data.onload = function () {
-           if (file.data.onload)
-           {
-               file.data.onload = null;
-               file.data.onerror = null;
-               self.fileLogComplete(file);
-           }
-    };
-
-    file.data.onerror = function () {
-            if (file.data.onload)
-            {
-                file.data.onload = null;
-                file.data.onerror = null;
-                self.fileLogError(file);
-            }
-    };*/
-
-
-
-    /*if (file.data.complete && file.data.width && file.data.height)
-    {
-            //file.data.onload = null;
-            //file.data.onerror = null;
-            this.fileLogComplete(file);
-            if (this.downloadIsDone()) {
-                this.endDownload();
-            }
-    }*/
-
-
-
-  },
-
-  loadAudioFile : function(file) {
-
-    var self = this;
-    var request = new XMLHttpRequest();
-    request.open('GET', file.url, true);
-    request.responseType = 'arraybuffer';
-
-    request.onload = function () {
-
-       if (request.readyState == 4 && request.status >= 400 && request.status <= 599) {
-         self.fileLogError(file);
-       } else {
-          self.fileLogComplete(file,request);
-        }
-
-    }
-
-    request.onerror = function () {
-          self.fileLogError(file);
-    }
-
-    request.send();
-
-
-  },
-
-  fileLogError: function (file) {
-      console.warn("tobiJS.load: Error to load asset from " + file.url);
-      this.dowloadComplete(file,true);
-  },
-
-  fileLogComplete: function (file, requestXHR) {
-
-
-
-    switch (file.type)
-    {
-      case 'image': {
-        this.cache.addImage(file.tag,file.url,file.data);
-        break;
-      }
-      case 'audio': {
-
-        file.data = requestXHR.response;
-
-        this.cache.addSound(file.tag,file.url,file.data,true);
-
-        if (file.autoDecode)
-        {
-            this.game.sound.decode(file.tag);
-        }
-
-        break;
-      }
-    }
-
-    this.dowloadComplete(file,false);
-
-  },
-
-  dowloadComplete : function(file, error) {
-
-    if (error == true) {
-      file.error = true;
-      this._fileErrorCount++;
-    } else {
-      file.loaded = true;
-      this._fileLoadedCount++;
-    }
-
-    this.updateProgress();
-
-    if (this.downloadIsDone()) {
-        this.endDownload();
-    }
-
-  },
-
-  downloadIsDone : function() {
-
-
-    return (this._fileQueue.length == (this._fileLoadedCount + this._fileErrorCount));
-
-  },
-
-  updateProgress : function() {
-
-    var progress = 0;
-
-
-
-    if (this._fileCount != 0)
-     progress = parseFloat(this._fileLoadedCount) / parseFloat(this._fileCount);
-
-
-
-    this.progress = progress;
-
-  },
-
-
-  totalQueuedFiles: function () {
-
-        return this._fileCount - this._fileLoadedCount;
-
-  }
-
-
-};
-
-tobi.LoadManager.prototype.constructor = tobi.LoadManager;
-;
 
 tobi.Scene = function(game) {
 
@@ -3302,52 +3150,6 @@ start : function() {},
 update : function() {},
 render : function() {},
 destroy : function() {},*/
-
-_update : function() {
-
-  //this.quadtree.clear();
-  //this.quadtree.insert(this.viewBox);
-  //this.quadtree.insert(this.instances);
-
-
-  /*var destroyList = [];
-
-
-  for (var i = 0; i < this.instances.length; i++) {
-    if (!this.instances[i]._selfDestroy) {
-      this.instances[i].update();
-      this.instances[i].bounds.setByGameObject(this.instances[i]);
-    } else {
-      destroyList.push(i);
-    }
-  }
-
-  for (var i = destroyList.length-1; i >= 0; i--) {
-
-    var index = destroyList[i];
-
-    if (this.instances[index]['destroy'])
-      this.instances[index].destroy();
-
-      this.instances.splice( index, 1 );
-
-  }*/
-
-  /*for (var i = this.instances.length-1; i >= 0; i--) {
-
-    if (this.instances[i]._selfDestroy) {
-        if (this.instances[i]['destroy'])
-          this.instances[i].destroy();
-
-      this.instances.splice( i, 1 );
-      //this.instanceDestroy(this.instances[i]);
-    }
-
-  }*/
-
-
-
-},
 
 _draw : function() {
 
@@ -3592,7 +3394,7 @@ preUpdate : function() {
       } else {
 
 
-          this.game.load.startDownload();
+          this.game.load.start();
 
       }
 
@@ -5261,6 +5063,628 @@ PRESSED : 2,
 RELEASE : 3
 };
 ;
+
+tobi.ImageFile = tobi.File.extend(function() {
+
+this.constructor = function(tag, url, path, xhrSettings, config)
+{
+    var assetTag = null;
+    
+    if (typeof tag === 'string')
+    {
+        assetTag = tag;
+    }
+    else
+    {
+        assetTag = tobi.Utils.getValue(tag, 'tag', '');
+    }
+
+    var fileConfig = {
+        type: 'image',
+        tag: assetTag,
+        ext: tobi.Utils.getValue(tag, 'ext', tobi.Utils.getFileExtension(url)),
+        url: tobi.Utils.getValue(tag, 'file', url),
+        path: path,
+        responseType: 'blob',
+        xhrSettings: tobi.Utils.getValue(tag, 'xhr', xhrSettings),
+        config: tobi.Utils.getValue(tag, 'config', config)
+    };
+
+    this.super(fileConfig);
+}
+
+this.onProcessing = function()
+{
+    this.state = LOADER_STATE.PROCESSING;
+    this.data = new Image();
+
+    var self = this;
+
+    this.data.onload = function () {
+
+        tobi.URLObject.revoke(self.data);
+
+        self.onDone();
+           /*if (file.data.onload)
+           {
+               //file.data.onload = null;
+               //file.data.onerror = null;
+               self.fileLogComplete(file);
+           }*/
+    };
+
+    this.data.onerror = function () {
+
+        tobi.URLObject.revoke(self.data);
+
+        self.state = LOADER_STATE.ERROR;
+            /*if (file.data.onload)
+            {
+                //file.data.onload = null;
+                //file.data.onerror = null;
+               
+                self.fileLogError(file);
+            }*/
+    };
+
+    tobi.URLObject.create(this.data, null, 'image/' + this.config.ext);
+}
+
+});
+
+AssetTypeHandler.register('image', function (tag, url, path, xhrSettings)
+{
+
+
+    this.addAsset(new tobi.ImageFile(tag, url, this.path, xhrSettings));
+
+    return this;
+
+});;
+
+
+// Class LoaderManager
+tobi.LoadManager = function(game) {
+
+  this.game = game;
+  this.cache = game.cache;
+
+  this._fileQueue = [];
+  this._filesCount = 0;
+  this._filesLoaded = 0;
+  this._fileErrorCount = 0;
+  this.isDownloading = false;
+  this._totalFiles = 0;
+
+  var gameConfig = game.config.loader;
+
+  this.xhr = tobi.XHR.createSettings(
+    tobi.Utils.getValue(config, 'responseType', gameConfig.responseType),
+    tobi.Utils.getValue(config, 'async', gameConfig.async),
+    //tobi.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
+    //tobi.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+    tobi.Utils.getValue(config, 'timeout', gameConfig.timeout)
+);
+
+
+  this.progress = 0;
+  this.path = '';
+  this.baseURL = '';
+  this.state = LOADER_STATE.IDLE;
+ 
+
+  AssetTypeHandler.inject(this);
+
+};
+
+tobi.LoadManager.prototype = {
+
+
+
+  queueAsset : function(type, tag, path, elements) {
+
+    var file = {
+      type:type,
+      tag:tag,
+      url:path,
+      data:null,
+      loaded: false,
+      error: false,
+      loading:false,
+    };
+
+    if (elements)
+    {
+        for (var prop in elements)
+        {
+            file[prop] = elements[prop];
+        }
+    }
+
+    var fileIndex = this.getAssetQueueIndex(type, tag);
+
+    if (fileIndex > -1)
+    {
+           var currentFile = this._fileQueue[fileIndex];
+
+           if (!currentFile.loading && !currentFile.loaded)
+           {
+               this._fileQueue[fileIndex] = file;
+           }
+           else
+           {
+               this._fileQueue.push(file);
+               this._filesCount++;
+           }
+    }
+    else if (fileIndex === -1)
+    {
+      this._fileQueue.push(file);
+      this._filesCount++;
+    }
+
+  },
+
+
+  setPath : function(path)
+  {
+    if (path !== '' && path.substr(-1) !== '/')
+        path = path.concat('/');
+
+    this.path = path;
+
+    return this;
+  },
+
+  setBaseURL : function(baseUrl)
+  {
+    if (baseUrl !== '' && baseUrl.substr(-1) !== '/')
+    {
+      baseUrl = baseUrl.concat('/');
+    }
+
+    this.baseURL = baseUrl || '';
+
+    return this;
+  },
+
+  addAsset : function(asset)
+  {
+    if (!this.isOK())
+        return -1;
+
+    asset.path = this.path;
+
+    var fileIndex = this.getAssetQueueIndex(asset.type, asset.tag);
+
+    if (fileIndex > -1)
+    {
+           var currentFile = this._fileQueue[fileIndex];
+
+           if (!currentFile.loading && !currentFile.loaded)
+           {
+               this._fileQueue[fileIndex] = asset;
+           }
+           else
+           {
+               this._fileQueue.push(asset);
+               this._filesCount++;
+           }
+    }
+    else if (fileIndex === -1)
+    {
+      this._fileQueue.push(asset);
+      this._filesCount++;
+    }
+  },
+
+  /*image : function(tag,path) {
+
+      this.queueAsset('image',tag,path);
+
+  },
+
+  audio : function(tag,path) {
+
+      this.queueAsset('audio',tag,path,{ buffer: null, autoDecode: true });
+
+  },*/
+
+  getAssetQueueIndex : function(type,tag) {
+
+    var found = -1;
+
+        for (var i = 0; i < this._fileQueue.length; i++)
+        {
+            var file = this._fileQueue[i];
+
+            if (file.type === type && file.name === tag)
+            {
+                found = i;
+
+                // An already loaded/loading file may be superceded.
+                if (!file.loaded && !file.loading)
+                {
+                    break;
+                }
+            }
+        }
+
+        return found;
+
+  },
+
+  reset : function() {
+
+    this.isDownloading = false;
+    this._filesCount = 0;
+    this._filesLoaded = 0;
+    this._fileQueue.length = 0;
+    this._fileErrorCount = 0;
+    this.progress = 0
+    this.state = LOADER_STATE.IDLE;
+
+
+  },
+
+  start : function() {
+
+    //if (this.isDownloading)
+    if (!this.isOK())
+    {
+        return -1;
+    }
+
+    this.progress = 0;
+    this.state = LOADER_STATE.LOADING;
+    this._filesCount = this._fileQueue.length;
+
+    if (this._filesCount === 0)
+    {
+      console.log("NO FILE");
+      this.end();
+    }
+    else
+    {
+      this.isDownloading = true;
+
+      this.processFileQueue();
+    }
+
+  },
+
+  end : function() {
+
+    this.isDownloading = false;
+    this.updateProgress();
+    this.game.scene.preloadComplete();
+
+  },
+
+  processFileQueue : function() {
+
+
+    for (var i = 0; i < this._fileQueue.length; i++) {
+
+      var file = this._fileQueue[i];
+
+      console.log(file);
+
+      if (file.state === LOADER_STATE.FINISHED ||
+         file.state === LOADER_STATE.PENDING) // && this.inflight.size < this.maxParallelDownloads))
+      {
+        file.load(this);
+      }
+      //file.loading = true;
+
+     
+
+
+
+    }
+
+  },
+
+  /*loadFile : function(file) {
+
+
+    /*switch (file.type) {
+
+      case 'image': this.loadImageFile(file); break;
+      case 'audio': {
+
+        // must check if audio tag or webaudio
+        if (this.game.sound.webAudio)
+          this.loadAudioFile(file);
+
+
+        break;
+      }
+
+    }
+
+  },*/
+
+  loadImageFile : function(file) {
+
+
+
+    var self = this;
+
+    file.data = new Image();
+    file.data.name = file.tag;
+
+    file.data.addEventListener("load", function() {
+          self.fileLogComplete(file);
+    }, false);
+
+    file.data.addEventListener("error", function() {
+          self.fileLogError(file);
+    }, false);
+
+    file.data.src = file.url;
+
+  /*  file.data.onload = function () {
+           if (file.data.onload)
+           {
+               file.data.onload = null;
+               file.data.onerror = null;
+               self.fileLogComplete(file);
+           }
+    };
+
+    file.data.onerror = function () {
+            if (file.data.onload)
+            {
+                file.data.onload = null;
+                file.data.onerror = null;
+                self.fileLogError(file);
+            }
+    };*/
+
+
+
+    /*if (file.data.complete && file.data.width && file.data.height)
+    {
+            //file.data.onload = null;
+            //file.data.onerror = null;
+            this.fileLogComplete(file);
+            if (this.downloadIsDone()) {
+                this.endDownload();
+            }
+    }*/
+
+
+
+  },
+
+  loadAudioFile : function(file) {
+
+    var self = this;
+    var request = new XMLHttpRequest();
+    request.open('GET', file.url, true);
+    request.responseType = 'arraybuffer';
+
+    request.onload = function () {
+
+       if (request.readyState == 4 && request.status >= 400 && request.status <= 599) {
+         self.fileLogError(file);
+       } else {
+          self.fileLogComplete(file,request);
+        }
+
+    }
+
+    request.onerror = function () {
+          self.fileLogError(file);
+    }
+
+    request.send();
+
+
+  },
+
+  fileLogError: function (file) {
+      console.warn("tobiJS.load: Error to load asset from " + file.url);
+      this.dowloadComplete(file,true);
+  },
+
+  fileLogComplete: function (file, requestXHR) {
+
+
+
+    switch (file.type)
+    {
+      case 'image': {
+        this.cache.addImage(file.tag,file.url,file.data);
+        break;
+      }
+      case 'audio': {
+
+        file.data = requestXHR.response;
+
+        this.cache.addSound(file.tag,file.url,file.data,true);
+
+        if (file.autoDecode)
+        {
+            this.game.sound.decode(file.tag);
+        }
+
+        break;
+      }
+    }
+
+    this.dowloadComplete(file,false);
+
+  },
+
+  dowloadComplete : function(file, error) {
+
+    if (error == true) {
+      file.error = true;
+      this._fileErrorCount++;
+    } else {
+      file.loaded = true;
+      this._filesLoaded++;
+    }
+
+    this.updateProgress();
+
+    if (this.downloadIsDone()) {
+        this.endDownload();
+    }
+
+  },
+
+  isLoading : function()
+  {
+    return (this.state === LOADER_STATE.LOADING || this.state === LOADER_STATE.PROCESSING);
+  },
+
+  isOK : function()
+  {
+    return (this.state === LOADER_STATE.IDLE || this.state === LOADER_STATE.DONE || this.state === LOADER_STATE.ERROR);
+  },
+
+  downloadIsDone : function() {
+
+
+    return (this._fileQueue.length == (this._filesLoaded + this._fileErrorCount));
+
+  },
+
+  updateProgress : function() {
+
+    var progress = 0;
+
+
+
+    if (this._filesCount != 0)
+    {
+      this.progress = 1 - (this._filesLoadedCount / this._filesCount);
+    }
+     //progress = parseFloat(this._filesLoaded) / parseFloat(this._filesCount);
+
+
+
+    this.progress = progress;
+
+  },
+
+
+  totalQueuedFiles: function () {
+
+        return this._filesCount - this._filesLoaded;
+
+  }
+
+
+};
+
+tobi.LoadManager.prototype.constructor = tobi.LoadManager;
+;
+tobi.URLObject = {
+
+    create : function(asset, obj, type)
+    {
+        if (typeof URL === 'function')
+        {
+            asset.src = URL.createObjectURL(obj);
+        }
+        else
+        {
+            var reader = new FileReader();
+
+            reader.onload = function ()
+            {
+                asset.removeAttribute('crossOrigin');
+                asset.src = 'data:' + (obj.type || type) + ';base64,' + reader.result.split(',')[1];
+            };
+
+            reader.onerror = asset.onerror;
+
+            reader.readAsDataURL(obj);
+        }   
+    },
+
+    revoke : function(data)
+    {
+        if (typeof URL === 'function')
+        {
+            URL.revokeObjectURL(data.src);
+        }
+    }
+};;
+
+tobi.XHR = {
+
+    createFileRequest : function(file, settings)
+    {
+        var xhrSettings = tobi.XHR.merge(settings, file.xhrSettings);
+
+
+
+        var xmlHttpRequest = new XMLHttpRequest();
+        xmlHttpRequest.open("GET", file.source, xhrSettings.async);
+
+        xmlHttpRequest.responseType = file.xhrSettings.responseType;
+        xmlHttpRequest.timeout = xhrSettings.timeout;
+
+        xmlHttpRequest.onload = file.onLoad.bind(file);
+        xmlHttpRequest.onerror = file.onError.bind(file);
+        xmlHttpRequest.onprogress = file.onProgress.bind(file);
+
+        
+
+        xmlHttpRequest.send();
+
+       
+
+        return xmlHttpRequest;
+    },
+
+    createSettings : function(type, doAsync, timeout)
+    {
+        if (type === undefined) 
+            type = '';
+
+        if (doAsync === undefined) 
+            doAsync = true;
+
+        if (timeout === undefined)
+            timeout = 0;
+
+        var settings = {
+            responseType: type,
+            timeout: timeout,
+            async: doAsync,
+        }
+
+        return settings;
+    },
+
+    merge : function(a, b)
+    {
+        var out = {};
+
+        if (a === undefined)
+            out = this.createSettings(); // : Extend(global);
+
+        if (b)
+        {
+            for (var setting in b)
+            {
+                if (b[setting] !== undefined)
+                    out[setting] = a[setting];
+            }
+        }
+    
+    return out;
+    }
+
+
+
+};
 tobi.Camera = function(game,x,y,width,height) {
 
 this.game = game;
@@ -6911,11 +7335,11 @@ tobi.Render.prototype = {
         if (!this.__enable)
             return;
 
-        this.game.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.game.context.globalCompositeOperation = 'source-over';
-        this.game.context.clearRect(0, 0, this.canvas.width, this.game.height);
-        //this.game.context.fillStyle = this.universe.backgroundColor;
-        this.game.context.fillRect(0, 0, this.canvas.width, this.game.height);
+        this.context.setTransform(1, 0, 0, 1, 0, 0);
+        this.context.globalCompositeOperation = 'source-over';
+        this.context.clearRect(0, 0, this.canvas.width, this.game.height);
+        this.context.fillStyle = '#fff';//this.universe.backgroundColor;
+        this.context.fillRect(0, 0, this.canvas.width, this.game.height);
 
         for (var i = 0; i < this.__renderLayers.length; i++)
         {
@@ -6924,6 +7348,17 @@ tobi.Render.prototype = {
                 this.__renderLayers[i].render();
             }
         }
+
+        this.game.scene.render();
+
+
+        if (this.game.debug != null) {
+
+            this.context.setTransform(1, 0, 0, 1, 0, 0);
+            this.game.debug.test();
+            //console.log("asdasd");
+      
+      }
     }
 
     
@@ -7980,7 +8415,13 @@ stop: function () {
 }
 
 }
-;/*!
+;
+// FUTURE IMPLEMENTATION
+
+/*function Class()
+{
+
+}*/;/*!
 Copyright (C) 2015 by Andrea Giammarchi - @WebReflection
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -8278,7 +8719,71 @@ tobi.Utils = {
 
   isFunction : function(obj) {
     return !!(obj && obj.constructor && obj.call && obj.apply);
-  }
+  },
 
+  getValue : function(obj, key, defaultValue)
+  {
+    var type = typeof(obj);
+
+    if (!obj || type === 'number' || type === 'string')
+        return defaultValue;
+    else if (obj.hasOwnProperty(key) && obj[key] !== undefined)
+        return obj[key];
+    else
+        return defaultValue;
+
+  },
+
+  // Get value in complex object
+  getPropertyValue : function (source, key, defaultValue)
+    {
+        if (!source || typeof source === 'number')
+            return defaultValue;
+        else if (source.hasOwnProperty(key))
+            return source[key];
+        else if (key.indexOf('.'))
+        {
+            var keys = key.split('.');
+            var parent = source;
+            var value = defaultValue;
+
+            for (var i = 0; i < keys.length; i++)
+            {
+                if (parent.hasOwnProperty(keys[i]))
+                {
+                    value = parent[keys[i]];
+                    parent = parent[keys[i]];
+                }
+                else
+                {
+                    value = defaultValue;
+                    break;
+                }
+            }
+
+            return value;
+        }
+        else
+        {
+            return defaultValue;
+        }
+    },
+
+  getFileExtension : function(filename)
+  {
+    return filename.substring(filename.lastIndexOf('.')+1, filename.length) || "";
+  },
+
+  getURL : function(url, baseURL)
+  {
+    if (!url)
+        return null;
+    
+        
+    if (url.match(/^(?:blob:|data:|http:\/\/|https:\/\/|\/\/)/))
+        return url;
+    else
+        return baseURL + url;
+  }
 
 };

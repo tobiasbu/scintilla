@@ -4,7 +4,7 @@
 * @class Game
 * @constructor
 */
-tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
+tobi.Game = function (config) {
 
   /**
   * @property {string|HTMLElement} parent - The Games DOM parent.
@@ -15,7 +15,7 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
   this.height = 600;
 
   // object
-  this.config = null;
+  this.config = new tobi.Config(config);
 
   // boolean
   this.systemInited = false;
@@ -51,8 +51,9 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
 
   this.context = null;
 
+  this.parseConfiguration(this.config);
   //parse config
-  if (arguments.length === 1 && typeof arguments[0] === 'object')
+ /* if (arguments.length === 1 && typeof arguments[0] === 'object')
    {
 
      this.parseConfiguration(arguments[0]);
@@ -71,10 +72,10 @@ tobi.Game = function (width, height, parent, timeOutMode, debugMode ) {
 
         if (typeof debugMode !== 'undefined')
         this.debugMode = debugMode;
-   }
+   }*/
 
 
-  this.init();
+   this.init();
 
   return this;
 
@@ -87,7 +88,7 @@ tobi.Game.prototype = {
 
   parseConfiguration : function(config) {
 
-    this.config = config;
+    //this.config = config;
 
     if (config['debug'])
     {

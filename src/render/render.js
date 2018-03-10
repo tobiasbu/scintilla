@@ -53,11 +53,11 @@ tobi.Render.prototype = {
         if (!this.__enable)
             return;
 
-        this.game.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.game.context.globalCompositeOperation = 'source-over';
-        this.game.context.clearRect(0, 0, this.canvas.width, this.game.height);
-        //this.game.context.fillStyle = this.universe.backgroundColor;
-        this.game.context.fillRect(0, 0, this.canvas.width, this.game.height);
+        this.context.setTransform(1, 0, 0, 1, 0, 0);
+        this.context.globalCompositeOperation = 'source-over';
+        this.context.clearRect(0, 0, this.canvas.width, this.game.height);
+        this.context.fillStyle = '#fff';//this.universe.backgroundColor;
+        this.context.fillRect(0, 0, this.canvas.width, this.game.height);
 
         for (var i = 0; i < this.__renderLayers.length; i++)
         {
@@ -66,6 +66,17 @@ tobi.Render.prototype = {
                 this.__renderLayers[i].render();
             }
         }
+
+        this.game.scene.render();
+
+
+        if (this.game.debug != null) {
+
+            this.context.setTransform(1, 0, 0, 1, 0, 0);
+            this.game.debug.test();
+            //console.log("asdasd");
+      
+      }
     }
 
     

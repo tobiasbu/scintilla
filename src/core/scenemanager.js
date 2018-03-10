@@ -173,7 +173,7 @@ preUpdate : function() {
       } else {
 
 
-          this.game.load.startDownload();
+          this.game.load.start();
 
       }
 

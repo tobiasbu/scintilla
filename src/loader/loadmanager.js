@@ -1,21 +1,43 @@
 
-// Class AssetManager
+
+
+// Class LoaderManager
 tobi.LoadManager = function(game) {
 
   this.game = game;
   this.cache = game.cache;
 
   this._fileQueue = [];
-  this._fileCount = 0;
-  this._fileLoadedCount = 0;
+  this._filesCount = 0;
+  this._filesLoaded = 0;
   this._fileErrorCount = 0;
   this.isDownloading = false;
+  this._totalFiles = 0;
+
+  var gameConfig = game.config.loader;
+
+  this.xhr = tobi.XHR.createSettings(
+    tobi.Utils.getValue(config, 'responseType', gameConfig.responseType),
+    tobi.Utils.getValue(config, 'async', gameConfig.async),
+    //tobi.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
+    //tobi.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+    tobi.Utils.getValue(config, 'timeout', gameConfig.timeout)
+);
+
 
   this.progress = 0;
+  this.path = '';
+  this.baseURL = '';
+  this.state = LOADER_STATE.IDLE;
+ 
+
+  AssetTypeHandler.inject(this);
 
 };
 
 tobi.LoadManager.prototype = {
+
+
 
   queueAsset : function(type, tag, path, elements) {
 
@@ -50,18 +72,71 @@ tobi.LoadManager.prototype = {
            else
            {
                this._fileQueue.push(file);
-               this._fileCount++;
+               this._filesCount++;
            }
     }
     else if (fileIndex === -1)
     {
       this._fileQueue.push(file);
-      this._fileCount++;
+      this._filesCount++;
     }
 
   },
 
-  image : function(tag,path) {
+
+  setPath : function(path)
+  {
+    if (path !== '' && path.substr(-1) !== '/')
+        path = path.concat('/');
+
+    this.path = path;
+
+    return this;
+  },
+
+  setBaseURL : function(baseUrl)
+  {
+    if (baseUrl !== '' && baseUrl.substr(-1) !== '/')
+    {
+      baseUrl = baseUrl.concat('/');
+    }
+
+    this.baseURL = baseUrl || '';
+
+    return this;
+  },
+
+  addAsset : function(asset)
+  {
+    if (!this.isOK())
+        return -1;
+
+    asset.path = this.path;
+
+    var fileIndex = this.getAssetQueueIndex(asset.type, asset.tag);
+
+    if (fileIndex > -1)
+    {
+           var currentFile = this._fileQueue[fileIndex];
+
+           if (!currentFile.loading && !currentFile.loaded)
+           {
+               this._fileQueue[fileIndex] = asset;
+           }
+           else
+           {
+               this._fileQueue.push(asset);
+               this._filesCount++;
+           }
+    }
+    else if (fileIndex === -1)
+    {
+      this._fileQueue.push(asset);
+      this._filesCount++;
+    }
+  },
+
+  /*image : function(tag,path) {
 
       this.queueAsset('image',tag,path);
 
@@ -71,7 +146,7 @@ tobi.LoadManager.prototype = {
 
       this.queueAsset('audio',tag,path,{ buffer: null, autoDecode: true });
 
-  },
+  },*/
 
   getAssetQueueIndex : function(type,tag) {
 
@@ -100,29 +175,43 @@ tobi.LoadManager.prototype = {
   reset : function() {
 
     this.isDownloading = false;
-    this._fileCount = 0;
-    this._fileLoadedCount = 0;
+    this._filesCount = 0;
+    this._filesLoaded = 0;
     this._fileQueue.length = 0;
     this._fileErrorCount = 0;
     this.progress = 0
+    this.state = LOADER_STATE.IDLE;
 
 
   },
 
-  startDownload : function() {
+  start : function() {
 
-    if (this.isDownloading)
+    //if (this.isDownloading)
+    if (!this.isOK())
     {
-           return;
+        return -1;
     }
 
-    this.isDownloading = true;
+    this.progress = 0;
+    this.state = LOADER_STATE.LOADING;
+    this._filesCount = this._fileQueue.length;
 
-    this.processFileQueue();
+    if (this._filesCount === 0)
+    {
+      console.log("NO FILE");
+      this.end();
+    }
+    else
+    {
+      this.isDownloading = true;
+
+      this.processFileQueue();
+    }
 
   },
 
-  endDownload : function() {
+  end : function() {
 
     this.isDownloading = false;
     this.updateProgress();
@@ -132,12 +221,21 @@ tobi.LoadManager.prototype = {
 
   processFileQueue : function() {
 
+
     for (var i = 0; i < this._fileQueue.length; i++) {
 
       var file = this._fileQueue[i];
-      file.loading = true;
 
-      this.downloadFile(file);
+      console.log(file);
+
+      if (file.state === LOADER_STATE.FINISHED ||
+         file.state === LOADER_STATE.PENDING) // && this.inflight.size < this.maxParallelDownloads))
+      {
+        file.load(this);
+      }
+      //file.loading = true;
+
+     
 
 
 
@@ -145,9 +243,10 @@ tobi.LoadManager.prototype = {
 
   },
 
-  downloadFile : function(file) {
+  /*loadFile : function(file) {
 
-    switch (file.type) {
+
+    /*switch (file.type) {
 
       case 'image': this.loadImageFile(file); break;
       case 'audio': {
@@ -162,7 +261,7 @@ tobi.LoadManager.prototype = {
 
     }
 
-  },
+  },*/
 
   loadImageFile : function(file) {
 
@@ -284,7 +383,7 @@ tobi.LoadManager.prototype = {
       this._fileErrorCount++;
     } else {
       file.loaded = true;
-      this._fileLoadedCount++;
+      this._filesLoaded++;
     }
 
     this.updateProgress();
@@ -295,10 +394,20 @@ tobi.LoadManager.prototype = {
 
   },
 
+  isLoading : function()
+  {
+    return (this.state === LOADER_STATE.LOADING || this.state === LOADER_STATE.PROCESSING);
+  },
+
+  isOK : function()
+  {
+    return (this.state === LOADER_STATE.IDLE || this.state === LOADER_STATE.DONE || this.state === LOADER_STATE.ERROR);
+  },
+
   downloadIsDone : function() {
 
 
-    return (this._fileQueue.length == (this._fileLoadedCount + this._fileErrorCount));
+    return (this._fileQueue.length == (this._filesLoaded + this._fileErrorCount));
 
   },
 
@@ -308,8 +417,11 @@ tobi.LoadManager.prototype = {
 
 
 
-    if (this._fileCount != 0)
-     progress = parseFloat(this._fileLoadedCount) / parseFloat(this._fileCount);
+    if (this._filesCount != 0)
+    {
+      this.progress = 1 - (this._filesLoadedCount / this._filesCount);
+    }
+     //progress = parseFloat(this._filesLoaded) / parseFloat(this._filesCount);
 
 
 
@@ -320,7 +432,7 @@ tobi.LoadManager.prototype = {
 
   totalQueuedFiles: function () {
 
-        return this._fileCount - this._fileLoadedCount;
+        return this._filesCount - this._filesLoaded;
 
   }
 
