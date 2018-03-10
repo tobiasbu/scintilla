@@ -29,10 +29,12 @@ this.constructor = function(tag, url, path, xhrSettings, config)
     this.super(fileConfig);
 }
 
-this.onProcessing = function()
+this.onProcessing = function(processingCallback)
 {
     this.state = LOADER_STATE.PROCESSING;
     this.data = new Image();
+    this.data.crossOrigin = this.crossOrigin;
+
 
     var self = this;
 
@@ -41,12 +43,8 @@ this.onProcessing = function()
         tobi.URLObject.revoke(self.data);
 
         self.onDone();
-           /*if (file.data.onload)
-           {
-               //file.data.onload = null;
-               //file.data.onerror = null;
-               self.fileLogComplete(file);
-           }*/
+
+        processingCallback(self);
     };
 
     this.data.onerror = function () {
@@ -54,16 +52,13 @@ this.onProcessing = function()
         tobi.URLObject.revoke(self.data);
 
         self.state = LOADER_STATE.ERROR;
-            /*if (file.data.onload)
-            {
-                //file.data.onload = null;
-                //file.data.onerror = null;
-               
-                self.fileLogError(file);
-            }*/
+
+        processingCallback(self);
+
     };
 
-    tobi.URLObject.create(this.data, null, 'image/' + this.config.ext);
+
+    tobi.URLObject.create(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
 }
 
 });

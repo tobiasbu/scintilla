@@ -58,18 +58,28 @@ tobi.Set.prototype = {
         return this;
     },
 
-    each : function(callback)
+    each : function(callback, scope)
     {
         var content = this._content.slice();
         var size = content.length;
+        var i;
 
-        for (var i = 0; i < size; i++)
+        if (scope)
         {
-            if (callback(content[i], i) === false)
+            for (i = 0; i < size; i++)
             {
-                break;
+                if (callback.call(scope, content[i], i) === false)
+                    break;                
+            }
+        } else {
+            for (i = 0; i < size; i++)
+            {
+                if (callback(content[i], i) === false)
+                    break;                
             }
         }
+
+      return this;
     }
 
 
@@ -83,6 +93,13 @@ Object.defineProperty(tobi.Set.prototype, "size", {
 
 });
 
+Object.defineProperty(tobi.Set.prototype, "length", {
+
+    get: function () {
+        return this._content.length;
+    }
+
+});
 
 tobi.Set.prototype.constructor = tobi.Set;
 

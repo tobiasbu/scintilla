@@ -61,7 +61,7 @@ tobi.XHR = {
             for (var setting in b)
             {
                 if (b[setting] !== undefined)
-                    out[setting] = a[setting];
+                    out[setting] = b[setting];
             }
         }
     

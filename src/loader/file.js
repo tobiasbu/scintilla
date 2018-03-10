@@ -31,10 +31,11 @@ tobi.File = Class.extend(function() {
         this.totalBytes = 0;
         this.loadedBytes = 0;
         this.progress = 0;
-        this.data = null;
+        this.data = undefined;
         this.source = null;
         this.xhrRequest = null;
         this.config = tobi.Utils.getValue(config,'config',{});
+        this.crossOrigin = undefined;
 
         // callbacks
         //loaded: false,
@@ -53,7 +54,7 @@ tobi.File = Class.extend(function() {
         {
             this.onDone();
 
-            loader.nextFile(this);
+            this.loader.nextFile(this);
         }
         else
         {
@@ -76,7 +77,7 @@ tobi.File = Class.extend(function() {
 
     this.onLoad = function(event)
     {
-        this.reset();
+        this.XHRreset();
 
         if (event.target && event.target.status !== 200)
             this.loader.next(this, true);
@@ -87,7 +88,7 @@ tobi.File = Class.extend(function() {
 
     this.onError = function()
     {
-        this.reset();
+        this.XHRreset();
 
         this.loader.next(this, true);
     }
@@ -107,12 +108,20 @@ tobi.File = Class.extend(function() {
 
     this.onDone = function()
     {
-     
+        this.state = LOADER_STATE.DONE;
+    }
+
+    this.onProcessing = function(processingCallback)
+    {
+        this.state = LOADER_STATE.PROCESSING;
+
+        this.onDone();
+
+        processingCallback(this);
     }
 
 
-
-    this.reset = function()
+    this.XHRreset = function()
     {
         this.xhrRequest.onload = undefined;
         this.xhrRequest.onerror = undefined;

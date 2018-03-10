@@ -7,14 +7,13 @@ tobi.LoadManager = function(game) {
   this.game = game;
   this.cache = game.cache;
 
-  this._filesQueue = [];
-  this._filesQueueCount = 0;
-  this._processedFilesCount = 0;
+  this._filesQueue = new tobi.Set();
+  this._successFiles = new tobi.Set();
+  this._failedFiles = new tobi.Set();
+  this._processedFiles = new tobi.Set();
 
-  this._successFiles = [];
-  this._successCount = 0;
-  this._failedCount = 0;
-  this._failedFiles = [];
+  this._filesQueueCount = 0;
+  this._loadedFilesCount = 0;
 
   this.isDownloading = false;
   this._totalFiles = 0;
@@ -41,53 +40,6 @@ tobi.LoadManager = function(game) {
 };
 
 tobi.LoadManager.prototype = {
-
-
-
-  /*queueAsset : function(type, tag, path, elements) {
-
-    var file = {
-      type:type,
-      tag:tag,
-      url:path,
-      data:null,
-      loaded: false,
-      error: false,
-      loading:false,
-    };
-
-    if (elements)
-    {
-        for (var prop in elements)
-        {
-            file[prop] = elements[prop];
-        }
-    }
-
-    var fileIndex = this.getAssetQueueIndex(type, tag);
-
-    if (fileIndex > -1)
-    {
-           var currentFile = this._filesQueue[fileIndex];
-
-           if (!currentFile.loading && !currentFile.loaded)
-           {
-               this._filesQueue[fileIndex] = file;
-           }
-           else
-           {
-               this._filesQueue.push(file);
-               this._filesQueueCount++;
-           }
-    }
-    else if (fileIndex === -1)
-    {
-      this._filesQueue.push(file);
-      this._filesQueueCount++;
-    }
-
-  },*/
-
 
   setPath : function(path)
   {
@@ -117,63 +69,9 @@ tobi.LoadManager.prototype = {
         return -1;
 
     asset.path = this.path;
-
-    var fileIndex = this.getAssetQueueIndex(asset.type, asset.tag);
-
-    if (fileIndex > -1)
-    {
-           var currentFile = this._filesQueue[fileIndex];
-
-           if (!currentFile.loading && !currentFile.loaded)
-           {
-               this._filesQueue[fileIndex] = asset;
-           }
-           else
-           {
-               this._filesQueue.push(asset);
-               this._filesQueueCount++;
-           }
-    }
-    else if (fileIndex === -1)
-    {
-      this._filesQueue.push(asset);
-      this._filesQueueCount++;
-    }
-  },
-
-  /*image : function(tag,path) {
-
-      this.queueAsset('image',tag,path);
-
-  },
-
-  audio : function(tag,path) {
-
-      this.queueAsset('audio',tag,path,{ buffer: null, autoDecode: true });
-
-  },*/
-
-  getAssetQueueIndex : function(type,tag) {
-
-    var found = -1;
-
-        for (var i = 0; i < this._filesQueue.length; i++)
-        {
-            var file = this._filesQueue[i];
-
-            if (file.type === type && file.name === tag)
-            {
-                found = i;
-
-                // An already loaded/loading file may be superceded.
-                if (!file.loaded && !file.loading)
-                {
-                    break;
-                }
-            }
-        }
-
-        return found;
+    this._filesQueue.set(asset);
+    this._filesQueueCount++;
+    return asset;
 
   },
 
@@ -192,30 +90,34 @@ tobi.LoadManager.prototype = {
 
   start : function() {
 
-    //if (this.isDownloading)
     if (!this.isOK())
     {
         return -1;
     }
 
     this.progress = 0;
+    this._loadedFilesCount = 0;
     this.state = LOADER_STATE.LOADING;
-    this._filesQueueCount = this._filesQueue.length;
+    this._filesQueueCount = this._filesQueue.size;
 
-    if (this._filesQueueCount === 0)
+    if (this._filesQueue.size === 0)
     {
-      this.end();
+      console.log(0);
+      this.loadFinished();
     }
     else
     {
       this.isDownloading = true;
+      this._successFiles.clear();
+      this._failedFiles.clear();
+      //this._filesQueue.clear();
 
       this.processFileQueue();
     }
 
   },
 
-  end : function() {
+  /*end : function() {
 
     if (this.state === LOADER_STATE.PROCESSING)
         return;
@@ -225,184 +127,163 @@ tobi.LoadManager.prototype = {
     this.state = LOADER_STATE.PROCESSING;
 
     
+    this._filesQueue.clear();
+    this._failedFiles.length = 0;
+    
+    this.processFiles();
 
-    this.game.scene.preloadComplete();
+    this._successFiles.clear();
 
-  },
+    this.state = LOADER_STATE.DONE;
+    //this.game.scene.preloadComplete();
+
+  },*/
 
   processFileQueue : function() {
 
+    var self = this;
 
-    for (var i = 0; i < this._filesQueue.length; i++) {
+    this._filesQueue.each(function(file) {
 
-      var file = this._filesQueue[i];
+      //var file = this._filesQueue[i];
 
       if (file.state === LOADER_STATE.FINISHED ||
-         file.state === LOADER_STATE.PENDING) // && this.inflight.size < this.maxParallelDownloads))
+         file.state === LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
       {
-        file.load(this);
+        file.load(self);
       }
-      //file.loading = true;
 
-     
-
-
-
-    }
+    });
 
   },
 
   next : function(concludedFile, hasError)
   {
       if (hasError)
-      {
-          this._failedFiles.push(concludedFile);
-          this._failedCount++;
-      } else {
-          this._successFiles.push(concludedFile);
-          this._successCount++;
-      }
+          this._failedFiles.set(concludedFile);
+      else 
+          this._successFiles.set(concludedFile);
       
-      this._processedFilesCount++;
+
+      this._filesQueue.delete(concludedFile);
+      this._loadedFilesCount++;
+
       this.updateProgress();
 
-      if (this._filesQueueCount >= this._processedFilesCount)
+      if (this._loadedFilesCount < this._filesQueueCount)
       {
-          this.processLoadQueue();
-      } else {
-          this.end();
+        console.log("asdasd");
+          this.processFileQueue();
+      } else  {
+        
+          this.loadFinished();
       }
-      //this._filesQueue.d
+
   },
 
-  loadImageFile : function(file) {
+  loadFinished : function()
+  {
+    if (this.state === LOADER_STATE.PROCESSING)
+        return;
+  
+    this.progress = 1;
+    this.isDownloading = false;
+    this.state = LOADER_STATE.PROCESSING;
 
+    this._processedFiles.clear();
 
-
-    var self = this;
-
-    file.data = new Image();
-    file.data.name = file.tag;
-
-    file.data.addEventListener("load", function() {
-          self.fileLogComplete(file);
-    }, false);
-
-    file.data.addEventListener("error", function() {
-          self.fileLogError(file);
-    }, false);
-
-    file.data.src = file.url;
-
-  /*  file.data.onload = function () {
-           if (file.data.onload)
-           {
-               file.data.onload = null;
-               file.data.onerror = null;
-               self.fileLogComplete(file);
-           }
-    };
-
-    file.data.onerror = function () {
-            if (file.data.onload)
-            {
-                file.data.onload = null;
-                file.data.onerror = null;
-                self.fileLogError(file);
-            }
-    };*/
-
-
-
-    /*if (file.data.complete && file.data.width && file.data.height)
+    if (this._successFiles.size === 0)
     {
-            //file.data.onload = null;
-            //file.data.onerror = null;
-            this.fileLogComplete(file);
-            if (this.downloadIsDone()) {
-                this.endDownload();
-            }
-    }*/
-
-
-
-  },
-
-  loadAudioFile : function(file) {
-
-    var self = this;
-    var request = new XMLHttpRequest();
-    request.open('GET', file.url, true);
-    request.responseType = 'arraybuffer';
-
-    request.onload = function () {
-
-       if (request.readyState == 4 && request.status >= 400 && request.status <= 599) {
-         self.fileLogError(file);
-       } else {
-          self.fileLogComplete(file,request);
-        }
-
-    }
-
-    request.onerror = function () {
-          self.fileLogError(file);
-    }
-
-    request.send();
-
-
-  },
-
-  fileLogError: function (file) {
-      console.warn("tobiJS.load: Error to load asset from " + file.url);
-      this.dowloadComplete(file,true);
-  },
-
-  /*fileLogComplete: function (file, requestXHR) {
-
-
-
-    switch (file.type)
-    {
-      case 'image': {
-        this.cache.addImage(file.tag,file.url,file.data);
-        break;
-      }
-      case 'audio': {
-
-        file.data = requestXHR.response;
-
-        this.cache.addSound(file.tag,file.url,file.data,true);
-
-        if (file.autoDecode)
-        {
-            this.game.sound.decode(file.tag);
-        }
-
-        break;
-      }
-    }
-
-    this.dowloadComplete(file,false);
-
-  },*/
-
-  dowloadComplete : function(file, error) {
-
-    if (error == true) {
-      file.error = true;
-      this._fileErrorCount++;
+     
+        this.processingDone();
     } else {
-      file.loaded = true;
-      this._successCount++;
+     
+      console.log("asdasd");
+      this._successFiles.each(function(file) {
+        file.onProcessing(this.processingUpdate.bind(this));
+      },this);
+    }
+   
+  },
+
+
+  processingUpdate : function(file)
+  {
+    ;
+    if (file.state === LOADER_STATE.ERROR)
+    {
+      console.log("fail")
+        this._failedFiles.set(file);
+
+        /*if (file.linkFile)
+        {
+            this.queue.delete(file.linkFile);
+        }*/
+
+        
+        
+
+        return this.deleteFromSuccessQueue(file);
     }
 
-    this.updateProgress();
 
-    if (this.downloadIsDone()) {
-        this.endDownload();
+    this._processedFiles.set(file);
+
+    return this.deleteFromSuccessQueue(file);
+
+
+  },
+
+  deleteFromSuccessQueue : function (file) {
+    
+      this._successFiles.delete(file);
+
+      if (this._successFiles.size === 0 && this.state === LOADER_STATE.PROCESSING)
+          this.processingDone();
+  },
+
+  processingDone : function()
+  {
+    console.log("done")
+    this._successFiles.clear();
+    this._filesQueue.clear();
+
+    var cache = this.game.cache;
+
+    if (this._processedFiles.size > 0)
+    {
+      this._processedFiles.each(function(file) {
+
+        switch (file.type)
+        {
+          case 'image': {
+            cache.addImage(file.tag,file.url,file.data);
+            break;
+          }
+          case 'audio': {
+
+            file.data = requestXHR.response;
+
+            cache.addSound(file.tag,file.url,file.data,true);
+
+            if (file.autoDecode)
+            {
+                this.game.sound.decode(file.tag);
+            }
+
+            break;
+          }
+        }
+
+      })
+
+      this._processedFiles.clear();
     }
+
+    this.state = LOADER_STATE.DONE;
+
+    this.game.scene.preloadComplete();
+    console.log("asdasd");
 
   },
 
@@ -431,7 +312,7 @@ tobi.LoadManager.prototype = {
 
     if (this._filesQueueCount != 0)
     {
-      this.progress = 1 - (this._processedFilesCount / this._filesQueueCount);
+      this.progress = 1 - (this._loadedFilesCount / this._filesQueueCount);
     }
      //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
 

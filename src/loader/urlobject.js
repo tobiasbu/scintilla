@@ -1,11 +1,13 @@
 
 tobi.URLObject = {
 
-    create : function(asset, obj, type)
+    create : function(asset, response, type)
     {
+
+
         if (typeof URL === 'function')
         {
-            asset.src = URL.createObjectURL(obj);
+            asset.src = URL.createObjectURL(response);
         }
         else
         {
@@ -14,12 +16,12 @@ tobi.URLObject = {
             reader.onload = function ()
             {
                 asset.removeAttribute('crossOrigin');
-                asset.src = 'data:' + (obj.type || type) + ';base64,' + reader.result.split(',')[1];
+                asset.src = 'data:' + (response.type || type) + ';base64,' + reader.result.split(',')[1];
             };
 
             reader.onerror = asset.onerror;
 
-            reader.readAsDataURL(obj);
+            reader.readAsDataURL(response);
         }   
     },
 

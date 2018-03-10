@@ -17,13 +17,15 @@ var config = {
 
 scene.preload = function()
 {
-    //game.load.setPath('assets/')
-    //game.load.image('test','img/block.png');
+    game.load.setPath('assets/')
+    game.load.image('test','img/block.png');
 }
 
 scene.render = function() {
 
     game.draw.sprite('test',VIEW.w / 2,VIEW.h / 2-16,[0.5,0.5]);
+
+    console.log("asdasdas");
     
 }
 

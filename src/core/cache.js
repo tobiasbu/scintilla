@@ -30,6 +30,8 @@ tobi.Cache.prototype = {
             data: data,
     };
 
+    console.log(data);
+
     this._cache.images[tag] = img;
 
   },
