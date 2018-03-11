@@ -1,108 +1,100 @@
 
-scintilla.Draw = function(game) {
+export default class Draw {
+  
+  constructor(game) {
+    this.game = game;
+    this.cache = game.cache;
+    this.context = game.render.context;
+  }
 
-this.game = game;
-this.cache = game.cache;
-this.context = game.context;
+  font(fontname,size) {
 
-}
-
-scintilla.Draw.prototype = {
-
-font : function(fontname,size) {
-
-this.context.font = size + "px " + fontname;
-
-},
-
-text : function(text,x,y,color) {
-
-  if (color === undefined) color = 'black';
-
-  this.context.fillStyle = color;
-  this.context.fillText(text, x, y);
-
-},
-
-sprite : function(tag, x, y, anchor) {
-
-    var img = this.cache.getAsset('images',tag);
-
-    if (img != null) {
-
-
-      if (anchor === undefined) {
-        anchor[0] = 0;
-        anchor[1] = 0;
-      }
-
-
-
-      var ctx = this.context;
-
-    ctx.save();
-
-    ctx.translate(x-img.width*anchor[0], y-img.height*anchor[1]);
-
-   ctx.drawImage(img,
-          0,
-          0,
-          img.width,
-          img.height);
-
-
-    ctx.restore();
+    this.context.font = size + "px " + fontname;
 
   }
 
-},
+  text(text,x,y,color) {
 
-spriteTransformed : function(tag, x, y, xscale, yscale, angle) {
+    if (color === undefined) color = 'black';
+
+    this.context.fillStyle = color;
+    this.context.fillText(text, x, y);
+
+  }
+
+  sprite(tag, x, y, anchor) {
+
+      var img = this.cache.getAsset('images',tag);
+
+      if (img != null) {
+
+        if (anchor === undefined) {
+          anchor[0] = 0;
+          anchor[1] = 0;
+        }
+
+        var ctx = this.context;
+
+      ctx.save();
+
+      ctx.translate(x-img.width*anchor[0], y-img.height*anchor[1]);
+
+    ctx.drawImage(img,
+            0,
+            0,
+            img.width,
+            img.height);
 
 
-},
+      ctx.restore();
 
-rectangle : function (x, y, width, height, color) {
+    }
 
-  this.context.fillStyle=color;
-  this.context.fillRect(x,y,width,height);
+  }
 
-},
+  spriteTransformed(tag, x, y, xscale, yscale, angle) {
 
-outlineRectangle : function (x,y,width,height,color,outlineWidth) {
 
-  this.context.beginPath();
-  this.context.lineWidth=outlineWidth;
-  this.context.setLineDash([6]);
-  this.context.strokeStyle=color;
-  this.context.rect(x,y,width,height);
-  this.context.stroke();
+  }
 
-},
+  rectangle(x, y, width, height, color) {
 
-alpha : function(a) {
+    this.context.fillStyle=color;
+    this.context.fillRect(x,y,width,height);
 
-  this.context.globalAlpha = a;
+  }
 
-},
+  outlineRectangle(x,y,width,height,color,outlineWidth) {
 
-color : function(color) {
+    this.context.beginPath();
+    this.context.lineWidth=outlineWidth;
+    this.context.setLineDash([6]);
+    this.context.strokeStyle=color;
+    this.context.rect(x,y,width,height);
+    this.context.stroke();
 
-  this.context.fillStyle = color;
+  }
 
-},
+  alpha(a) {
 
-boundingbox : function(bb,color) {
+    this.context.globalAlpha = a;
 
-if (color === undefined)
-  color = 'black';
-  this.context.setTransform(1,0,0,1,0,0);
- this.outlineRectangle(bb.min.x,bb.min.y,bb.max.x-bb.min.x,bb.max.y-bb.min.y,color,2);
+  }
+
+  color(color) {
+
+    this.context.fillStyle = color;
+
+  }
+
+  boundingbox(bb,color) {
+
+  if (color === undefined)
+    color = 'black';
+    this.context.setTransform(1,0,0,1,0,0);
+  this.outlineRectangle(bb.min.x,bb.min.y,bb.max.x-bb.min.x,bb.max.y-bb.min.y,color,2);
+
+  }
 
 }
 
-
-
-}
-
-scintilla.Draw.prototype.constructor = scintilla.Draw;

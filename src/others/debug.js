@@ -4,7 +4,8 @@ export default class Debug {
   constructor(game) {
 
     this.game = game;
-    this.context = game.context;
+    this.draw = game.draw;
+    this.context = game.render.context;
     this.x = 8;
     this.y = 12;
     this.lineHeight = 14;
@@ -21,16 +22,16 @@ export default class Debug {
     this.context.setTransform(1, 0, 0, 1, 0, 0);
     this.context.strokeStyle = this.bgcolor;
     this.context.font = this.font;
-    this.game.draw.alpha(0.5);
-    this.game.draw.rectangle(0,0,this.game.width,(14 * 4)+ 16,this.bgcolor);
-    this.game.draw.alpha(1);
+    this.draw.alpha(0.5);
+    this.draw.rectangle(0,0,this.game.width,(14 * 4)+ 16,this.bgcolor);
+    this.draw.alpha(1);
     this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
-    this.drawLine("Instances in view: " + this.game.camera.instancesInView);
-    this.drawLine("Instances count " + this.game.world.length);
+    //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
+    //this.drawLine("Instances count " + this.game.world.length);
     this.drawLine("Colliders count " + this.game.physics.length);
     this.x += this.game.width / 2;
     this.y = 12+8;
-    this.drawLine("Sounds count " + this.game.sound.length);
+    //this.drawLine("Sounds count " + this.game.sound.length);
     this.x = 8;
     this.y = 12+8;
 

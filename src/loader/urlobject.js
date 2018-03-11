@@ -1,5 +1,5 @@
 
-scintilla.URLObject = {
+var URLObject = {
 
     create : function(asset, response, type)
     {
@@ -33,3 +33,5 @@ scintilla.URLObject = {
         }
     }
 };
+
+module.exports = URLObject;

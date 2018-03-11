@@ -12,9 +12,6 @@ scintilla.World = scintilla.Instance.extend(function() {
 
     this.camera = new scintilla.Camera(this.game,0,0,this.game.width,this.game.height);
     this.worldBounds = new scintilla.Rect(0,0,this.game.width,this.game.height);
-  //scintilla.Instance.call(this,game,null,"__world",true);
-
-  // this._new();
     this.game = game;
 
   }

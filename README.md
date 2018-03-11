@@ -1,4 +1,4 @@
-![Scintilla Logo](https://raw.githubusercontent.com/tobiasbu/raytracer/master/resources/scintilla_logo.png)
+![Scintilla Logo](https://raw.githubusercontent.com/tobiasbu/scintilla/master/resources/scintilla_logo.png)
 
 # Scintilla - HTML5 Game Engine
 

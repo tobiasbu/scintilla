@@ -1,5 +1,6 @@
 
 import Map from '../structures/map'
+import Scene from './scene'
 
 export default class SceneManager {
   
@@ -52,7 +53,7 @@ new(sceneName)
     return null;
   }
   
-  var newScene = new scintilla.Scene(this.game);
+  var newScene = new Scene(this.game);
   this._scenes.set(sceneName,newScene);
 
   return newScene;
@@ -114,9 +115,9 @@ setupScene(sceneName) {
 
   this.game.time.refresh();
 
-  this.current_scene.camera = this.game.world.camera;
+  //this.current_scene.camera = this.game.world.camera;
 
-  this.game.instance.scene = this.current_scene;
+  //this.game.instance.scene = this.current_scene;
 
   this._setup = false;
 
@@ -137,7 +138,7 @@ clearCurrentScene() {
           this.game.cache.clear();
     }
 
-    this.game.world.destroyAllChilds();
+    //this.game.world.destroyAllChilds();
 
   }
 
@@ -166,7 +167,7 @@ preUpdate() {
       this.game.load.reset();
       this.onPreloadCallback.call(this.current_scene, this.game);
 
-      if (this.game.load.totalQueuedFiles() === 0)
+      if (this.game.load.totalQueuedFiles === 0)
       {
         this.preloadComplete();
 

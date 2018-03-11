@@ -17,7 +17,7 @@ var config = {
 };
   
   var game = new scintilla.Game(config);
-  /*var scene = game.scene.new('scene');
+  var scene = game.scene.new('scene');
   var x = 0;
 
 scene.preload = function()

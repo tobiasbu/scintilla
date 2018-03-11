@@ -1,76 +1,67 @@
 
-scintilla.Camera = function(game,x,y,width,height) {
+import Rect from '../math/rect'
+import Vector from '../math/vector'
 
-this.game = game;
-this.view = new scintilla.Rect(x,y,width,height);
-this.root = null; // who is the node (world)
-this.instancesInView = 0;
+export default class Camera {
+  
+  constructor(game,x,y,width,height) {
 
-this.target = null;
-this.scale = new scintilla.Vector(1,1);
-this.angle = 0;
+    this.game = game;
+    this.view = new Rect(x,y,width,height);
+    this.root = null; // who is the node (world)
+    this.instancesInView = 0;
 
-this._width = width;
-this._height = height;
+    this.target = null;
+    this.scale = new Vector(1,1);
+    this.angle = 0;
 
-}
+    this._width = width;
+    this._height = height;
 
+  }
 
+  update() {
+    this.instancesInView = 0;
+    this.root.position.x = -this.view.x;
+    this.root.position.y = -this.view.y;
+    this.root.scale = this.scale;
+    this.root.angle = this.angle;
+  }
 
-scintilla.Camera.prototype = {
+  setScale(x,y) {
+    this.scale.set(x,y);
+  }
 
-  update : function() {
+  setPosition(x,y) {
+    this.view.x = x;
+    this.view.y = y;
+  }
 
-  this.instancesInView = 0;
-  this.root.position.x = -this.view.x;
-  this.root.position.y = -this.view.y;
-  this.root.scale = this.scale;
-  this.root.angle = this.angle;
+  setFocus(vector) {
 
-},
+    this.setPosition(Math.round(vector.x - (this.view.width/2)), Math.round(vector.y - (this.view.height/2)));
 
-setScale : function(x,y) {
+  }
 
-  this.scale.set(x,y);
-  //this.view.width = this._width * x;
-  //this.view.height = this._height * y;
+  setFocusXY(x,y) {
 
-},
+    this.setPosition(Math.round(x - (this.view.width/2)), Math.round(y - (this.view.height/2)));
 
-setPosition : function(x,y) {
+  }
 
-  this.view.x = x;
-  this.view.y = y;
+  setTarget(target) {
 
-},
+    this.target = target;
 
-setFocus : function(vector) {
+  }
 
-  this.setPosition(Math.round(vector.x - (this.view.width/2)), Math.round(vector.y - (this.view.height/2)));
+  reset() {
 
-},
-
-setFocusXY : function(x,y) {
-
-  this.setPosition(Math.round(x - (this.view.width/2)), Math.round(y - (this.view.height/2)));
-
-},
-
-setTarget : function(target) {
-
-  this.target = target;
-
-},
-
-reset: function () {
-
-       this.target = null;
-       this.view.x = 0;
-       this.view.y = 0;
-       this.angle = 0;
-       this.scale.set(1,1)
-}
+        this.target = null;
+        this.view.x = 0;
+        this.view.y = 0;
+        this.angle = 0;
+        this.scale.set(1,1)
+  }
 
 }
-
-scintilla.Camera.prototype.constructor = scintilla.Camera;

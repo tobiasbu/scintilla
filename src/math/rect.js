@@ -4,92 +4,82 @@
 * @class Rect
 * @constructor
 */
-scintilla.Rect = function(x,y,width,height) {
-
-  x = x || 0;
-  y = y || 0;
-  width = width || 0;
-  height = height || 0;
-
-  this.x = x;
-  this.y = y;
-  this.width = width;
-  this.height = height;
-}
-
-
-scintilla.Rect.prototype = {
-
-  intersects : function(rect) {
-
-      return scintilla.Rect.intersects(this, rect);
-
-  },
-
-  contains : function(x,y) {
-
-    return scintilla.Rect.contains(this,x,y);
-
-  },
-
-  set : function(x,y,width,height) {
+export default class Rect {
+  
+  constructor(x,y,width,height) {
+    x = x || 0;
+    y = y || 0;
+    width = width || 0;
+    height = height || 0;
 
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-
   }
 
-};
+  intersects(rect) {
+      return Rect.intersects(this, rect);
+  }
 
-scintilla.Rect.prototype.constructor = scintilla.Rect;
+  contains(x,y) {
+    return Rect.contains(this,x,y);
+  }
 
-scintilla.Rect.intersects = function(rect1, rect2) {
+  set(x,y,width,height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
 
-  if (rect1.width <= 0 || rect1.height <= 0 || rect2.width <= 0 || rect2.height <= 0)
-    return false;
+  static intersects(rect1, rect2) {
 
-  return    !(rect1.x > rect2.x + rect2.width ||
-             rect1.x + rect1.width < rect2.x ||
-             rect1.y > rect2.y + rect2.height ||
-             rect1.y + rect1.height < rect2.y);
-};
+    if (rect1.width <= 0 || rect1.height <= 0 || rect2.width <= 0 || rect2.height <= 0)
+      return false;
+  
+    return    !(rect1.x > rect2.x + rect2.width ||
+               rect1.x + rect1.width < rect2.x ||
+               rect1.y > rect2.y + rect2.height ||
+               rect1.y + rect1.height < rect2.y);
+  }
 
-scintilla.Rect.contains = function(rect, x, y) {
-
-  if (rect.width <= 0 && rect.height <= 0 )
-    return false;
-
-  return (x > rect.x &&
-          x < rect.x + rect.width &&
-          y >= rect.y &&
-          y < rect.y + rect.height);
-
-};
-
-scintilla.Rect.intersectionArea = function(rect1,rect2) {
-
-    var out = new scintilla.Rect();
-
-    if (scintilla.Rect.intersects(rect1,rect2)) {
-
-       out.y = Math.max(a.y, b.y);
-       out.x = Math.max(a.x, b.x);
-       out.width = Math.min(a.x + a.width, b.x + b.width) - out.x;
-       out.height = Math.min(a.y + a.height, b.y + b.height) - out.y;
-
-    }
-
-    return out;
-
+  static contains(rect, x, y) {
+  
+    if (rect.width <= 0 && rect.height <= 0 )
+      return false;
+  
+    return (x > rect.x &&
+            x < rect.x + rect.width &&
+            y >= rect.y &&
+            y < rect.y + rect.height);
+  
+  }
+  
+  static intersectionArea(rect1,rect2) {
+  
+      var out = new scintilla.Rect();
+  
+      if (scintilla.Rect.intersects(rect1,rect2)) {
+  
+         out.y = Math.max(a.y, b.y);
+         out.x = Math.max(a.x, b.x);
+         out.width = Math.min(a.x + a.width, b.x + b.width) - out.x;
+         out.height = Math.min(a.y + a.height, b.y + b.height) - out.y;
+  
+      }
+  
+      return out;
+  
+  }
+  
+  get centerPoint() {
+    var vec2 = {};
+    vec.x = this.x + this.width / 2;
+    vec.y = this.y + this.height / 2;
+    return vec2;
+  }
 }
 
-scintilla.Rect.centerPoint = function() {
 
-  var vec2 = {};
-  vec.x = this.x + this.width / 2;
-  vec.y = this.y + this.height / 2;
-  return vec2;
 
-}

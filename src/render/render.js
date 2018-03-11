@@ -1,13 +1,16 @@
 
 import Map from '../structures/map'
 import RenderLayer from './renderlayer'
+import Canvas from './canvas/canvas'
 
 export default class Render {
     
-    constructor(game, canvas, context) {
+    constructor(game) {
         this.game = game;
-        this.canvas = canvas;
-        this.context = context;
+
+        this.canvas = Canvas.create(this.game.parent,this.game.width,this.game.height);
+        this.context = this.canvas.getContext("2d", { alpha: false });    
+
         this.__enable = true;
         this.__renderLayers = [];
         this.__renderLayersMap = new Map();
@@ -56,9 +59,9 @@ export default class Render {
 
         this.context.setTransform(1, 0, 0, 1, 0, 0);
         this.context.globalCompositeOperation = 'source-over';
-        this.context.clearRect(0, 0, this.canvas.width, this.game.height);
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.fillStyle = '#fff';//this.universe.backgroundColor;
-        this.context.fillRect(0, 0, this.canvas.width, this.game.height);
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (var i = 0; i < this.__renderLayers.length; i++)
         {

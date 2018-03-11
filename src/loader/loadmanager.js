@@ -79,13 +79,16 @@ export default class LoadManager {
   reset() {
 
     this.isDownloading = false;
+    this._filesQueue.clear();
+    this._successFiles.clear();
+    this._failedFiles.clear();
+    this._processedFiles.clear();
+
     this._filesQueueCount = 0;
-    this._successCount = 0;
-    this._filesQueue.length = 0;
-    this._fileErrorCount = 0;
+    this._loadedFilesCount = 0;
+
     this.progress = 0
     this.state = LOADER_STATE.IDLE;
-
 
   }
 
@@ -305,8 +308,8 @@ export default class LoadManager {
   }
 
 
-  totalQueuedFiles() {
-    return this._filesQueueCount - this._successCount;
+  get totalQueuedFiles() {
+    return this._filesQueueCount - this._loadedFilesCount;
   }
 
 

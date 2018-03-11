@@ -1,27 +1,31 @@
 
-scintilla.File = Class.extend(function() {
+import Utils from '../utils/utils'
+import XHR from './XHR'
+import {LOADER_STATE} from './loaderstate'
 
-    this.constructor = function(config) {
+export default class File {
 
-        this.type = scintilla.Utils.getValue(config, 'type', null);
-        this.tag = scintilla.Utils.getValue(config, 'tag', null);
+    constructor(config) {
+
+        this.type = Utils.getValue(config, 'type', null);
+        this.tag = Utils.getValue(config, 'tag', null);
 
         if (this.type == null || this.tag == null)
         {
             throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
         }
 
-        this.url = scintilla.Utils.getValue(config, 'url', null);
+        this.url = Utils.getValue(config, 'url', null);
 
         if (this.url === undefined)
-            this.url = scintilla.Utils.getValue(config, 'path', '') + this.tag + '.' + GetFastValue(config, 'ext', '');
+            this.url = Utils.getValue(config, 'path', '') + this.tag + '.' + Utils.getValue(config, 'ext', '');
         else
-            this.url = scintilla.Utils.getValue(config, 'path', '').concat(this.url);
+            this.url = Utils.getValue(config, 'path', '').concat(this.url);
 
-        this.xhrSettings = scintilla.XHR.createSettings(scintilla.Utils.getValue(config, 'responseType', undefined));
+        this.xhrSettings = XHR.createSettings(Utils.getValue(config, 'responseType', undefined));
         
-        if (scintilla.Utils.getValue(config, 'xhrSettings', false))
-            this.xhrSettings = scintilla.XHR.merge(this.xhrSettings, scintilla.Utils.getValue(config, 'xhrSettings', {}));
+        if (Utils.getValue(config, 'xhrSettings', false))
+            this.xhrSettings = XHR.merge(this.xhrSettings, Utils.getValue(config, 'xhrSettings', {}));
 
         
         console.log(this.xhrSettings);
@@ -34,7 +38,7 @@ scintilla.File = Class.extend(function() {
         this.data = undefined;
         this.source = null;
         this.xhrRequest = null;
-        this.config = scintilla.Utils.getValue(config,'config',{});
+        this.config = Utils.getValue(config,'config',{});
         this.crossOrigin = undefined;
 
         // callbacks
@@ -44,8 +48,7 @@ scintilla.File = Class.extend(function() {
 
     }
 
-
-    this.load = function(gameLoader)
+    load(gameLoader)
     {
         this.loader = gameLoader;
 
@@ -60,7 +63,7 @@ scintilla.File = Class.extend(function() {
         {
            
 
-            this.source = scintilla.Utils.getURL(this.url, gameLoader.baseURL);
+            this.source = Utils.getURL(this.url, gameLoader.baseURL);
 
             
             if (this.source.indexOf('data:') === 0 || this.source == null)
@@ -69,13 +72,13 @@ scintilla.File = Class.extend(function() {
             }
             else
             {
-                this.xhrRequest = scintilla.XHR.createFileRequest(this, gameLoader.xhr);
+                this.xhrRequest = XHR.createFileRequest(this, gameLoader.xhr);
             }
         }
 
     }
 
-    this.onLoad = function(event)
+    onLoad(event)
     {
         this.XHRreset();
 
@@ -86,14 +89,14 @@ scintilla.File = Class.extend(function() {
 
     }
 
-    this.onError = function()
+    onError()
     {
         this.XHRreset();
 
         this.loader.next(this, true);
     }
 
-    this.onProgress = function(event)
+    onProgress(event)
     {
         if (event.lengthComputable)
         {
@@ -106,12 +109,12 @@ scintilla.File = Class.extend(function() {
         }
     }
 
-    this.onDone = function()
+    onDone()
     {
         this.state = LOADER_STATE.DONE;
     }
 
-    this.onProcessing = function(processingCallback)
+    onProcessing(processingCallback)
     {
         this.state = LOADER_STATE.PROCESSING;
 
@@ -121,7 +124,7 @@ scintilla.File = Class.extend(function() {
     }
 
 
-    this.XHRreset = function()
+    XHRreset()
     {
         this.xhrRequest.onload = undefined;
         this.xhrRequest.onerror = undefined;
@@ -129,5 +132,5 @@ scintilla.File = Class.extend(function() {
     }
 
 
-});
+}
 

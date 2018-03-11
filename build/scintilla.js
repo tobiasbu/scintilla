@@ -144,6 +144,9 @@ module.exports = g;
 */
 var scintilla = scintilla || {
   VERSION: '0.0.1',
+  Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
+  KeyCode: __webpack_require__(/*! ./input/keycode */ "./input/keycode.js"),
+  Input: __webpack_require__(/*! ./input */ "./input/index.js"),
   Game: __webpack_require__(/*! ./core/game */ "./core/game.js")
 };
 
@@ -418,6 +421,10 @@ var _render = __webpack_require__(/*! ../render/render */ "./render/render.js");
 
 var _render2 = _interopRequireDefault(_render);
 
+var _draw = __webpack_require__(/*! ../render/draw */ "./render/draw.js");
+
+var _draw2 = _interopRequireDefault(_draw);
+
 var _scenemanager = __webpack_require__(/*! ./scenemanager */ "./core/scenemanager.js");
 
 var _scenemanager2 = _interopRequireDefault(_scenemanager);
@@ -528,16 +535,14 @@ var Game = function () {
 
             if (this.systemInited) return;
 
-            this.canvas = _canvas2.default.create(this.parent, this.width, this.height);
-            this.context = this.canvas.getContext("2d", { alpha: false });
-
             this.cache = new _cache2.default(this);
             this.load = new _loadmanager2.default(this);
             this.time = new _time2.default(this);
             //this.universe = new scintilla.Universe(this);
             //this.world = new scintilla.World(this);
-            //this.draw = new scintilla.Draw(this);
-            this.render = new _render2.default(this, this.canvas, this.context);
+
+            this.render = new _render2.default(this);
+            this.draw = new _draw2.default(this);
             this.scene = new _scenemanager2.default(this);
             this.input = new _input2.default(this);
             //this.instance = new scintilla.Creator(this,this.world);
@@ -682,6 +687,113 @@ module.exports = Game;
 
 /***/ }),
 
+/***/ "./core/scene.js":
+/*!***********************!*\
+  !*** ./core/scene.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Scene = function () {
+  function Scene(game) {
+    _classCallCheck(this, Scene);
+
+    var myGame = null;
+
+    if (typeof game === 'undefined') myGame = null;else {
+      myGame = game;
+    }
+
+    this.game = myGame;
+    this.camera = null;
+    this.x = 0;
+    this.y = 0;
+    this.width = 0;
+    this.height = 0;
+    this.view = 0;
+
+    if (myGame != null) {
+      this.width = myGame.width;
+      this.height = myGame.height;
+    }
+  }
+
+  /*preload : function() {},
+  loading : function() {},
+  loadingRender : function() {},
+  start : function() {},
+  update : function() {},
+  render : function() {},
+  destroy : function() {},
+    _draw : function() {
+      self.game.context.font ="12px Verdana";
+    self.game.context.fillText("FPS: " + Math.round(this.game.clock.fps) + " / 60",0,12);
+    self.game.context.fillText("Instances Count: " + this.instances.length,0,24);
+    self.game.context.fillText("Instances in view: " + this.view,0,36);
+    },*/
+
+  _createClass(Scene, [{
+    key: 'instanceDestroy',
+    value: function instanceDestroy(gameObject) {
+
+      if (gameObject['destroy']) gameObject.destroy();
+
+      //console.log("deleted " + gameObject._id)
+
+      var index = this.instances.indexOf(gameObject);
+
+      this.instances.splice(index, 1);
+    }
+  }, {
+    key: 'addGameObject',
+    value: function addGameObject(gameObject, clone) {
+
+      var obj = void 0;
+      var cl = false;
+
+      if (arguments.length == 0) obj = new scintilla.GameObject();else {
+
+        if (clone === undefined) cl = false;else cl = clone;
+
+        if (cl) obj = gameObject.clone();else obj = gameObject;
+      }
+
+      obj._id = this.instances.length;
+      obj._game = this.game;
+      this.instances.push(obj);
+
+      obj.start();
+      return obj;
+    }
+  }, {
+    key: 'setBounds',
+    value: function setBounds(x, y, width, height) {
+
+      this.x = x;
+      this.y = y;
+      this.width = width;
+      this.height = height;
+    }
+  }]);
+
+  return Scene;
+}();
+
+exports.default = Scene;
+
+/***/ }),
+
 /***/ "./core/scenemanager.js":
 /*!******************************!*\
   !*** ./core/scenemanager.js ***!
@@ -701,6 +813,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
 
 var _map2 = _interopRequireDefault(_map);
+
+var _scene = __webpack_require__(/*! ./scene */ "./core/scene.js");
+
+var _scene2 = _interopRequireDefault(_scene);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -752,7 +868,7 @@ var SceneManager = function () {
                 return null;
             }
 
-            var newScene = new scintilla.Scene(this.game);
+            var newScene = new _scene2.default(this.game);
             this._scenes.set(sceneName, newScene);
 
             return newScene;
@@ -814,9 +930,9 @@ var SceneManager = function () {
 
             this.game.time.refresh();
 
-            this.current_scene.camera = this.game.world.camera;
+            //this.current_scene.camera = this.game.world.camera;
 
-            this.game.instance.scene = this.current_scene;
+            //this.game.instance.scene = this.current_scene;
 
             this._setup = false;
         }
@@ -834,7 +950,7 @@ var SceneManager = function () {
                     this.game.cache.clear();
                 }
 
-                this.game.world.destroyAllChilds();
+                //this.game.world.destroyAllChilds();
             }
         }
     }, {
@@ -858,7 +974,7 @@ var SceneManager = function () {
                     this.game.load.reset();
                     this.onPreloadCallback.call(this.current_scene, this.game);
 
-                    if (this.game.load.totalQueuedFiles() === 0) {
+                    if (this.game.load.totalQueuedFiles === 0) {
                         this.preloadComplete();
                     } else {
 
@@ -927,6 +1043,27 @@ var SceneManager = function () {
 }();
 
 exports.default = SceneManager;
+
+/***/ }),
+
+/***/ "./input/index.js":
+/*!************************!*\
+  !*** ./input/index.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+
+    Key: __webpack_require__(/*! ./key */ "./input/key.js"),
+    Keyboard: __webpack_require__(/*! ./keyboard */ "./input/keyboard.js"),
+    Mouse: __webpack_require__(/*! ./keyboard */ "./input/keyboard.js"),
+    Input: __webpack_require__(/*! ./input */ "./input/input.js")
+
+};
 
 /***/ }),
 
@@ -1036,7 +1173,7 @@ var Key = function () {
         this.press = false;
         this.release = false;
 
-        this._event = scintilla.KeyEvent.NONE;
+        this._event = KeyEvent.NONE;
 
         this.pressTime = 0;
         this.pressDuration = -2500;
@@ -1091,19 +1228,19 @@ var Key = function () {
 
             if (this.press) {
                 if (this.pressDuration == 0) {
-                    this._event = scintilla.KeyEvent.PRESSED;
+                    this._event = KeyEvent.PRESSED;
                 }
             } else {
 
                 if (this.releaseDuration == 0) {
-                    this._event = scintilla.KeyEvent.RELEASED;
+                    this._event = KeyEvent.RELEASED;
                 } else {
-                    this._event = scintilla.KeyEvent.IDLE;
+                    this._event = KeyEvent.IDLE;
                 }
             }
 
-            if (this._event == scintilla.KeyEvent.IDLE) {
-                this._event = scintilla.KeyEvent.NONE;
+            if (this._event == KeyEvent.IDLE) {
+                this._event = KeyEvent.NONE;
             }
         }
     }, {
@@ -1130,7 +1267,7 @@ var Key = function () {
         key: "reset",
         value: function reset() {
             this.status = false;
-            this._event = scintilla.KeyEvent.NONE;
+            this._event = KeyEvent.NONE;
             this.press = false;
             this.release = false;
 
@@ -1176,7 +1313,6 @@ exports.default = Key;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.KeyCode = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -1187,6 +1323,10 @@ var _key2 = _interopRequireDefault(_key);
 var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
 
 var _map2 = _interopRequireDefault(_map);
+
+var _keycode = __webpack_require__(/*! ./keycode */ "./input/keycode.js");
+
+var _keycode2 = _interopRequireDefault(_keycode);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1212,6 +1352,7 @@ var Keyboard = function () {
     this._onKeyDown = null;
     this._onKeyUp = null;
     this._onKeyPress = null;
+    this.reset();
   }
 
   _createClass(Keyboard, [{
@@ -1221,11 +1362,11 @@ var Keyboard = function () {
       this._keyMapping.clear();
       this._keyWatch.clear();
       this._keyGarbage = [];
-      for (var prop in scintilla.KeyCode) {
+      for (var prop in _keycode2.default) {
 
-        if (scintilla.KeyCode.hasOwnProperty(prop)) {
-          var value = scintilla.KeyCode[prop];
-          this._keyMapping.set(value, new scintilla.Key(value, this.game));
+        if (_keycode2.default.hasOwnProperty(prop)) {
+          var value = _keycode2.default[prop];
+          this._keyMapping.set(value, new _key2.default(value, this.game));
         }
         /*if (scintilla.KeyCode.hasOwnProperty(prop)) {
             
@@ -1349,7 +1490,7 @@ var Keyboard = function () {
 
         //console.log(value);
 
-        if (value.event() == scintilla.KeyEvent.IDLE) {
+        if (value.event() == KeyEvent.IDLE) {
 
           // value.reset();
           self._keyGarbage.push(key);
@@ -1422,7 +1563,7 @@ var Keyboard = function () {
         if (key === undefined)
         return false;*/
 
-      return key.status;
+      return this._keyMapping.get(keycode).status;
 
       /*var keyLock = false;
         if (this._keyLock[keycode] ==  scintilla.KeyEvent.RELEASE ||
@@ -1439,106 +1580,121 @@ var Keyboard = function () {
 }();
 
 exports.default = Keyboard;
-var KeyCode = exports.KeyCode = {
-  Backspace: 8,
-  Tab: 9,
-  Enter: 13,
-  Shift: 16,
-  Ctrl: 17,
-  Alt: 18,
-  Pause: 19,
-  CapsLock: 20,
-  Escape: 27,
-  Space: 32,
-  PageUp: 33,
-  PageDown: 34,
-  End: 35,
-  Home: 36,
-  Left: 37,
-  Up: 38,
-  Right: 39,
-  Down: 40,
-  Insert: 45,
-  Delete: 46,
-  Num0: 48,
-  Num1: 49,
-  Num2: 50,
-  Num3: 51,
-  Num4: 52,
-  Num5: 53,
-  Num6: 54,
-  Num7: 55,
-  Num8: 56,
-  Num9: 57,
-  A: 65,
-  B: 66,
-  C: 67,
-  D: 68,
-  E: 69,
-  F: 70,
-  G: 71,
-  H: 72,
-  I: 73,
-  J: 74,
-  K: 75,
-  L: 76,
-  M: 77,
-  N: 78,
-  O: 79,
-  P: 80,
-  Q: 81,
-  R: 82,
-  S: 83,
-  T: 84,
-  U: 85,
-  V: 86,
-  W: 87,
-  X: 88,
-  Y: 89,
-  Z: 90,
-  LSystem: 91,
-  RSystem: 92,
-  SelectK: 93,
-  Numpad0: 96,
-  Numpad1: 97,
-  Numpad2: 98,
-  Numpad3: 99,
-  Numpad4: 100,
-  Numpad5: 101,
-  Numpad6: 102,
-  Numpad7: 103,
-  Numpad8: 104,
-  Numpad9: 105,
-  Multiply: 106,
-  Add: 107,
-  Subtract: 109,
-  DecimalPoint: 110,
-  Divide: 111,
-  F1: 112,
-  F2: 113,
-  F3: 114,
-  F4: 115,
-  F5: 116,
-  F6: 117,
-  F7: 118,
-  F8: 119,
-  F9: 120,
-  F10: 121,
-  F11: 122,
-  F12: 123,
-  NumLock: 144,
-  ScrollLock: 145,
-  SemiColon: 186,
-  Equal: 187,
-  Comma: 188,
-  Dash: 189,
-  Period: 190,
-  Slash: 191,
-  LBraket: 219,
-  BackSlash: 220,
-  RBracket: 221,
-  Quote: 222
+
+/***/ }),
+
+/***/ "./input/keycode.js":
+/*!**************************!*\
+  !*** ./input/keycode.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var KeyCode = {
+    Backspace: 8,
+    Tab: 9,
+    Enter: 13,
+    Shift: 16,
+    Ctrl: 17,
+    Alt: 18,
+    Pause: 19,
+    CapsLock: 20,
+    Escape: 27,
+    Space: 32,
+    PageUp: 33,
+    PageDown: 34,
+    End: 35,
+    Home: 36,
+    Left: 37,
+    Up: 38,
+    Right: 39,
+    Down: 40,
+    Insert: 45,
+    Delete: 46,
+    Num0: 48,
+    Num1: 49,
+    Num2: 50,
+    Num3: 51,
+    Num4: 52,
+    Num5: 53,
+    Num6: 54,
+    Num7: 55,
+    Num8: 56,
+    Num9: 57,
+    A: 65,
+    B: 66,
+    C: 67,
+    D: 68,
+    E: 69,
+    F: 70,
+    G: 71,
+    H: 72,
+    I: 73,
+    J: 74,
+    K: 75,
+    L: 76,
+    M: 77,
+    N: 78,
+    O: 79,
+    P: 80,
+    Q: 81,
+    R: 82,
+    S: 83,
+    T: 84,
+    U: 85,
+    V: 86,
+    W: 87,
+    X: 88,
+    Y: 89,
+    Z: 90,
+    LSystem: 91,
+    RSystem: 92,
+    SelectK: 93,
+    Numpad0: 96,
+    Numpad1: 97,
+    Numpad2: 98,
+    Numpad3: 99,
+    Numpad4: 100,
+    Numpad5: 101,
+    Numpad6: 102,
+    Numpad7: 103,
+    Numpad8: 104,
+    Numpad9: 105,
+    Multiply: 106,
+    Add: 107,
+    Subtract: 109,
+    DecimalPoint: 110,
+    Divide: 111,
+    F1: 112,
+    F2: 113,
+    F3: 114,
+    F4: 115,
+    F5: 116,
+    F6: 117,
+    F7: 118,
+    F8: 119,
+    F9: 120,
+    F10: 121,
+    F11: 122,
+    F12: 123,
+    NumLock: 144,
+    ScrollLock: 145,
+    SemiColon: 186,
+    Equal: 187,
+    Comma: 188,
+    Dash: 189,
+    Period: 190,
+    Slash: 191,
+    LBraket: 219,
+    BackSlash: 220,
+    RBracket: 221,
+    Quote: 222
 };
+
+module.exports = KeyCode;
 
 /***/ }),
 
@@ -1582,7 +1738,7 @@ var Mouse = function () {
         this.x = 0;
         this.y = 0;
         this.game = game;
-        this.canvas = game.canvas;
+        this.canvas = game.render.canvas;
         this.button = 0;
         this.wheelDelta = 0;
         this.active = true;
@@ -1752,6 +1908,47 @@ exports.default = Mouse;
 
 /***/ }),
 
+/***/ "./loader/URLobject.js":
+/*!*****************************!*\
+  !*** ./loader/URLobject.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var URLObject = {
+
+    create: function create(asset, response, type) {
+
+        if (typeof URL === 'function') {
+            asset.src = URL.createObjectURL(response);
+        } else {
+            var reader = new FileReader();
+
+            reader.onload = function () {
+                asset.removeAttribute('crossOrigin');
+                asset.src = 'data:' + (response.type || type) + ';base64,' + reader.result.split(',')[1];
+            };
+
+            reader.onerror = asset.onerror;
+
+            reader.readAsDataURL(response);
+        }
+    },
+
+    revoke: function revoke(data) {
+        if (typeof URL === 'function') {
+            URL.revokeObjectURL(data.src);
+        }
+    }
+};
+
+module.exports = URLObject;
+
+/***/ }),
+
 /***/ "./loader/XHR.js":
 /*!***********************!*\
   !*** ./loader/XHR.js ***!
@@ -1832,6 +2029,302 @@ exports.default = function () {
 
     return XHR;
 }();
+
+/***/ }),
+
+/***/ "./loader/assets/imagefile.js":
+/*!************************************!*\
+  !*** ./loader/assets/imagefile.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+
+var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+
+var _file2 = _interopRequireDefault(_file);
+
+var _URLobject = __webpack_require__(/*! ../URLobject */ "./loader/URLobject.js");
+
+var _URLobject2 = _interopRequireDefault(_URLobject);
+
+var _utils = __webpack_require__(/*! ../../utils/utils */ "./utils/utils.js");
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ImageFile = function (_File) {
+    _inherits(ImageFile, _File);
+
+    function ImageFile(tag, url, path, xhrSettings, config) {
+        _classCallCheck(this, ImageFile);
+
+        var assetTag = null;
+
+        if (typeof tag === 'string') {
+            assetTag = tag;
+        } else {
+            assetTag = _utils2.default.getValue(tag, 'tag', '');
+        }
+
+        var fileConfig = {
+            type: 'image',
+            tag: assetTag,
+            ext: _utils2.default.getValue(tag, 'ext', _utils2.default.getFileExtension(url)),
+            url: _utils2.default.getValue(tag, 'file', url),
+            path: path,
+            responseType: 'blob',
+            xhrSettings: _utils2.default.getValue(tag, 'xhr', xhrSettings),
+            config: _utils2.default.getValue(tag, 'config', config)
+        };
+
+        return _possibleConstructorReturn(this, (ImageFile.__proto__ || Object.getPrototypeOf(ImageFile)).call(this, fileConfig));
+    }
+
+    _createClass(ImageFile, [{
+        key: 'onProcessing',
+        value: function onProcessing(processingCallback) {
+            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            this.data = new Image();
+            this.data.crossOrigin = this.crossOrigin;
+
+            var self = this;
+
+            this.data.onload = function () {
+
+                _URLobject2.default.revoke(self.data);
+
+                self.onDone();
+
+                processingCallback(self);
+            };
+
+            this.data.onerror = function () {
+
+                _URLobject2.default.revoke(self.data);
+
+                self.state = _loaderstate.LOADER_STATE.ERROR;
+
+                processingCallback(self);
+            };
+
+            _URLobject2.default.create(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
+        }
+    }]);
+
+    return ImageFile;
+}(_file2.default);
+
+exports.default = ImageFile;
+
+
+_loaderstate.AssetTypeHandler.register('image', function (tag, url, path, xhrSettings) {
+
+    this.addAsset(new ImageFile(tag, url, this.path, xhrSettings));
+
+    return this;
+});
+
+module.exports = ImageFile;
+
+/***/ }),
+
+/***/ "./loader/assets/index.js":
+/*!********************************!*\
+  !*** ./loader/assets/index.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    ImageFile: __webpack_require__(/*! ./imagefile */ "./loader/assets/imagefile.js")
+};
+
+/***/ }),
+
+/***/ "./loader/file.js":
+/*!************************!*\
+  !*** ./loader/file.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _utils = __webpack_require__(/*! ../utils/utils */ "./utils/utils.js");
+
+var _utils2 = _interopRequireDefault(_utils);
+
+var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
+
+var _XHR2 = _interopRequireDefault(_XHR);
+
+var _loaderstate = __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var File = function () {
+    function File(config) {
+        _classCallCheck(this, File);
+
+        this.type = _utils2.default.getValue(config, 'type', null);
+        this.tag = _utils2.default.getValue(config, 'tag', null);
+
+        if (this.type == null || this.tag == null) {
+            throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
+        }
+
+        this.url = _utils2.default.getValue(config, 'url', null);
+
+        if (this.url === undefined) this.url = _utils2.default.getValue(config, 'path', '') + this.tag + '.' + _utils2.default.getValue(config, 'ext', '');else this.url = _utils2.default.getValue(config, 'path', '').concat(this.url);
+
+        this.xhrSettings = _XHR2.default.createSettings(_utils2.default.getValue(config, 'responseType', undefined));
+
+        if (_utils2.default.getValue(config, 'xhrSettings', false)) this.xhrSettings = _XHR2.default.merge(this.xhrSettings, _utils2.default.getValue(config, 'xhrSettings', {}));
+
+        console.log(this.xhrSettings);
+
+        this.loader = null;
+        this.state = _loaderstate.LOADER_STATE.PENDING;
+        this.totalBytes = 0;
+        this.loadedBytes = 0;
+        this.progress = 0;
+        this.data = undefined;
+        this.source = null;
+        this.xhrRequest = null;
+        this.config = _utils2.default.getValue(config, 'config', {});
+        this.crossOrigin = undefined;
+
+        // callbacks
+        //loaded: false,
+        //error: false,
+        //loading:false,
+    }
+
+    _createClass(File, [{
+        key: 'load',
+        value: function load(gameLoader) {
+            this.loader = gameLoader;
+
+            if (this.state === _loaderstate.LOADER_STATE.FINISHED) {
+                this.onDone();
+
+                this.loader.nextFile(this);
+            } else {
+
+                this.source = _utils2.default.getURL(this.url, gameLoader.baseURL);
+
+                if (this.source.indexOf('data:') === 0 || this.source == null) {
+                    console.warn("Loader.File.load: unsupported URI.");
+                } else {
+                    this.xhrRequest = _XHR2.default.createFileRequest(this, gameLoader.xhr);
+                }
+            }
+        }
+    }, {
+        key: 'onLoad',
+        value: function onLoad(event) {
+            this.XHRreset();
+
+            if (event.target && event.target.status !== 200) this.loader.next(this, true);else this.loader.next(this, false);
+        }
+    }, {
+        key: 'onError',
+        value: function onError() {
+            this.XHRreset();
+
+            this.loader.next(this, true);
+        }
+    }, {
+        key: 'onProgress',
+        value: function onProgress(event) {
+            if (event.lengthComputable) {
+                this.loadedBytes = event.loaded;
+                this.totalBytes = event.total;
+
+                this.progress = Math.min(this.loadedBytes / this.totalBytes, 1);
+
+                //this.loader.emit('fileprogress', this, this.progress);
+            }
+        }
+    }, {
+        key: 'onDone',
+        value: function onDone() {
+            this.state = _loaderstate.LOADER_STATE.DONE;
+        }
+    }, {
+        key: 'onProcessing',
+        value: function onProcessing(processingCallback) {
+            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+
+            this.onDone();
+
+            processingCallback(this);
+        }
+    }, {
+        key: 'XHRreset',
+        value: function XHRreset() {
+            this.xhrRequest.onload = undefined;
+            this.xhrRequest.onerror = undefined;
+            this.xhrRequest.onprogress = undefined;
+        }
+    }]);
+
+    return File;
+}();
+
+exports.default = File;
+
+/***/ }),
+
+/***/ "./loader/index.js":
+/*!*************************!*\
+  !*** ./loader/index.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+
+    File: __webpack_require__(/*! ./file */ "./loader/file.js"),
+    AssetsTypes: __webpack_require__(/*! ./assets */ "./loader/assets/index.js"),
+    LoaderState: __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js"),
+    LoaderManager: __webpack_require__(/*! ./loadmanager */ "./loader/loadmanager.js"),
+    XHR: __webpack_require__(/*! ./XHR */ "./loader/XHR.js")
+
+};
 
 /***/ }),
 
@@ -2030,10 +2523,14 @@ var LoadManager = function () {
     value: function reset() {
 
       this.isDownloading = false;
+      this._filesQueue.clear();
+      this._successFiles.clear();
+      this._failedFiles.clear();
+      this._processedFiles.clear();
+
       this._filesQueueCount = 0;
-      this._successCount = 0;
-      this._filesQueue.length = 0;
-      this._fileErrorCount = 0;
+      this._loadedFilesCount = 0;
+
       this.progress = 0;
       this.state = _loaderstate.LOADER_STATE.IDLE;
     }
@@ -2234,8 +2731,8 @@ var LoadManager = function () {
     }
   }, {
     key: 'totalQueuedFiles',
-    value: function totalQueuedFiles() {
-      return this._filesQueueCount - this._successCount;
+    get: function get() {
+      return this._filesQueueCount - this._loadedFilesCount;
     }
   }]);
 
@@ -2509,7 +3006,8 @@ var Debug = function () {
     _classCallCheck(this, Debug);
 
     this.game = game;
-    this.context = game.context;
+    this.draw = game.draw;
+    this.context = game.render.context;
     this.x = 8;
     this.y = 12;
     this.lineHeight = 14;
@@ -2527,16 +3025,16 @@ var Debug = function () {
       this.context.setTransform(1, 0, 0, 1, 0, 0);
       this.context.strokeStyle = this.bgcolor;
       this.context.font = this.font;
-      this.game.draw.alpha(0.5);
-      this.game.draw.rectangle(0, 0, this.game.width, 14 * 4 + 16, this.bgcolor);
-      this.game.draw.alpha(1);
+      this.draw.alpha(0.5);
+      this.draw.rectangle(0, 0, this.game.width, 14 * 4 + 16, this.bgcolor);
+      this.draw.alpha(1);
       this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
-      this.drawLine("Instances in view: " + this.game.camera.instancesInView);
-      this.drawLine("Instances count " + this.game.world.length);
+      //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
+      //this.drawLine("Instances count " + this.game.world.length);
       this.drawLine("Colliders count " + this.game.physics.length);
       this.x += this.game.width / 2;
       this.y = 12 + 8;
-      this.drawLine("Sounds count " + this.game.sound.length);
+      //this.drawLine("Sounds count " + this.game.sound.length);
       this.x = 8;
       this.y = 12 + 8;
     }
@@ -3045,6 +3543,122 @@ exports.default = function () {
 
 /***/ }),
 
+/***/ "./render/draw.js":
+/*!************************!*\
+  !*** ./render/draw.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Draw = function () {
+  function Draw(game) {
+    _classCallCheck(this, Draw);
+
+    this.game = game;
+    this.cache = game.cache;
+    this.context = game.render.context;
+  }
+
+  _createClass(Draw, [{
+    key: 'font',
+    value: function font(fontname, size) {
+
+      this.context.font = size + "px " + fontname;
+    }
+  }, {
+    key: 'text',
+    value: function text(_text, x, y, color) {
+
+      if (color === undefined) color = 'black';
+
+      this.context.fillStyle = color;
+      this.context.fillText(_text, x, y);
+    }
+  }, {
+    key: 'sprite',
+    value: function sprite(tag, x, y, anchor) {
+
+      var img = this.cache.getAsset('images', tag);
+
+      if (img != null) {
+
+        if (anchor === undefined) {
+          anchor[0] = 0;
+          anchor[1] = 0;
+        }
+
+        var ctx = this.context;
+
+        ctx.save();
+
+        ctx.translate(x - img.width * anchor[0], y - img.height * anchor[1]);
+
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        ctx.restore();
+      }
+    }
+  }, {
+    key: 'spriteTransformed',
+    value: function spriteTransformed(tag, x, y, xscale, yscale, angle) {}
+  }, {
+    key: 'rectangle',
+    value: function rectangle(x, y, width, height, color) {
+
+      this.context.fillStyle = color;
+      this.context.fillRect(x, y, width, height);
+    }
+  }, {
+    key: 'outlineRectangle',
+    value: function outlineRectangle(x, y, width, height, color, outlineWidth) {
+
+      this.context.beginPath();
+      this.context.lineWidth = outlineWidth;
+      this.context.setLineDash([6]);
+      this.context.strokeStyle = color;
+      this.context.rect(x, y, width, height);
+      this.context.stroke();
+    }
+  }, {
+    key: 'alpha',
+    value: function alpha(a) {
+
+      this.context.globalAlpha = a;
+    }
+  }, {
+    key: 'color',
+    value: function color(_color) {
+
+      this.context.fillStyle = _color;
+    }
+  }, {
+    key: 'boundingbox',
+    value: function boundingbox(bb, color) {
+
+      if (color === undefined) color = 'black';
+      this.context.setTransform(1, 0, 0, 1, 0, 0);
+      this.outlineRectangle(bb.min.x, bb.min.y, bb.max.x - bb.min.x, bb.max.y - bb.min.y, color, 2);
+    }
+  }]);
+
+  return Draw;
+}();
+
+exports.default = Draw;
+
+/***/ }),
+
 /***/ "./render/render.js":
 /*!**************************!*\
   !*** ./render/render.js ***!
@@ -3069,17 +3683,23 @@ var _renderlayer = __webpack_require__(/*! ./renderlayer */ "./render/renderlaye
 
 var _renderlayer2 = _interopRequireDefault(_renderlayer);
 
+var _canvas = __webpack_require__(/*! ./canvas/canvas */ "./render/canvas/canvas.js");
+
+var _canvas2 = _interopRequireDefault(_canvas);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Render = function () {
-    function Render(game, canvas, context) {
+    function Render(game) {
         _classCallCheck(this, Render);
 
         this.game = game;
-        this.canvas = canvas;
-        this.context = context;
+
+        this.canvas = _canvas2.default.create(this.game.parent, this.game.width, this.game.height);
+        this.context = this.canvas.getContext("2d", { alpha: false });
+
         this.__enable = true;
         this.__renderLayers = [];
         this.__renderLayersMap = new _map2.default();
@@ -3123,9 +3743,9 @@ var Render = function () {
 
             this.context.setTransform(1, 0, 0, 1, 0, 0);
             this.context.globalCompositeOperation = 'source-over';
-            this.context.clearRect(0, 0, this.canvas.width, this.game.height);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.context.fillStyle = '#fff'; //this.universe.backgroundColor;
-            this.context.fillRect(0, 0, this.canvas.width, this.game.height);
+            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
             for (var i = 0; i < this.__renderLayers.length; i++) {
                 if (this.__renderLayers[i].enable) {

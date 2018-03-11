@@ -19,7 +19,7 @@ export default class Key {
         this.press = false;
         this.release = false;
 
-        this._event = scintilla.KeyEvent.NONE;
+        this._event = KeyEvent.NONE;
 
         this.pressTime = 0;
         this.pressDuration = -2500;
@@ -91,23 +91,23 @@ export default class Key {
         {
             if (this.pressDuration == 0)
             {
-                this._event = scintilla.KeyEvent.PRESSED;
+                this._event = KeyEvent.PRESSED;
             }
 
         } else {
 
             if (this.releaseDuration == 0)
             {
-                this._event = scintilla.KeyEvent.RELEASED;
+                this._event = KeyEvent.RELEASED;
             } else {
-                this._event = scintilla.KeyEvent.IDLE;
+                this._event = KeyEvent.IDLE;
             }
 
         }
 
-        if (this._event == scintilla.KeyEvent.IDLE)
+        if (this._event == KeyEvent.IDLE)
         {
-            this._event = scintilla.KeyEvent.NONE;
+            this._event = KeyEvent.NONE;
         }
         
     }
@@ -135,7 +135,7 @@ export default class Key {
     reset()
     {   
         this.status = false;
-        this._event = scintilla.KeyEvent.NONE;
+        this._event = KeyEvent.NONE;
         this.press = false;
         this.release = false;
     

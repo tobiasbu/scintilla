@@ -23,7 +23,7 @@ export default class Mouse {
     this.x = 0;
     this.y = 0;
     this.game = game;
-    this.canvas = game.canvas;
+    this.canvas = game.render.canvas;
     this.button = 0;
     this.wheelDelta = 0;
     this.active = true;

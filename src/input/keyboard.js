@@ -2,6 +2,7 @@
 
 import Key from './key'
 import Map from '../structures/map'
+import KeyCode from './keycode'
 
 export default class Keyboard {
   
@@ -23,6 +24,7 @@ export default class Keyboard {
   this._onKeyDown = null;
   this._onKeyUp = null;
   this._onKeyPress = null;
+  this.reset();
 }
 
   reset() {
@@ -30,11 +32,11 @@ export default class Keyboard {
     this._keyMapping.clear();
     this._keyWatch.clear();
     this._keyGarbage = [];
-    for (var prop in scintilla.KeyCode){
+    for (var prop in KeyCode){
 
-      if (scintilla.KeyCode.hasOwnProperty(prop)) {
-        var value = scintilla.KeyCode[prop];
-        this._keyMapping.set(value, new scintilla.Key(value,this.game));
+      if (KeyCode.hasOwnProperty(prop)) {
+        var value = KeyCode[prop];
+        this._keyMapping.set(value, new Key(value,this.game));
       }
       /*if (scintilla.KeyCode.hasOwnProperty(prop)) {
 
@@ -170,7 +172,7 @@ export default class Keyboard {
 
         //console.log(value);
 
-        if (value.event() == scintilla.KeyEvent.IDLE)
+        if (value.event() == KeyEvent.IDLE)
         {
         
           // value.reset();
@@ -256,7 +258,7 @@ export default class Keyboard {
     if (key === undefined)
       return false;*/
 
-    return key.status;
+    return this._keyMapping.get(keycode).status;
 
     /*var keyLock = false;
 
@@ -273,104 +275,4 @@ export default class Keyboard {
   }
 }
 
-  export const KeyCode = {
-    Backspace: 8,
-    Tab: 9,
-    Enter: 13,
-    Shift: 16,
-    Ctrl: 17,
-    Alt: 18,
-    Pause: 19,
-    CapsLock: 20,
-    Escape: 27,
-    Space:32,
-    PageUp: 33,
-    PageDown: 34,
-    End: 35,
-    Home: 36,
-    Left: 37,
-    Up: 38,
-    Right: 39,
-    Down: 40,
-    Insert: 45,
-    Delete:	46,
-    Num0: 48,
-    Num1: 49,
-    Num2: 50,
-    Num3: 51,
-    Num4: 52,
-    Num5:	53,
-    Num6: 54,
-    Num7: 55,
-    Num8: 56,
-    Num9: 57,
-    A: 65,
-    B: 66,
-    C: 67,
-    D: 68,
-    E: 69,
-    F: 70,
-    G: 71,
-    H: 72,
-    I: 73,
-    J: 74,
-    K: 75,
-    L: 76,
-    M: 77,
-    N: 78,
-    O: 79,
-    P: 80,
-    Q: 81,
-    R: 82,
-    S: 83,
-    T: 84,
-    U: 85,
-    V: 86,
-    W: 87,
-    X: 88,
-    Y: 89,
-    Z: 90,
-    LSystem: 91,
-    RSystem: 92,
-    SelectK:	93,
-    Numpad0: 96,
-    Numpad1: 97,
-    Numpad2: 98,
-    Numpad3: 99,
-    Numpad4: 100,
-    Numpad5: 101,
-    Numpad6: 102,
-    Numpad7: 103,
-    Numpad8: 104,
-    Numpad9: 105,
-    Multiply: 106,
-    Add: 107,
-    Subtract: 109,
-    DecimalPoint: 110,
-    Divide: 111,
-    F1:	112,
-    F2:	113,
-    F3:	114,
-    F4:	115,
-    F5:	116,
-    F6:	117,
-    F7:	118,
-    F8:	119,
-    F9:	120,
-    F10: 121,
-    F11: 122,
-    F12: 123,
-    NumLock: 144,
-    ScrollLock: 145,
-    SemiColon: 186,
-    Equal: 187,
-    Comma: 188,
-    Dash: 189,
-    Period:	190,
-    Slash: 191,
-    LBraket: 219,
-    BackSlash: 220,
-    RBracket: 221,
-    Quote: 222,
-    };
-    
+ 

@@ -7,6 +7,7 @@ import Time from '../time/time'
 import UpdateTime from '../time/updatetime'
 import Input from '../input/input'
 import Render from '../render/render'
+import Draw from '../render/draw'
 import SceneManager from './scenemanager'
 import Physics from '../physics/physics'
 import Debug from '../others/debug'
@@ -107,16 +108,15 @@ export default class Game {
     if (this.systemInited)
         return;
 
-    this.canvas = Canvas.create(this.parent,this.width,this.height);
-    this.context = this.canvas.getContext("2d", { alpha: false });
 
     this.cache = new Cache(this);
     this.load = new LoadManager(this);
     this.time = new Time(this);
     //this.universe = new scintilla.Universe(this);
     //this.world = new scintilla.World(this);
-    //this.draw = new scintilla.Draw(this);
-    this.render = new Render(this, this.canvas, this.context);
+
+    this.render = new Render(this);
+    this.draw = new Draw(this);
     this.scene = new SceneManager(this);
     this.input = new Input(this);
     //this.instance = new scintilla.Creator(this,this.world);

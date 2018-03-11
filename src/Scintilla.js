@@ -20,6 +20,9 @@
 */
 var scintilla = scintilla || {
   VERSION: '0.0.1',
+  Loader : require('./loader'),
+  KeyCode : require('./input/keycode'),
+  Input : require('./input'),
   Game : require('./core/game'),
 };
 
