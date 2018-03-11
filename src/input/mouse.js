@@ -104,13 +104,13 @@ export default class Mouse {
 
     var value = event.button;
 
-    if (this._mouseButtonsLocksPressed[value] != scintilla.KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != scintilla.KeyEvent.PRESS) {
-      this._mouseButtonsLocksPressed[value] = scintilla.MouseEvent.PRESSED;
+    if (this._mouseButtonsLocksPressed[value] != KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != KeyEvent.PRESS) {
+      this._mouseButtonsLocksPressed[value] = MouseEvent.PRESSED;
       this._mouseDownDuration[value] = 1;
     }
 
     this._mouseButtons[value] = true;
-    this._mouseButtonsLocks[value] = scintilla.MouseEvent.PRESS;
+    this._mouseButtonsLocks[value] = MouseEvent.PRESS;
 
     event.preventDefault();
 
@@ -124,8 +124,8 @@ export default class Mouse {
     var value = event.button;
 
     this._mouseButtons[value] = false;
-    this._mouseButtonsLocks[value] = scintilla.MouseEvent.RELEASE;
-    this._mouseButtonsLocksPressed[value] = scintilla.MouseEvent.NONE;
+    this._mouseButtonsLocks[value] = MouseEvent.RELEASE;
+    this._mouseButtonsLocksPressed[value] = MouseEvent.NONE;
 
     event.preventDefault();
 
@@ -136,9 +136,9 @@ export default class Mouse {
 
     var buttonLock = false;
 
-    if (this._mouseButtonsLocksPressed[button] == scintilla.MouseEvent.PRESSED) {
+    if (this._mouseButtonsLocksPressed[button] == MouseEvent.PRESSED) {
       buttonLock = true;
-      this._mouseButtonsLocksPressed[button] = scintilla.MouseEvent.PRESS;
+      this._mouseButtonsLocksPressed[button] = MouseEvent.PRESS;
     }
 
     var hit = this._mouseButtons[button] && buttonLock;
@@ -151,16 +151,16 @@ export default class Mouse {
 
     var buttonLock = false;
 
-  	if (this._mouseButtonsLocks[button] ==  scintilla.MouseEvent.PRESSED ||
-        this._mouseButtonsLocks[button] ==  scintilla.MouseEvent.PRESS ||
-        this._mouseButtonsLocks[button] ==  scintilla.MouseEvent.NONE)
+  	if (this._mouseButtonsLocks[button] ==  MouseEvent.PRESSED ||
+        this._mouseButtonsLocks[button] ==  MouseEvent.PRESS ||
+        this._mouseButtonsLocks[button] ==  MouseEvent.NONE)
   		buttonLock = false;
   	else
   		buttonLock = true;
 
   	var hit = !this._mouseButtons[button] && buttonLock;
 
-  	this._mouseButtonsLocks[button] = scintilla.MouseEvent.NONE;
+  	this._mouseButtonsLocks[button] = MouseEvent.NONE;
 
   	return hit;
 
@@ -170,8 +170,8 @@ export default class Mouse {
 
     var buttonLock = false;
 
-    if (this._mouseButtonsLocks[button] ==  scintilla.MouseEvent.RELEASE ||
-      this._mouseButtonsLocks[button] ==  scintilla.MouseEvent.NONE)
+    if (this._mouseButtonsLocks[button] ==  MouseEvent.RELEASE ||
+      this._mouseButtonsLocks[button] ==  MouseEvent.NONE)
       buttonLock = false;
     else
       buttonLock = true;
@@ -187,11 +187,11 @@ export default class Mouse {
 
     for (var i = 0; i < this._mouseButtons.length; i++) {
 
-          if (this._mouseButtonsLocksPressed[i] ==  scintilla.MouseEvent.PRESSED) {
+          if (this._mouseButtonsLocksPressed[i] ==  MouseEvent.PRESSED) {
               if (this._mouseDownDuration[i] > 0)
                 this._mouseDownDuration[i]--;
               else
-                this._mouseButtonsLocksPressed[i] = scintilla.MouseEvent.PRESS;
+                this._mouseButtonsLocksPressed[i] = MouseEvent.PRESS;
           } else
             continue;
 

@@ -1,120 +1,115 @@
 
-scintilla.Physics = Class.extend( function() {
+import SAT from './sat'
+import SATResponse from './satresponse'
 
-this.game = null;
-this.sat = null;
-this.response = null;
+export default class Physics {
 
-var colliadables = [];
+  
 
-this.constructor = function(game) {
+  constructor(game) {
 
-  this.game = game;
+    this.game = null;
+    this.sat = null;
+    this.response = null;
 
-};
+   
+    this.game = game;
+    this.colliadables = [];
 
-this.init = function() {
+  }
 
-  this.sat = new scintilla.SAT();
-  this.response = new scintilla.SAT.Response();
+  init() {
 
-};
+    this.sat = new SAT();
+    this.response = new SATResponse();
 
-this.getColliadables = function() {
+  }
 
-  return colliadables;
+  getColliadables() {
+    return this.colliadables;
+  }
+
+  addColliderObj(obj) {
+    this.colliadables.push(obj);
+  }
+
+  removeColliderObj(obj) {
+
+    var i = this.colliadables.indexOf(obj);
+
+    if(i != -1) {
+      this.colliadables.splice(i, 1);
+    }
+
+  }
+
+  clear() {
+
+    this.colliadables = [];
+    this.colliadables.length = 0;
+
+  }
+
+  update(time) {
+
+    let size = this.colliadables.length;
+
+    // CHECK COLLISION
+    if (size < 2) // at least we must have 2 objects
+      return;
+
+    //var collision = 0;
+
+    for (var i = 0; i < size; i++) {
+
+        var objA = this.colliadables[i];
+        var shapeA = objA.shape;
+
+        if (objA._gameObject._selfDestroy || !objA._gameObject.active)
+          continue;
+
+        var jit = i + 1;
+
+        if (jit >= size)
+          break;
+
+        for (var j = jit; j < size; j++) {
+
+          var objB = this.colliadables[j];
+          var shapeB = objB.shape;
+
+          if (objB._gameObject._selfDestroy || !objB._gameObject.active)
+            continue;
+
+          // AABB check of the shapes
+        if (objB.bounds.box.intersects(objA.bounds.box)) {
+
+          // check SAT
+          if (this.sat["test" + shapeA.getType() + shapeB.getType()].call(this,
+            objA,objB,this.response.clear()) === true) {
+
+
+              if (objA._gameObject['onCollision'])
+              if (objA._gameObject.onCollision(objB._gameObject,this.response) !== false) {
+
+
+              }
+
+              if (objB._gameObject['onCollision'])
+              if (objB._gameObject.onCollision(objA._gameObject,this.response) !== false) {
+
+
+              }
+
+          } else
+            continue;
+          } else
+            continue;
+        }
+      }
+  }
+
+  get length() {return this.colliadables.length;}
 
 }
 
-this.addColliderObj = function(obj) {
-
-  colliadables.push(obj);
-
-};
-
-this.removeColliderObj = function(obj) {
-
-  var i = colliadables.indexOf(obj);
-
-  if(i != -1) {
-  	colliadables.splice(i, 1);
-  }
-
-};
-
-this.clear = function() {
-
-  colliadables = [];
-  colliadables.length = 0;
-
-};
-
-this.update = function(time) {
-
-
-// CHECK COLLISION
-if (colliadables.length < 2) // at least we must have 2 objects
-  return;
-
-//var collision = 0;
-
-
-for (var i = 0; i < colliadables.length; i++) {
-
-    var objA = colliadables[i];
-    var shapeA = objA.shape;
-
-    if (objA._gameObject._selfDestroy || !objA._gameObject.active)
-      continue;
-
-    var jit = i + 1;
-
-    if (jit >= colliadables.length)
-      break;
-
-    for (var j = jit; j < colliadables.length; j++) {
-
-      var objB = colliadables[j];
-      var shapeB = objB.shape;
-
-      if (objB._gameObject._selfDestroy || !objB._gameObject.active)
-        continue;
-
-      // AABB check of the shapes
-    if (objB.bounds.box.intersects(objA.bounds.box)) {
-
-
-
-      // check SAT
-      if (this.sat["test" + shapeA.getType() + shapeB.getType()].call(this,
-        objA,objB,this.response.clear()) === true) {
-
-
-          if (objA._gameObject['onCollision'])
-          if (objA._gameObject.onCollision(objB._gameObject,this.response) !== false) {
-
-
-          }
-
-          if (objB._gameObject['onCollision'])
-          if (objB._gameObject.onCollision(objA._gameObject,this.response) !== false) {
-
-
-          }
-
-      } else
-        continue;
-      } else
-        continue;
-    }
-  }
-}
-});
-
-Object.defineProperty(scintilla.Physics.prototype, "length", {
-
-    get: function() {
-        return this.getColliadables().length;
-    }
-
-});

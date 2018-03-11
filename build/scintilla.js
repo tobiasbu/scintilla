@@ -414,6 +414,14 @@ var _input = __webpack_require__(/*! ../input/input */ "./input/input.js");
 
 var _input2 = _interopRequireDefault(_input);
 
+var _scenemanager = __webpack_require__(/*! ./scenemanager */ "./core/scenemanager.js");
+
+var _scenemanager2 = _interopRequireDefault(_scenemanager);
+
+var _physics = __webpack_require__(/*! ../physics/physics */ "./physics/physics.js");
+
+var _physics2 = _interopRequireDefault(_physics);
+
 var _debug = __webpack_require__(/*! ../others/debug */ "./others/debug.js");
 
 var _debug2 = _interopRequireDefault(_debug);
@@ -526,14 +534,14 @@ var Game = function () {
             //this.world = new scintilla.World(this);
             //this.draw = new scintilla.Draw(this);
             //this.render = new scintilla.Render(this, this.canvas, this.context);
-            //this.scene = new scintilla.SceneManager(this);
+            this.scene = new _scenemanager2.default(this);
             this.input = new _input2.default(this);
             //this.instance = new scintilla.Creator(this,this.world);
             //this.component = new scintilla.GameComponents(this);
             //this.animationCache = new scintilla.AnimationCache(this);
             //this.sound = new scintilla.SoundManager(this);
             //this.pool = new scintilla.Pool(this);
-            //this.physics = new scintilla.Physics(this);
+            this.physics = new _physics2.default(this);
 
             if (this.debugMode) this.debug = new _debug2.default(this);
 
@@ -618,15 +626,17 @@ var Game = function () {
             this.scene.preUpdate();
             this.scene.update(timeStep);
             this.input.update();
-            this.universe.preUpdate(timeStep);
+            //this.universe.preUpdate(timeStep);
+
 
             //this.world.camera.update();
 
-            this.universe.update(timeStep);
+            //this.universe.update(timeStep);
             this.physics.update();
-            this.sound.update();
+            //this.sound.update();
 
-            this.universe._updateTransform();
+            //this.universe._updateTransform();
+
         }
     }, {
         key: 'destroy',
@@ -665,6 +675,254 @@ var Game = function () {
 
 exports.default = Game;
 module.exports = Game;
+
+/***/ }),
+
+/***/ "./core/scenemanager.js":
+/*!******************************!*\
+  !*** ./core/scenemanager.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+
+var _map2 = _interopRequireDefault(_map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SceneManager = function () {
+    function SceneManager(game) {
+        _classCallCheck(this, SceneManager);
+
+        this.game = game;
+        this._scenes = new _map2.default();
+
+        this.current_scene_name = '';
+        this.change_scene = null;
+
+        this._setup = false;
+        this._clearCache = false;
+
+        // callbacks
+        this.current_scene = null;
+        this.onStartCallback = null;
+        this.onLoadingCallback = null;
+        this.onLoadingRenderCallback = null;
+        this.onPreloadCallback = null;
+        this.onUpdateCallback = null;
+        this.onRenderCallback = null;
+        this.onDestroyCallback = null;
+    }
+
+    _createClass(SceneManager, [{
+        key: 'add',
+        value: function add(sceneName, scene) {
+
+            var newScene;
+
+            if (scintilla.Scene.prototype.isPrototypeOf(scene)) {
+                newScene = scene;
+                newScene.game = this.game;
+            } else newScene = null;
+
+            if (newScene != null) this._scenes.set(sceneName, newScene);
+        }
+    }, {
+        key: 'new',
+        value: function _new(sceneName) {
+
+            if (this._scenes.has(sceneName)) {
+                throw "Could not create new Scene. The scene name \"" + name + "\" already exists.";
+                return null;
+            }
+
+            var newScene = new scintilla.Scene(this.game);
+            this._scenes.set(sceneName, newScene);
+
+            return newScene;
+        }
+    }, {
+        key: 'set',
+        value: function set(sceneName, clearCache) {
+
+            if (clearCache === undefined) {
+                clearCache = false;
+            }
+
+            this.change_scene = sceneName;
+            this._clearCache = clearCache;
+        }
+    }, {
+        key: 'restart',
+        value: function restart(clearCache) {
+
+            if (clearCache === undefined) {
+                clearCache = false;
+            }
+
+            this.change_scene = this.current_scene_name;
+            this._clearCache = clearCache;
+        }
+    }, {
+        key: 'remove',
+        value: function remove(sceneName) {
+
+            if (this.current_scene_name === sceneName) {
+
+                this.current_scene = null;
+
+                this.onStartCallback = null;
+                this.onLoadingCallback = null;
+                this.onLoadingRenderCallback = null;
+                this.onPreloadCallback = null;
+                this.onUpdateCallback = null;
+                this.onRenderCallback = null;
+                this.onDestroyCallback = null;
+            }
+
+            delete this.scenes[sceneName];
+        }
+    }, {
+        key: 'setupScene',
+        value: function setupScene(sceneName) {
+
+            this.current_scene = this._scenes.get(sceneName);
+            this.onStartCallback = this.current_scene['start'] || null;
+            this.onLoadingCallback = this.current_scene['loading'] || null;
+            this.onLoadingRenderCallback = this.current_scene['loadingRender'] || null;
+            this.onPreloadCallback = this.current_scene['preload'] || null;
+            this.onUpdateCallback = this.current_scene['update'] || null;
+            this.onRenderCallback = this.current_scene['render'] || null;
+            this.onDestroyCallback = this.current_scene['destroy'] || null;
+            this.current_scene_name = sceneName;
+
+            this.game.time.refresh();
+
+            this.current_scene.camera = this.game.world.camera;
+
+            this.game.instance.scene = this.current_scene;
+
+            this._setup = false;
+        }
+    }, {
+        key: 'clearCurrentScene',
+        value: function clearCurrentScene() {
+
+            if (this.current_scene_name) {
+
+                if (this.onDestroyCallback) {
+                    this.onDestroyCallback.call(this.current_scene, this.game);
+                }
+
+                if (this._clearCache) {
+                    this.game.cache.clear();
+                }
+
+                this.game.world.destroyAllChilds();
+            }
+        }
+    }, {
+        key: 'preUpdate',
+        value: function preUpdate() {
+
+            if (this.game.systemInited && this.change_scene != null) {
+
+                this.clearCurrentScene();
+
+                this.setupScene(this.change_scene);
+
+                if (this.current_scene_name !== this.change_scene) {
+                    return;
+                } else {
+                    this.change_scene = null;
+                }
+
+                if (this.onPreloadCallback) {
+
+                    this.game.load.reset();
+                    this.onPreloadCallback.call(this.current_scene, this.game);
+
+                    if (this.game.load.totalQueuedFiles() === 0) {
+                        this.preloadComplete();
+                    } else {
+
+                        this.game.load.start();
+                    }
+                } else {
+
+                    this.preloadComplete();
+                }
+            }
+        }
+    }, {
+        key: 'preloadComplete',
+        value: function preloadComplete() {
+
+            //this.current_scene.quadtree = new tobiJS.Quadtree({x: 0, y: 0, width: 640,height: 480});
+
+            if (this._setup === false && this.onLoadingCallback) {
+                this.onLoadingCallback.call(this.current_scene, this.game);
+            }
+
+            if (this._setup === false && this.onStartCallback) {
+                this._setup = true;
+                this.onStartCallback.call(this.current_scene, this.game);
+            } else {
+                this._setup = true;
+            }
+        }
+    }, {
+        key: 'update',
+        value: function update() {
+
+            if (this._setup) {
+
+                if (this.onUpdateCallback) {
+                    this.onUpdateCallback.call(this.current_scene, this.game);
+                }
+
+                //this.current_scene._update();
+            } else {
+
+                if (this.onLoadingCallback) {
+                    this.onLoadingCallback.call(this.current_scene, this.game);
+                }
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+
+            if (this._setup) {
+
+                if (this.onRenderCallback) {
+                    this.onRenderCallback.call(this.current_scene, this.game);
+                }
+            } else {
+
+                if (this.onLoadingRenderCallback) {
+                    this.onLoadingRenderCallback.call(this.current_scene, this.game);
+                }
+            }
+        }
+    }]);
+
+    return SceneManager;
+}();
+
+exports.default = SceneManager;
 
 /***/ }),
 
@@ -1394,13 +1652,13 @@ var Mouse = function () {
 
             var value = event.button;
 
-            if (this._mouseButtonsLocksPressed[value] != scintilla.KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != scintilla.KeyEvent.PRESS) {
-                this._mouseButtonsLocksPressed[value] = scintilla.MouseEvent.PRESSED;
+            if (this._mouseButtonsLocksPressed[value] != KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != KeyEvent.PRESS) {
+                this._mouseButtonsLocksPressed[value] = MouseEvent.PRESSED;
                 this._mouseDownDuration[value] = 1;
             }
 
             this._mouseButtons[value] = true;
-            this._mouseButtonsLocks[value] = scintilla.MouseEvent.PRESS;
+            this._mouseButtonsLocks[value] = MouseEvent.PRESS;
 
             event.preventDefault();
         }
@@ -1413,8 +1671,8 @@ var Mouse = function () {
             var value = event.button;
 
             this._mouseButtons[value] = false;
-            this._mouseButtonsLocks[value] = scintilla.MouseEvent.RELEASE;
-            this._mouseButtonsLocksPressed[value] = scintilla.MouseEvent.NONE;
+            this._mouseButtonsLocks[value] = MouseEvent.RELEASE;
+            this._mouseButtonsLocksPressed[value] = MouseEvent.NONE;
 
             event.preventDefault();
         }
@@ -1424,9 +1682,9 @@ var Mouse = function () {
 
             var buttonLock = false;
 
-            if (this._mouseButtonsLocksPressed[button] == scintilla.MouseEvent.PRESSED) {
+            if (this._mouseButtonsLocksPressed[button] == MouseEvent.PRESSED) {
                 buttonLock = true;
-                this._mouseButtonsLocksPressed[button] = scintilla.MouseEvent.PRESS;
+                this._mouseButtonsLocksPressed[button] = MouseEvent.PRESS;
             }
 
             var hit = this._mouseButtons[button] && buttonLock;
@@ -1439,11 +1697,11 @@ var Mouse = function () {
 
             var buttonLock = false;
 
-            if (this._mouseButtonsLocks[button] == scintilla.MouseEvent.PRESSED || this._mouseButtonsLocks[button] == scintilla.MouseEvent.PRESS || this._mouseButtonsLocks[button] == scintilla.MouseEvent.NONE) buttonLock = false;else buttonLock = true;
+            if (this._mouseButtonsLocks[button] == MouseEvent.PRESSED || this._mouseButtonsLocks[button] == MouseEvent.PRESS || this._mouseButtonsLocks[button] == MouseEvent.NONE) buttonLock = false;else buttonLock = true;
 
             var hit = !this._mouseButtons[button] && buttonLock;
 
-            this._mouseButtonsLocks[button] = scintilla.MouseEvent.NONE;
+            this._mouseButtonsLocks[button] = MouseEvent.NONE;
 
             return hit;
         }
@@ -1453,7 +1711,7 @@ var Mouse = function () {
 
             var buttonLock = false;
 
-            if (this._mouseButtonsLocks[button] == scintilla.MouseEvent.RELEASE || this._mouseButtonsLocks[button] == scintilla.MouseEvent.NONE) buttonLock = false;else buttonLock = true;
+            if (this._mouseButtonsLocks[button] == MouseEvent.RELEASE || this._mouseButtonsLocks[button] == MouseEvent.NONE) buttonLock = false;else buttonLock = true;
 
             var hit = this._mouseButtons[button] && buttonLock;
 
@@ -1465,8 +1723,8 @@ var Mouse = function () {
 
             for (var i = 0; i < this._mouseButtons.length; i++) {
 
-                if (this._mouseButtonsLocksPressed[i] == scintilla.MouseEvent.PRESSED) {
-                    if (this._mouseDownDuration[i] > 0) this._mouseDownDuration[i]--;else this._mouseButtonsLocksPressed[i] = scintilla.MouseEvent.PRESS;
+                if (this._mouseButtonsLocksPressed[i] == MouseEvent.PRESSED) {
+                    if (this._mouseDownDuration[i] > 0) this._mouseDownDuration[i]--;else this._mouseButtonsLocksPressed[i] = MouseEvent.PRESS;
                 } else continue;
             }
         }
@@ -1985,6 +2243,245 @@ exports.default = LoadManager;
 
 /***/ }),
 
+/***/ "./math/vector.js":
+/*!************************!*\
+  !*** ./math/vector.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+* Class for points and vectors.
+* @class Vector
+* @constructor
+*/
+var Vector = function () {
+  function Vector(x, y) {
+    _classCallCheck(this, Vector);
+
+    this.x = x || 0;
+    this.y = y || 0;
+  }
+
+  _createClass(Vector, [{
+    key: "set",
+    value: function set(x, y) {
+
+      this.x = x;
+      this.y = y || x;
+    }
+  }, {
+    key: "move",
+    value: function move(x, y) {
+
+      this.x += x;
+      this.y += y;
+    }
+  }, {
+    key: "scale",
+    value: function scale(x, y) {
+
+      this.x *= x;
+      this.y *= y || x;
+      return this;
+    }
+  }, {
+    key: "rotate",
+    value: function rotate(radians) {
+
+      var x = this.x;
+      var y = this.y;
+      this.x = x * Math.cos(radians) - y * Math.sin(radians);
+      this.y = x * Math.sin(radians) + y * Math.cos(radians);
+      return this;
+    }
+  }, {
+    key: "rotateAround",
+    value: function rotateAround(radians, other) {
+
+      /*var x = this.x;
+      var y = this.y;*/
+      var dx = this.x - other.x;
+      var dy = this.y - other.y;
+
+      var c = Math.cos(radians);
+      var s = Math.sin(radians);
+
+      /*this.x = c * (x-other.x) - s * (y-other.y) + other.x;
+      this.y = s * (x-other.x) + c * (y-other.y) + other.y;*/
+
+      this.x = other.x + (c * dx - s * dy);
+      this.y = other.y + (s * dx + c * dy);
+
+      return this;
+    }
+  }, {
+    key: "copy",
+    value: function copy(otherVector) {
+
+      this.x = otherVector.x;
+      this.y = otherVector.y;
+      return this;
+    }
+  }, {
+    key: "normalize",
+    value: function normalize() {
+
+      var mag = this.length();
+      if (mag > 0) {
+        this.x = this.x / mag;
+        this.y = this.y / mag;
+      }
+      return this;
+    }
+  }, {
+    key: "reverse",
+    value: function reverse() {
+      this.x = -this.x;
+      this.y = -this.y;
+      return this;
+    }
+  }, {
+    key: "add",
+    value: function add(other) {
+      this.x += other.x;
+      this.y += other.y;
+      return this;
+    }
+  }, {
+    key: "sub",
+    value: function sub(other) {
+      this.x -= other.x;
+      this.y -= other.y;
+      return this;
+    }
+  }, {
+    key: "perp",
+    value: function perp() {
+
+      var x = this.x;
+      this.x = this.y;
+      this.y = -x;
+      return this;
+    }
+  }, {
+    key: "dot",
+    value: function dot(other) {
+      return Vector.dot(this, other);
+    }
+  }, {
+    key: "project",
+    value: function project(other) {
+      return Vector.project(this, other);
+    }
+  }, {
+    key: "clone",
+    value: function clone() {
+      return new Vector(this.x, this.y);
+    }
+  }, {
+    key: "length",
+    value: function length() {
+      return Math.sqrt(this.squaredLenght());
+    }
+  }, {
+    key: "squaredLenght",
+    value: function squaredLenght() {
+      return Vector.dot(this, this);
+    }
+  }, {
+    key: "magnitude",
+    get: function get() {
+      return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+  }, {
+    key: "normal",
+    get: function get() {
+      var mag = this.magnitude;
+      var vec = new tobiJS.Vector(this.x / mag, this.y / mag);
+      return vec;
+    }
+  }], [{
+    key: "scalar",
+    value: function scalar(a, b) {
+      return a.x * b.y - a.y * b.x;
+    }
+  }, {
+    key: "distance",
+    value: function distance(a, b) {
+      return Math.distance(a.x, a.y, b.x, b.y);
+    }
+  }, {
+    key: "angleBetween",
+    value: function angleBetween(a, b) {
+      return Math.angleBetween(a.x, a.y, b.x, b.y);
+    }
+  }, {
+    key: "dot",
+    value: function dot(a, b) {
+      return a.x * b.x + a.y * b.y;
+    }
+  }, {
+    key: "project",
+    value: function project(a, b) {
+      var dp = Vector.dot(a, b);
+      var proj = new Vector(dp / (b.x * b.x + b.y * b.y) * b.x, dp / (b.x * b.x + b.y * b.y) * b.y);
+      return proj;
+    }
+  }, {
+    key: "projectNormal",
+
+
+    // project for unit vector
+    value: function projectNormal(a, b) {
+      var dp = Vector.dot(a, b);
+      var proj = new Vector(dp / b.x, dp / b.y);
+      return proj;
+    }
+  }, {
+    key: "reflect",
+    value: function reflect(vec, axis) {
+
+      var r = Vector.project(vec, axis);
+      r.scale(2);
+      r.sub(vec);
+      return r;
+    }
+  }, {
+    key: "reflectNormal",
+    value: function reflectNormal(vec, axis) {
+
+      var r = Vector.projectNormal(vec, axis);
+      r.scale(2);
+      r.sub(vec);
+      return r;
+    }
+  }, {
+    key: "lerp",
+    value: function lerp(a, b, t) {
+      var vec = new Vector(scintilla.Math.lerp(a.x, b.x, t), scintilla.Math.lerp(a.y, b.y, t));
+      return vec;
+    }
+  }]);
+
+  return Vector;
+}();
+
+exports.default = Vector;
+
+/***/ }),
+
 /***/ "./others/debug.js":
 /*!*************************!*\
   !*** ./others/debug.js ***!
@@ -2059,6 +2556,382 @@ var Debug = function () {
 }();
 
 exports.default = Debug;
+
+/***/ }),
+
+/***/ "./physics/physics.js":
+/*!****************************!*\
+  !*** ./physics/physics.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _sat = __webpack_require__(/*! ./sat */ "./physics/sat.js");
+
+var _sat2 = _interopRequireDefault(_sat);
+
+var _satresponse = __webpack_require__(/*! ./satresponse */ "./physics/satresponse.js");
+
+var _satresponse2 = _interopRequireDefault(_satresponse);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Physics = function () {
+  function Physics(game) {
+    _classCallCheck(this, Physics);
+
+    this.game = null;
+    this.sat = null;
+    this.response = null;
+
+    this.game = game;
+    this.colliadables = [];
+  }
+
+  _createClass(Physics, [{
+    key: 'init',
+    value: function init() {
+
+      this.sat = new _sat2.default();
+      this.response = new _satresponse2.default();
+    }
+  }, {
+    key: 'getColliadables',
+    value: function getColliadables() {
+      return this.colliadables;
+    }
+  }, {
+    key: 'addColliderObj',
+    value: function addColliderObj(obj) {
+      this.colliadables.push(obj);
+    }
+  }, {
+    key: 'removeColliderObj',
+    value: function removeColliderObj(obj) {
+
+      var i = this.colliadables.indexOf(obj);
+
+      if (i != -1) {
+        this.colliadables.splice(i, 1);
+      }
+    }
+  }, {
+    key: 'clear',
+    value: function clear() {
+
+      this.colliadables = [];
+      this.colliadables.length = 0;
+    }
+  }, {
+    key: 'update',
+    value: function update(time) {
+
+      var size = this.colliadables.length;
+
+      // CHECK COLLISION
+      if (size < 2) // at least we must have 2 objects
+        return;
+
+      //var collision = 0;
+
+      for (var i = 0; i < size; i++) {
+
+        var objA = this.colliadables[i];
+        var shapeA = objA.shape;
+
+        if (objA._gameObject._selfDestroy || !objA._gameObject.active) continue;
+
+        var jit = i + 1;
+
+        if (jit >= size) break;
+
+        for (var j = jit; j < size; j++) {
+
+          var objB = this.colliadables[j];
+          var shapeB = objB.shape;
+
+          if (objB._gameObject._selfDestroy || !objB._gameObject.active) continue;
+
+          // AABB check of the shapes
+          if (objB.bounds.box.intersects(objA.bounds.box)) {
+
+            // check SAT
+            if (this.sat["test" + shapeA.getType() + shapeB.getType()].call(this, objA, objB, this.response.clear()) === true) {
+
+              if (objA._gameObject['onCollision']) if (objA._gameObject.onCollision(objB._gameObject, this.response) !== false) {}
+
+              if (objB._gameObject['onCollision']) if (objB._gameObject.onCollision(objA._gameObject, this.response) !== false) {}
+            } else continue;
+          } else continue;
+        }
+      }
+    }
+  }, {
+    key: 'length',
+    get: function get() {
+      return this.colliadables.length;
+    }
+  }]);
+
+  return Physics;
+}();
+
+exports.default = Physics;
+
+/***/ }),
+
+/***/ "./physics/sat.js":
+/*!************************!*\
+  !*** ./physics/sat.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _vector = __webpack_require__(/*! ../math/vector */ "./math/vector.js");
+
+var _vector2 = _interopRequireDefault(_vector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SAT = function () {
+    function SAT() {
+        _classCallCheck(this, SAT);
+
+        this.VECTORS = [];
+        for (var v = 0; v < 10; v++) {
+            VECTORS.push(new _vector2.default());
+        }
+
+        this.ARRAYS = [];
+        for (var a = 0; a < 5; a++) {
+            ARRAYS.push([]);
+        }
+    }
+
+    _createClass(SAT, [{
+        key: 'flattenPointsOn',
+        value: function flattenPointsOn(points, normal, result) {
+            var min = Number.MAX_VALUE;
+            var max = -Number.MAX_VALUE;
+            var len = points.length;
+            for (var i = 0; i < len; i++) {
+                // The magnitude of the projection of the point onto the normal
+                var dot = points[i].dot(normal);
+                if (dot < min) {
+                    min = dot;
+                }
+                if (dot > max) {
+                    max = dot;
+                }
+            }
+            result[0] = min;
+            result[1] = max;
+        }
+    }, {
+        key: 'isSeparatingAxis',
+        value: function isSeparatingAxis(posA, posB, pointsA, pointsB, axis, response) {
+
+            var rangeA = ARRAYS.pop();
+            var rangeB = ARRAYS.pop();
+
+            // magnitude between the two polygons
+            var offsetV = VECTORS.pop().copy(posB).sub(posA);
+            var projectedOffset = offsetV.dot(axis);
+
+            // Project the polygons onto the axis.
+            flattenPointsOn(pointsA, axis, rangeA);
+            flattenPointsOn(pointsB, axis, rangeB);
+
+            // Move B's range to its position relative to A.
+            rangeB[0] += projectedOffset;
+            rangeB[1] += projectedOffset;
+
+            // Check if there is a gap. If there is, this is a separating axis and we can stop
+            if (rangeA[0] > rangeB[1] || rangeB[0] > rangeA[1]) {
+                VECTORS.push(offsetV);
+                ARRAYS.push(rangeA);
+                ARRAYS.push(rangeB);
+                return true;
+            }
+
+            if (response) {
+                var overlap = 0;
+                // A starts further left than B
+                if (rangeA[0] < rangeB[0]) {
+
+                    response.aInB = false;
+
+                    // A ends before B does. We have to pull A out of B
+                    if (rangeA[1] < rangeB[1]) {
+
+                        overlap = rangeA[1] - rangeB[0];
+                        response.bInA = false;
+
+                        // B is fully inside A.  Pick the shortest way out.
+                    } else {
+
+                        var option1 = rangeA[1] - rangeB[0];
+                        var option2 = rangeB[1] - rangeA[0];
+                        overlap = option1 < option2 ? option1 : -option2;
+                    }
+                    // B starts further left than A
+                } else {
+
+                    response.bInA = false;
+
+                    // B ends before A ends. We have to push A out of B
+                    if (rangeA[1] > rangeB[1]) {
+
+                        overlap = rangeA[0] - rangeB[1];
+                        response.aInB = false;
+
+                        // A is fully inside B.  Pick the shortest way out.
+                    } else {
+
+                        var option1 = rangeA[1] - rangeB[0];
+                        var option2 = rangeB[1] - rangeA[0];
+                        overlap = option1 < option2 ? option1 : -option2;
+                    }
+                }
+                // If this is the smallest amount of overlap we've seen so far, set it as the minimum overlap.
+                var absOverlap = Math.abs(overlap);
+
+                if (absOverlap < response.overlap) {
+
+                    response.overlap = absOverlap;
+                    response.overlapN.copy(axis);
+
+                    if (overlap < 0) response.overlapN.reverse();
+                }
+            }
+
+            VECTORS.push(offsetV);
+            ARRAYS.push(rangeA);
+            ARRAYS.push(rangeB);
+
+            return false;
+        }
+    }, {
+        key: 'testPolygonPolygon',
+        value: function testPolygonPolygon(a, b, response) {
+
+            // collider a
+
+            var pointsA = a.shape.getPoints();
+            var normalsA = a.shape.getNormals();
+            var normalsALen = normalsA.length;
+
+            // collider b
+
+            var pointsB = b.shape.getPoints();
+            var normalsB = b.shape.getNormals();
+            var normalsBLen = normalsB.length;
+
+            // If any of the edge normals of A is a separating axis, no intersection.
+            while (normalsALen--) {
+                if (isSeparatingAxis(a.position, b.position, pointsA, pointsB, normalsA[normalsALen], response)) {
+                    return false;
+                }
+            }
+
+            // If any of the edge normals of B is a separating axis, no intersection.
+            while (normalsBLen--) {
+                if (isSeparatingAxis(a.position, b.position, pointsA, pointsB, normalsB[normalsBLen], response)) {
+                    return false;
+                }
+            }
+
+            // Since none of the edge normals of A or B are a separating axis, there is an intersection
+            // and we've already calculated the smallest overlap (in isSeparatingAxis).  Calculate the
+            // final overlap vector.
+            if (response) {
+                response.a = a;
+                response.b = b;
+                response.overlapV.copy(response.overlapN).scale(response.overlap);
+            }
+            return true;
+        }
+    }]);
+
+    return SAT;
+}();
+
+exports.default = SAT;
+
+/***/ }),
+
+/***/ "./physics/satresponse.js":
+/*!********************************!*\
+  !*** ./physics/satresponse.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SATResponse = function () {
+    function SATResponse() {
+        _classCallCheck(this, SATResponse);
+
+        this.a = null;
+        this.b = null;
+        this.overlapN = new scintilla.Vector();
+        this.overlapV = new scintilla.Vector();
+        this.aInB = true;
+        this.bInA = true;
+        this.overlap = Number.MAX_VALUE;
+        this.indexShapeA = -1;
+        this.indexShapeB = -1;
+        this.clear();
+    }
+
+    _createClass(SATResponse, [{
+        key: "clear",
+        value: function clear() {
+            this.aInB = true;
+            this.bInA = true;
+            this.overlap = Number.MAX_VALUE;
+            this.indexShapeA = -1;
+            this.indexShapeB = -1;
+            return this;
+        }
+    }]);
+
+    return SATResponse;
+}();
+
+exports.default = SATResponse;
 
 /***/ }),
 

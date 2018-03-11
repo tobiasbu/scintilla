@@ -6,6 +6,8 @@ import LoadManager from '../loader/loadmanager'
 import Time from '../time/time'
 import UpdateTime from '../time/updatetime'
 import Input from '../input/input'
+import SceneManager from './scenemanager'
+import Physics from '../physics/physics'
 import Debug from '../others/debug'
 
 /**
@@ -114,14 +116,14 @@ export default class Game {
     //this.world = new scintilla.World(this);
     //this.draw = new scintilla.Draw(this);
     //this.render = new scintilla.Render(this, this.canvas, this.context);
-    //this.scene = new scintilla.SceneManager(this);
+    this.scene = new SceneManager(this);
     this.input = new Input(this);
     //this.instance = new scintilla.Creator(this,this.world);
     //this.component = new scintilla.GameComponents(this);
     //this.animationCache = new scintilla.AnimationCache(this);
     //this.sound = new scintilla.SoundManager(this);
     //this.pool = new scintilla.Pool(this);
-    //this.physics = new scintilla.Physics(this);
+    this.physics = new Physics(this);
 
     if (this.debugMode)
       this.debug = new Debug(this);
@@ -216,16 +218,16 @@ export default class Game {
     this.scene.preUpdate();
     this.scene.update(timeStep);
     this.input.update();
-    this.universe.preUpdate(timeStep);
+    //this.universe.preUpdate(timeStep);
 
 
     //this.world.camera.update();
 
-    this.universe.update(timeStep);
+    //this.universe.update(timeStep);
     this.physics.update();
-    this.sound.update();
+    //this.sound.update();
 
-    this.universe._updateTransform();
+    //this.universe._updateTransform();
 
 
   }

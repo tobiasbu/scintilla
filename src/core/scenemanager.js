@@ -1,31 +1,33 @@
 
-scintilla.SceneManager = function(game) {
+import Map from '../structures/map'
 
-this.game = game;
-this._scenes = new scintilla.Map();
+export default class SceneManager {
+  
+  constructor(game) {
 
-this.current_scene_name = '';
-this.change_scene = null;
+    this.game = game;
+    this._scenes = new Map();
 
-this._setup = false;
-this._clearCache = false;
+    this.current_scene_name = '';
+    this.change_scene = null;
 
-// callbacks
-this.current_scene = null;
-this.onStartCallback = null;
-this.onLoadingCallback = null;
-this.onLoadingRenderCallback = null;
-this.onPreloadCallback = null;
-this.onUpdateCallback = null;
-this.onRenderCallback = null;
-this.onDestroyCallback = null;
+    this._setup = false;
+    this._clearCache = false;
+
+    // callbacks
+    this.current_scene = null;
+    this.onStartCallback = null;
+    this.onLoadingCallback = null;
+    this.onLoadingRenderCallback = null;
+    this.onPreloadCallback = null;
+    this.onUpdateCallback = null;
+    this.onRenderCallback = null;
+    this.onDestroyCallback = null;
+
+  }
 
 
-}
-
-scintilla.SceneManager.prototype = {
-
-add : function (sceneName,scene) {
+add(sceneName,scene) {
 
   var newScene;
 
@@ -39,9 +41,9 @@ add : function (sceneName,scene) {
   if (newScene != null)
     this._scenes.set(sceneName,newScene);
 
-},
+}
 
-new : function(sceneName)
+new(sceneName)
 {
 
   if (this._scenes.has(sceneName))
@@ -55,9 +57,9 @@ new : function(sceneName)
 
   return newScene;
 
-},
+}
 
-set : function (sceneName, clearCache) {
+set(sceneName, clearCache) {
 
   if (clearCache === undefined) { clearCache = false; }
 
@@ -66,18 +68,18 @@ set : function (sceneName, clearCache) {
 
 
 
-},
+}
 
-restart : function(clearCache) {
+restart(clearCache) {
 
   if (clearCache === undefined) { clearCache = false; }
 
   this.change_scene = this.current_scene_name;
   this._clearCache = clearCache;
 
-},
+}
 
-remove : function(sceneName) {
+remove(sceneName) {
 
   if (this.current_scene_name === sceneName) {
 
@@ -96,11 +98,9 @@ remove : function(sceneName) {
 
   delete this.scenes[sceneName];
 
-},
+}
 
-setupScene : function(sceneName) {
-
-
+setupScene(sceneName) {
 
   this.current_scene = this._scenes.get(sceneName);
   this.onStartCallback = this.current_scene['start'] || null;
@@ -120,9 +120,9 @@ setupScene : function(sceneName) {
 
   this._setup = false;
 
-},
+}
 
-clearCurrentScene : function() {
+clearCurrentScene() {
 
   if (this.current_scene_name)
   {
@@ -141,9 +141,9 @@ clearCurrentScene : function() {
 
   }
 
-},
+}
 
-preUpdate : function() {
+preUpdate() {
 
   if (this.game.systemInited && this.change_scene != null)
   {
@@ -168,45 +168,44 @@ preUpdate : function() {
 
       if (this.game.load.totalQueuedFiles() === 0)
       {
-            this.preloadComplete();
+        this.preloadComplete();
 
       } else {
 
-          this.game.load.start();
+        this.game.load.start();
       }
 
     } else {
 
-        this.preloadComplete();
-
+      this.preloadComplete();
     }
 
   }
 
-},
+  }
 
-    preloadComplete: function () {
+  preloadComplete() {
 
-      //this.current_scene.quadtree = new tobiJS.Quadtree({x: 0, y: 0, width: 640,height: 480});
+    //this.current_scene.quadtree = new tobiJS.Quadtree({x: 0, y: 0, width: 640,height: 480});
 
-        if (this._setup === false && this.onLoadingCallback)
-        {
-            this.onLoadingCallback.call(this.current_scene, this.game);
-        }
+      if (this._setup === false && this.onLoadingCallback)
+      {
+          this.onLoadingCallback.call(this.current_scene, this.game);
+      }
 
-        if (this._setup === false && this.onStartCallback)
-        {
-            this._setup  = true;
-            this.onStartCallback.call(this.current_scene, this.game);
-        }
-        else
-        {
-            this._setup = true;
+      if (this._setup === false && this.onStartCallback)
+      {
+          this._setup  = true;
+          this.onStartCallback.call(this.current_scene, this.game);
+      }
+      else
+      {
+          this._setup = true;
 
-        }
-    },
+      }
+  }
 
-    update : function() {
+    update() {
 
       if (this._setup) {
 
@@ -226,9 +225,9 @@ preUpdate : function() {
 
       }
 
-    },
+    }
 
-    render : function () {
+    render() {
 
       if (this._setup) {
 
@@ -253,4 +252,4 @@ preUpdate : function() {
 
 }
 
-scintilla.SceneManager.prototype.constructor = scintilla.SceneManager;
+
