@@ -414,6 +414,10 @@ var _input = __webpack_require__(/*! ../input/input */ "./input/input.js");
 
 var _input2 = _interopRequireDefault(_input);
 
+var _render = __webpack_require__(/*! ../render/render */ "./render/render.js");
+
+var _render2 = _interopRequireDefault(_render);
+
 var _scenemanager = __webpack_require__(/*! ./scenemanager */ "./core/scenemanager.js");
 
 var _scenemanager2 = _interopRequireDefault(_scenemanager);
@@ -533,7 +537,7 @@ var Game = function () {
             //this.universe = new scintilla.Universe(this);
             //this.world = new scintilla.World(this);
             //this.draw = new scintilla.Draw(this);
-            //this.render = new scintilla.Render(this, this.canvas, this.context);
+            this.render = new _render2.default(this, this.canvas, this.context);
             this.scene = new _scenemanager2.default(this);
             this.input = new _input2.default(this);
             //this.instance = new scintilla.Creator(this,this.world);
@@ -3038,6 +3042,254 @@ exports.default = function () {
 
   return Canvas;
 }();
+
+/***/ }),
+
+/***/ "./render/render.js":
+/*!**************************!*\
+  !*** ./render/render.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+
+var _map2 = _interopRequireDefault(_map);
+
+var _renderlayer = __webpack_require__(/*! ./renderlayer */ "./render/renderlayer.js");
+
+var _renderlayer2 = _interopRequireDefault(_renderlayer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Render = function () {
+    function Render(game, canvas, context) {
+        _classCallCheck(this, Render);
+
+        this.game = game;
+        this.canvas = canvas;
+        this.context = context;
+        this.__enable = true;
+        this.__renderLayers = [];
+        this.__renderLayersMap = new _map2.default();
+        this.addLayer('default');
+    }
+
+    _createClass(Render, [{
+        key: 'addLayer',
+        value: function addLayer(name) {
+            if (this.contains(name)) {
+                throw new Error("Render.add: There is already a RenderLayer called: \"" + name + "\".");
+            }
+
+            this.__renderLayersMap.set(name, this.__renderLayers.length);
+            this.__renderLayers.push(new _renderlayer2.default(game, name));
+        }
+    }, {
+        key: 'remove',
+        value: function remove(name) {
+            if (typeof name !== 'string') throw new Error("Render.remove: The value name is not a string.");
+
+            if (name === "default") throw new Error("Render.remove: You can not remove the \"default\" layer.");
+
+            if (!this.__renderLayersMap.has(name)) throw new Error("Render.remove: Could not remove layer. There is no layer named \"" + name + "\".");
+
+            var index = this.__renderLayersMap.get(name);
+            this.__renderLayers.splice(index, 1);
+            this.__renderLayersMap.delete(name);
+        }
+    }, {
+        key: 'contains',
+        value: function contains(layerName) {
+            if (typeof layerName !== 'string') throw new Error("Render.contains: The value name is not a string.");
+
+            return this.__renderLayers.indexOf(layerName) > -1;
+        }
+    }, {
+        key: '_render',
+        value: function _render() {
+            if (!this.__enable) return;
+
+            this.context.setTransform(1, 0, 0, 1, 0, 0);
+            this.context.globalCompositeOperation = 'source-over';
+            this.context.clearRect(0, 0, this.canvas.width, this.game.height);
+            this.context.fillStyle = '#fff'; //this.universe.backgroundColor;
+            this.context.fillRect(0, 0, this.canvas.width, this.game.height);
+
+            for (var i = 0; i < this.__renderLayers.length; i++) {
+                if (this.__renderLayers[i].enable) {
+                    this.__renderLayers[i].render();
+                }
+            }
+
+            this.game.scene.render();
+
+            if (this.game.debug != null) {
+
+                this.context.setTransform(1, 0, 0, 1, 0, 0);
+                this.game.debug.test();
+                //console.log("asdasd");
+            }
+        }
+    }]);
+
+    return Render;
+}();
+
+exports.default = Render;
+
+/***/ }),
+
+/***/ "./render/renderlayer.js":
+/*!*******************************!*\
+  !*** ./render/renderlayer.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var RenderLayer = function () {
+    function RenderLayer(game, layerName) {
+        _classCallCheck(this, RenderLayer);
+
+        this._name = layerName;
+        this.game = game;
+        this.__enable = true;
+        this.__renderers = [];
+        this.__isDirty = true;
+    }
+
+    // Add renderable components
+
+
+    _createClass(RenderLayer, [{
+        key: 'add',
+        value: function add(renderer) {
+
+            if (renderer === undefined) return;
+
+            this.__renderers.push(renderer);
+            this.renderer.__renderLayer = this;
+            this.__isDirty = true;
+        }
+    }, {
+        key: 'remove',
+        value: function remove(renderer) {
+            var index = this.__renderers.indexOf(renderer);
+
+            if (index === -1) return;
+
+            return this.removeChildAt(index);
+        }
+    }, {
+        key: 'removeAt',
+        value: function removeAt(index) {
+            var child = this.getChildAt(index);
+            this.__renderers.splice(index, 1);
+            return child;
+        }
+    }, {
+        key: 'at',
+        value: function at(index) {
+            if (index < 0 || index >= this.__renderers.length) {
+                throw new Error('RenderLayer.at: Renderer at ' + index + ' does not exist in the render layer list: \"' + name + "\".");
+            }
+            return this.__renderers[index];
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            if (!this.__enable) return;
+
+            if (this.__isDirty) {
+                this._updateDepth();
+                this.__isDirty = false;
+            }
+
+            for (var i = 0; i < this.__renderers.length; i++) {
+                this.__renderers[i].render(this.game.context);
+            }
+        }
+    }, {
+        key: 'clear',
+        value: function clear() {
+            this.__renderers.splice(0, this.__renderers.length);
+        }
+    }, {
+        key: '_updateDepth',
+        value: function _updateDepth() {
+            // sort ascending
+
+            this.__renderers.sort(function (a, b) {
+
+                if (a.depth > b.depth) {
+
+                    return 1;
+                } else if (a.depth < b.depth) {
+
+                    return -1;
+                } else {
+
+                    if (a.z > b.z) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+            });
+        }
+    }, {
+        key: 'length',
+        get: function get() {
+            return this.__renderers.length;
+        }
+    }, {
+        key: 'name',
+        get: function get() {
+            return this._name;
+        }
+    }, {
+        key: 'enable',
+        get: function get() {
+            return this.__enable;
+        },
+        set: function set(value) {
+            value = !!value;
+
+            if (value !== this._enabled) {
+                //if (!value)
+                //    this.reset();
+
+                this._enabled = value;
+            }
+        }
+    }]);
+
+    return RenderLayer;
+}();
+
+exports.default = RenderLayer;
 
 /***/ }),
 

@@ -1,7 +1,8 @@
+![Scintilla Logo](https://raw.githubusercontent.com/tobiasbu/raytracer/master/resources/scintilla_logo.png)
 
-# Scintilla
+# Scintilla - HTML5 Game Engine
 
-A simple 2D Game framework for HTML5.
+_A simple 2D Game framework for HTML5._
 
 Alpha test: [play here](http://tobiasbu.github.io/website/portfolio/untitled-space/)
 

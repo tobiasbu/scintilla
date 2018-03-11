@@ -6,6 +6,7 @@ import LoadManager from '../loader/loadmanager'
 import Time from '../time/time'
 import UpdateTime from '../time/updatetime'
 import Input from '../input/input'
+import Render from '../render/render'
 import SceneManager from './scenemanager'
 import Physics from '../physics/physics'
 import Debug from '../others/debug'
@@ -115,7 +116,7 @@ export default class Game {
     //this.universe = new scintilla.Universe(this);
     //this.world = new scintilla.World(this);
     //this.draw = new scintilla.Draw(this);
-    //this.render = new scintilla.Render(this, this.canvas, this.context);
+    this.render = new Render(this, this.canvas, this.context);
     this.scene = new SceneManager(this);
     this.input = new Input(this);
     //this.instance = new scintilla.Creator(this,this.world);

@@ -1,19 +1,18 @@
 
 
-scintilla.RenderLayer = function(game,name) {
+export default class RenderLayer { 
+    
+    constructor(game,layerName) {
 
-    this.name = name;
-    this.game = game;
-    this.__enable = true;
-    this.__renderers = [];
-    this.__isDirty = true;
-
-}
-
-scintilla.RenderLayer.prototype = {
+        this._name = layerName;
+        this.game = game;
+        this.__enable = true;
+        this.__renderers = [];
+        this.__isDirty = true;
+    }
 
     // Add renderable components
-    add : function(renderer) {
+    add(renderer) {
     
         if (renderer === undefined)
             return;
@@ -22,9 +21,9 @@ scintilla.RenderLayer.prototype = {
         this.renderer.__renderLayer = this;
         this.__isDirty = true;
 
-    },
+    }
 
-    remove : function(renderer)
+    remove(renderer)
     {
         var index = this.__renderers.indexOf(renderer);
 
@@ -32,16 +31,16 @@ scintilla.RenderLayer.prototype = {
             return;
 
         return this.removeChildAt(index);
-    },
+    }
 
-    removeAt : function(index)
+    removeAt(index)
     {
         var child = this.getChildAt(index);
         this.__renderers.splice( index, 1 );
         return child;
-    },
+    }
 
-    at : function(index)
+    at(index)
     {
         if (index < 0 || index >= this.__renderers.length)
         {
@@ -49,9 +48,9 @@ scintilla.RenderLayer.prototype = {
         }
         return this.__renderers[index];
 
-    },
+    }
 
-    render : function()
+    render()
     {
         if (!this.__enable)
             return;
@@ -67,14 +66,14 @@ scintilla.RenderLayer.prototype = {
         {
             this.__renderers[i].render(this.game.context);
         }
-    },
+    }
 
-    clear : function()
+    clear()
     {
         this.__renderers.splice(0, this.__renderers.length);
-    },
+    }
 
-    _updateDepth : function() { // sort ascending
+    _updateDepth() { // sort ascending
 
         this.__renderers.sort(
 
@@ -100,40 +99,13 @@ scintilla.RenderLayer.prototype = {
             }
           });
 
-          
     }
 
-
-
-}
-scintilla.RenderLayer.prototype.constructor = scintilla.RenderLayer;
-
-
-Object.defineProperty(scintilla.RenderLayer.prototype, "length", {
-
-    get: function() {
-        return this.__renderers.length;
-    }
-
-});
-
-Object.defineProperty(scintilla.RenderLayer.prototype, "name", {
-
-    get: function() {
-        return this.__renderers.name;
-    }
-
-});
-
-Object.defineProperty(scintilla.RenderLayer.prototype, "enable", {
-
-    get: function() {
-        return this.__enable;
-    },
-
-    set: function(value) {
-
-            value = !!value;
+    get length() {return this.__renderers.length;}
+    get name() {return this._name;}
+    get enable() {return this.__enable;}
+    set enable(value) {
+        value = !!value;
     
         if (value !== this._enabled)
         {
@@ -143,9 +115,7 @@ Object.defineProperty(scintilla.RenderLayer.prototype, "enable", {
             this._enabled = value;
         }
     }
-    
 
-});
-
+}
 
 

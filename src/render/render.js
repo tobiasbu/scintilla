@@ -1,19 +1,20 @@
 
+import Map from '../structures/map'
+import RenderLayer from './renderlayer'
 
-scintilla.Render = function(game, canvas, context) {
+export default class Render {
+    
+    constructor(game, canvas, context) {
+        this.game = game;
+        this.canvas = canvas;
+        this.context = context;
+        this.__enable = true;
+        this.__renderLayers = [];
+        this.__renderLayersMap = new Map();
+        this.addLayer('default');
+    }
 
-    this.game = game;
-    this.canvas = canvas;
-    this.context = context;
-    this.__enable = true;
-    this.__renderLayers = [];
-    this.__renderLayersMap = new scintilla.Map();
-    this.add('default');
-}
-
-scintilla.Render.prototype = {
-
-    add : function(name)
+    addLayer(name)
     {
         if (this.contains(name))
         {
@@ -21,10 +22,10 @@ scintilla.Render.prototype = {
         }
        
         this.__renderLayersMap.set(name, this.__renderLayers.length);
-        this.__renderLayers.push(new scintilla.RenderLayer(game, name));
-    },
+        this.__renderLayers.push(new RenderLayer(game, name));
+    }
 
-    remove : function(name)
+    remove(name)
     {
         if (typeof name !== 'string')
             throw new Error("Render.remove: The value name is not a string.");
@@ -38,17 +39,17 @@ scintilla.Render.prototype = {
         var index = this.__renderLayersMap.get(name);
         this.__renderLayers.splice(index, 1);
         this.__renderLayersMap.delete(name);
-    },
+    }
 
-    contains : function(name)
+    contains(layerName)
     {
-        if (typeof name !== 'string')
+        if (typeof layerName !== 'string')
             throw new Error("Render.contains: The value name is not a string.");
 
-        return this.__renderLayers.indexOf(name) > -1;
-    },
+        return this.__renderLayers.indexOf(layerName) > -1;
+    }
 
-    _render : function()
+    _render()
     {
         if (!this.__enable)
             return;
@@ -78,10 +79,5 @@ scintilla.Render.prototype = {
       
       }
     }
-
-    
-
 }
-
-scintilla.Render.prototype.constructor = scintilla.Render;
 
