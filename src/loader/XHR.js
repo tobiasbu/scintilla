@@ -1,10 +1,10 @@
 
 
-tobi.XHR = {
+Scintilla.XHR = {
 
     createFileRequest : function(file, settings)
     {
-        var xhrSettings = tobi.XHR.merge(settings, file.xhrSettings);
+        var xhrSettings = Scintilla.XHR.merge(settings, file.xhrSettings);
 
 
 

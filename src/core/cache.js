@@ -4,7 +4,7 @@
 * @class Cache
 * @constructor
 */
-tobi.Cache = function(game) {
+Scintilla.Cache = function(game) {
 
 this.game = game;
 this._cache = {
@@ -14,7 +14,7 @@ this._cache = {
 
 }
 
-tobi.Cache.prototype = {
+Scintilla.Cache.prototype = {
 
   addImage : function (tag, url, data) {
 

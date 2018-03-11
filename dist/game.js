@@ -4,7 +4,7 @@ var VIEW = {
   h : 480
 }
 
-var myGame = new tobi.Game({width:VIEW.w,height:VIEW.h, parent:"canvas-container"});
+var myGame = new Scintilla.Game({width:VIEW.w,height:VIEW.h, parent:"canvas-container"});
 
 window.addEventListener("resize", OnResizeCalled, false);
 
@@ -27,8 +27,8 @@ function OnResizeCalled() {
   }*/
 }
 
-var myLoadingScene = new tobi.Scene(myGame);
-var myScene = new tobi.Scene(myGame);
+var myLoadingScene = new Scintilla.Scene(myGame);
+var myScene = new Scintilla.Scene(myGame);
 
 
 // loading scene
@@ -58,8 +58,8 @@ myLoadingScene.preload = function() {
   myGame.load.audio('phase',"sounds/bgm_phase.ogg")
   myGame.load.audio('gameover',"sounds/bgm_gameover.ogg")
 
-  this.rectColor = tobi.Color.HSLtoRGB(110,186,144,255);
-  this.rectColorBG = tobi.Color.HSLtoRGB(0,0,180,255);
+  this.rectColor = Scintilla.Color.HSLtoRGB(110,186,144,255);
+  this.rectColorBG = Scintilla.Color.HSLtoRGB(0,0,180,255);
   this.step = 0;
   this.alpha = 1;
   this.fadeStart = false;
@@ -134,7 +134,7 @@ myGame.draw.alpha(1);
 
 }
 
-var bg = tobi.GameObject.extend(function() {
+var bg = Scintilla.GameObject.extend(function() {
 
 this.start = function() {
 
@@ -162,7 +162,7 @@ this.update = function() {
 
 });
 
-var starObj = tobi.GameObject.extend(function() {
+var starObj = Scintilla.GameObject.extend(function() {
 
   this.speed = 2;
 
@@ -187,20 +187,20 @@ this.update = function() {
 
 this.reset = function() {
 
-  var s = tobi.Math.randomRange(0.15,0.65);
-  var a = tobi.Math.randomRange(0.3,0.5)
-  var x = tobi.Math.randomRange(0,VIEW.w)
+  var s = Scintilla.Math.randomRange(0.15,0.65);
+  var a = Scintilla.Math.randomRange(0.3,0.5)
+  var x = Scintilla.Math.randomRange(0,VIEW.w)
 
   this.scale.set(s,s);
   this.component['render'].alpha = a;
   this.position.set(x,-64);
-  this.speed = tobi.Math.randomRange(3,6);
+  this.speed = Scintilla.Math.randomRange(3,6);
 
 }
 
 });
 
-var explosion = tobi.GameObject.extend(function() {
+var explosion = Scintilla.GameObject.extend(function() {
 
   this.start = function() {
 
@@ -213,9 +213,9 @@ var explosion = tobi.GameObject.extend(function() {
 
   this.reset = function() {
 
-    var rand = tobi.Math.randomRange(0.75,0.85);
+    var rand = Scintilla.Math.randomRange(0.75,0.85);
     this.scale.set(rand);
-    this.angle = tobi.Math.irandomRange(0,360);
+    this.angle = Scintilla.Math.irandomRange(0,360);
     this.anim.play();
 
   }
@@ -230,7 +230,7 @@ var explosion = tobi.GameObject.extend(function() {
 
 });
 
-var playerBullet = tobi.GameObject.extend(function() {
+var playerBullet = Scintilla.GameObject.extend(function() {
 
   this.start = function() {
 
@@ -254,7 +254,7 @@ var playerBullet = tobi.GameObject.extend(function() {
 
 });
 
-var enemyBulletObj = tobi.GameObject.extend(function() {
+var enemyBulletObj = Scintilla.GameObject.extend(function() {
 
     // /this.player = null;
 
@@ -282,7 +282,7 @@ var enemyBulletObj = tobi.GameObject.extend(function() {
 
 
 
-var enemy = tobi.GameObject.extend(function() {
+var enemy = Scintilla.GameObject.extend(function() {
 
   this.start = function() {
 
@@ -298,7 +298,7 @@ var enemy = tobi.GameObject.extend(function() {
 
     this.setDepth(2);
 
-    this.speed = tobi.Math.randomRange(2.5,4);
+    this.speed = Scintilla.Math.randomRange(2.5,4);
   }
 
   this.update = function() {
@@ -349,7 +349,7 @@ var enemy2Obj = enemy.extend(function() {
 
     this.setDepth(2);
 
-    this.speed = tobi.Math.randomRange(2.5,3.5);
+    this.speed = Scintilla.Math.randomRange(2.5,3.5);
 
   }
 
@@ -358,7 +358,7 @@ var enemy2Obj = enemy.extend(function() {
     this.stepBullet = 0;
     this.nextBullet = 1;
     this.bulletCount = 0;
-    this.speed = tobi.Math.randomRange(2.5,3.5);
+    this.speed = Scintilla.Math.randomRange(2.5,3.5);
 
   }
 
@@ -379,7 +379,7 @@ var enemy2Obj = enemy.extend(function() {
 
         if (this.bulletCount > 5) {
 
-          this.nextBullet = tobi.Math.randomRange(2,2.5);
+          this.nextBullet = Scintilla.Math.randomRange(2,2.5);
           this.bulletCount = 0;
 
         } else {
@@ -397,7 +397,7 @@ var enemy2Obj = enemy.extend(function() {
 
 });
 
-var player = tobi.GameObject.extend(function() {
+var player = Scintilla.GameObject.extend(function() {
 
   this.speed = 3.25;
   this.stepBullet = 0;
@@ -442,7 +442,7 @@ if (  this.state == "playing") {
 
       var t = 1 - (this.invulnerableTime / 2);
 
-      var t2 = tobi.Math.lerp(0.1,0.02,t);
+      var t2 = Scintilla.Math.lerp(0.1,0.02,t);
 
       this.alphaTime += myGame.clock.deltaTime / t2;
 
@@ -475,19 +475,19 @@ if (  this.state == "playing") {
     var angle = 0;
 
 
-  if (this.game.input.keyboard.press(tobi.KeyCode.Right)) {
+  if (this.game.input.keyboard.press(Scintilla.KeyCode.Right)) {
     movingX = 1;
     angle = 2;
 
   }
-  if (this.game.input.keyboard.press(tobi.KeyCode.Left)) {
+  if (this.game.input.keyboard.press(Scintilla.KeyCode.Left)) {
     movingX = -1;
     angle = -2;
 
   }
-  if (this.game.input.keyboard.press(tobi.KeyCode.Down))
+  if (this.game.input.keyboard.press(Scintilla.KeyCode.Down))
     movingY = 1;
-  if (this.game.input.keyboard.press(tobi.KeyCode.Up))
+  if (this.game.input.keyboard.press(Scintilla.KeyCode.Up))
       movingY = -1;
 
     this.position.move(this.speed*movingX,this.speed*movingY);
@@ -509,7 +509,7 @@ if (  this.state == "playing") {
 
     if (this.stepBullet > 0.45) {
 
-    if (this.game.input.keyboard.press(tobi.KeyCode.Space)) {
+    if (this.game.input.keyboard.press(Scintilla.KeyCode.Space)) {
         //myGame.instance.create(bullet,this.position.x,this.position.y - 20);
         var bullet = myGame.instance.addFromPool("bullet");
         bullet.player = this;
@@ -622,7 +622,7 @@ this.update = function() {
 
 music = new musicController();
 
-var gameController = tobi.GameObject.extend(function() {
+var gameController = Scintilla.GameObject.extend(function() {
 
   this.start = function() {
 
@@ -636,8 +636,8 @@ var gameController = tobi.GameObject.extend(function() {
 
     this.player = null;
 
-    this.vec = new tobi.Vector(VIEW.w / 2,VIEW.h / 2);
-    this.logo = new tobi.Vector(VIEW.w / 2,150);
+    this.vec = new Scintilla.Vector(VIEW.w / 2,VIEW.h / 2);
+    this.logo = new Scintilla.Vector(VIEW.w / 2,150);
 
     this.lerpTime = 0;
     this.oldAngle = 0;
@@ -664,7 +664,7 @@ var gameController = tobi.GameObject.extend(function() {
 
       var rotate = myGame.camera.angle - this.oldAngle;
 
-      this.vec.rotateAround(rotate * tobi.Math.degToRad,new tobi.Vector(0,0));
+      this.vec.rotateAround(rotate * Scintilla.Math.degToRad,new Scintilla.Vector(0,0));
 
       myGame.camera.setFocus(this.vec);*/
 
@@ -688,7 +688,7 @@ var gameController = tobi.GameObject.extend(function() {
 
       }
 
-      if (myGame.input.keyboard.pressed(tobi.KeyCode.Enter)) {
+      if (myGame.input.keyboard.pressed(Scintilla.KeyCode.Enter)) {
         this.state = "startgame";
         music.fadeAndChange(1.25,0,'start',1,false);
       if (this.bg) {
@@ -714,12 +714,12 @@ var gameController = tobi.GameObject.extend(function() {
       }
 
       if (this.bg !== undefined)
-      this.bg.angle = tobi.Math.lerpAngle(this.oldAngle, 0, t);
-      /*var focus = tobi.Vector.lerp(this.vec,new tobi.Vector(VIEW.w / 2,VIEW.h / 2),  t);
+      this.bg.angle = Scintilla.Math.lerpAngle(this.oldAngle, 0, t);
+      /*var focus = Scintilla.Vector.lerp(this.vec,new Scintilla.Vector(VIEW.w / 2,VIEW.h / 2),  t);
       myGame.camera.angle = angle;
       myGame.camera.setFocus(focus);*/
 
-      this.logo.y = tobi.Math.lerp(150,-120,t);
+      this.logo.y = Scintilla.Math.lerp(150,-120,t);
 
     } else if (this.state == "playing") {
 
@@ -734,9 +734,9 @@ var gameController = tobi.GameObject.extend(function() {
 
             if (this.generateTime2 > 1) {
 
-              var x = tobi.Math.irandomRange(32,VIEW.w-64);
+              var x = Scintilla.Math.irandomRange(32,VIEW.w-64);
 
-              this.generateTimeNext2 = tobi.Math.randomRange(0.8,1.5);
+              this.generateTimeNext2 = Scintilla.Math.randomRange(0.8,1.5);
                 this.generateTime2 = 0;
 
                 if (myGame.pool.getContainer("enemyRed").length > 0) {
@@ -750,9 +750,9 @@ var gameController = tobi.GameObject.extend(function() {
 
         if (this.generateTime > 1) {
 
-          var x = tobi.Math.irandomRange(32,VIEW.w-64);
+          var x = Scintilla.Math.irandomRange(32,VIEW.w-64);
 
-          this.generateTimeNext = tobi.Math.randomRange(0.65,1.25);
+          this.generateTimeNext = Scintilla.Math.randomRange(0.65,1.25);
             this.generateTime = 0;
 
           if (myGame.pool.getContainer("enemy").length > 0) {
@@ -787,7 +787,7 @@ var gameController = tobi.GameObject.extend(function() {
 
       if (this.trigger == 2) {
 
-        var ok = myGame.input.keyboard.pressed(tobi.KeyCode.Enter);
+        var ok = myGame.input.keyboard.pressed(Scintilla.KeyCode.Enter);
 
         this.timer += myGame.clock.deltaTime / 10;
 
@@ -891,8 +891,8 @@ myGame.pool.add("star",starObj,20);
 
 for (var i = 0; i < 8; i++) {
 
-var x = tobi.Math.randomRange(0,VIEW.w);
-var y = tobi.Math.randomRange(0,VIEW.h);
+var x = Scintilla.Math.randomRange(0,VIEW.w);
+var y = Scintilla.Math.randomRange(0,VIEW.h);
 var star = myGame.instance.addFromPool("star");
 
 
@@ -920,7 +920,7 @@ if (myGame.pool.getContainer('star').length > 0) {
 
     myGame.instance.addFromPool('star');
 
-    this.nextStar = tobi.Math.randomRange(0.15,0.75);
+    this.nextStar = Scintilla.Math.randomRange(0.15,0.75);
     this.timeStar = 0;
 
   }

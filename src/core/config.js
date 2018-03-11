@@ -1,13 +1,13 @@
 
-tobi.Config = Class.extend(function() {
+Scintilla.Config = Class.extend(function() {
 
 this.constructor = function(config)
 {
     if (config === undefined) 
         config = {};
 
-    var callback = tobi.Utils.getValue;
-    var callback_2 = tobi.Utils.getPropertyValue;
+    var callback = Scintilla.Utils.getValue;
+    var callback_2 = Scintilla.Utils.getPropertyValue;
 
     // view and canvas
     this.width = callback(config, 'width', 640);

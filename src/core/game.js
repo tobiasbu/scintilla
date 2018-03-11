@@ -4,7 +4,7 @@
 * @class Game
 * @constructor
 */
-tobi.Game = function (config) {
+Scintilla.Game = function (config) {
 
   /**
   * @property {string|HTMLElement} parent - The Games DOM parent.
@@ -15,7 +15,7 @@ tobi.Game = function (config) {
   this.height = 600;
 
   // object
-  this.config = new tobi.Config(config);
+  this.config = new Scintilla.Config(config);
 
   // boolean
   this.systemInited = false;
@@ -82,7 +82,7 @@ tobi.Game = function (config) {
 }
 
 
-tobi.Game.prototype = {
+Scintilla.Game.prototype = {
 
 
 
@@ -125,34 +125,34 @@ tobi.Game.prototype = {
 
 
 
-    this.canvas = tobi.Canvas.create(this.parent,this.width,this.height);
+    this.canvas = Scintilla.Canvas.create(this.parent,this.width,this.height);
     this.context = this.canvas.getContext("2d", { alpha: false });
 
-    this.cache = new tobi.Cache(this);
-    this.load = new tobi.LoadManager(this);
-    this.time = new tobi.Time(this);
-    this.universe = new tobi.Universe(this);
-    this.world = new tobi.World(this);
-    this.draw = new tobi.Draw(this);
-    this.render = new tobi.Render(this, this.canvas, this.context);
-    this.scene = new tobi.SceneManager(this);
-    this.input = new tobi.Input(this);
-    this.instance = new tobi.Creator(this,this.world);
-    this.component = new tobi.GameComponents(this);
-    this.animationCache = new tobi.AnimationCache(this);
-    this.sound = new tobi.SoundManager(this);
-    this.pool = new tobi.Pool(this);
-    this.physics = new tobi.Physics(this);
+    this.cache = new Scintilla.Cache(this);
+    this.load = new Scintilla.LoadManager(this);
+    this.time = new Scintilla.Time(this);
+    this.universe = new Scintilla.Universe(this);
+    this.world = new Scintilla.World(this);
+    this.draw = new Scintilla.Draw(this);
+    this.render = new Scintilla.Render(this, this.canvas, this.context);
+    this.scene = new Scintilla.SceneManager(this);
+    this.input = new Scintilla.Input(this);
+    this.instance = new Scintilla.Creator(this,this.world);
+    this.component = new Scintilla.GameComponents(this);
+    this.animationCache = new Scintilla.AnimationCache(this);
+    this.sound = new Scintilla.SoundManager(this);
+    this.pool = new Scintilla.Pool(this);
+    this.physics = new Scintilla.Physics(this);
 
     if (this.debugMode)
-      this.debug = new tobi.Debug(this);
+      this.debug = new Scintilla.Debug(this);
 
     this.time.start();
     this.input.init();
     this.sound.start();
     this.world.start();
 
-    this.updateGameMethod = new tobi.UpdateGame(this,this.timeMode);
+    this.updateGameMethod = new Scintilla.UpdateGame(this,this.timeMode);
     this.updateGameMethod.start();
 
 
@@ -301,4 +301,4 @@ tobi.Game.prototype = {
 
 }
 
-tobi.Game.prototype.constructor = tobi.Game;
+Scintilla.Game.prototype.constructor = Scintilla.Game;

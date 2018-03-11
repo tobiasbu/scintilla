@@ -1,14 +1,14 @@
 
 // simple helper class -
 // game instances creator
-tobi.Creator = function(game, root) {
+Scintilla.Creator = function(game, root) {
 
 this.game = game;
 this.root = root;
 
 }
 
-tobi.Creator.prototype = {
+Scintilla.Creator.prototype = {
 
 addFromPool : function(containerName, node) {
 
@@ -36,7 +36,7 @@ add : function(gameObject, node) {
 
   if (node === undefined || node === null) { node = this.root; }
 
-  if (tobi.Utils.isFunction(gameObject)) {
+  if (Scintilla.Utils.isFunction(gameObject)) {
     this.create(gameObject);
     return;
   }
@@ -56,7 +56,7 @@ create : function(gameObject, x, y, node) {
 
   var obj = gameObject;
 
-  if (tobi.Utils.isFunction(obj)) {
+  if (Scintilla.Utils.isFunction(obj)) {
 
     obj = new gameObject();
 

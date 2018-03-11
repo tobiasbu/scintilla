@@ -1,10 +1,10 @@
 
 // Hierarchy Tree of instances
 // Instance is a children of the Hierarchy tree
-tobi.Hierarchy = tobi.Transform.extend(function() {
+Scintilla.Hierarchy = Scintilla.Transform.extend(function() {
 
 this.children = [];
-//tobi.Transform.call(this);
+//Scintilla.Transform.call(this);
 
 //if (newTransform)
 //this._newTransform();
@@ -121,10 +121,10 @@ this._updateTransform = function() {
 });
 
 
-//tobi.Hierarchy.prototype = Object.create( tobi.Transform.prototype );
-//tobi.Hierarchy.prototype.constructor = tobi.Hierarchy;
+//Scintilla.Hierarchy.prototype = Object.create( Scintilla.Transform.prototype );
+//Scintilla.Hierarchy.prototype.constructor = Scintilla.Hierarchy;
 
-//tobi.Hierarchy.prototype.updateCycle = tobi.Hierarchy.prototype._updateCycle;
+//Scintilla.Hierarchy.prototype.updateCycle = Scintilla.Hierarchy.prototype._updateCycle;
 
 
       //  if (self.game.world.camera.view.intersects(instance.bounds.box)) {
@@ -144,7 +144,7 @@ this._updateTransform = function() {
 
 //}
 
-//tobi.Hierarchy.prototype.renderCycle = tobi.Hierarchy.prototype._renderCycle;
+//Scintilla.Hierarchy.prototype.renderCycle = Scintilla.Hierarchy.prototype._renderCycle;
 /*
 setScene : function(scene) {
 

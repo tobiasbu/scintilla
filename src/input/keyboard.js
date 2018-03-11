@@ -1,13 +1,13 @@
 
 
-tobi.Keyboard = function(game) {
+Scintilla.Keyboard = function(game) {
 
 this.game = game;
 this.context = game.context;
 this.active = true;
 //this._keys = [];
-this._keyMapping = new tobi.Map();
-this._keyWatch = new tobi.Map();
+this._keyMapping = new Scintilla.Map();
+this._keyWatch = new Scintilla.Map();
 this._keyGarbage = [];
 //this._keyLock = [];
 //this._keyLockPressed = [];
@@ -23,27 +23,27 @@ this._onKeyPress = null;
 
 }
 
-tobi.Keyboard.prototype = {
+Scintilla.Keyboard.prototype = {
 
 reset : function() {
 
   this._keyMapping.clear();
   this._keyWatch.clear();
   this._keyGarbage = [];
-  for (var prop in tobi.KeyCode){
+  for (var prop in Scintilla.KeyCode){
 
-    if (tobi.KeyCode.hasOwnProperty(prop)) {
-      var value = tobi.KeyCode[prop];
-      this._keyMapping.set(value, new tobi.Key(value,this.game));
+    if (Scintilla.KeyCode.hasOwnProperty(prop)) {
+      var value = Scintilla.KeyCode[prop];
+      this._keyMapping.set(value, new Scintilla.Key(value,this.game));
     }
-    /*if (tobi.KeyCode.hasOwnProperty(prop)) {
+    /*if (Scintilla.KeyCode.hasOwnProperty(prop)) {
 
       
 
-          var value = tobi.KeyCode[prop];
+          var value = Scintilla.KeyCode[prop];
           this._keys[value] = false;
-          this._keyLock[value] = tobi.KeyEvent.NONE;
-          this._keyLockPressed[value] = tobi.KeyEvent.NONE;
+          this._keyLock[value] = Scintilla.KeyEvent.NONE;
+          this._keyLockPressed[value] = Scintilla.KeyEvent.NONE;
           this._keyDownDuration[value] = 0;
     }*/
   }
@@ -91,8 +91,8 @@ processKeyUp : function(event) {
     var keyObj = this._keyMapping.get(key);
     keyObj.onKeyUp();
 
-    /*this._keyLock[key] = tobi.KeyEvent.RELEASE;
-    this._keyLockPressed[key] = tobi.KeyEvent.NONE;
+    /*this._keyLock[key] = Scintilla.KeyEvent.RELEASE;
+    this._keyLockPressed[key] = Scintilla.KeyEvent.NONE;
     this._keys[key] = false;*/
 
 },
@@ -123,12 +123,12 @@ processKeyDown : function(event) {
 
    //_keyMapping[]
    //this._keys[key] = true;
-  /* if (this._keyLockPressed[key] != tobi.KeyEvent.PRESSED && this._keyLockPressed[key] != tobi.KeyEvent.PRESS) {
-     this._keyLockPressed[key] = tobi.KeyEvent.PRESSED;
+  /* if (this._keyLockPressed[key] != Scintilla.KeyEvent.PRESSED && this._keyLockPressed[key] != Scintilla.KeyEvent.PRESS) {
+     this._keyLockPressed[key] = Scintilla.KeyEvent.PRESSED;
      this._keyDownDuration[key] = 1;
    }
 
-   this._keyLock[key] = tobi.KeyEvent.PRESS;
+   this._keyLock[key] = Scintilla.KeyEvent.PRESS;
    this._keys[key] = true;
    */
 
@@ -155,16 +155,16 @@ processKeyDown : function(event) {
 
 update : function() {
 
-  /*for (var prop in tobi.KeyCode){
-    if (tobi.KeyCode.hasOwnProperty(prop)) {
+  /*for (var prop in Scintilla.KeyCode){
+    if (Scintilla.KeyCode.hasOwnProperty(prop)) {
 
-      var value = tobi.KeyCode[prop];
+      var value = Scintilla.KeyCode[prop];
 
-        if (this._keyLockPressed[value] ==  tobi.KeyEvent.PRESSED) {
+        if (this._keyLockPressed[value] ==  Scintilla.KeyEvent.PRESSED) {
             if (this._keyDownDuration[value] > 0)
               this._keyDownDuration[value]--;
             else {
-              this._keyLockPressed[value] = tobi.KeyEvent.PRESS;
+              this._keyLockPressed[value] = Scintilla.KeyEvent.PRESS;
             }
         } else {
           continue;
@@ -192,7 +192,7 @@ update : function() {
 
       //console.log(value);
 
-      if (value.event() == tobi.KeyEvent.IDLE)
+      if (value.event() == Scintilla.KeyEvent.IDLE)
       {
       
         // value.reset();
@@ -208,7 +208,7 @@ update : function() {
           var value = this._keyWatch.get(key);
           value.update();
 
-          if (value.event() == tobi.KeyEvent.IDLE)
+          if (value.event() == Scintilla.KeyEvent.IDLE)
           {
              // value.reset();
               this._keyGarbage.push(key);
@@ -228,9 +228,9 @@ pressed : function(keycode) {
 
   /*var keyLock = false;
 
-if (this._keyLockPressed[keycode] == tobi.KeyEvent.PRESSED) {
+if (this._keyLockPressed[keycode] == Scintilla.KeyEvent.PRESSED) {
 		keyLock = true;
-    this._keyLockPressed[keycode] = tobi.KeyEvent.PRESS;
+    this._keyLockPressed[keycode] = Scintilla.KeyEvent.PRESS;
   }
 
 	var hit = this._keys[keycode] && keyLock;*/
@@ -254,16 +254,16 @@ release : function(keycode) {
 
   /*var keyLock = false;
 
-	if (this._keyLock[keycode] ==  tobi.KeyEvent.PRESSED ||
-    this._keyLock[keycode] ==  tobi.KeyEvent.PRESS ||
-    this._keyLock[keycode] ==  tobi.KeyEvent.NONE)
+	if (this._keyLock[keycode] ==  Scintilla.KeyEvent.PRESSED ||
+    this._keyLock[keycode] ==  Scintilla.KeyEvent.PRESS ||
+    this._keyLock[keycode] ==  Scintilla.KeyEvent.NONE)
 		keyLock = false;
 	else
 		keyLock = true;
 
 	var hit = !this._keys[keycode] && keyLock;
 
-	this._keyLock[keycode] = tobi.KeyEvent.NONE;
+	this._keyLock[keycode] = Scintilla.KeyEvent.NONE;
 
   return hit;*/
   return this._keyMapping.get(keycode).isReleased();
@@ -282,8 +282,8 @@ press : function(keycode) {
 
   /*var keyLock = false;
 
-  if (this._keyLock[keycode] ==  tobi.KeyEvent.RELEASE ||
-    this._keyLock[keycode] ==  tobi.KeyEvent.NONE)
+  if (this._keyLock[keycode] ==  Scintilla.KeyEvent.RELEASE ||
+    this._keyLock[keycode] ==  Scintilla.KeyEvent.NONE)
     keyLock = false;
   else
     keyLock = true;
@@ -298,9 +298,9 @@ press : function(keycode) {
 
 }
 
-tobi.Keyboard.prototype.constructor = tobi.Keyboard;
+Scintilla.Keyboard.prototype.constructor = Scintilla.Keyboard;
 
-tobi.KeyCode = {
+Scintilla.KeyCode = {
   Backspace: 8,
   Tab: 9,
   Enter: 13,

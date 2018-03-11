@@ -1,5 +1,5 @@
 
-tobi.Callback = function (contextObject, delegateMethod) {
+Scintilla.Callback = function (contextObject, delegateMethod) {
 
  return function() {
 

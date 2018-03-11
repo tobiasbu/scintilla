@@ -1,10 +1,10 @@
 
 // based in pixi
-tobi.CanvasList = {
+Scintilla.CanvasList = {
 
 create : function(parent, width, height) {
 
-  var index = tobi.CanvasList.first();
+  var index = Scintilla.CanvasList.first();
   var canvas;
 
   // no parent found
@@ -15,13 +15,13 @@ create : function(parent, width, height) {
          canvas: document.createElement('canvas')
      }
 
-     tobi.CanvasList.list.push(tag);
+     Scintilla.CanvasList.list.push(tag);
 
      canvas = tag.canvas;
 
   } else {
 
-      tobi.CanvasList[index].parent = parent;
+      Scintilla.CanvasList[index].parent = parent;
 
       canvas = tobiJS.CanvasList[index].canvas;
   }
@@ -45,7 +45,7 @@ appendDOM : function() {
 
 filter : function(parent) { // functional programming
 
-  var list = tobi.CanvasList.list;
+  var list = Scintilla.CanvasList.list;
 
   return list.parent === parent;
 
@@ -54,7 +54,7 @@ filter : function(parent) { // functional programming
 
 first : function() {
 
-  var list = tobi.CanvasList.list;
+  var list = Scintilla.CanvasList.list;
 
     for (var i = 0; i < list.length; i++)
     {
@@ -71,7 +71,7 @@ first : function() {
 
 remove : function(parent) {
 
-  var list = tobi.CanvasList.list;
+  var list = Scintilla.CanvasList.list;
 
     for (var i = 0; i < list.length; i++)
     {
@@ -91,4 +91,4 @@ remove : function(parent) {
 }
 
 // list of canvas
-tobi.CanvasList.list = [];
+Scintilla.CanvasList.list = [];

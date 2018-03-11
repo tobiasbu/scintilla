@@ -2,15 +2,15 @@
 
 
 // Class LoaderManager
-tobi.LoadManager = function(game) {
+Scintilla.LoadManager = function(game) {
 
   this.game = game;
   this.cache = game.cache;
 
-  this._filesQueue = new tobi.Set();
-  this._successFiles = new tobi.Set();
-  this._failedFiles = new tobi.Set();
-  this._processedFiles = new tobi.Set();
+  this._filesQueue = new Scintilla.Set();
+  this._successFiles = new Scintilla.Set();
+  this._failedFiles = new Scintilla.Set();
+  this._processedFiles = new Scintilla.Set();
 
   this._filesQueueCount = 0;
   this._loadedFilesCount = 0;
@@ -20,12 +20,12 @@ tobi.LoadManager = function(game) {
 
   var gameConfig = game.config.loader;
 
-  this.xhr = tobi.XHR.createSettings(
-    tobi.Utils.getValue(config, 'responseType', gameConfig.responseType),
-    tobi.Utils.getValue(config, 'async', gameConfig.async),
-    //tobi.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
-    //tobi.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
-    tobi.Utils.getValue(config, 'timeout', gameConfig.timeout)
+  this.xhr = Scintilla.XHR.createSettings(
+    Scintilla.Utils.getValue(config, 'responseType', gameConfig.responseType),
+    Scintilla.Utils.getValue(config, 'async', gameConfig.async),
+    //Scintilla.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
+    //Scintilla.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+    Scintilla.Utils.getValue(config, 'timeout', gameConfig.timeout)
 );
 
 
@@ -39,7 +39,7 @@ tobi.LoadManager = function(game) {
 
 };
 
-tobi.LoadManager.prototype = {
+Scintilla.LoadManager.prototype = {
 
   setPath : function(path)
   {
@@ -212,8 +212,7 @@ tobi.LoadManager.prototype = {
     ;
     if (file.state === LOADER_STATE.ERROR)
     {
-      console.log("fail")
-        this._failedFiles.set(file);
+       this._failedFiles.set(file);
 
         /*if (file.linkFile)
         {
@@ -332,4 +331,4 @@ tobi.LoadManager.prototype = {
 
 };
 
-tobi.LoadManager.prototype.constructor = tobi.LoadManager;
+Scintilla.LoadManager.prototype.constructor = Scintilla.LoadManager;

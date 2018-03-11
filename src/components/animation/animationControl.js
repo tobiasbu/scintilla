@@ -1,5 +1,5 @@
 
-tobi.AnimationControl = function(game) {
+Scintilla.AnimationControl = function(game) {
 
 this.game = game;
 this.animations = {};
@@ -18,13 +18,13 @@ this.frameSpeed = 1; // frame rate 1 / 60
 
 }
 
-tobi.AnimationControl.prototype = {
+Scintilla.AnimationControl.prototype = {
 
   add : function(name, image) {
 
 
 
-    return this.animations[name] = new tobi.Animation(name,image);
+    return this.animations[name] = new Scintilla.Animation(name,image);
 
   },
 

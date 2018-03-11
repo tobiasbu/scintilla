@@ -13,7 +13,7 @@ module.exports = function(grunt) {
       dist: {
         // the files to concatenate
         src: [
-          'src/tobi.js',
+          'src/Scintilla.js',
          'src/core/extend.js',
         'src/core/renderable.js',
         'src/objects/transform.js',

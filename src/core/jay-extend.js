@@ -159,7 +159,7 @@
         "value" : extend
     });
 
-    tobi.Class = Jay;
+    Scintilla.Class = Jay;
 
 })();
 
@@ -178,7 +178,7 @@
 
 
 /*
-tobi._extend = function(dest,source) {
+Scintilla._extend = function(dest,source) {
     if(!source) { return dest; }
     for (var prop in source) {
       dest[prop] = source[prop];
@@ -196,15 +196,15 @@ tobi._extend = function(dest,source) {
   /*
 
   // The base Class implementation (does nothing)
-  tobi.Class = function() {};
+  Scintilla.Class = function() {};
 
   // Check if a class is 'instance of'
-  tobi.Class.prototype.is = function(className) {
+  Scintilla.Class.prototype.is = function(className) {
       return this.className === className;
   }
 
   // Create a new Class that inherits from this class
-  tobi.Class.extend = function(className, prop, classMethods) {
+  Scintilla.Class.extend = function(className, prop, classMethods) {
 
     var _super = this.prototype, self = this;
 
@@ -250,14 +250,14 @@ tobi._extend = function(dest,source) {
     Class.prototype = prototype;
 
     // Enforce the constructor to be what we expect
-    Class.prototype.constructor = tobi.Class;
+    Class.prototype.constructor = Scintilla.Class;
 
     // And make this class extendable
-    tobi.Class.extend = tobi.Class.extend;//arguments.callee;
+    Scintilla.Class.extend = Scintilla.Class.extend;//arguments.callee;
 
     // If there are class-level Methods, add them to the class
     if(classMethods) {
-        tobi._extend(Class,classMethods);
+        Scintilla._extend(Class,classMethods);
     }
 
     if(className) {

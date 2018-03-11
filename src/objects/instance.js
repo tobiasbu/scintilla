@@ -1,7 +1,7 @@
 
 // instance of gameobjects and transforms in the world
 // can be a group of gameobjects
-tobi.Instance = tobi.Hierarchy.extend(function() {
+Scintilla.Instance = Scintilla.Hierarchy.extend(function() {
 
 // private
 this.game = null;
@@ -361,7 +361,7 @@ this._poolBack = function(callOnDestroy) {
 });
 
 
-Object.defineProperty(tobi.Instance.prototype, "length", {
+Object.defineProperty(Scintilla.Instance.prototype, "length", {
 
     get: function() {
         return this.children.length;
@@ -386,12 +386,12 @@ if (parent != null) {
 
 
 
-//tobi.Instance.prototype =  Object.create(tobi.Hierarchy.prototype);
-//tobi.Instance.prototype.constructor = tobi.Instance;
+//Scintilla.Instance.prototype =  Object.create(Scintilla.Hierarchy.prototype);
+//Scintilla.Instance.prototype.constructor = Scintilla.Instance;
 
 
 
-//tobi.Instance.prototype.renderCycle = function(context) {
+//Scintilla.Instance.prototype.renderCycle = function(context) {
 
 
 

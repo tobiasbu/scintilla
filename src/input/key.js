@@ -1,6 +1,6 @@
 
 
-tobi.Key = function(keycode, game) {
+Scintilla.Key = function(keycode, game) {
 
     this.game = game;
     this.keyCode = keycode; 
@@ -10,7 +10,7 @@ tobi.Key = function(keycode, game) {
     this.press = false;
     this.release = false;
 
-    this._event = tobi.KeyEvent.NONE;
+    this._event = Scintilla.KeyEvent.NONE;
 
     this.pressTime = 0;
     this.pressDuration = -2500;
@@ -19,7 +19,7 @@ tobi.Key = function(keycode, game) {
 
 }
 
-tobi.Key.prototype = {
+Scintilla.Key.prototype = {
 
     onKeyDown: function()
     {
@@ -83,23 +83,23 @@ tobi.Key.prototype = {
         {
             if (this.pressDuration == 0)
             {
-                this._event = tobi.KeyEvent.PRESSED;
+                this._event = Scintilla.KeyEvent.PRESSED;
             }
 
         } else {
 
             if (this.releaseDuration == 0)
             {
-                this._event = tobi.KeyEvent.RELEASED;
+                this._event = Scintilla.KeyEvent.RELEASED;
             } else {
-                this._event = tobi.KeyEvent.IDLE;
+                this._event = Scintilla.KeyEvent.IDLE;
             }
 
         }
 
-        if (this._event == tobi.KeyEvent.IDLE)
+        if (this._event == Scintilla.KeyEvent.IDLE)
         {
-            this._event = tobi.KeyEvent.NONE;
+            this._event = Scintilla.KeyEvent.NONE;
         }
         
     },
@@ -127,7 +127,7 @@ tobi.Key.prototype = {
     reset: function()
     {   
         this.status = false;
-        this._event = tobi.KeyEvent.NONE;
+        this._event = Scintilla.KeyEvent.NONE;
         this.press = false;
         this.release = false;
     
@@ -138,7 +138,7 @@ tobi.Key.prototype = {
     }
 };
 
-Object.defineProperty(tobi.Key.prototype, "enabled", {
+Object.defineProperty(Scintilla.Key.prototype, "enabled", {
 
     get: function () {
         return this._enabled;
@@ -159,9 +159,9 @@ Object.defineProperty(tobi.Key.prototype, "enabled", {
 
 });
 
-tobi.Key.prototype.constructor = tobi.Key;
+Scintilla.Key.prototype.constructor = Scintilla.Key;
 
-tobi.KeyEvent = {
+Scintilla.KeyEvent = {
     NONE : -1,
     IDLE: 0,
     PRESSED : 1,

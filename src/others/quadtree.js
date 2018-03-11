@@ -2,7 +2,7 @@
 /*
 Source http://gamedevelopment.tutsplus.com/tutorials/quick-tip-use-quadtrees-to-detect-likely-collisions-in-2d-space--gamedev-374
 */
-tobi.Quadtree = function(x,y,width,height,maxObjects,maxLevels,level) {
+Scintilla.Quadtree = function(x,y,width,height,maxObjects,maxLevels,level) {
 
 
 this.maxObjects = 0;
@@ -16,9 +16,9 @@ this.bounds = {}
 }
 
 
-tobi.Quadtree.prototype.constructor = tobi.Quadtree;
+Scintilla.Quadtree.prototype.constructor = Scintilla.Quadtree;
 
-tobi.Quadtree.prototype.reset = function(x,y,width,height,maxObjects,maxLevels,level) {
+Scintilla.Quadtree.prototype.reset = function(x,y,width,height,maxObjects,maxLevels,level) {
 
   this.maxObjects = maxObjects || 4;
   this.maxLevels =  maxLevels || 4;
@@ -37,7 +37,7 @@ tobi.Quadtree.prototype.reset = function(x,y,width,height,maxObjects,maxLevels,l
 }
 
 // insert node
-tobi.Quadtree.prototype.insert = function(obj) {
+Scintilla.Quadtree.prototype.insert = function(obj) {
 
   // undefined obj
   if (typeof obj === "undefined") {
@@ -89,7 +89,7 @@ tobi.Quadtree.prototype.insert = function(obj) {
 
 };
 
-tobi.Quadtree.insertArray = function(arr) {
+Scintilla.Quadtree.insertArray = function(arr) {
 
   // is an Array
   if (obj instanceof Array) {
@@ -102,7 +102,7 @@ tobi.Quadtree.insertArray = function(arr) {
 }
 
 // get index of quadrant
-tobi.Quadtree.prototype.getIndex = function(obj) {
+Scintilla.Quadtree.prototype.getIndex = function(obj) {
 
   var index = -1;
   var verticalMidpoint = this.bounds.x + this.bounds.width / 2;
@@ -164,34 +164,34 @@ tobi.Quadtree.prototype.getIndex = function(obj) {
 }
 
 // split into 4 nodes
-tobi.Quadtree.prototype.split = function() {
+Scintilla.Quadtree.prototype.split = function() {
   // Bitwise or [html5rocks]
 	var subWidth = (this.bounds.width / 2) | 0;
 	var subHeight = (this.bounds.height / 2) | 0;
   var nextLevel = this.level+1;
 
-	this.nodes[0] = new tobi.Quadtree(
+	this.nodes[0] = new Scintilla.Quadtree(
 		this.bounds.x + subWidth,
 		this.bounds.y,
 	  subWidth,
 		subHeight,
 	  nextLevel);
 
-	this.nodes[1] = new tobi.Quadtree(
+	this.nodes[1] = new Scintilla.Quadtree(
 		this.bounds.x,
 		this.bounds.y,
 		subWidth,
 		subHeight,
 	  nextLevel);
 
-	this.nodes[2] = new tobi.Quadtree(
+	this.nodes[2] = new Scintilla.Quadtree(
 		this.bounds.x,
 		this.bounds.y + subHeight,
 		subWidth,
 		subHeight,
 	  nextLevel);
 
-	this.nodes[3] = new tobi.Quadtree(
+	this.nodes[3] = new Scintilla.Quadtree(
 		this.bounds.x + subWidth,
 		this.bounds.y + subHeight,
 		subWidth,
@@ -201,7 +201,7 @@ tobi.Quadtree.prototype.split = function() {
 }
 
 // return all objects
-tobi.Quadtree.prototype.getAllObjects = function(returnedObjects) {
+Scintilla.Quadtree.prototype.getAllObjects = function(returnedObjects) {
   for (var i = 0; i < this.nodes.length; i++) {
   			this.nodes[i].getAllObjects(returnedObjects);
   		}
@@ -212,7 +212,7 @@ tobi.Quadtree.prototype.getAllObjects = function(returnedObjects) {
 }
 
 // return all objects that can collide with obj
-tobi.Quadtree.prototype.retrieve = function (obj) {
+Scintilla.Quadtree.prototype.retrieve = function (obj) {
 
   if (typeof obj === "undefined") {
 			return;
@@ -246,7 +246,7 @@ tobi.Quadtree.prototype.retrieve = function (obj) {
 
 
 // clear the quad tree
-tobi.Quadtree.prototype.clear = function() {
+Scintilla.Quadtree.prototype.clear = function() {
 
     this.objects.length = 0;
 

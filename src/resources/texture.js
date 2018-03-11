@@ -1,8 +1,8 @@
 
-tobi.textureCache = {};
-tobi.textureCacheID = 0;
+Scintilla.textureCache = {};
+Scintilla.textureCacheID = 0;
 
-tobi.Texture = function(source,scaleMode) {
+Scintilla.Texture = function(source,scaleMode) {
 
 this.source = source;
 this.loaded = false;
@@ -26,13 +26,13 @@ this.isTiling = false;
 
 }
 
-tobi.Texture.prototype.constructor = tobi.Texture;
+Scintilla.Texture.prototype.constructor = Scintilla.Texture;
 
-tobi.Texture.createFromCanvas = function(canvas) {
+Scintilla.Texture.createFromCanvas = function(canvas) {
 
   if (!canvas._id)
     {
-        canvas._id = 'canvas_' + tobi.textureCacheID++;
+        canvas._id = 'canvas_' + Scintilla.textureCacheID++;
     }
 
   if (canvas.width === 0)
@@ -45,12 +45,12 @@ tobi.Texture.createFromCanvas = function(canvas) {
         canvas.height = 1;
   }
 
-  var texture = tobi.textureCache[canvas._id];
+  var texture = Scintilla.textureCache[canvas._id];
 
   if (!texture)
   {
-      texture = new tobi.Texture(canvas);
-      tobi.textureCache[canvas._id] = texture;
+      texture = new Scintilla.Texture(canvas);
+      Scintilla.textureCache[canvas._id] = texture;
   }
 
     return texture;

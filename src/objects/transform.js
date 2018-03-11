@@ -1,8 +1,8 @@
 
-tobi.Transform = Class.extend(function(){
+Scintilla.Transform = Class.extend(function(){
 
 // private:
-var _cosSin = new tobi.Vector(0,0);
+var _cosSin = new Scintilla.Vector(0,0);
 var _oldRotation = -2;
 
 // public:
@@ -12,23 +12,23 @@ this.constructor = function() {
 
   this.rotation = 0;
 
-  this.position = new tobi.Vector(0,0);
-  this.scale = new tobi.Vector(1,1);
+  this.position = new Scintilla.Vector(0,0);
+  this.scale = new Scintilla.Vector(1,1);
   this.angle = 0;
 
-  this.matrix = new tobi.Matrix();
-  this.worldPosition = new tobi.Vector(0,0);
-  this.worldScale =  new tobi.Vector(1,1);
+  this.matrix = new Scintilla.Matrix();
+  this.worldPosition = new Scintilla.Vector(0,0);
+  this.worldScale =  new Scintilla.Vector(1,1);
   this.worldRotation = 0;
 
 
-  this.origin = new tobi.Vector(0,0);
-  this.bounds = new tobi.BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
-  this.globalBounds = new tobi.BoundingBox(0,0,1,1); // defined by render
+  this.origin = new Scintilla.Vector(0,0);
+  this.bounds = new Scintilla.BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
+  this.globalBounds = new Scintilla.BoundingBox(0,0,1,1); // defined by render
 
   this.rotation = 0; // radians
 
-  //this._cosSin = new tobi.Vector(0,0);
+  //this._cosSin = new Scintilla.Vector(0,0);
 
 }
 
@@ -38,9 +38,9 @@ var a, b, c, d, x, y;
 var wt = this.matrix;
 var pt = this.parent.matrix;
 
-  this.rotation = this.angle * tobi.Math.degToRad;
+  this.rotation = this.angle * Scintilla.Math.degToRad;
 
-  if (this.rotation % tobi.Math.PI2)
+  if (this.rotation % Scintilla.Math.PI2)
   {
 
     if (this.rotation !== this._oldRotation)
@@ -133,9 +133,9 @@ var pt = this.parent.matrix;
 
 });
 
-//tobi.Transform.prototype.constructor = tobi.Transform;
+//Scintilla.Transform.prototype.constructor = Scintilla.Transform;
 
-/*tobi.Transform.prototype._newTransform = function() {
+/*Scintilla.Transform.prototype._newTransform = function() {
 
 
 
@@ -180,4 +180,4 @@ var pt = this.parent.matrix;
 
 
 
-//tobi.Transform.prototype.updateTransform = tobi.Transform.prototype._updateTransform;
+//Scintilla.Transform.prototype.updateTransform = Scintilla.Transform.prototype._updateTransform;

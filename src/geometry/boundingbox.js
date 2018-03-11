@@ -1,15 +1,15 @@
 
-tobi.BoundingBox = function(x,y,width,height) {
+Scintilla.BoundingBox = function(x,y,width,height) {
 
-this.center = new tobi.Vector(x+width/2,y+height/2);
-this.size = new tobi.Vector(width,height);
-this.min = new tobi.Vector(x,y);
-this.max = new tobi.Vector(x+width,y+height);
-this.box = new tobi.Rect(x,y,width,height);
+this.center = new Scintilla.Vector(x+width/2,y+height/2);
+this.size = new Scintilla.Vector(width,height);
+this.min = new Scintilla.Vector(x,y);
+this.max = new Scintilla.Vector(x+width,y+height);
+this.box = new Scintilla.Rect(x,y,width,height);
 
 }
 
-tobi.BoundingBox.prototype = {
+Scintilla.BoundingBox.prototype = {
 
 set : function(minX,minY,maxX,maxY) {
 
@@ -49,7 +49,7 @@ setup : function(pos, scale, rotation, anchor, width, height) {
 
   var callback = null;
 
-  if (rotation instanceof  tobi.Vector)
+  if (rotation instanceof  Scintilla.Vector)
       callback = this['calcCoordsCosSin'];
     else
       callback = this['calcCoords'];

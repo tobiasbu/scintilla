@@ -1,5 +1,5 @@
 
-tobi.Debug = function(game) {
+Scintilla.Debug = function(game) {
 
 this.game = game;
 this.context = game.context;
@@ -14,7 +14,7 @@ this.textShadow = 'black';
 
 }
 
-tobi.Debug.prototype = {
+Scintilla.Debug.prototype = {
 
 test : function() {
 

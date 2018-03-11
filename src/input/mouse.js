@@ -1,6 +1,6 @@
 
 
-tobi.Mouse = function(game) {
+Scintilla.Mouse = function(game) {
 
 this.x = 0;
 this.y = 0;
@@ -23,7 +23,7 @@ this.reset();
 
 }
 
-tobi.Mouse.prototype = {
+Scintilla.Mouse.prototype = {
 
   reset : function() {
 
@@ -31,8 +31,8 @@ tobi.Mouse.prototype = {
 
 
             this._mouseButtons[i] = false;
-            this._mouseButtonsLocks[i] = tobi.MouseEvent.NONE;
-            this._mouseButtonsLocksPressed[i] = tobi.MouseEvent.NONE;
+            this._mouseButtonsLocks[i] = Scintilla.MouseEvent.NONE;
+            this._mouseButtonsLocksPressed[i] = Scintilla.MouseEvent.NONE;
             this._mouseDownDuration[i] = 0;
 
     }
@@ -89,13 +89,13 @@ tobi.Mouse.prototype = {
 
     var value = event.button;
 
-    if (this._mouseButtonsLocksPressed[value] != tobi.KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != tobi.KeyEvent.PRESS) {
-      this._mouseButtonsLocksPressed[value] = tobi.MouseEvent.PRESSED;
+    if (this._mouseButtonsLocksPressed[value] != Scintilla.KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != Scintilla.KeyEvent.PRESS) {
+      this._mouseButtonsLocksPressed[value] = Scintilla.MouseEvent.PRESSED;
       this._mouseDownDuration[value] = 1;
     }
 
     this._mouseButtons[value] = true;
-    this._mouseButtonsLocks[value] = tobi.MouseEvent.PRESS;
+    this._mouseButtonsLocks[value] = Scintilla.MouseEvent.PRESS;
 
     event.preventDefault();
 
@@ -109,8 +109,8 @@ tobi.Mouse.prototype = {
     var value = event.button;
 
     this._mouseButtons[value] = false;
-    this._mouseButtonsLocks[value] = tobi.MouseEvent.RELEASE;
-    this._mouseButtonsLocksPressed[value] = tobi.MouseEvent.NONE;
+    this._mouseButtonsLocks[value] = Scintilla.MouseEvent.RELEASE;
+    this._mouseButtonsLocksPressed[value] = Scintilla.MouseEvent.NONE;
 
     event.preventDefault();
 
@@ -121,9 +121,9 @@ tobi.Mouse.prototype = {
 
     var buttonLock = false;
 
-    if (this._mouseButtonsLocksPressed[button] == tobi.MouseEvent.PRESSED) {
+    if (this._mouseButtonsLocksPressed[button] == Scintilla.MouseEvent.PRESSED) {
       buttonLock = true;
-      this._mouseButtonsLocksPressed[button] = tobi.MouseEvent.PRESS;
+      this._mouseButtonsLocksPressed[button] = Scintilla.MouseEvent.PRESS;
     }
 
     var hit = this._mouseButtons[button] && buttonLock;
@@ -136,16 +136,16 @@ tobi.Mouse.prototype = {
 
     var buttonLock = false;
 
-  	if (this._mouseButtonsLocks[button] ==  tobi.MouseEvent.PRESSED ||
-        this._mouseButtonsLocks[button] ==  tobi.MouseEvent.PRESS ||
-        this._mouseButtonsLocks[button] ==  tobi.MouseEvent.NONE)
+  	if (this._mouseButtonsLocks[button] ==  Scintilla.MouseEvent.PRESSED ||
+        this._mouseButtonsLocks[button] ==  Scintilla.MouseEvent.PRESS ||
+        this._mouseButtonsLocks[button] ==  Scintilla.MouseEvent.NONE)
   		buttonLock = false;
   	else
   		buttonLock = true;
 
   	var hit = !this._mouseButtons[button] && buttonLock;
 
-  	this._mouseButtonsLocks[button] = tobi.MouseEvent.NONE;
+  	this._mouseButtonsLocks[button] = Scintilla.MouseEvent.NONE;
 
   	return hit;
 
@@ -155,8 +155,8 @@ tobi.Mouse.prototype = {
 
     var buttonLock = false;
 
-    if (this._mouseButtonsLocks[button] ==  tobi.MouseEvent.RELEASE ||
-      this._mouseButtonsLocks[button] ==  tobi.MouseEvent.NONE)
+    if (this._mouseButtonsLocks[button] ==  Scintilla.MouseEvent.RELEASE ||
+      this._mouseButtonsLocks[button] ==  Scintilla.MouseEvent.NONE)
       buttonLock = false;
     else
       buttonLock = true;
@@ -172,11 +172,11 @@ tobi.Mouse.prototype = {
 
     for (var i = 0; i < this._mouseButtons.length; i++) {
 
-          if (this._mouseButtonsLocksPressed[i] ==  tobi.MouseEvent.PRESSED) {
+          if (this._mouseButtonsLocksPressed[i] ==  Scintilla.MouseEvent.PRESSED) {
               if (this._mouseDownDuration[i] > 0)
                 this._mouseDownDuration[i]--;
               else
-                this._mouseButtonsLocksPressed[i] = tobi.MouseEvent.PRESS;
+                this._mouseButtonsLocksPressed[i] = Scintilla.MouseEvent.PRESS;
           } else
             continue;
 
@@ -201,9 +201,9 @@ tobi.Mouse.prototype = {
 
 }
 
-tobi.Mouse.prototype.constructor = tobi.Mouse;
+Scintilla.Mouse.prototype.constructor = Scintilla.Mouse;
 
-tobi.MouseButton = {
+Scintilla.MouseButton = {
 LEFT_BUTTON : 0,
 MIDDLE_BUTTON : 1,
 RIGHT_BUTTON : 2,
@@ -211,7 +211,7 @@ WHEEL_UP : 3,
 WHEEL_DOWN : 4
 };
 
-tobi.MouseEvent = {
+Scintilla.MouseEvent = {
 NONE : 0,
 PRESS : 1,
 PRESSED : 2,

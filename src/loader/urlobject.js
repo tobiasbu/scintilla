@@ -1,5 +1,5 @@
 
-tobi.URLObject = {
+Scintilla.URLObject = {
 
     create : function(asset, response, type)
     {

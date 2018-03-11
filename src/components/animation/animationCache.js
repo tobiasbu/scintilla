@@ -1,12 +1,12 @@
 
-tobi.AnimationCache = function(game) {
+Scintilla.AnimationCache = function(game) {
 
 this.game = game;
-//this.map = new tobi.Multimap();
+//this.map = new Scintilla.Multimap();
 
 }
 
-tobi.AnimationCache.prototype = {
+Scintilla.AnimationCache.prototype = {
 
 add : function(spritesheet,container,name) {
 
@@ -17,7 +17,7 @@ add : function(spritesheet,container,name) {
     return null;
   }
 
-  var animation = new tobi.Animation(sprite);
+  var animation = new Scintilla.Animation(sprite);
 
 
 

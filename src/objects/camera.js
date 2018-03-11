@@ -1,13 +1,13 @@
 
-tobi.Camera = function(game,x,y,width,height) {
+Scintilla.Camera = function(game,x,y,width,height) {
 
 this.game = game;
-this.view = new tobi.Rect(x,y,width,height);
+this.view = new Scintilla.Rect(x,y,width,height);
 this.root = null; // who is the node (world)
 this.instancesInView = 0;
 
 this.target = null;
-this.scale = new tobi.Vector(1,1);
+this.scale = new Scintilla.Vector(1,1);
 this.angle = 0;
 
 this._width = width;
@@ -17,7 +17,7 @@ this._height = height;
 
 
 
-tobi.Camera.prototype = {
+Scintilla.Camera.prototype = {
 
   update : function() {
 
@@ -73,4 +73,4 @@ reset: function () {
 
 }
 
-tobi.Camera.prototype.constructor = tobi.Camera;
+Scintilla.Camera.prototype.constructor = Scintilla.Camera;

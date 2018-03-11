@@ -1,5 +1,5 @@
 
-tobi.Sound = Class.extend(function() {
+Scintilla.Sound = Class.extend(function() {
 
 this.constructor = function(game, tag, volume, loop, connect) {
 
@@ -271,7 +271,7 @@ this.update = function() {
         }
 
 
-        var value = tobi.Math.lerp(this._oldVolume,this._fadeVolume,t);
+        var value = Scintilla.Math.lerp(this._oldVolume,this._fadeVolume,t);
 
         this.volume = value;
 
@@ -324,7 +324,7 @@ this.destroy = function(remove) {
 
 });
 
-Object.defineProperty(tobi.Sound.prototype, "volume", {
+Object.defineProperty(Scintilla.Sound.prototype, "volume", {
 
     get: function () {
         return this._volume;

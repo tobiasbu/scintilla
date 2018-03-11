@@ -1,6 +1,6 @@
 
 
-tobi.RenderLayer = function(game,name) {
+Scintilla.RenderLayer = function(game,name) {
 
     this.name = name;
     this.game = game;
@@ -10,7 +10,7 @@ tobi.RenderLayer = function(game,name) {
 
 }
 
-tobi.RenderLayer.prototype = {
+Scintilla.RenderLayer.prototype = {
 
     // Add renderable components
     add : function(renderer) {
@@ -106,10 +106,10 @@ tobi.RenderLayer.prototype = {
 
 
 }
-tobi.RenderLayer.prototype.constructor = tobi.RenderLayer;
+Scintilla.RenderLayer.prototype.constructor = Scintilla.RenderLayer;
 
 
-Object.defineProperty(tobi.RenderLayer.prototype, "length", {
+Object.defineProperty(Scintilla.RenderLayer.prototype, "length", {
 
     get: function() {
         return this.__renderers.length;
@@ -117,7 +117,7 @@ Object.defineProperty(tobi.RenderLayer.prototype, "length", {
 
 });
 
-Object.defineProperty(tobi.RenderLayer.prototype, "name", {
+Object.defineProperty(Scintilla.RenderLayer.prototype, "name", {
 
     get: function() {
         return this.__renderers.name;
@@ -125,7 +125,7 @@ Object.defineProperty(tobi.RenderLayer.prototype, "name", {
 
 });
 
-Object.defineProperty(tobi.RenderLayer.prototype, "enable", {
+Object.defineProperty(Scintilla.RenderLayer.prototype, "enable", {
 
     get: function() {
         return this.__enable;

@@ -1,17 +1,17 @@
 
 
-tobi.Render = function(game, canvas, context) {
+Scintilla.Render = function(game, canvas, context) {
 
     this.game = game;
     this.canvas = canvas;
     this.context = context;
     this.__enable = true;
     this.__renderLayers = [];
-    this.__renderLayersMap = new tobi.Map();
+    this.__renderLayersMap = new Scintilla.Map();
     this.add('default');
 }
 
-tobi.Render.prototype = {
+Scintilla.Render.prototype = {
 
     add : function(name)
     {
@@ -21,7 +21,7 @@ tobi.Render.prototype = {
         }
        
         this.__renderLayersMap.set(name, this.__renderLayers.length);
-        this.__renderLayers.push(new tobi.RenderLayer(game, name));
+        this.__renderLayers.push(new Scintilla.RenderLayer(game, name));
     },
 
     remove : function(name)
@@ -83,5 +83,5 @@ tobi.Render.prototype = {
 
 }
 
-tobi.Render.prototype.constructor = tobi.Render;
+Scintilla.Render.prototype.constructor = Scintilla.Render;
 

@@ -1,5 +1,5 @@
 
-tobi.Dispatcher = Class.extend(function() {
+Scintilla.Dispatcher = Class.extend(function() {
 
 
 this.dispatch = function() {

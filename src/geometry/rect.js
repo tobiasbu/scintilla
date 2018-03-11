@@ -4,7 +4,7 @@
 * @class Rect
 * @constructor
 */
-tobi.Rect = function(x,y,width,height) {
+Scintilla.Rect = function(x,y,width,height) {
 
   x = x || 0;
   y = y || 0;
@@ -18,17 +18,17 @@ tobi.Rect = function(x,y,width,height) {
 }
 
 
-tobi.Rect.prototype = {
+Scintilla.Rect.prototype = {
 
   intersects : function(rect) {
 
-      return tobi.Rect.intersects(this, rect);
+      return Scintilla.Rect.intersects(this, rect);
 
   },
 
   contains : function(x,y) {
 
-    return tobi.Rect.contains(this,x,y);
+    return Scintilla.Rect.contains(this,x,y);
 
   },
 
@@ -43,9 +43,9 @@ tobi.Rect.prototype = {
 
 };
 
-tobi.Rect.prototype.constructor = tobi.Rect;
+Scintilla.Rect.prototype.constructor = Scintilla.Rect;
 
-tobi.Rect.intersects = function(rect1, rect2) {
+Scintilla.Rect.intersects = function(rect1, rect2) {
 
   if (rect1.width <= 0 || rect1.height <= 0 || rect2.width <= 0 || rect2.height <= 0)
     return false;
@@ -56,7 +56,7 @@ tobi.Rect.intersects = function(rect1, rect2) {
              rect1.y + rect1.height < rect2.y);
 };
 
-tobi.Rect.contains = function(rect, x, y) {
+Scintilla.Rect.contains = function(rect, x, y) {
 
   if (rect.width <= 0 && rect.height <= 0 )
     return false;
@@ -68,11 +68,11 @@ tobi.Rect.contains = function(rect, x, y) {
 
 };
 
-tobi.Rect.intersectionArea = function(rect1,rect2) {
+Scintilla.Rect.intersectionArea = function(rect1,rect2) {
 
-    var out = new tobi.Rect();
+    var out = new Scintilla.Rect();
 
-    if (tobi.Rect.intersects(rect1,rect2)) {
+    if (Scintilla.Rect.intersects(rect1,rect2)) {
 
        out.y = Math.max(a.y, b.y);
        out.x = Math.max(a.x, b.x);
@@ -85,7 +85,7 @@ tobi.Rect.intersectionArea = function(rect1,rect2) {
 
 }
 
-tobi.Rect.centerPoint = function() {
+Scintilla.Rect.centerPoint = function() {
 
   var vec2 = {};
   vec.x = this.x + this.width / 2;

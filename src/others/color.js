@@ -1,5 +1,5 @@
 
-tobi.Color = {
+Scintilla.Color = {
 
 webRGB : function(r,g,b,a) {
 

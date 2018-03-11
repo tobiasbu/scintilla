@@ -1,6 +1,6 @@
 
 
-tobi.Scene = function(game) {
+Scintilla.Scene = function(game) {
 
   var myGame = null;
 
@@ -28,7 +28,7 @@ tobi.Scene = function(game) {
 
 };
 
-tobi.Scene.prototype = {
+Scintilla.Scene.prototype = {
 
 
 /*preload : function() {},
@@ -69,7 +69,7 @@ instanceDestroy : function(gameObject) {
    var cl = false;
 
    if (arguments.length == 0)
-     obj = new tobi.GameObject();
+     obj = new Scintilla.GameObject();
    else {
 
      if (clone === undefined)
@@ -97,9 +97,9 @@ instanceDestroy : function(gameObject) {
 
 }
 
-tobi.Scene.prototype.constructor = tobi.Scene;
+Scintilla.Scene.prototype.constructor = Scintilla.Scene;
 
-tobi.Scene.prototype.setBounds = function(x,y,width,height) {
+Scintilla.Scene.prototype.setBounds = function(x,y,width,height) {
 
 this.x = x;
 this.y = y;

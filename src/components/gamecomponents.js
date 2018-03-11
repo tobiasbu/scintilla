@@ -1,11 +1,11 @@
 
-tobi.GameComponents = function(game) {
+Scintilla.GameComponents = function(game) {
 
 this.game = game;
 
 }
 
-tobi.GameComponents.prototype = {
+Scintilla.GameComponents.prototype = {
 
 sprite : function(tag) {
 
@@ -17,7 +17,7 @@ sprite : function(tag) {
     else
       sprite = this.game.cache.getAsset('images',tag);
 
-    return new tobi.Sprite(sprite);
+    return new Scintilla.Sprite(sprite);
 
 
 },
@@ -33,13 +33,13 @@ tiledSprite : function(args) { //tag,width,height
 
 
 
-    return new tobi.TiledSprite(sprite,args[1],args[2]);
+    return new Scintilla.TiledSprite(sprite,args[1],args[2]);
 
 },
 
 animationControl : function() {
 
-    return new tobi.AnimationControl(this.game);
+    return new Scintilla.AnimationControl(this.game);
 
 },
 
@@ -50,11 +50,11 @@ collider : function(args) { // type, shape
 
 
     if (type == "triangle")
-      s = tobi.Polygon.makeTriangle(args[1],args[2]);
+      s = Scintilla.Polygon.makeTriangle(args[1],args[2]);
     else if (type == "rectangle")
-      s = tobi.Polygon.makeRectangle(args[1],args[2]);
+      s = Scintilla.Polygon.makeRectangle(args[1],args[2]);
 
-      var col = new tobi.Collider(s);
+      var col = new Scintilla.Collider(s);
 
 
     return col;
@@ -63,14 +63,14 @@ collider : function(args) { // type, shape
 
 body : function(shapeType, width, height) {
 
-  /*var body = new tobi.Body();
+  /*var body = new Scintilla.Body();
 
   if (shapeType == ShapeType.Triangle)
-    body.setShape(tobi.Polygon.makeTriangle(0,0,width,height));
+    body.setShape(Scintilla.Polygon.makeTriangle(0,0,width,height));
   else if (shapeType == ShapeType.Rectangle)
-    body.setShape(tobi.Polygon.makeRectangle(0,0,width,height));*/
+    body.setShape(Scintilla.Polygon.makeRectangle(0,0,width,height));*/
 },
 
 }
 
-tobi.GameComponents.prototype.constructor = tobi.GameComponents;
+Scintilla.GameComponents.prototype.constructor = Scintilla.GameComponents;

@@ -1,27 +1,27 @@
 
-tobi.File = Class.extend(function() {
+Scintilla.File = Class.extend(function() {
 
     this.constructor = function(config) {
 
-        this.type = tobi.Utils.getValue(config, 'type', null);
-        this.tag = tobi.Utils.getValue(config, 'tag', null);
+        this.type = Scintilla.Utils.getValue(config, 'type', null);
+        this.tag = Scintilla.Utils.getValue(config, 'tag', null);
 
         if (this.type == null || this.tag == null)
         {
             throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
         }
 
-        this.url = tobi.Utils.getValue(config, 'url', null);
+        this.url = Scintilla.Utils.getValue(config, 'url', null);
 
         if (this.url === undefined)
-            this.url = tobi.Utils.getValue(config, 'path', '') + this.tag + '.' + GetFastValue(config, 'ext', '');
+            this.url = Scintilla.Utils.getValue(config, 'path', '') + this.tag + '.' + GetFastValue(config, 'ext', '');
         else
-            this.url = tobi.Utils.getValue(config, 'path', '').concat(this.url);
+            this.url = Scintilla.Utils.getValue(config, 'path', '').concat(this.url);
 
-        this.xhrSettings = tobi.XHR.createSettings(tobi.Utils.getValue(config, 'responseType', undefined));
+        this.xhrSettings = Scintilla.XHR.createSettings(Scintilla.Utils.getValue(config, 'responseType', undefined));
         
-        if (tobi.Utils.getValue(config, 'xhrSettings', false))
-            this.xhrSettings = tobi.XHR.merge(this.xhrSettings, tobi.Utils.getValue(config, 'xhrSettings', {}));
+        if (Scintilla.Utils.getValue(config, 'xhrSettings', false))
+            this.xhrSettings = Scintilla.XHR.merge(this.xhrSettings, Scintilla.Utils.getValue(config, 'xhrSettings', {}));
 
         
         console.log(this.xhrSettings);
@@ -34,7 +34,7 @@ tobi.File = Class.extend(function() {
         this.data = undefined;
         this.source = null;
         this.xhrRequest = null;
-        this.config = tobi.Utils.getValue(config,'config',{});
+        this.config = Scintilla.Utils.getValue(config,'config',{});
         this.crossOrigin = undefined;
 
         // callbacks
@@ -60,7 +60,7 @@ tobi.File = Class.extend(function() {
         {
            
 
-            this.source = tobi.Utils.getURL(this.url, gameLoader.baseURL);
+            this.source = Scintilla.Utils.getURL(this.url, gameLoader.baseURL);
 
             
             if (this.source.indexOf('data:') === 0 || this.source == null)
@@ -69,7 +69,7 @@ tobi.File = Class.extend(function() {
             }
             else
             {
-                this.xhrRequest = tobi.XHR.createFileRequest(this, gameLoader.xhr);
+                this.xhrRequest = Scintilla.XHR.createFileRequest(this, gameLoader.xhr);
             }
         }
 

@@ -3,7 +3,7 @@
  * Create a Canvas object.
  * @function Canvas
  */
-tobi.Canvas = {
+Scintilla.Canvas = {
 
 
 

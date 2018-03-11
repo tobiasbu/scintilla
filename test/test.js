@@ -12,8 +12,9 @@ var config = {
     debug: true
 };
   
-  var game = new tobi.Game(config);
+  var game = new Scintilla.Game(config);
   var scene = game.scene.new('scene');
+  var x = 0;
 
 scene.preload = function()
 {
@@ -23,7 +24,8 @@ scene.preload = function()
 
 scene.render = function() {
 
-    game.draw.sprite('test',VIEW.w / 2,VIEW.h / 2-16,[0.5,0.5]);
+
+    game.draw.sprite('test',VIEW.w / 2 + x,VIEW.h / 2-16,[0.5,0.5]);
 
     console.log("asdasdas");
     
@@ -31,12 +33,14 @@ scene.render = function() {
 
   scene.update = function() {
 
-    if (game.input.keyboard.pressed(tobi.KeyCode.Space)) 
+    //x += game.time.deltaTime * 20;
+
+    if (game.input.keyboard.pressed(Scintilla.KeyCode.Space)) 
     {
         console.log("pressed")
     }
 
-    if (game.input.keyboard.release(tobi.KeyCode.Space)) 
+    if (game.input.keyboard.release(Scintilla.KeyCode.Space)) 
     {
         console.log("release")
     }

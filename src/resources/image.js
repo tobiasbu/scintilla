@@ -4,7 +4,7 @@
 * @class Image
 * @constructor
 */
-tobi.Image = function(source) {
+Scintilla.Image = function(source) {
 
   this.width = 100;
   this.height = 100;
@@ -27,21 +27,21 @@ tobi.Image = function(source) {
     return this;
 }
 
-tobi.Image.prototype = {
+Scintilla.Image.prototype = {
 
 
 
 }
 
-tobi.Image.prototype.constructor = tobi.Image;
+Scintilla.Image.prototype.constructor = Scintilla.Image;
 
-tobi.Image.load = function(path) {
+Scintilla.Image.load = function(path) {
 
 
 
 
 }
 
-tobi.Image.onload = function(image) {
+Scintilla.Image.onload = function(image) {
 
 }

@@ -1,6 +1,6 @@
 
 
-tobi.Set = function(elements) 
+Scintilla.Set = function(elements) 
 {
   this._content = [];
   this._size = 0;
@@ -16,7 +16,7 @@ tobi.Set = function(elements)
 }
 
 
-tobi.Set.prototype = {
+Scintilla.Set.prototype = {
 
     set : function(value)
     {
@@ -85,7 +85,7 @@ tobi.Set.prototype = {
 
 }
 
-Object.defineProperty(tobi.Set.prototype, "size", {
+Object.defineProperty(Scintilla.Set.prototype, "size", {
 
     get: function () {
         return this._content.length;
@@ -93,7 +93,7 @@ Object.defineProperty(tobi.Set.prototype, "size", {
 
 });
 
-Object.defineProperty(tobi.Set.prototype, "length", {
+Object.defineProperty(Scintilla.Set.prototype, "length", {
 
     get: function () {
         return this._content.length;
@@ -101,5 +101,5 @@ Object.defineProperty(tobi.Set.prototype, "length", {
 
 });
 
-tobi.Set.prototype.constructor = tobi.Set;
+Scintilla.Set.prototype.constructor = Scintilla.Set;
 

@@ -1,5 +1,5 @@
 
-tobi.Draw = function(game) {
+Scintilla.Draw = function(game) {
 
 this.game = game;
 this.cache = game.cache;
@@ -7,7 +7,7 @@ this.context = game.context;
 
 }
 
-tobi.Draw.prototype = {
+Scintilla.Draw.prototype = {
 
 font : function(fontname,size) {
 
@@ -105,4 +105,4 @@ if (color === undefined)
 
 }
 
-tobi.Draw.prototype.constructor = tobi.Draw;
+Scintilla.Draw.prototype.constructor = Scintilla.Draw;

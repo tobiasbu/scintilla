@@ -1,8 +1,8 @@
 
-tobi.SceneManager = function(game) {
+Scintilla.SceneManager = function(game) {
 
 this.game = game;
-this._scenes = new tobi.Map();
+this._scenes = new Scintilla.Map();
 
 this.current_scene_name = '';
 this.change_scene = null;
@@ -23,13 +23,13 @@ this.onDestroyCallback = null;
 
 }
 
-tobi.SceneManager.prototype = {
+Scintilla.SceneManager.prototype = {
 
 add : function (sceneName,scene) {
 
   var newScene;
 
-  if (tobi.Scene.prototype.isPrototypeOf(scene)) {
+  if (Scintilla.Scene.prototype.isPrototypeOf(scene)) {
     newScene = scene;
     newScene.game = this.game;
   } else
@@ -50,7 +50,7 @@ new : function(sceneName)
     return null;
   }
   
-  var newScene = new tobi.Scene(this.game);
+  var newScene = new Scintilla.Scene(this.game);
   this._scenes.set(sceneName,newScene);
 
   return newScene;
@@ -172,9 +172,7 @@ preUpdate : function() {
 
       } else {
 
-
           this.game.load.start();
-
       }
 
     } else {
@@ -255,4 +253,4 @@ preUpdate : function() {
 
 }
 
-tobi.SceneManager.prototype.constructor = tobi.SceneManager;
+Scintilla.SceneManager.prototype.constructor = Scintilla.SceneManager;

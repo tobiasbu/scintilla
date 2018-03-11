@@ -1,7 +1,7 @@
 {
-  "name": "tobijs",
-  "version": "1.0.0",
-  "description": "Tobi game engine",
+  "name": "Scintilla",
+  "version": "0.0.1",
+  "description": "Scintilla game engine for web",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +16,7 @@
     "javascript"
   ],
   "author": "Tobias Ulrich",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "grunt": "^1.0.1",
     "grunt-contrib-concat": "^1.0.1",

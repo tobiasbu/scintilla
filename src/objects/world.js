@@ -1,6 +1,6 @@
 
 // is the root node of the game
-tobi.World = tobi.Instance.extend(function() {
+Scintilla.World = Scintilla.Instance.extend(function() {
 
   this.game = null;
   this.camera = null;
@@ -10,9 +10,9 @@ tobi.World = tobi.Instance.extend(function() {
 
     this.super(game,null,"__world",true);
 
-    this.camera = new tobi.Camera(this.game,0,0,this.game.width,this.game.height);
-    this.worldBounds = new tobi.Rect(0,0,this.game.width,this.game.height);
-  //tobi.Instance.call(this,game,null,"__world",true);
+    this.camera = new Scintilla.Camera(this.game,0,0,this.game.width,this.game.height);
+    this.worldBounds = new Scintilla.Rect(0,0,this.game.width,this.game.height);
+  //Scintilla.Instance.call(this,game,null,"__world",true);
 
   // this._new();
     this.game = game;
@@ -105,10 +105,10 @@ tobi.World = tobi.Instance.extend(function() {
 
 });
 
-//tobi.World.prototype = Object.create(tobi.Instance.prototype);
-//tobi.World.prototype.constructor = tobi.World;
+//Scintilla.World.prototype = Object.create(Scintilla.Instance.prototype);
+//Scintilla.World.prototype.constructor = Scintilla.World;
 
-tobi.World.prototype.start = function() {
+Scintilla.World.prototype.start = function() {
 
 
 
@@ -125,7 +125,7 @@ tobi.World.prototype.start = function() {
 
 //tobiJS.World.prototype.
 
-tobi.World.prototype.reset = function() {
+Scintilla.World.prototype.reset = function() {
 
   this.camera.reset();
 

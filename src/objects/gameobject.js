@@ -1,5 +1,5 @@
 
-tobi.GameObject = tobi.Instance.extend(function() {
+Scintilla.GameObject = Scintilla.Instance.extend(function() {
 
   this.game = null;
   this.pool = null;
@@ -10,7 +10,7 @@ tobi.GameObject = tobi.Instance.extend(function() {
     if (name === undefined) name = 'gameobject';
 
     this.super(null,null,name);
-    //tobi.Instance.call(this,null,null,name,false);
+    //Scintilla.Instance.call(this,null,null,name,false);
     this.origin.set(0.5,0.5);
 
   }
@@ -146,14 +146,14 @@ tobi.GameObject = tobi.Instance.extend(function() {
 
 
 
-//tobi.GameObject.prototype = Object.create(tobi.Instance.prototype);
-//tobi.GameObject.prototype.constructor = tobi.GameObject;
+//Scintilla.GameObject.prototype = Object.create(Scintilla.Instance.prototype);
+//Scintilla.GameObject.prototype.constructor = Scintilla.GameObject;
 /*
-tobi.GameObject.prototype.start = function() {};
-tobi.GameObject.prototype.update = function() {};
-tobi.GameObject.prototype.destroy = function() {};
+Scintilla.GameObject.prototype.start = function() {};
+Scintilla.GameObject.prototype.update = function() {};
+Scintilla.GameObject.prototype.destroy = function() {};
 
-tobi.GameObject.prototype.draw = function(context) {
+Scintilla.GameObject.prototype.draw = function(context) {
 
   if (this.renderComponent != null) {
 

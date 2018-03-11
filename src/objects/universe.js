@@ -1,7 +1,7 @@
 
 
 // display and update everything
-tobi.Universe = tobi.Hierarchy.extend(function() {
+Scintilla.Universe = Scintilla.Hierarchy.extend(function() {
 
 this.backgroundColor = "rgb(231, 231, 231)";
 
@@ -11,12 +11,12 @@ this.backgroundColor = "rgb(231, 231, 231)";
 
     this.game = game;
     this.name = "__universe";
-    //tobi.Hierarchy.call(this,true);
+    //Scintilla.Hierarchy.call(this,true);
 
   }
 
 
 });
 
-//tobi.Universe.prototype = Object.create(tobi.Hierarchy.prototype);
-//tobi.Universe.prototype.constructor = tobi.Universe;
+//Scintilla.Universe.prototype = Object.create(Scintilla.Hierarchy.prototype);
+//Scintilla.Universe.prototype.constructor = Scintilla.Universe;

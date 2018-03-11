@@ -1,20 +1,20 @@
 
 
-tobi.ShapeType = {
+Scintilla.ShapeType = {
 Triangle : 0,
 Rectangle : 1,
 Polygon : 2,
 Circle : 3
 }
 
-tobi.Polygon = Class.extend(function() {
+Scintilla.Polygon = Class.extend(function() {
 
 var _points = null;
 var _normals = null;
 var _edges = null;
 var type = null;
 var _area = false;
-this.centroid = new tobi.Vector();
+this.centroid = new Scintilla.Vector();
 this.area = 0;
 
 this.constructor = function(points) {
@@ -83,10 +83,10 @@ this._recalc = function() {
 
     var p1 = points[i];
     var p2 = i < len - 1 ? points[i + 1] : points[0];
-    var e = new tobi.Vector().copy(p2).sub(p1);
+    var e = new Scintilla.Vector().copy(p2).sub(p1);
     //e.copy(points[(i + 1) % len]).sub(points[i]);
 
-    var n = new tobi.Vector().copy(e).perp().normalize();
+    var n = new Scintilla.Vector().copy(e).perp().normalize();
 
     if (!_area) {
       a = p1.x*p2.y - p2.x*p1.y;
@@ -115,27 +115,27 @@ this._recalc = function() {
 
 });
 
-tobi.Polygon.makeTriangle = function(width,height) {
+Scintilla.Polygon.makeTriangle = function(width,height) {
 
   if (height === undefined) height = width;
 
- return new tobi.Polygon([
-   new tobi.Vector(-width/2,height/2),
-   new tobi.Vector(0,-height/2),
-   new tobi.Vector(width/2,height/2),
+ return new Scintilla.Polygon([
+   new Scintilla.Vector(-width/2,height/2),
+   new Scintilla.Vector(0,-height/2),
+   new Scintilla.Vector(width/2,height/2),
  ]);
 
 };
 
-tobi.Polygon.makeRectangle = function(width,height) {
+Scintilla.Polygon.makeRectangle = function(width,height) {
 
   if (height === undefined) height = width;
 
- return new tobi.Polygon([
-   new tobi.Vector(-width/2,-height/2),
-   new tobi.Vector(width/2,-height/2),
-   new tobi.Vector(width/2,height/2),
-   new tobi.Vector(-width/2,height/2)
+ return new Scintilla.Polygon([
+   new Scintilla.Vector(-width/2,-height/2),
+   new Scintilla.Vector(width/2,-height/2),
+   new Scintilla.Vector(width/2,height/2),
+   new Scintilla.Vector(-width/2,height/2)
  ]);
 
 }

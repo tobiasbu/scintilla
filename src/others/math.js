@@ -2,7 +2,7 @@
 
 
 
-tobi.Math = {
+Scintilla.Math = {
 
 randomRange : function(min, max) {
 
@@ -82,17 +82,17 @@ angleBetween : function(x0,y0,x1,y1) {
 
 }
 
-tobi.Math.degToRad = Math.PI / 180;
-tobi.Math.radToDeg = 180 / Math.PI;
-tobi.Math.TAU = Math.PI * 2;
+Scintilla.Math.degToRad = Math.PI / 180;
+Scintilla.Math.radToDeg = 180 / Math.PI;
+Scintilla.Math.TAU = Math.PI * 2;
 
-tobi.Math.toDegree = function(radians) {
+Scintilla.Math.toDegree = function(radians) {
 
   return radians * tobiJS.Math.radToDeg;
 
 };
 
-tobi.Math.toRadian = function(degrees) {
+Scintilla.Math.toRadian = function(degrees) {
 
   return degrees * tobiJS.Math.degToRad;
 

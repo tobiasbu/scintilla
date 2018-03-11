@@ -1,18 +1,18 @@
 
-tobi.RenderType = {
+Scintilla.RenderType = {
 Sprite : 1,
 TiledSprite : 2,
 CSSText : 3
 }
 
-tobi.Renderable = Class.extend(function() {
+Scintilla.Renderable = Class.extend(function() {
 
 this._gameObject = null;
 
 this.constructor = function() {
   this.type = null;
   this.source = null;
-  this.frame = new tobi.Rect(0,0,1,1);
+  this.frame = new Scintilla.Rect(0,0,1,1);
   this.alpha = 1;
 }
 

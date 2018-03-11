@@ -1,6 +1,6 @@
 
 
-tobi.Time = function(game) {
+Scintilla.Time = function(game) {
 
   this.game = game;
 
@@ -45,7 +45,7 @@ tobi.Time = function(game) {
 
 }
 
-tobi.Time.prototype = {
+Scintilla.Time.prototype = {
 
 start : function() {
 
@@ -229,4 +229,4 @@ fpsUpdate : function(timestamp) {
 
 }
 
-tobi.Time.prototype.constructor = tobi.Time;
+Scintilla.Time.prototype.constructor = Scintilla.Time;

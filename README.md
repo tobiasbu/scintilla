@@ -1,7 +1,7 @@
 ![Alt text](https://raw.githubusercontent.com/kaltkaffee/tobiJS/master/dist/images/tobijs_splash.png)
-# tobiJS
+# Scintilla
 
-2D Game framework for HTML5 ~ good as a good dog.
+A simple 2D Game framework for HTML5.
 
 Alpha test: [play here](http://tobiasbu.github.io/website/portfolio/untitled-space/)
 

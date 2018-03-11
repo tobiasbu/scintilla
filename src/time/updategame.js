@@ -1,6 +1,6 @@
 
 
-tobi.UpdateGame = function(game, timeout) {
+Scintilla.UpdateGame = function(game, timeout) {
 
   if (timeout === undefined) { timeout = false; }
 
@@ -29,7 +29,7 @@ this._timeOutCallback = null;
 
 }
 
-tobi.UpdateGame.prototype = {
+Scintilla.UpdateGame.prototype = {
 
 start : function() {
 

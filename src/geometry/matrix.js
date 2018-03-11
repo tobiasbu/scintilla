@@ -17,7 +17,7 @@ y = y translate
 
 */
 
-tobi.Matrix = function(a,b,c,d,x,y) {
+Scintilla.Matrix = function(a,b,c,d,x,y) {
 
    a = a || 1;
    b = b || 0;
@@ -35,7 +35,7 @@ tobi.Matrix = function(a,b,c,d,x,y) {
 
 }
 
-tobi.Matrix.prototype = {
+Scintilla.Matrix.prototype = {
 
   set : function(a,b,c,d,x,y) {
 
@@ -92,4 +92,4 @@ tobi.Matrix.prototype = {
 
 }
 
-tobi.Matrix.identity = new tobi.Matrix();
+Scintilla.Matrix.identity = new Scintilla.Matrix();

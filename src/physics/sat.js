@@ -1,8 +1,8 @@
 
-tobi.SAT = Class.extend(function() {
+Scintilla.SAT = Class.extend(function() {
 
   var VECTORS = [];
-  for (var v = 0; v < 10; v++) { VECTORS.push(new tobi.Vector()); }
+  for (var v = 0; v < 10; v++) { VECTORS.push(new Scintilla.Vector()); }
 
   var ARRAYS = [];
   for (var a = 0; a < 5; a++) { ARRAYS.push([]); }
@@ -160,11 +160,11 @@ this.testPolygonPolygon = function(a,b,response) {
 });
 
 
-tobi.SAT.Response = function() {
+Scintilla.SAT.Response = function() {
     this.a = null;
     this.b = null;
-    this.overlapN = new tobi.Vector();
-    this.overlapV = new tobi.Vector();
+    this.overlapN = new Scintilla.Vector();
+    this.overlapV = new Scintilla.Vector();
     this.aInB = true;
     this.bInA = true;
     this.overlap = Number.MAX_VALUE;
@@ -173,7 +173,7 @@ tobi.SAT.Response = function() {
     this.clear();
 };
 
-tobi.SAT.Response.prototype.clear = function() {
+Scintilla.SAT.Response.prototype.clear = function() {
   this.aInB = true;
   this.bInA = true;
   this.overlap = Number.MAX_VALUE;

@@ -1,17 +1,17 @@
 
 // storage of animation state
-tobi.Animation = function(sprite) {
+Scintilla.Animation = function(sprite) {
 
 this.source = sprite;
 this.frames = [];
 
 }
 
-tobi.Animation.prototype = {
+Scintilla.Animation.prototype = {
 
 addFrame : function(x,y,width,height) {
 
-this.frames.push(new tobi.Rect(x,y,width,height));
+this.frames.push(new Scintilla.Rect(x,y,width,height));
 
 },
 
@@ -56,7 +56,7 @@ getFrame : function(index) {
 
 }
 
-Object.defineProperty(tobi.Animation.prototype, "length", {
+Object.defineProperty(Scintilla.Animation.prototype, "length", {
 
 get : function() {
   return this.frames.length;

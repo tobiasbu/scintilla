@@ -1,5 +1,5 @@
 
-tobi.Injector = Class.extend(function() {
+Scintilla.Injector = Class.extend(function() {
 
     this.list = {};
 

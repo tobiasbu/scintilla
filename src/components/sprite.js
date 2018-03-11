@@ -1,13 +1,13 @@
 
 
 
-tobi.Sprite = tobi.Renderable.extend(function() {
+Scintilla.Sprite = Scintilla.Renderable.extend(function() {
 
 this.constructor = function(source) {
 
   this.super();
 
-  this.type = tobi.RenderType.Sprite;
+  this.type = Scintilla.RenderType.Sprite;
   this.source = source;
 
   if (source != null)

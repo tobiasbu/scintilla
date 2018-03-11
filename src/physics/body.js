@@ -1,5 +1,5 @@
 
-tobi.Body = Class.extend(function() {
+Scintilla.Body = Class.extend(function() {
 
 var _gameObject = null;
 

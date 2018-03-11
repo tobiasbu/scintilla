@@ -1,5 +1,5 @@
 
-tobi.Pool = Class.extend(function() {
+Scintilla.Pool = Class.extend(function() {
 
 this.poolList = {};
 this.game = null;

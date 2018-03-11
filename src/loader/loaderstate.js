@@ -1,5 +1,5 @@
 
-var AssetTypeHandler = new tobi.Injector();
+var AssetTypeHandler = new Scintilla.Injector();
 
 var LOADER_STATE = {
     NONE : 0,

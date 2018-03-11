@@ -1,19 +1,19 @@
 
-tobi.TiledSprite = tobi.Renderable.extend(function() {
+Scintilla.TiledSprite = Scintilla.Renderable.extend(function() {
 
 
 this.constructor = function(source,width,height) {
 
   this.super();
 
-  this.type = tobi.RenderType.TiledSprite;
+  this.type = Scintilla.RenderType.TiledSprite;
 
 this.source = source;
 this.setFrame(0,0,width,height);
 
-this.tilePosition = new tobi.Vector(0,0);
-this.tileScale = new tobi.Vector(1,1);
-this.offset = new tobi.Vector(1,1);
+this.tilePosition = new Scintilla.Vector(0,0);
+this.tileScale = new Scintilla.Vector(1,1);
+this.offset = new Scintilla.Vector(1,1);
 
 this.tilePattern = null;
 
@@ -89,8 +89,8 @@ this.createTilling = function() {
     }
     else
     {
-        this.canvasBuffer = new tobi.CanvasBuffer(targetWidth, targetHeight);
-        this.tiledTexture = tobi.Texture.createFromCanvas(this.canvasBuffer.canvas);
+        this.canvasBuffer = new Scintilla.CanvasBuffer(targetWidth, targetHeight);
+        this.tiledTexture = Scintilla.Texture.createFromCanvas(this.canvasBuffer.canvas);
         this.tiledTexture.isTiling = true;
         this.tiledTexture.needsUpdate = true;
     }
