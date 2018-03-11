@@ -1,39 +1,38 @@
 
+import Keyboard from "./keyboard";
+import Mouse from "./mouse";
 
-scintilla.Input = function(game) {
+export default class Input {
 
-this.game = game;
-this.mouse = null;
-this.keyboard = null;
+  constructor(game) {
+
+  this.game = game;
+  this.mouse = null;
+  this.keyboard = null;
+
+  }
+
+  init() {
+
+    //this.mouse = new tobiJS.Mouse(this.game);
+    this.keyboard = new Keyboard(this.game);
+    this.mouse = new Mouse(this.game);
+    this.keyboard.init();
+    this.mouse.init();
+
+  }
+
+  update() {
+
+    this.keyboard.update();
+    this.mouse.update();
+
+  }
+
+  reset()
+  {
+    this.keyboard.reset();
+    this.mouse.reset();
+  }
 
 }
-
-scintilla.Input.prototype = {
-
-init : function() {
-
-  //this.mouse = new tobiJS.Mouse(this.game);
-  this.keyboard = new scintilla.Keyboard(this.game);
-  this.mouse = new scintilla.Mouse(this.game);
-  this.keyboard.init();
-  this.mouse.init();
-
-},
-
-update : function() {
-
-  this.keyboard.update();
-  this.mouse.update();
-
-},
-
-reset : function()
-{
-  this.keyboard.reset();
-  this.mouse.reset();
-}
-
-
-}
-
-scintilla.Input.prototype.constructor = scintilla.Input;

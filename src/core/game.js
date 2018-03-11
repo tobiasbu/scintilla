@@ -1,6 +1,12 @@
 
 import Config from './config';
 import Canvas from '../render/canvas/canvas'
+import Cache from './cache'
+import LoadManager from '../loader/loadmanager'
+import Time from '../time/time'
+import UpdateTime from '../time/updatetime'
+import Input from '../input/input'
+import Debug from '../others/debug'
 
 /**
 * Main class of engine. Holds all main data.
@@ -101,31 +107,31 @@ export default class Game {
     this.canvas = Canvas.create(this.parent,this.width,this.height);
     this.context = this.canvas.getContext("2d", { alpha: false });
 
-    this.cache = new scintilla.Cache(this);
-    this.load = new scintilla.LoadManager(this);
-    this.time = new scintilla.Time(this);
-    this.universe = new scintilla.Universe(this);
-    this.world = new scintilla.World(this);
-    this.draw = new scintilla.Draw(this);
-    this.render = new scintilla.Render(this, this.canvas, this.context);
-    this.scene = new scintilla.SceneManager(this);
-    this.input = new scintilla.Input(this);
-    this.instance = new scintilla.Creator(this,this.world);
-    this.component = new scintilla.GameComponents(this);
-    this.animationCache = new scintilla.AnimationCache(this);
-    this.sound = new scintilla.SoundManager(this);
-    this.pool = new scintilla.Pool(this);
-    this.physics = new scintilla.Physics(this);
+    this.cache = new Cache(this);
+    this.load = new LoadManager(this);
+    this.time = new Time(this);
+    //this.universe = new scintilla.Universe(this);
+    //this.world = new scintilla.World(this);
+    //this.draw = new scintilla.Draw(this);
+    //this.render = new scintilla.Render(this, this.canvas, this.context);
+    //this.scene = new scintilla.SceneManager(this);
+    this.input = new Input(this);
+    //this.instance = new scintilla.Creator(this,this.world);
+    //this.component = new scintilla.GameComponents(this);
+    //this.animationCache = new scintilla.AnimationCache(this);
+    //this.sound = new scintilla.SoundManager(this);
+    //this.pool = new scintilla.Pool(this);
+    //this.physics = new scintilla.Physics(this);
 
     if (this.debugMode)
-      this.debug = new scintilla.Debug(this);
+      this.debug = new Debug(this);
 
     this.time.start();
     this.input.init();
-    this.sound.start();
-    this.world.start();
+    //this.sound.start();
+    //this.world.start();
 
-    this.updateGameMethod = new scintilla.UpdateGame(this,this.timeMode);
+    this.updateGameMethod = new UpdateTime(this,this.timeMode);
     this.updateGameMethod.start();
 
 

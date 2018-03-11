@@ -1,403 +1,376 @@
 
 
-scintilla.Keyboard = function(game) {
+import Key from './key'
+import Map from '../structures/map'
 
-this.game = game;
-this.context = game.context;
-this.active = true;
-//this._keys = [];
-this._keyMapping = new scintilla.Map();
-this._keyWatch = new scintilla.Map();
-this._keyGarbage = [];
-//this._keyLock = [];
-//this._keyLockPressed = [];
-//this._keyDownDuration = [];
-this.lastKey = null;
+export default class Keyboard {
+  
+  constructor(game) {
 
-//callbacks
-this._onKeyDown = null;
-this._onKeyUp = null;
-this._onKeyPress = null;
-
-
-
-}
-
-scintilla.Keyboard.prototype = {
-
-reset : function() {
-
-  this._keyMapping.clear();
-  this._keyWatch.clear();
+  this.game = game;
+  this.context = game.context;
+  this.active = true;
+  //this._keys = [];
+  this._keyMapping = new Map();
+  this._keyWatch = new Map();
   this._keyGarbage = [];
-  for (var prop in scintilla.KeyCode){
+  //this._keyLock = [];
+  //this._keyLockPressed = [];
+  //this._keyDownDuration = [];
+  this.lastKey = null;
 
-    if (scintilla.KeyCode.hasOwnProperty(prop)) {
-      var value = scintilla.KeyCode[prop];
-      this._keyMapping.set(value, new scintilla.Key(value,this.game));
-    }
-    /*if (scintilla.KeyCode.hasOwnProperty(prop)) {
-
-      
-
-          var value = scintilla.KeyCode[prop];
-          this._keys[value] = false;
-          this._keyLock[value] = scintilla.KeyEvent.NONE;
-          this._keyLockPressed[value] = scintilla.KeyEvent.NONE;
-          this._keyDownDuration[value] = 0;
-    }*/
-  }
-
-},
-
-init : function() {
-
-  var self = this;
-
-  this.reset();
-
-    this._onKeyDown = function (event) {
-           return self.processKeyDown(event);
-   };
-
-   this._onKeyUp = function (event) {
-       return self.processKeyUp(event);
-   };
-
-  window.addEventListener('keydown', this._onKeyDown, false);
-  window.addEventListener('keyup', this._onKeyUp, false);
-},
-
-stop : function() {
-
-  window.removeEventListener('keydown', this._onKeyDown);
-  window.removeEventListener('keyup', this._onKeyUp);
+  //callbacks
   this._onKeyDown = null;
   this._onKeyUp = null;
   this._onKeyPress = null;
+}
 
-  this._keyMapping.clear();
-},
+  reset() {
 
-processKeyUp : function(event) {
+    this._keyMapping.clear();
+    this._keyWatch.clear();
+    this._keyGarbage = [];
+    for (var prop in scintilla.KeyCode){
 
-   var key = event.keyCode;
+      if (scintilla.KeyCode.hasOwnProperty(prop)) {
+        var value = scintilla.KeyCode[prop];
+        this._keyMapping.set(value, new scintilla.Key(value,this.game));
+      }
+      /*if (scintilla.KeyCode.hasOwnProperty(prop)) {
 
-   event.preventDefault();
+        
 
-   if (!this.active)
-    return;
+            var value = scintilla.KeyCode[prop];
+            this._keys[value] = false;
+            this._keyLock[value] = scintilla.KeyEvent.NONE;
+            this._keyLockPressed[value] = scintilla.KeyEvent.NONE;
+            this._keyDownDuration[value] = 0;
+      }*/
+    }
 
-    var keyObj = this._keyMapping.get(key);
-    keyObj.onKeyUp();
-
-    /*this._keyLock[key] = scintilla.KeyEvent.RELEASE;
-    this._keyLockPressed[key] = scintilla.KeyEvent.NONE;
-    this._keys[key] = false;*/
-
-},
-
-processKeyDown : function(event) { 
-
-  var key = event.keyCode;
-
-  event.preventDefault();
-
-  if (!this.active)
-   return;
-
-   this.lastKey = key;
-
-  var keyObj = this._keyMapping.get(key);
-  keyObj.onKeyDown();
-
-  if (!this._keyWatch.has(key))
-  {
-    this._keyWatch.set(key, keyObj);
   }
 
-
-
-  
-
-
-   //_keyMapping[]
-   //this._keys[key] = true;
-  /* if (this._keyLockPressed[key] != scintilla.KeyEvent.PRESSED && this._keyLockPressed[key] != scintilla.KeyEvent.PRESS) {
-     this._keyLockPressed[key] = scintilla.KeyEvent.PRESSED;
-     this._keyDownDuration[key] = 1;
-   }
-
-   this._keyLock[key] = scintilla.KeyEvent.PRESS;
-   this._keys[key] = true;
-   */
-
-
-
-},
-
-/*processKeyPress : function(event) { // commom characters
-
-   var key = event.keyCode;
-
-   event.preventDefault();
-
-   if (!this.active)
-    return;
-
-
-    this._keyLock[key] = tobiJS.KeyEvent.PRESS;
-    this._keys[key] = true;
-
-
-
-},*/
-
-update : function() {
-
-  /*for (var prop in scintilla.KeyCode){
-    if (scintilla.KeyCode.hasOwnProperty(prop)) {
-
-      var value = scintilla.KeyCode[prop];
-
-        if (this._keyLockPressed[value] ==  scintilla.KeyEvent.PRESSED) {
-            if (this._keyDownDuration[value] > 0)
-              this._keyDownDuration[value]--;
-            else {
-              this._keyLockPressed[value] = scintilla.KeyEvent.PRESS;
-            }
-        } else {
-          continue;
-        }
-    }*/
-
-    /*var keys = this._keyMapping.keys();
-    for (var key in keys)
-    {
-      if (keys.hasOwnProperty(key)) {
-
-        var value = this._keyMapping.get(key);
-        value.update();
-
-      }
-    }*/
-
-   //var keyswatch = this._keyWatch; //.keys();
+  init() {
 
     var self = this;
 
-   this._keyWatch.each(function (key, value) {
-      //var value = this._keyWatch.get(key);
-      value.update();
+    this.reset();
 
-      //console.log(value);
+      this._onKeyDown = function (event) {
+            return self.processKeyDown(event);
+    };
 
-      if (value.event() == scintilla.KeyEvent.IDLE)
-      {
-      
-        // value.reset();
-          self._keyGarbage.push(key);
-      }
-   });
-    /*for (var key in keys)
-    {
-      //console.log("UPDATE")
+    this._onKeyUp = function (event) {
+        return self.processKeyUp(event);
+    };
 
-      if (keys.hasOwnProperty(key)) {
-
-          var value = this._keyWatch.get(key);
-          value.update();
-
-          if (value.event() == scintilla.KeyEvent.IDLE)
-          {
-             // value.reset();
-              this._keyGarbage.push(key);
-          }
-      }
-    }*/
-
-    if (this._keyGarbage.length > 0)
-    {
-      this._keyWatch.deleteByIndexedArray(this._keyGarbage);
-      this._keyGarbage.splice(0, this._keyGarbage.length)
-    }
-
-},
-
-pressed : function(keycode) {
-
-  /*var keyLock = false;
-
-if (this._keyLockPressed[keycode] == scintilla.KeyEvent.PRESSED) {
-		keyLock = true;
-    this._keyLockPressed[keycode] = scintilla.KeyEvent.PRESS;
+    window.addEventListener('keydown', this._onKeyDown, false);
+    window.addEventListener('keyup', this._onKeyUp, false);
   }
 
-	var hit = this._keys[keycode] && keyLock;*/
+  stop() {
 
-  //return hit;
+    window.removeEventListener('keydown', this._onKeyDown);
+    window.removeEventListener('keyup', this._onKeyUp);
+    this._onKeyDown = null;
+    this._onKeyUp = null;
+    this._onKeyPress = null;
 
-  return this._keyMapping.get(keycode).isPressed();
-  
- /* if (this._keyMapping.has(keycode))
-  {
+    this._keyMapping.clear();
+  }
+
+  processKeyUp(event) {
+
+    var key = event.keyCode;
+
+    event.preventDefault();
+
+    if (!this.active)
+      return;
+
+      var keyObj = this._keyMapping.get(key);
+      keyObj.onKeyUp();
+
+      /*this._keyLock[key] = scintilla.KeyEvent.RELEASE;
+      this._keyLockPressed[key] = scintilla.KeyEvent.NONE;
+      this._keys[key] = false;*/
+
+  }
+
+  processKeyDown(event) { 
+
+    var key = event.keyCode;
+
+    event.preventDefault();
+
+    if (!this.active)
+    return;
+
+    this.lastKey = key;
+
+    var keyObj = this._keyMapping.get(key);
+    keyObj.onKeyDown();
+
+    if (!this._keyWatch.has(key))
+    {
+      this._keyWatch.set(key, keyObj);
+    }
+
+    //_keyMapping[]
+    //this._keys[key] = true;
+    /* if (this._keyLockPressed[key] != scintilla.KeyEvent.PRESSED && this._keyLockPressed[key] != scintilla.KeyEvent.PRESS) {
+      this._keyLockPressed[key] = scintilla.KeyEvent.PRESSED;
+      this._keyDownDuration[key] = 1;
+    }
+
+    this._keyLock[key] = scintilla.KeyEvent.PRESS;
+    this._keys[key] = true;
+    */
+
+
+  }
+
+  /*processKeyPress : function(event) { // commom characters
+
+    var key = event.keyCode;
+
+    event.preventDefault();
+
+    if (!this.active)
+      return;
+
+
+      this._keyLock[key] = tobiJS.KeyEvent.PRESS;
+      this._keys[key] = true;
+
+
+
+  },*/
+
+  update() {
+
+      /*var keys = this._keyMapping.keys();
+      for (var key in keys)
+      {
+        if (keys.hasOwnProperty(key)) {
+
+          var value = this._keyMapping.get(key);
+          value.update();
+
+        }
+      }*/
+
+    //var keyswatch = this._keyWatch; //.keys();
+
+      var self = this;
+
+    this._keyWatch.each(function (key, value) {
+        //var value = this._keyWatch.get(key);
+        value.update();
+
+        //console.log(value);
+
+        if (value.event() == scintilla.KeyEvent.IDLE)
+        {
+        
+          // value.reset();
+            self._keyGarbage.push(key);
+        }
+    });
+      /*for (var key in keys)
+      {
+        //console.log("UPDATE")
+
+        if (keys.hasOwnProperty(key)) {
+
+            var value = this._keyWatch.get(key);
+            value.update();
+
+            if (value.event() == scintilla.KeyEvent.IDLE)
+            {
+              // value.reset();
+                this._keyGarbage.push(key);
+            }
+        }
+      }*/
+
+      if (this._keyGarbage.length > 0)
+      {
+        this._keyWatch.deleteByIndexedArray(this._keyGarbage);
+        this._keyGarbage.splice(0, this._keyGarbage.length)
+      }
+
+  }
+
+  pressed(keycode) {
+
+    /*var keyLock = false;
+
+  if (this._keyLockPressed[keycode] == scintilla.KeyEvent.PRESSED) {
+      keyLock = true;
+      this._keyLockPressed[keycode] = scintilla.KeyEvent.PRESS;
+    }
+
+    var hit = this._keys[keycode] && keyLock;*/
+
+    //return hit;
+
+    return this._keyMapping.get(keycode).isPressed();
     
-  } 
-  else 
-  {
-    return false;
-  }*/
+  /* if (this._keyMapping.has(keycode))
+    {
+      
+    } 
+    else 
+    {
+      return false;
+    }*/
 
-},
+  }
 
-release : function(keycode) {
+  release(keycode) {
 
-  /*var keyLock = false;
+    /*var keyLock = false;
 
-	if (this._keyLock[keycode] ==  scintilla.KeyEvent.PRESSED ||
-    this._keyLock[keycode] ==  scintilla.KeyEvent.PRESS ||
-    this._keyLock[keycode] ==  scintilla.KeyEvent.NONE)
-		keyLock = false;
-	else
-		keyLock = true;
+    if (this._keyLock[keycode] ==  scintilla.KeyEvent.PRESSED ||
+      this._keyLock[keycode] ==  scintilla.KeyEvent.PRESS ||
+      this._keyLock[keycode] ==  scintilla.KeyEvent.NONE)
+      keyLock = false;
+    else
+      keyLock = true;
 
-	var hit = !this._keys[keycode] && keyLock;
+    var hit = !this._keys[keycode] && keyLock;
 
-	this._keyLock[keycode] = scintilla.KeyEvent.NONE;
+    this._keyLock[keycode] = scintilla.KeyEvent.NONE;
 
-  return hit;*/
-  return this._keyMapping.get(keycode).isReleased();
+    return hit;*/
+    return this._keyMapping.get(keycode).isReleased();
 
-},
+  }
 
-press : function(keycode) {
+  press(keycode) {
 
 
-  /*var key = this._keyWatch.get(keycode);
+    /*var key = this._keyWatch.get(keycode);
 
-  if (key === undefined)
-    return false;*/
+    if (key === undefined)
+      return false;*/
 
-  return key.status;
+    return key.status;
 
-  /*var keyLock = false;
+    /*var keyLock = false;
 
-  if (this._keyLock[keycode] ==  scintilla.KeyEvent.RELEASE ||
-    this._keyLock[keycode] ==  scintilla.KeyEvent.NONE)
-    keyLock = false;
-  else
-    keyLock = true;
+    if (this._keyLock[keycode] ==  scintilla.KeyEvent.RELEASE ||
+      this._keyLock[keycode] ==  scintilla.KeyEvent.NONE)
+      keyLock = false;
+    else
+      keyLock = true;
 
-  var hit = this._keys[keycode] && keyLock;
+    var hit = this._keys[keycode] && keyLock;
 
-  return hit;*/
+    return hit;*/
 
+  }
 }
 
-
-
-}
-
-scintilla.Keyboard.prototype.constructor = scintilla.Keyboard;
-
-scintilla.KeyCode = {
-  Backspace: 8,
-  Tab: 9,
-  Enter: 13,
-  Shift: 16,
-  Ctrl: 17,
-  Alt: 18,
-  Pause: 19,
-  CapsLock: 20,
-  Escape: 27,
-  Space:32,
-  PageUp: 33,
-  PageDown: 34,
-  End: 35,
-  Home: 36,
-  Left: 37,
-  Up: 38,
-  Right: 39,
-  Down: 40,
-  Insert: 45,
-  Delete:	46,
-  Num0: 48,
-  Num1: 49,
-  Num2: 50,
-  Num3: 51,
-  Num4: 52,
-  Num5:	53,
-  Num6: 54,
-  Num7: 55,
-  Num8: 56,
-  Num9: 57,
-  A: 65,
-  B: 66,
-  C: 67,
-  D: 68,
-  E: 69,
-  F: 70,
-  G: 71,
-  H: 72,
-  I: 73,
-  J: 74,
-  K: 75,
-  L: 76,
-  M: 77,
-  N: 78,
-  O: 79,
-  P: 80,
-  Q: 81,
-  R: 82,
-  S: 83,
-  T: 84,
-  U: 85,
-  V: 86,
-  W: 87,
-  X: 88,
-  Y: 89,
-  Z: 90,
-  LSystem: 91,
-  RSystem: 92,
-  SelectK:	93,
-  Numpad0: 96,
-  Numpad1: 97,
-  Numpad2: 98,
-  Numpad3: 99,
-  Numpad4: 100,
-  Numpad5: 101,
-  Numpad6: 102,
-  Numpad7: 103,
-  Numpad8: 104,
-  Numpad9: 105,
-  Multiply: 106,
-  Add: 107,
-  Subtract: 109,
-  DecimalPoint: 110,
-  Divide: 111,
-  F1:	112,
-  F2:	113,
-  F3:	114,
-  F4:	115,
-  F5:	116,
-  F6:	117,
-  F7:	118,
-  F8:	119,
-  F9:	120,
-  F10: 121,
-  F11: 122,
-  F12: 123,
-  NumLock: 144,
-  ScrollLock: 145,
-  SemiColon: 186,
-  Equal: 187,
-  Comma: 188,
-  Dash: 189,
-  Period:	190,
-  Slash: 191,
-  LBraket: 219,
-  BackSlash: 220,
-  RBracket: 221,
-  Quote: 222,
-  };
-  
+  export const KeyCode = {
+    Backspace: 8,
+    Tab: 9,
+    Enter: 13,
+    Shift: 16,
+    Ctrl: 17,
+    Alt: 18,
+    Pause: 19,
+    CapsLock: 20,
+    Escape: 27,
+    Space:32,
+    PageUp: 33,
+    PageDown: 34,
+    End: 35,
+    Home: 36,
+    Left: 37,
+    Up: 38,
+    Right: 39,
+    Down: 40,
+    Insert: 45,
+    Delete:	46,
+    Num0: 48,
+    Num1: 49,
+    Num2: 50,
+    Num3: 51,
+    Num4: 52,
+    Num5:	53,
+    Num6: 54,
+    Num7: 55,
+    Num8: 56,
+    Num9: 57,
+    A: 65,
+    B: 66,
+    C: 67,
+    D: 68,
+    E: 69,
+    F: 70,
+    G: 71,
+    H: 72,
+    I: 73,
+    J: 74,
+    K: 75,
+    L: 76,
+    M: 77,
+    N: 78,
+    O: 79,
+    P: 80,
+    Q: 81,
+    R: 82,
+    S: 83,
+    T: 84,
+    U: 85,
+    V: 86,
+    W: 87,
+    X: 88,
+    Y: 89,
+    Z: 90,
+    LSystem: 91,
+    RSystem: 92,
+    SelectK:	93,
+    Numpad0: 96,
+    Numpad1: 97,
+    Numpad2: 98,
+    Numpad3: 99,
+    Numpad4: 100,
+    Numpad5: 101,
+    Numpad6: 102,
+    Numpad7: 103,
+    Numpad8: 104,
+    Numpad9: 105,
+    Multiply: 106,
+    Add: 107,
+    Subtract: 109,
+    DecimalPoint: 110,
+    Divide: 111,
+    F1:	112,
+    F2:	113,
+    F3:	114,
+    F4:	115,
+    F5:	116,
+    F6:	117,
+    F7:	118,
+    F8:	119,
+    F9:	120,
+    F10: 121,
+    F11: 122,
+    F12: 123,
+    NumLock: 144,
+    ScrollLock: 145,
+    SemiColon: 186,
+    Equal: 187,
+    Comma: 188,
+    Dash: 189,
+    Period:	190,
+    Slash: 191,
+    LBraket: 219,
+    BackSlash: 220,
+    RBracket: 221,
+    Quote: 222,
+    };
+    

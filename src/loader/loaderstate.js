@@ -1,7 +1,9 @@
 
-var AssetTypeHandler = new scintilla.Injector();
+import ListInjector from './listinjector'
 
-var LOADER_STATE = {
+export var AssetTypeHandler = new ListInjector();
+
+export const LOADER_STATE = {
     NONE : 0,
     IDLE : 1,
     PENDING : 2,
@@ -11,3 +13,6 @@ var LOADER_STATE = {
     FINISHED : 6,
     DONE : 7, 
 }
+
+//export var AssetTypeHandler;
+//export var LOADER_STATE;

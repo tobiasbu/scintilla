@@ -1,27 +1,35 @@
 
 
-scintilla.Key = function(keycode, game) {
+export const KeyEvent = {
+    NONE : -1,
+    IDLE: 0,
+    PRESSED : 1,
+    RELEASED : 2,
+};
 
-    this.game = game;
-    this.keyCode = keycode; 
+export default class Key {
+    
+    constructor(keycode, game) {
 
-    this._enabled = true;       
-    this.status = false;
-    this.press = false;
-    this.release = false;
+        this.game = game;
+        this.keyCode = keycode; 
 
-    this._event = scintilla.KeyEvent.NONE;
+        this._enabled = true;       
+        this.status = false;
+        this.press = false;
+        this.release = false;
 
-    this.pressTime = 0;
-    this.pressDuration = -2500;
-    this.releaseTime = 0;
-    this.releaseDuration = -2500;
+        this._event = scintilla.KeyEvent.NONE;
 
-}
+        this.pressTime = 0;
+        this.pressDuration = -2500;
+        this.releaseTime = 0;
+        this.releaseDuration = -2500;
 
-scintilla.Key.prototype = {
+    }
 
-    onKeyDown: function()
+
+    onKeyDown()
     {
         if (!this._enabled)
             return;
@@ -39,9 +47,9 @@ scintilla.Key.prototype = {
         this.pressDuration = 0;
         this.releaseDuration = this.game.time.time - this.releaseTime;
     
-    },
+    }
 
-    onKeyUp: function()
+    onKeyUp()
     {
         if (!this._enabled)
             return;
@@ -59,9 +67,9 @@ scintilla.Key.prototype = {
         this.pressDuration = this.game.time.time - this.pressTime;
         this.releaseDuration = 0;
 
-    },
+    }
 
-    update : function()
+    update()
     {
         if (!this._enabled)
             return;
@@ -102,29 +110,29 @@ scintilla.Key.prototype = {
             this._event = scintilla.KeyEvent.NONE;
         }
         
-    },
+    }
 
-    isPressing: function()
+    isPressing()
     {
         return this.status;
-    },
+    }
 
-    isPressed: function()
+    isPressed()
     {
         return (this.press && this.pressDuration == 0);
-    },
+    }
 
-    isReleased: function()
+    isReleased()
     {
         return (!this.press && this.releaseDuration == 0)
-    },
+    }
 
-    event: function()
+    event()
     {
         return this._event;
-    },
+    }
 
-    reset: function()
+    reset()
     {   
         this.status = false;
         this._event = scintilla.KeyEvent.NONE;
@@ -136,16 +144,9 @@ scintilla.Key.prototype = {
         this.releaseTime = 0;
         this.releaseDuration = -2500;
     }
-};
 
-Object.defineProperty(scintilla.Key.prototype, "enabled", {
-
-    get: function () {
-        return this._enabled;
-    },
-
-    set: function (value) {
-
+    get enabled() {return this._enabled;}
+    set enabled(value) {
         value = !!value;
 
         if (value !== this._enabled)
@@ -156,15 +157,8 @@ Object.defineProperty(scintilla.Key.prototype, "enabled", {
             this._enabled = value;
         }
     }
-
-});
-
-scintilla.Key.prototype.constructor = scintilla.Key;
-
-scintilla.KeyEvent = {
-    NONE : -1,
-    IDLE: 0,
-    PRESSED : 1,
-    RELEASED : 2,
 };
+
+
+
   

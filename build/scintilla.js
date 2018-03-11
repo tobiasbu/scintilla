@@ -160,6 +160,159 @@ global.scintilla = scintilla;
 
 /***/ }),
 
+/***/ "./core/cache.js":
+/*!***********************!*\
+  !*** ./core/cache.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+* Cache manager - holds file data
+* @class Cache
+* @constructor
+*/
+var Cache = function () {
+    function Cache(game) {
+        _classCallCheck(this, Cache);
+
+        this.game = game;
+        this._cache = {
+            images: {},
+            sounds: {}
+        };
+    }
+
+    _createClass(Cache, [{
+        key: 'addImage',
+        value: function addImage(tag, url, data) {
+
+            if (this.tagExists('images', tag)) {
+
+                this.removeTagAt('images', tag);
+            }
+
+            var img = {
+                tag: tag,
+                url: url,
+                data: data
+            };
+
+            console.log(data);
+
+            this._cache.images[tag] = img;
+        }
+    }, {
+        key: 'addSound',
+        value: function addSound(tag, url, data, webAudio) {
+
+            var decoded = false;
+
+            if (!webAudio) {
+                decoded = true;
+            }
+
+            var audio = {
+                tag: tag,
+                url: url,
+                data: data,
+                usingWebAudio: webAudio,
+                decoded: decoded,
+                isDecoding: false
+            };
+
+            this._cache.sounds[tag] = audio;
+        }
+    }, {
+        key: 'soundDecoded',
+        value: function soundDecoded(tag, data) {
+
+            var sound = this.getAssetInfo("sounds", tag);
+
+            sound.data = data;
+            sound.decoded = true;
+            sound.isDecoding = false;
+        }
+    }, {
+        key: 'tagExists',
+        value: function tagExists(cacheType, tag) {
+
+            if (this._cache[cacheType][tag]) return true;
+
+            return false;
+        }
+    }, {
+        key: 'removeTagAt',
+        value: function removeTagAt(cacheType, tag) {
+
+            delete this._cache[cacheType][tag];
+        }
+    }, {
+        key: 'getAsset',
+        value: function getAsset(cacheType, tag) {
+            // return the cache container
+
+            if (this.tagExists(cacheType, tag)) {
+
+                var asset = this._cache[cacheType][tag];
+
+                return asset.data;
+            } else {
+                return null;
+            }
+        }
+    }, {
+        key: 'getAssetInfo',
+        value: function getAssetInfo(cacheType, tag) {
+            // return the raw data
+
+            if (this.tagExists(cacheType, tag)) {
+
+                var asset = this._cache[cacheType][tag];
+
+                //if (cacheType == 'images')
+                return asset;
+            } else {
+                return null;
+            }
+        }
+    }, {
+        key: 'clear',
+        value: function clear() {
+
+            //console.log(this._cache[property][tag]);
+
+            for (var property in this._cache) {
+
+                for (var tag in this._cache[property]) {
+
+                    delete this._cache[property][tag];
+                }
+            }
+        }
+
+        // SOUND STUFF
+
+    }]);
+
+    return Cache;
+}();
+
+exports.default = Cache;
+
+/***/ }),
+
 /***/ "./core/config.js":
 /*!************************!*\
   !*** ./core/config.js ***!
@@ -240,6 +393,30 @@ var _config2 = _interopRequireDefault(_config);
 var _canvas = __webpack_require__(/*! ../render/canvas/canvas */ "./render/canvas/canvas.js");
 
 var _canvas2 = _interopRequireDefault(_canvas);
+
+var _cache = __webpack_require__(/*! ./cache */ "./core/cache.js");
+
+var _cache2 = _interopRequireDefault(_cache);
+
+var _loadmanager = __webpack_require__(/*! ../loader/loadmanager */ "./loader/loadmanager.js");
+
+var _loadmanager2 = _interopRequireDefault(_loadmanager);
+
+var _time = __webpack_require__(/*! ../time/time */ "./time/time.js");
+
+var _time2 = _interopRequireDefault(_time);
+
+var _updatetime = __webpack_require__(/*! ../time/updatetime */ "./time/updatetime.js");
+
+var _updatetime2 = _interopRequireDefault(_updatetime);
+
+var _input = __webpack_require__(/*! ../input/input */ "./input/input.js");
+
+var _input2 = _interopRequireDefault(_input);
+
+var _debug = __webpack_require__(/*! ../others/debug */ "./others/debug.js");
+
+var _debug2 = _interopRequireDefault(_debug);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -342,30 +519,30 @@ var Game = function () {
             this.canvas = _canvas2.default.create(this.parent, this.width, this.height);
             this.context = this.canvas.getContext("2d", { alpha: false });
 
-            this.cache = new scintilla.Cache(this);
-            this.load = new scintilla.LoadManager(this);
-            this.time = new scintilla.Time(this);
-            this.universe = new scintilla.Universe(this);
-            this.world = new scintilla.World(this);
-            this.draw = new scintilla.Draw(this);
-            this.render = new scintilla.Render(this, this.canvas, this.context);
-            this.scene = new scintilla.SceneManager(this);
-            this.input = new scintilla.Input(this);
-            this.instance = new scintilla.Creator(this, this.world);
-            this.component = new scintilla.GameComponents(this);
-            this.animationCache = new scintilla.AnimationCache(this);
-            this.sound = new scintilla.SoundManager(this);
-            this.pool = new scintilla.Pool(this);
-            this.physics = new scintilla.Physics(this);
+            this.cache = new _cache2.default(this);
+            this.load = new _loadmanager2.default(this);
+            this.time = new _time2.default(this);
+            //this.universe = new scintilla.Universe(this);
+            //this.world = new scintilla.World(this);
+            //this.draw = new scintilla.Draw(this);
+            //this.render = new scintilla.Render(this, this.canvas, this.context);
+            //this.scene = new scintilla.SceneManager(this);
+            this.input = new _input2.default(this);
+            //this.instance = new scintilla.Creator(this,this.world);
+            //this.component = new scintilla.GameComponents(this);
+            //this.animationCache = new scintilla.AnimationCache(this);
+            //this.sound = new scintilla.SoundManager(this);
+            //this.pool = new scintilla.Pool(this);
+            //this.physics = new scintilla.Physics(this);
 
-            if (this.debugMode) this.debug = new scintilla.Debug(this);
+            if (this.debugMode) this.debug = new _debug2.default(this);
 
             this.time.start();
             this.input.init();
-            this.sound.start();
-            this.world.start();
+            //this.sound.start();
+            //this.world.start();
 
-            this.updateGameMethod = new scintilla.UpdateGame(this, this.timeMode);
+            this.updateGameMethod = new _updatetime2.default(this, this.timeMode);
             this.updateGameMethod.start();
 
             this.systemInited = true;
@@ -491,6 +668,1400 @@ module.exports = Game;
 
 /***/ }),
 
+/***/ "./input/input.js":
+/*!************************!*\
+  !*** ./input/input.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _keyboard = __webpack_require__(/*! ./keyboard */ "./input/keyboard.js");
+
+var _keyboard2 = _interopRequireDefault(_keyboard);
+
+var _mouse = __webpack_require__(/*! ./mouse */ "./input/mouse.js");
+
+var _mouse2 = _interopRequireDefault(_mouse);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Input = function () {
+  function Input(game) {
+    _classCallCheck(this, Input);
+
+    this.game = game;
+    this.mouse = null;
+    this.keyboard = null;
+  }
+
+  _createClass(Input, [{
+    key: "init",
+    value: function init() {
+
+      //this.mouse = new tobiJS.Mouse(this.game);
+      this.keyboard = new _keyboard2.default(this.game);
+      this.mouse = new _mouse2.default(this.game);
+      this.keyboard.init();
+      this.mouse.init();
+    }
+  }, {
+    key: "update",
+    value: function update() {
+
+      this.keyboard.update();
+      this.mouse.update();
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.keyboard.reset();
+      this.mouse.reset();
+    }
+  }]);
+
+  return Input;
+}();
+
+exports.default = Input;
+
+/***/ }),
+
+/***/ "./input/key.js":
+/*!**********************!*\
+  !*** ./input/key.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var KeyEvent = exports.KeyEvent = {
+    NONE: -1,
+    IDLE: 0,
+    PRESSED: 1,
+    RELEASED: 2
+};
+
+var Key = function () {
+    function Key(keycode, game) {
+        _classCallCheck(this, Key);
+
+        this.game = game;
+        this.keyCode = keycode;
+
+        this._enabled = true;
+        this.status = false;
+        this.press = false;
+        this.release = false;
+
+        this._event = scintilla.KeyEvent.NONE;
+
+        this.pressTime = 0;
+        this.pressDuration = -2500;
+        this.releaseTime = 0;
+        this.releaseDuration = -2500;
+    }
+
+    _createClass(Key, [{
+        key: "onKeyDown",
+        value: function onKeyDown() {
+            if (!this._enabled) return;
+
+            if (this.press) return;
+
+            // set key properties
+            this.status = true;
+            this.press = true;
+            this.release = false;
+
+            // set press time duration
+            this.pressTime = this.game.time.time;
+            this.pressDuration = 0;
+            this.releaseDuration = this.game.time.time - this.releaseTime;
+        }
+    }, {
+        key: "onKeyUp",
+        value: function onKeyUp() {
+            if (!this._enabled) return;
+
+            if (this.release) return;
+
+            // set key properties
+            this.status = false;
+            this.press = false;
+            this.release = true;
+
+            // set press time duration
+            this.releaseTime = this.game.time.time;
+            this.pressDuration = this.game.time.time - this.pressTime;
+            this.releaseDuration = 0;
+        }
+    }, {
+        key: "update",
+        value: function update() {
+            if (!this._enabled) return;
+
+            if (this.press) {
+                this.pressDuration = this.game.time.time - this.pressTime;
+            } else {
+                this.releaseDuration = this.game.time.time - this.releaseTime;
+            }
+
+            if (this.press) {
+                if (this.pressDuration == 0) {
+                    this._event = scintilla.KeyEvent.PRESSED;
+                }
+            } else {
+
+                if (this.releaseDuration == 0) {
+                    this._event = scintilla.KeyEvent.RELEASED;
+                } else {
+                    this._event = scintilla.KeyEvent.IDLE;
+                }
+            }
+
+            if (this._event == scintilla.KeyEvent.IDLE) {
+                this._event = scintilla.KeyEvent.NONE;
+            }
+        }
+    }, {
+        key: "isPressing",
+        value: function isPressing() {
+            return this.status;
+        }
+    }, {
+        key: "isPressed",
+        value: function isPressed() {
+            return this.press && this.pressDuration == 0;
+        }
+    }, {
+        key: "isReleased",
+        value: function isReleased() {
+            return !this.press && this.releaseDuration == 0;
+        }
+    }, {
+        key: "event",
+        value: function event() {
+            return this._event;
+        }
+    }, {
+        key: "reset",
+        value: function reset() {
+            this.status = false;
+            this._event = scintilla.KeyEvent.NONE;
+            this.press = false;
+            this.release = false;
+
+            this.pressTime = 0;
+            this.pressDuration = -2500;
+            this.releaseTime = 0;
+            this.releaseDuration = -2500;
+        }
+    }, {
+        key: "enabled",
+        get: function get() {
+            return this._enabled;
+        },
+        set: function set(value) {
+            value = !!value;
+
+            if (value !== this._enabled) {
+                if (!value) this.reset();
+
+                this._enabled = value;
+            }
+        }
+    }]);
+
+    return Key;
+}();
+
+exports.default = Key;
+;
+
+/***/ }),
+
+/***/ "./input/keyboard.js":
+/*!***************************!*\
+  !*** ./input/keyboard.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.KeyCode = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _key = __webpack_require__(/*! ./key */ "./input/key.js");
+
+var _key2 = _interopRequireDefault(_key);
+
+var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+
+var _map2 = _interopRequireDefault(_map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Keyboard = function () {
+  function Keyboard(game) {
+    _classCallCheck(this, Keyboard);
+
+    this.game = game;
+    this.context = game.context;
+    this.active = true;
+    //this._keys = [];
+    this._keyMapping = new _map2.default();
+    this._keyWatch = new _map2.default();
+    this._keyGarbage = [];
+    //this._keyLock = [];
+    //this._keyLockPressed = [];
+    //this._keyDownDuration = [];
+    this.lastKey = null;
+
+    //callbacks
+    this._onKeyDown = null;
+    this._onKeyUp = null;
+    this._onKeyPress = null;
+  }
+
+  _createClass(Keyboard, [{
+    key: 'reset',
+    value: function reset() {
+
+      this._keyMapping.clear();
+      this._keyWatch.clear();
+      this._keyGarbage = [];
+      for (var prop in scintilla.KeyCode) {
+
+        if (scintilla.KeyCode.hasOwnProperty(prop)) {
+          var value = scintilla.KeyCode[prop];
+          this._keyMapping.set(value, new scintilla.Key(value, this.game));
+        }
+        /*if (scintilla.KeyCode.hasOwnProperty(prop)) {
+            
+                var value = scintilla.KeyCode[prop];
+              this._keys[value] = false;
+              this._keyLock[value] = scintilla.KeyEvent.NONE;
+              this._keyLockPressed[value] = scintilla.KeyEvent.NONE;
+              this._keyDownDuration[value] = 0;
+        }*/
+      }
+    }
+  }, {
+    key: 'init',
+    value: function init() {
+
+      var self = this;
+
+      this.reset();
+
+      this._onKeyDown = function (event) {
+        return self.processKeyDown(event);
+      };
+
+      this._onKeyUp = function (event) {
+        return self.processKeyUp(event);
+      };
+
+      window.addEventListener('keydown', this._onKeyDown, false);
+      window.addEventListener('keyup', this._onKeyUp, false);
+    }
+  }, {
+    key: 'stop',
+    value: function stop() {
+
+      window.removeEventListener('keydown', this._onKeyDown);
+      window.removeEventListener('keyup', this._onKeyUp);
+      this._onKeyDown = null;
+      this._onKeyUp = null;
+      this._onKeyPress = null;
+
+      this._keyMapping.clear();
+    }
+  }, {
+    key: 'processKeyUp',
+    value: function processKeyUp(event) {
+
+      var key = event.keyCode;
+
+      event.preventDefault();
+
+      if (!this.active) return;
+
+      var keyObj = this._keyMapping.get(key);
+      keyObj.onKeyUp();
+
+      /*this._keyLock[key] = scintilla.KeyEvent.RELEASE;
+      this._keyLockPressed[key] = scintilla.KeyEvent.NONE;
+      this._keys[key] = false;*/
+    }
+  }, {
+    key: 'processKeyDown',
+    value: function processKeyDown(event) {
+
+      var key = event.keyCode;
+
+      event.preventDefault();
+
+      if (!this.active) return;
+
+      this.lastKey = key;
+
+      var keyObj = this._keyMapping.get(key);
+      keyObj.onKeyDown();
+
+      if (!this._keyWatch.has(key)) {
+        this._keyWatch.set(key, keyObj);
+      }
+
+      //_keyMapping[]
+      //this._keys[key] = true;
+      /* if (this._keyLockPressed[key] != scintilla.KeyEvent.PRESSED && this._keyLockPressed[key] != scintilla.KeyEvent.PRESS) {
+        this._keyLockPressed[key] = scintilla.KeyEvent.PRESSED;
+        this._keyDownDuration[key] = 1;
+      }
+        this._keyLock[key] = scintilla.KeyEvent.PRESS;
+      this._keys[key] = true;
+      */
+    }
+
+    /*processKeyPress : function(event) { // commom characters
+        var key = event.keyCode;
+        event.preventDefault();
+        if (!this.active)
+        return;
+    
+        this._keyLock[key] = tobiJS.KeyEvent.PRESS;
+        this._keys[key] = true;
+    
+      },*/
+
+  }, {
+    key: 'update',
+    value: function update() {
+
+      /*var keys = this._keyMapping.keys();
+      for (var key in keys)
+      {
+        if (keys.hasOwnProperty(key)) {
+            var value = this._keyMapping.get(key);
+          value.update();
+          }
+      }*/
+
+      //var keyswatch = this._keyWatch; //.keys();
+
+      var self = this;
+
+      this._keyWatch.each(function (key, value) {
+        //var value = this._keyWatch.get(key);
+        value.update();
+
+        //console.log(value);
+
+        if (value.event() == scintilla.KeyEvent.IDLE) {
+
+          // value.reset();
+          self._keyGarbage.push(key);
+        }
+      });
+      /*for (var key in keys)
+      {
+        //console.log("UPDATE")
+          if (keys.hasOwnProperty(key)) {
+              var value = this._keyWatch.get(key);
+            value.update();
+              if (value.event() == scintilla.KeyEvent.IDLE)
+            {
+              // value.reset();
+                this._keyGarbage.push(key);
+            }
+        }
+      }*/
+
+      if (this._keyGarbage.length > 0) {
+        this._keyWatch.deleteByIndexedArray(this._keyGarbage);
+        this._keyGarbage.splice(0, this._keyGarbage.length);
+      }
+    }
+  }, {
+    key: 'pressed',
+    value: function pressed(keycode) {
+
+      /*var keyLock = false;
+      if (this._keyLockPressed[keycode] == scintilla.KeyEvent.PRESSED) {
+        keyLock = true;
+        this._keyLockPressed[keycode] = scintilla.KeyEvent.PRESS;
+      }
+        var hit = this._keys[keycode] && keyLock;*/
+
+      //return hit;
+
+      return this._keyMapping.get(keycode).isPressed();
+
+      /* if (this._keyMapping.has(keycode))
+        {
+          
+        } 
+        else 
+        {
+          return false;
+        }*/
+    }
+  }, {
+    key: 'release',
+    value: function release(keycode) {
+
+      /*var keyLock = false;
+        if (this._keyLock[keycode] ==  scintilla.KeyEvent.PRESSED ||
+        this._keyLock[keycode] ==  scintilla.KeyEvent.PRESS ||
+        this._keyLock[keycode] ==  scintilla.KeyEvent.NONE)
+        keyLock = false;
+      else
+        keyLock = true;
+        var hit = !this._keys[keycode] && keyLock;
+        this._keyLock[keycode] = scintilla.KeyEvent.NONE;
+        return hit;*/
+      return this._keyMapping.get(keycode).isReleased();
+    }
+  }, {
+    key: 'press',
+    value: function press(keycode) {
+
+      /*var key = this._keyWatch.get(keycode);
+        if (key === undefined)
+        return false;*/
+
+      return key.status;
+
+      /*var keyLock = false;
+        if (this._keyLock[keycode] ==  scintilla.KeyEvent.RELEASE ||
+        this._keyLock[keycode] ==  scintilla.KeyEvent.NONE)
+        keyLock = false;
+      else
+        keyLock = true;
+        var hit = this._keys[keycode] && keyLock;
+        return hit;*/
+    }
+  }]);
+
+  return Keyboard;
+}();
+
+exports.default = Keyboard;
+var KeyCode = exports.KeyCode = {
+  Backspace: 8,
+  Tab: 9,
+  Enter: 13,
+  Shift: 16,
+  Ctrl: 17,
+  Alt: 18,
+  Pause: 19,
+  CapsLock: 20,
+  Escape: 27,
+  Space: 32,
+  PageUp: 33,
+  PageDown: 34,
+  End: 35,
+  Home: 36,
+  Left: 37,
+  Up: 38,
+  Right: 39,
+  Down: 40,
+  Insert: 45,
+  Delete: 46,
+  Num0: 48,
+  Num1: 49,
+  Num2: 50,
+  Num3: 51,
+  Num4: 52,
+  Num5: 53,
+  Num6: 54,
+  Num7: 55,
+  Num8: 56,
+  Num9: 57,
+  A: 65,
+  B: 66,
+  C: 67,
+  D: 68,
+  E: 69,
+  F: 70,
+  G: 71,
+  H: 72,
+  I: 73,
+  J: 74,
+  K: 75,
+  L: 76,
+  M: 77,
+  N: 78,
+  O: 79,
+  P: 80,
+  Q: 81,
+  R: 82,
+  S: 83,
+  T: 84,
+  U: 85,
+  V: 86,
+  W: 87,
+  X: 88,
+  Y: 89,
+  Z: 90,
+  LSystem: 91,
+  RSystem: 92,
+  SelectK: 93,
+  Numpad0: 96,
+  Numpad1: 97,
+  Numpad2: 98,
+  Numpad3: 99,
+  Numpad4: 100,
+  Numpad5: 101,
+  Numpad6: 102,
+  Numpad7: 103,
+  Numpad8: 104,
+  Numpad9: 105,
+  Multiply: 106,
+  Add: 107,
+  Subtract: 109,
+  DecimalPoint: 110,
+  Divide: 111,
+  F1: 112,
+  F2: 113,
+  F3: 114,
+  F4: 115,
+  F5: 116,
+  F6: 117,
+  F7: 118,
+  F8: 119,
+  F9: 120,
+  F10: 121,
+  F11: 122,
+  F12: 123,
+  NumLock: 144,
+  ScrollLock: 145,
+  SemiColon: 186,
+  Equal: 187,
+  Comma: 188,
+  Dash: 189,
+  Period: 190,
+  Slash: 191,
+  LBraket: 219,
+  BackSlash: 220,
+  RBracket: 221,
+  Quote: 222
+};
+
+/***/ }),
+
+/***/ "./input/mouse.js":
+/*!************************!*\
+  !*** ./input/mouse.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MouseButton = exports.MouseButton = {
+    LEFT_BUTTON: 0,
+    MIDDLE_BUTTON: 1,
+    RIGHT_BUTTON: 2,
+    WHEEL_UP: 3,
+    WHEEL_DOWN: 4
+};
+
+var MouseEvent = exports.MouseEvent = {
+    NONE: 0,
+    PRESS: 1,
+    PRESSED: 2,
+    RELEASE: 3
+};
+
+var Mouse = function () {
+    function Mouse(game) {
+        _classCallCheck(this, Mouse);
+
+        this.x = 0;
+        this.y = 0;
+        this.game = game;
+        this.canvas = game.canvas;
+        this.button = 0;
+        this.wheelDelta = 0;
+        this.active = true;
+
+        this._mouseButtons = [];
+        this._mouseButtonsLocks = [];
+        this._mouseButtonsLocksPressed = [];
+        this._mouseDownDuration = [];
+
+        //callbacks
+        this._onMouseDown = null;
+        this._onMouseMove = null;
+
+        this.reset();
+    }
+
+    _createClass(Mouse, [{
+        key: 'reset',
+        value: function reset() {
+
+            for (var i = 0; i < 3; i++) {
+
+                this._mouseButtons[i] = false;
+                this._mouseButtonsLocks[i] = MouseEvent.NONE;
+                this._mouseButtonsLocksPressed[i] = MouseEvent.NONE;
+                this._mouseDownDuration[i] = 0;
+            }
+        }
+    }, {
+        key: 'init',
+        value: function init() {
+
+            var self = this;
+
+            this._onMouseDown = function (event) {
+                return self.onMouseDown(event);
+            };
+
+            this._onMouseUp = function (event) {
+                return self.onMouseUp(event);
+            };
+
+            this._onMouseMove = function (event) {
+                return self.onMouseMove(event);
+            };
+
+            this.canvas.addEventListener('mousedown', this._onMouseDown, true);
+            this.canvas.addEventListener('mousemove', this._onMouseMove, true);
+            this.canvas.addEventListener('mouseup', this._onMouseUp, true);
+            this.canvas.addEventListener('mouseover', this._onMouseOver, true);
+            this.canvas.addEventListener('mouseout', this._onMouseOut, true);
+        }
+    }, {
+        key: 'onMouseMove',
+        value: function onMouseMove(event) {
+
+            if (!this.active) return;
+
+            var rect = this.canvas.getBoundingClientRect();
+
+            this.x = Math.floor((event.clientX - rect.left) / (rect.right - rect.left) * this.canvas.width);
+            this.y = Math.floor((event.clientY - rect.top) / (rect.bottom - rect.top) * this.canvas.height);
+            //this.x = event.clientX - rect.left;
+            //this.y = event.clientY - rect.top;
+        }
+    }, {
+        key: 'onMouseDown',
+        value: function onMouseDown(event) {
+
+            if (!this.active) return;
+
+            var value = event.button;
+
+            if (this._mouseButtonsLocksPressed[value] != scintilla.KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != scintilla.KeyEvent.PRESS) {
+                this._mouseButtonsLocksPressed[value] = scintilla.MouseEvent.PRESSED;
+                this._mouseDownDuration[value] = 1;
+            }
+
+            this._mouseButtons[value] = true;
+            this._mouseButtonsLocks[value] = scintilla.MouseEvent.PRESS;
+
+            event.preventDefault();
+        }
+    }, {
+        key: 'onMouseUp',
+        value: function onMouseUp(event) {
+
+            if (!this.active) return;
+
+            var value = event.button;
+
+            this._mouseButtons[value] = false;
+            this._mouseButtonsLocks[value] = scintilla.MouseEvent.RELEASE;
+            this._mouseButtonsLocksPressed[value] = scintilla.MouseEvent.NONE;
+
+            event.preventDefault();
+        }
+    }, {
+        key: 'pressed',
+        value: function pressed(button) {
+
+            var buttonLock = false;
+
+            if (this._mouseButtonsLocksPressed[button] == scintilla.MouseEvent.PRESSED) {
+                buttonLock = true;
+                this._mouseButtonsLocksPressed[button] = scintilla.MouseEvent.PRESS;
+            }
+
+            var hit = this._mouseButtons[button] && buttonLock;
+
+            return hit;
+        }
+    }, {
+        key: 'release',
+        value: function release(button) {
+
+            var buttonLock = false;
+
+            if (this._mouseButtonsLocks[button] == scintilla.MouseEvent.PRESSED || this._mouseButtonsLocks[button] == scintilla.MouseEvent.PRESS || this._mouseButtonsLocks[button] == scintilla.MouseEvent.NONE) buttonLock = false;else buttonLock = true;
+
+            var hit = !this._mouseButtons[button] && buttonLock;
+
+            this._mouseButtonsLocks[button] = scintilla.MouseEvent.NONE;
+
+            return hit;
+        }
+    }, {
+        key: 'press',
+        value: function press(button) {
+
+            var buttonLock = false;
+
+            if (this._mouseButtonsLocks[button] == scintilla.MouseEvent.RELEASE || this._mouseButtonsLocks[button] == scintilla.MouseEvent.NONE) buttonLock = false;else buttonLock = true;
+
+            var hit = this._mouseButtons[button] && buttonLock;
+
+            return hit;
+        }
+    }, {
+        key: 'update',
+        value: function update() {
+
+            for (var i = 0; i < this._mouseButtons.length; i++) {
+
+                if (this._mouseButtonsLocksPressed[i] == scintilla.MouseEvent.PRESSED) {
+                    if (this._mouseDownDuration[i] > 0) this._mouseDownDuration[i]--;else this._mouseButtonsLocksPressed[i] = scintilla.MouseEvent.PRESS;
+                } else continue;
+            }
+        }
+    }, {
+        key: 'posRelativeTo',
+        value: function posRelativeTo(object) {
+
+            var vec2 = { x: 0, y: 0 };
+
+            vec2.x = this.x - object.x;
+            vec2.y = this.y - object.y;
+
+            return vec2;
+        }
+    }]);
+
+    return Mouse;
+}();
+
+exports.default = Mouse;
+
+/***/ }),
+
+/***/ "./loader/XHR.js":
+/*!***********************!*\
+  !*** ./loader/XHR.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+exports.default = function () {
+    function XHR() {
+        _classCallCheck(this, XHR);
+    }
+
+    _createClass(XHR, null, [{
+        key: "createFileRequest",
+        value: function createFileRequest(file, settings) {
+            var xhrSettings = XHR.merge(settings, file.xhrSettings);
+
+            var xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.open("GET", file.source, xhrSettings.async);
+
+            xmlHttpRequest.responseType = file.xhrSettings.responseType;
+            xmlHttpRequest.timeout = xhrSettings.timeout;
+
+            xmlHttpRequest.onload = file.onLoad.bind(file);
+            xmlHttpRequest.onerror = file.onError.bind(file);
+            xmlHttpRequest.onprogress = file.onProgress.bind(file);
+
+            xmlHttpRequest.send();
+
+            return xmlHttpRequest;
+        }
+    }, {
+        key: "createSettings",
+        value: function createSettings(type, doAsync, timeout) {
+            if (type === undefined) type = '';
+
+            if (doAsync === undefined) doAsync = true;
+
+            if (timeout === undefined) timeout = 0;
+
+            var settings = {
+                responseType: type,
+                timeout: timeout,
+                async: doAsync
+            };
+
+            return settings;
+        }
+    }, {
+        key: "merge",
+        value: function merge(a, b) {
+            var out = {};
+
+            if (a === undefined) out = XHR.createSettings(); // : Extend(global);
+            // else
+            // do something cool
+
+            if (b) {
+                for (var setting in b) {
+                    if (b[setting] !== undefined) out[setting] = b[setting];
+                }
+            }
+
+            return out;
+        }
+    }]);
+
+    return XHR;
+}();
+
+/***/ }),
+
+/***/ "./loader/listinjector.js":
+/*!********************************!*\
+  !*** ./loader/listinjector.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ListInjector = function () {
+    function ListInjector() {
+        _classCallCheck(this, ListInjector);
+
+        this.list = {};
+    }
+
+    _createClass(ListInjector, [{
+        key: "inject",
+        value: function inject(toObj) {
+            for (var key in this.list) {
+                toObj[key] = this.list[key];
+            }
+        }
+    }, {
+        key: "register",
+        value: function register(key, func) {
+            this.list[key] = func;
+        }
+    }, {
+        key: "destroyfunction",
+        value: function destroyfunction() {
+            this.list = {};
+        }
+    }]);
+
+    return ListInjector;
+}();
+
+exports.default = ListInjector;
+;
+
+/***/ }),
+
+/***/ "./loader/loaderstate.js":
+/*!*******************************!*\
+  !*** ./loader/loaderstate.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.LOADER_STATE = exports.AssetTypeHandler = undefined;
+
+var _listinjector = __webpack_require__(/*! ./listinjector */ "./loader/listinjector.js");
+
+var _listinjector2 = _interopRequireDefault(_listinjector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AssetTypeHandler = exports.AssetTypeHandler = new _listinjector2.default();
+
+var LOADER_STATE = exports.LOADER_STATE = {
+    NONE: 0,
+    IDLE: 1,
+    PENDING: 2,
+    LOADING: 3,
+    PROCESSING: 4,
+    ERROR: 5,
+    FINISHED: 6,
+    DONE: 7
+
+    //export var AssetTypeHandler;
+    //export var LOADER_STATE;
+
+};
+
+/***/ }),
+
+/***/ "./loader/loadmanager.js":
+/*!*******************************!*\
+  !*** ./loader/loadmanager.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _loaderstate = __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js");
+
+var _set = __webpack_require__(/*! ../structures/set */ "./structures/set.js");
+
+var _set2 = _interopRequireDefault(_set);
+
+var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
+
+var _XHR2 = _interopRequireDefault(_XHR);
+
+var _utils = __webpack_require__(/*! ../utils/utils */ "./utils/utils.js");
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// Class LoaderManager
+var LoadManager = function () {
+  function LoadManager(game) {
+    _classCallCheck(this, LoadManager);
+
+    this.game = game;
+    this.cache = game.cache;
+
+    this._filesQueue = new _set2.default();
+    this._successFiles = new _set2.default();
+    this._failedFiles = new _set2.default();
+    this._processedFiles = new _set2.default();
+
+    this._filesQueueCount = 0;
+    this._loadedFilesCount = 0;
+
+    this.isDownloading = false;
+    this._totalFiles = 0;
+
+    var gameConfig = game.config.loader;
+
+    this.xhr = _XHR2.default.createSettings(_utils2.default.getValue(config, 'responseType', gameConfig.responseType), _utils2.default.getValue(config, 'async', gameConfig.async),
+    //scintilla.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
+    //scintilla.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+    _utils2.default.getValue(config, 'timeout', gameConfig.timeout));
+
+    this.progress = 0;
+    this.path = '';
+    this.baseURL = '';
+    this.state = _loaderstate.LOADER_STATE.IDLE;
+
+    _loaderstate.AssetTypeHandler.inject(this);
+  }
+
+  _createClass(LoadManager, [{
+    key: 'setPath',
+    value: function setPath(path) {
+      if (path !== '' && path.substr(-1) !== '/') path = path.concat('/');
+
+      this.path = path;
+
+      return this;
+    }
+  }, {
+    key: 'setBaseURL',
+    value: function setBaseURL(baseUrl) {
+      if (baseUrl !== '' && baseUrl.substr(-1) !== '/') {
+        baseUrl = baseUrl.concat('/');
+      }
+
+      this.baseURL = baseUrl || '';
+
+      return this;
+    }
+  }, {
+    key: 'addAsset',
+    value: function addAsset(asset) {
+      if (!this.isOK()) return -1;
+
+      asset.path = this.path;
+      this._filesQueue.set(asset);
+      this._filesQueueCount++;
+      return asset;
+    }
+  }, {
+    key: 'reset',
+    value: function reset() {
+
+      this.isDownloading = false;
+      this._filesQueueCount = 0;
+      this._successCount = 0;
+      this._filesQueue.length = 0;
+      this._fileErrorCount = 0;
+      this.progress = 0;
+      this.state = _loaderstate.LOADER_STATE.IDLE;
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+
+      if (!this.isOK()) {
+        return -1;
+      }
+
+      this.progress = 0;
+      this._loadedFilesCount = 0;
+      this.state = _loaderstate.LOADER_STATE.LOADING;
+      this._filesQueueCount = this._filesQueue.size;
+
+      if (this._filesQueue.size === 0) {
+        console.log(0);
+        this.loadFinished();
+      } else {
+        this.isDownloading = true;
+        this._successFiles.clear();
+        this._failedFiles.clear();
+        //this._filesQueue.clear();
+
+        this.processFileQueue();
+      }
+    }
+
+    /*end : function() {
+        if (this.state === LOADER_STATE.PROCESSING)
+          return;
+    
+      this.progress = 1;
+      this.isDownloading = false;
+      this.state = LOADER_STATE.PROCESSING;
+        
+      this._filesQueue.clear();
+      this._failedFiles.length = 0;
+      
+      this.processFiles();
+        this._successFiles.clear();
+        this.state = LOADER_STATE.DONE;
+      //this.game.scene.preloadComplete();
+      },*/
+
+  }, {
+    key: 'processFileQueue',
+    value: function processFileQueue() {
+
+      var self = this;
+
+      this._filesQueue.each(function (file) {
+
+        //var file = this._filesQueue[i];
+
+        if (file.state === _loaderstate.LOADER_STATE.FINISHED || file.state === _loaderstate.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
+          {
+            file.load(self);
+          }
+      });
+    }
+  }, {
+    key: 'next',
+    value: function next(concludedFile, hasError) {
+      if (hasError) this._failedFiles.set(concludedFile);else this._successFiles.set(concludedFile);
+
+      this._filesQueue.delete(concludedFile);
+      this._loadedFilesCount++;
+
+      this.updateProgress();
+
+      if (this._loadedFilesCount < this._filesQueueCount) {
+        console.log("asdasd");
+        this.processFileQueue();
+      } else {
+
+        this.loadFinished();
+      }
+    }
+  }, {
+    key: 'loadFinished',
+    value: function loadFinished() {
+      if (this.state === _loaderstate.LOADER_STATE.PROCESSING) return;
+
+      this.progress = 1;
+      this.isDownloading = false;
+      this.state = _loaderstate.LOADER_STATE.PROCESSING;
+
+      this._processedFiles.clear();
+
+      if (this._successFiles.size === 0) {
+
+        this.processingDone();
+      } else {
+
+        console.log("asdasd");
+        this._successFiles.each(function (file) {
+          file.onProcessing(this.processingUpdate.bind(this));
+        }, this);
+      }
+    }
+  }, {
+    key: 'processingUpdate',
+    value: function processingUpdate(file) {
+
+      if (file.state === _loaderstate.LOADER_STATE.ERROR) {
+        this._failedFiles.set(file);
+
+        /*if (file.linkFile)
+        {
+            this.queue.delete(file.linkFile);
+        }*/
+        return this.deleteFromSuccessQueue(file);
+      }
+
+      this._processedFiles.set(file);
+
+      return this.deleteFromSuccessQueue(file);
+    }
+  }, {
+    key: 'deleteFromSuccessQueue',
+    value: function deleteFromSuccessQueue(file) {
+
+      this._successFiles.delete(file);
+
+      if (this._successFiles.size === 0 && this.state === _loaderstate.LOADER_STATE.PROCESSING) this.processingDone();
+    }
+  }, {
+    key: 'processingDone',
+    value: function processingDone() {
+      console.log("done");
+      this._successFiles.clear();
+      this._filesQueue.clear();
+
+      var cache = this.game.cache;
+
+      if (this._processedFiles.size > 0) {
+        this._processedFiles.each(function (file) {
+
+          switch (file.type) {
+            case 'image':
+              {
+                cache.addImage(file.tag, file.url, file.data);
+                break;
+              }
+            case 'audio':
+              {
+
+                file.data = requestXHR.response;
+
+                cache.addSound(file.tag, file.url, file.data, true);
+
+                if (file.autoDecode) {
+                  this.game.sound.decode(file.tag);
+                }
+
+                break;
+              }
+          }
+        });
+
+        this._processedFiles.clear();
+      }
+
+      this.state = _loaderstate.LOADER_STATE.DONE;
+
+      this.game.scene.preloadComplete();
+      console.log("asdasd");
+    }
+  }, {
+    key: 'isLoading',
+    value: function isLoading() {
+      return this.state === _loaderstate.LOADER_STATE.LOADING || this.state === _loaderstate.LOADER_STATE.PROCESSING;
+    }
+  }, {
+    key: 'isOK',
+    value: function isOK() {
+      return this.state === _loaderstate.LOADER_STATE.IDLE || this.state === _loaderstate.LOADER_STATE.DONE || this.state === _loaderstate.LOADER_STATE.ERROR;
+    }
+  }, {
+    key: 'downloadIsDone',
+    value: function downloadIsDone() {
+      return this._filesQueue.length == this._successCount + this._fileErrorCount;
+    }
+  }, {
+    key: 'updateProgress',
+    value: function updateProgress() {
+
+      var progress = 0;
+
+      if (this._filesQueueCount != 0) {
+        this.progress = 1 - this._loadedFilesCount / this._filesQueueCount;
+      }
+      //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
+
+      this.progress = progress;
+    }
+  }, {
+    key: 'totalQueuedFiles',
+    value: function totalQueuedFiles() {
+      return this._filesQueueCount - this._successCount;
+    }
+  }]);
+
+  return LoadManager;
+}();
+
+exports.default = LoadManager;
+;
+
+/***/ }),
+
+/***/ "./others/debug.js":
+/*!*************************!*\
+  !*** ./others/debug.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Debug = function () {
+  function Debug(game) {
+    _classCallCheck(this, Debug);
+
+    this.game = game;
+    this.context = game.context;
+    this.x = 8;
+    this.y = 12;
+    this.lineHeight = 14;
+    this.column = 100;
+    this.font = "12px Verdana";
+    this.textColor = 'white';
+    this.bgcolor = 'black';
+    this.textShadow = 'black';
+  }
+
+  _createClass(Debug, [{
+    key: 'test',
+    value: function test() {
+
+      this.context.setTransform(1, 0, 0, 1, 0, 0);
+      this.context.strokeStyle = this.bgcolor;
+      this.context.font = this.font;
+      this.game.draw.alpha(0.5);
+      this.game.draw.rectangle(0, 0, this.game.width, 14 * 4 + 16, this.bgcolor);
+      this.game.draw.alpha(1);
+      this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
+      this.drawLine("Instances in view: " + this.game.camera.instancesInView);
+      this.drawLine("Instances count " + this.game.world.length);
+      this.drawLine("Colliders count " + this.game.physics.length);
+      this.x += this.game.width / 2;
+      this.y = 12 + 8;
+      this.drawLine("Sounds count " + this.game.sound.length);
+      this.x = 8;
+      this.y = 12 + 8;
+    }
+  }, {
+    key: 'drawLine',
+    value: function drawLine(textLine) {
+
+      var xx = this.x;
+
+      this.context.fillStyle = this.textShadow;
+      this.context.fillText(textLine, xx + 1, this.y + 1);
+      this.context.fillStyle = this.textColor;
+
+      this.context.fillText(textLine, xx, this.y);
+
+      this.y += this.lineHeight;
+    }
+  }]);
+
+  return Debug;
+}();
+
+exports.default = Debug;
+
+/***/ }),
+
 /***/ "./render/canvas/canvas.js":
 /*!*********************************!*\
   !*** ./render/canvas/canvas.js ***!
@@ -594,6 +2165,615 @@ exports.default = function () {
 
   return Canvas;
 }();
+
+/***/ }),
+
+/***/ "./structures/map.js":
+/*!***************************!*\
+  !*** ./structures/map.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// Map simple class
+var Map = function () {
+  function Map() {
+    _classCallCheck(this, Map);
+
+    this._content = {};
+    this._size = 0;
+  }
+
+  /* 
+  Add or set value to the map
+  key = keyName
+  value = value
+  */
+
+
+  _createClass(Map, [{
+    key: "set",
+    value: function set(key, value) {
+
+      if (!this.has(key)) {
+        this._size++;
+      }
+
+      this._content[key] = value;
+
+      return this;
+    }
+  }, {
+    key: "get",
+    value: function get(key) {
+      if (this.has(key)) {
+        return this._content[key];
+      } else {
+        return null;
+      }
+    }
+  }, {
+    key: "has",
+    value: function has(key) {
+      return this._content.hasOwnProperty(key);
+    }
+  }, {
+    key: "contains",
+    value: function contains(value) {
+      for (var key in this._content) {
+        if (entries[key] === value) {
+          return true;
+        } else continue;
+      }
+
+      return false;
+    }
+  }, {
+    key: "keys",
+    value: function keys() {
+      return Object.keys(this._content);
+    }
+  }, {
+    key: "values",
+    value: function values() {
+      var values = [];
+      var content = this._content;
+
+      for (var key in content) {
+        values.push(entries[key]);
+      }return values;
+    }
+  }, {
+    key: "remove",
+    value: function remove(key) {
+
+      if (!this.has(key)) return null;
+
+      var prop = this._content[key];
+      delete this._content[key];
+      this._size--;
+      return prop;
+    }
+  }, {
+    key: "delete",
+    value: function _delete(key) {
+
+      if (!this.has(key)) return false;
+
+      delete this._content[key];
+      this._size--;
+
+      return true;
+    }
+  }, {
+    key: "deleteAt",
+    value: function deleteAt(key) {
+
+      //if (!this.hasTagInKey(key))
+      //  return false;
+      this._size--;
+      delete this._content[key];
+    }
+  }, {
+    key: "deleteByIndexedArray",
+    value: function deleteByIndexedArray(array) {
+      for (var i = 0; i < array.length; i++) {
+        delete this._content[array[i]];
+        this._size--;
+      }
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+
+      for (var property in this._content) {
+        delete this._content[property];
+      }this._size = 0;
+    }
+  }, {
+    key: "slowSize",
+    value: function slowSize() {
+      return Object.keys(_contents).length;
+    }
+  }, {
+    key: "each",
+    value: function each(callback) {
+      var content = this._content;
+
+      for (var property in content) {
+
+        if (callback(property, content[property]) === false) break;
+      }
+
+      return this;
+    }
+  }, {
+    key: "size",
+    get: function get() {
+      return this._size;
+    }
+  }]);
+
+  return Map;
+}();
+
+exports.default = Map;
+
+/***/ }),
+
+/***/ "./structures/set.js":
+/*!***************************!*\
+  !*** ./structures/set.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Set = function () {
+    function Set(elements) {
+        _classCallCheck(this, Set);
+
+        this._content = [];
+        this._size = 0;
+
+        if (Array.isArray(elements)) {
+            for (var i = 0; i < elements.length; i++) {
+                this.set(elements[i]);
+            }
+        }
+    }
+
+    _createClass(Set, [{
+        key: "set",
+        value: function set(value) {
+            if (this._content.indexOf(value) === -1) this._content.push(value);
+
+            return this;
+        }
+    }, {
+        key: "at",
+        value: function at(value) {
+            var index = this._content.indexOf(value);
+            if (index > -1) {
+                return this._content[index];
+            } else {
+                return null;
+            }
+        }
+    }, {
+        key: "has",
+        value: function has(value) {
+            return this._content.indexOf(value) > -1;
+        }
+    }, {
+        key: "delete",
+        value: function _delete(value) {
+            var idx = this._content.indexOf(value);
+
+            if (idx > -1) this._content.splice(idx, 1);
+
+            return this;
+        }
+    }, {
+        key: "clear",
+        value: function clear() {
+            this._content.length = 0;
+            return this;
+        }
+    }, {
+        key: "each",
+        value: function each(callback, scope) {
+            var content = this._content.slice();
+            var size = content.length;
+            var i;
+
+            if (scope) {
+                for (i = 0; i < size; i++) {
+                    if (callback.call(scope, content[i], i) === false) break;
+                }
+            } else {
+                for (i = 0; i < size; i++) {
+                    if (callback(content[i], i) === false) break;
+                }
+            }
+
+            return this;
+        }
+    }, {
+        key: "size",
+        get: function get() {
+            return this._content.length;
+        }
+    }, {
+        key: "length",
+        get: function get() {
+            return this._content.length;
+        }
+    }]);
+
+    return Set;
+}();
+
+exports.default = Set;
+
+/***/ }),
+
+/***/ "./time/time.js":
+/*!**********************!*\
+  !*** ./time/time.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Time = function () {
+  function Time(game) {
+    _classCallCheck(this, Time);
+
+    this.game = game;
+
+    // START TIME
+    this.startTime = 0;
+
+    // date now
+    this.time = 0;
+
+    this.currentTime = 0;
+    this.previousTime = 0;
+
+    this.elapsed = 0;
+    this.elapsed_mili = 0;
+
+    // FOR TIME OUT MODE
+    this.timeOut_toCall = 0;
+    this.timeOut_expected = 0;
+
+    // FPS
+    this.fps = 60;
+    this.fpsDesired = 60;
+    this.timeStep_mili = 1 / this.fpsDesired;
+    this.timeStep = 1000 / this.fpsDesired;
+
+    // lag
+    this.accumalator = 0;
+    this.accumulatorMax = this.timeStep * 10;
+    this.accumulatorDelta = this.timeStep;
+
+    this.updateStart = 0;
+    this.updateLast = 0;
+    this.updateAverage = 0;
+    this.updateDelta = 0;
+
+    this.deltaTime = 0;
+
+    this._lastFpsUpdate = 0;
+    this._framesThisSecond = 0;
+  }
+
+  _createClass(Time, [{
+    key: "start",
+    value: function start() {
+
+      this.startTime = Date.now();
+      this.time = Date.now();
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+
+      var previousDateNow = this.time;
+
+      this.time = Date.now();
+
+      this.elapsed_mili = this.time - previousDateNow;
+
+      //this.currentTime =  this.previousTime = window.performance.now();
+      //this.deltaTime = 0;
+      //this.elapsed = 0;
+      //this._framesThisSecond = 0;
+    }
+  }, {
+    key: "update",
+    value: function update(timestamp) {
+
+      // DATE NOW ----------------------------------
+      var previousDateNow = this.time;
+
+      this.time = Date.now(); // current time
+
+      this.elapsed_mili = this.time - previousDateNow;
+
+      // timestamp --------------------
+
+      // Throttle the frame rate.
+      if (timestamp < this.previousTime + this.timeStep) {
+        //requestAnimationFrame(mainLoop);
+        return false;
+      }
+
+      // set prev
+      this.previousTime = this.currentTime;
+
+      // set current
+      this.currentTime = timestamp;
+
+      // delta time (MILISECONDS)
+      this.elapsed = this.currentTime - this.previousTime;
+
+      // delta time in  seconds
+      this.deltaTime = 0; //this.elapsed / 1000.0;
+
+
+      if (this.game.updateGameMethod._isTimeOutMode) {
+
+        this.timeOut_toCall = Math.floor(Math.max(0, 1000.0 / this.fpsDesired - (this.timeOut_expected - time)));
+
+        // time when the next call is expected if using timers
+        this.timeOut_expected = time + this.timeOut_toCall;
+      }
+
+      // Track acumulate time
+
+
+      //this.accumalator += this.elapsed; //Math.max(Math.min(this.timeStep * 3, this.elapsed), 0); //timestamp - this._lastTimeStamp;
+      this.accumalator += Math.max(Math.min(this.timeStep * 3, this.elapsed), 0);
+
+      this.accumulatorDelta = this.timeStep; //, this.updateAverage);
+
+      //console.log(this.accumalator + " " + this.updateAverage);
+      //this._lag = Math.min(this._lag, this.accumulatorMax);
+
+      //  this.updateDelta = this.timeStep // interpolation = this.elapsed (deltatime); // or step
+      //this.accumulatorUpdateDelta = this.updateDelta; // interpolation = Math.max(this.updateDelta, this.updateAverage);
+
+      // FPS Update
+      if (this.game.debugMode) this.fpsUpdate(timestamp);
+
+      return true;
+
+      //this.last_time = now;
+
+      /*var elapsed = (this.current_time - this.last_time)/1000.0;
+      this.last_time = this.current_time;
+      this.delta_time = Math.min(elapsed, 1/60.0);*/
+
+      //console.log(this.delta_time);
+
+      //  Adjust accordingly.
+      /*this.time_elapsed_mili = this.current_time - previousDateNow;
+        // 'now' is currently still holding the time of the last call, move it into prevTime
+      this.prev_time  = this.now_time;
+        // update 'now' to hold the current time
+      // this.now may hold the RAF high resolution time value if RAF is available (otherwise it also holds Date.now)
+      this.now_time = time;
+       // elapsed time between previous call and now - this could be a high resolution value
+      this.time_elapsed = this.now_time - this.prev_time;*/
+
+      //if (this.game.updateGameMethod._usingTimeout)
+      //{
+      // console.log('Time isSet', this._desiredFps, 'te', this.timeExpected, 'time', time);
+
+      // time to call this function again in ms in case we're using timers instead of RequestAnimationFrame to update the game
+      //this.timeToCall = Math.floor(Math.max(0, (1000.0 / this._desiredFps) - (this.timeExpected - time)));
+
+      // time when the next call is expected if using timers
+      //  this.timeExpected = time + this.timeToCall;
+
+      // console.log('Time expect', this.timeExpected);
+      //  }
+
+      //  Paused but still running?
+      /*  if (!this.game.paused)
+        {
+            //  Our internal Phaser.Timer
+            this.events.update(this.time);
+              if (this._timers.length)
+            {
+                this.updateTimers();
+            }
+        }*/
+    }
+  }, {
+    key: "fpsUpdate",
+    value: function fpsUpdate(timestamp) {
+
+      // METHOD 2
+
+      // count the number of time.update calls
+      /*this._frameCount++;
+      this._elapsedAccumulator += this.elapsed;
+        // occasionally recalculate the suggestedFps based on the accumulated elapsed time
+      if (this._frameCount >= this._desiredFps * 2)
+      {
+          // this formula calculates suggestedFps in multiples of 5 fps
+          this.suggestedFps = Math.floor(200 / (this._elapsedAccumulator / this._frameCount)) * 5;
+          this._frameCount = 0;
+          this._elapsedAccumulator = 0;
+      }
+        this.msMin = Math.min(this.msMin, this.elapsed);
+      this.msMax = Math.max(this.msMax, this.elapsed);
+        this.frames++;
+        if (this.now > this._timeLastSecond + 1000)
+      {
+          this.fps = Math.round((this.frames * 1000) / (this.now - this._timeLastSecond));
+          this.fpsMin = Math.min(this.fpsMin, this.fps);
+          this.fpsMax = Math.max(this.fpsMax, this.fps);
+          this._timeLastSecond = this.now;
+          this.frames = 0;
+      }*/
+
+      // METHOD 1
+      if (timestamp > this._lastFpsUpdate + 1000) {
+        this.fps = 0.25 * this._framesThisSecond + 0.75 * this.fps;
+
+        this._lastFpsUpdate = timestamp;
+        this._framesThisSecond = 0;
+      }
+
+      this._framesThisSecond++;
+    }
+  }]);
+
+  return Time;
+}();
+
+exports.default = Time;
+
+/***/ }),
+
+/***/ "./time/updatetime.js":
+/*!****************************!*\
+  !*** ./time/updatetime.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UpdateTime = function () {
+    function UpdateTime(game, timeout) {
+        _classCallCheck(this, UpdateTime);
+
+        if (timeout === undefined) {
+            timeout = false;
+        }
+
+        this.game = game;
+        this.isRunning = false;
+        this.setTimeOutMode = timeout;
+        this._isTimeOutMode = false;
+
+        var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+        for (var x = 0; x < vendors.length && !window.requestAnimationFrame; x++) {
+            window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+            window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'];
+        }
+
+        //callbacks
+        this._onLoopingCallback = null;
+        this._timeOutCallback = null;
+    }
+
+    _createClass(UpdateTime, [{
+        key: 'start',
+        value: function start() {
+
+            this.isRunning = true;
+
+            var self = this;
+
+            if (!window.requestAnimationFrame || this.setTimeOutMode) {
+                this._isTimeOutMode = true;
+
+                this._onLoopingCallback = function () {
+                    return self.updateTimeout();
+                };
+
+                this._timeOutCallback = window.setTimeout(this._onLoopingCallback, 0);
+            } else {
+
+                this._isTimeOutMode = false;
+
+                this._onLoopingCallback = function (time) {
+                    return self.updateRequestAnimationFrame(time);
+                };
+
+                this._timeOutCallback = window.requestAnimationFrame(this._onLoopingCallback, this.game.canvas);
+            }
+        }
+    }, {
+        key: 'updateRequestAnimationFrame',
+        value: function updateRequestAnimationFrame(time) {
+
+            this.game.update(time);
+            this._timeOutCallback = window.requestAnimationFrame(this._onLoopingCallback, this.game.canvas);
+        }
+    }, {
+        key: 'updateTimeout',
+        value: function updateTimeout() {
+
+            this.game.update(Date.now());
+            this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.time.timeOut_toCall);
+        }
+    }, {
+        key: 'stop',
+        value: function stop() {
+
+            if (this._isTimeOutMode) {
+                clearTimeout(this._timeOutCallback);
+            } else {
+                window.cancelAnimationFrame(this._timeOutCallback);
+            }
+
+            this.isRunning = false;
+        }
+    }]);
+
+    return UpdateTime;
+}();
+
+exports.default = UpdateTime;
 
 /***/ }),
 

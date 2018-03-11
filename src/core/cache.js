@@ -4,19 +4,17 @@
 * @class Cache
 * @constructor
 */
-scintilla.Cache = function(game) {
+export default class Cache {
 
-this.game = game;
-this._cache = {
-    images : {},
-    sounds : {}
-};
-
+constructor(game) {
+  this.game = game;
+  this._cache = {
+      images : {},
+      sounds : {}
+  }
 }
 
-scintilla.Cache.prototype = {
-
-  addImage : function (tag, url, data) {
+  addImage(tag, url, data) {
 
     if (this.tagExists('images',tag)) {
 
@@ -34,9 +32,9 @@ scintilla.Cache.prototype = {
 
     this._cache.images[tag] = img;
 
-  },
+  }
 
-  addSound : function(tag, url,data,webAudio) {
+  addSound(tag, url,data,webAudio) {
 
     var decoded = false;
 
@@ -56,9 +54,9 @@ scintilla.Cache.prototype = {
 
     this._cache.sounds[tag] = audio;
 
-  },
+  }
 
-  soundDecoded : function(tag, data) {
+  soundDecoded(tag, data) {
 
     var sound = this.getAssetInfo("sounds",tag);
 
@@ -66,24 +64,24 @@ scintilla.Cache.prototype = {
     sound.decoded = true;
     sound.isDecoding = false;
 
-  },
+  }
 
-  tagExists : function(cacheType, tag) {
+  tagExists(cacheType, tag) {
 
     if (this._cache[cacheType][tag])
       return true;
 
     return false;
 
-  },
+  }
 
-  removeTagAt : function(cacheType, tag) {
+  removeTagAt(cacheType, tag) {
 
     delete this._cache[cacheType][tag];
 
-  },
+  }
 
-  getAsset : function(cacheType, tag) { // return the cache container
+  getAsset(cacheType, tag) { // return the cache container
 
     if (this.tagExists(cacheType,tag)) {
 
@@ -96,9 +94,9 @@ scintilla.Cache.prototype = {
       return null;
     }
 
-  },
+  }
 
-  getAssetInfo : function(cacheType, tag) { // return the raw data
+  getAssetInfo(cacheType, tag) { // return the raw data
 
     if (this.tagExists(cacheType,tag)) {
 
@@ -112,9 +110,9 @@ scintilla.Cache.prototype = {
       return null;
     }
 
-  },
+  }
 
-  clear : function() {
+  clear() {
 
     //console.log(this._cache[property][tag]);
 

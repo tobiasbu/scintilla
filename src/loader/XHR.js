@@ -1,12 +1,11 @@
 
 
-scintilla.XHR = {
+export default (
+    class XHR {
 
-    createFileRequest : function(file, settings)
+    static createFileRequest(file, settings)
     {
-        var xhrSettings = scintilla.XHR.merge(settings, file.xhrSettings);
-
-
+        var xhrSettings = XHR.merge(settings, file.xhrSettings);
 
         var xmlHttpRequest = new XMLHttpRequest();
         xmlHttpRequest.open("GET", file.source, xhrSettings.async);
@@ -18,16 +17,12 @@ scintilla.XHR = {
         xmlHttpRequest.onerror = file.onError.bind(file);
         xmlHttpRequest.onprogress = file.onProgress.bind(file);
 
-        
-
         xmlHttpRequest.send();
 
-       
-
         return xmlHttpRequest;
-    },
+    }
 
-    createSettings : function(type, doAsync, timeout)
+    static createSettings(type, doAsync, timeout)
     {
         if (type === undefined) 
             type = '';
@@ -45,29 +40,29 @@ scintilla.XHR = {
         }
 
         return settings;
-    },
+    }
 
-    merge : function(a, b)
+    static merge(a, b)
     {
         var out = {};
 
         if (a === undefined)
-            out = this.createSettings(); // : Extend(global);
+            out = XHR.createSettings(); // : Extend(global);
         // else
             // do something cool
 
         if (b)
         {
-            for (var setting in b)
+            for (let setting in b)
             {
                 if (b[setting] !== undefined)
                     out[setting] = b[setting];
             }
         }
     
-    return out;
+        return out;
     }
 
 
 
-}
+})

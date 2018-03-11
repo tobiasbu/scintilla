@@ -1,45 +1,60 @@
 
 
-scintilla.Mouse = function(game) {
+export const MouseButton = {
+  LEFT_BUTTON : 0,
+  MIDDLE_BUTTON : 1,
+  RIGHT_BUTTON : 2,
+  WHEEL_UP : 3,
+  WHEEL_DOWN : 4
+  };
+  
+  export const MouseEvent = {
+  NONE : 0,
+  PRESS : 1,
+  PRESSED : 2,
+  RELEASE : 3
+  };
+  
 
-this.x = 0;
-this.y = 0;
-this.game = game;
-this.canvas = game.canvas;
-this.button = 0;
-this.wheelDelta = 0;
-this.active = true;
+export default class Mouse {
+  
+  constructor(game) {
 
-this._mouseButtons = [];
-this._mouseButtonsLocks = [];
-this._mouseButtonsLocksPressed = [];
-this._mouseDownDuration = [];
+    this.x = 0;
+    this.y = 0;
+    this.game = game;
+    this.canvas = game.canvas;
+    this.button = 0;
+    this.wheelDelta = 0;
+    this.active = true;
 
-//callbacks
-this._onMouseDown = null;
-this._onMouseMove = null;
+    this._mouseButtons = [];
+    this._mouseButtonsLocks = [];
+    this._mouseButtonsLocksPressed = [];
+    this._mouseDownDuration = [];
 
-this.reset();
+    //callbacks
+    this._onMouseDown = null;
+    this._onMouseMove = null;
 
-}
+    this.reset();
+  }
 
-scintilla.Mouse.prototype = {
-
-  reset : function() {
+  reset() {
 
     for (var i = 0; i < 3; i++){
 
 
             this._mouseButtons[i] = false;
-            this._mouseButtonsLocks[i] = scintilla.MouseEvent.NONE;
-            this._mouseButtonsLocksPressed[i] = scintilla.MouseEvent.NONE;
+            this._mouseButtonsLocks[i] = MouseEvent.NONE;
+            this._mouseButtonsLocksPressed[i] = MouseEvent.NONE;
             this._mouseDownDuration[i] = 0;
 
     }
 
-  },
+  }
 
-  init : function() {
+  init() {
 
 
     var self = this;
@@ -62,9 +77,9 @@ scintilla.Mouse.prototype = {
     this.canvas.addEventListener('mouseover', this._onMouseOver, true);
     this.canvas.addEventListener('mouseout', this._onMouseOut, true);
 
-  },
+  }
 
-  onMouseMove: function (event) {
+  onMouseMove(event) {
 
     if (!this.active)
       return;
@@ -78,9 +93,9 @@ scintilla.Mouse.prototype = {
     //this.x = event.clientX - rect.left;
     //this.y = event.clientY - rect.top;
 
-  },
+  }
 
-  onMouseDown : function(event) {
+  onMouseDown(event) {
 
     if (!this.active)
       return;
@@ -99,9 +114,9 @@ scintilla.Mouse.prototype = {
 
     event.preventDefault();
 
-  },
+  }
 
-  onMouseUp : function(event) {
+  onMouseUp(event) {
 
     if (!this.active)
       return;
@@ -115,9 +130,9 @@ scintilla.Mouse.prototype = {
     event.preventDefault();
 
 
-  },
+  }
 
-  pressed : function(button) {
+  pressed(button) {
 
     var buttonLock = false;
 
@@ -130,9 +145,9 @@ scintilla.Mouse.prototype = {
 
     return hit;
 
-  },
+  }
 
-  release : function(button) {
+  release(button) {
 
     var buttonLock = false;
 
@@ -149,9 +164,9 @@ scintilla.Mouse.prototype = {
 
   	return hit;
 
-  },
+  }
 
-  press : function(button) {
+  press(button) {
 
     var buttonLock = false;
 
@@ -166,9 +181,9 @@ scintilla.Mouse.prototype = {
     return hit;
 
 
-  },
+  }
 
-  update : function() {
+  update() {
 
     for (var i = 0; i < this._mouseButtons.length; i++) {
 
@@ -183,9 +198,9 @@ scintilla.Mouse.prototype = {
 
     }
 
-  },
+  }
 
-  posRelativeTo : function(object) {
+  posRelativeTo(object) {
 
     var vec2 = {x:0,y:0};
 
@@ -195,25 +210,8 @@ scintilla.Mouse.prototype = {
 
     return vec2;
 
-
   }
 
 
 }
 
-scintilla.Mouse.prototype.constructor = scintilla.Mouse;
-
-scintilla.MouseButton = {
-LEFT_BUTTON : 0,
-MIDDLE_BUTTON : 1,
-RIGHT_BUTTON : 2,
-WHEEL_UP : 3,
-WHEEL_DOWN : 4
-};
-
-scintilla.MouseEvent = {
-NONE : 0,
-PRESS : 1,
-PRESSED : 2,
-RELEASE : 3
-};

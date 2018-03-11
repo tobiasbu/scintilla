@@ -2,21 +2,20 @@
 
 
 // Map simple class
-scintilla.Map = function() 
-{
-  this._content = {};
-  this._size = 0;
-}
-
-scintilla.Map.prototype = {
-
+export default class Map {
+  
+  constructor() 
+  {
+    this._content = {};
+    this._size = 0;
+  }
 
   /* 
   Add or set value to the map
   key = keyName
   value = value
   */
-  set : function(key, value) {
+  set(key, value) {
 
     if (!this.has(key))
     {
@@ -27,9 +26,9 @@ scintilla.Map.prototype = {
     
     return this;
 
-  },
+  }
 
-  get : function(key) {
+  get(key) {
       if (this.has(key))
       {
         return this._content[key];
@@ -38,13 +37,13 @@ scintilla.Map.prototype = {
       {
         return null;
       }
-  },
+  }
 
-  has : function(key) {
+  has(key) {
     return (this._content.hasOwnProperty(key));
-  },
+  }
 
-  contains : function(value)
+  contains(value)
   {
     for (var key in this._content)
     {
@@ -56,14 +55,14 @@ scintilla.Map.prototype = {
     }
 
     return false;
-  },
+  }
 
-  keys : function()
+  keys()
   {
     return Object.keys(this._content);
-  },
+  }
 
-  values : function()
+  values()
   {
     var values = [];
     var content = this._content;
@@ -72,9 +71,9 @@ scintilla.Map.prototype = {
       values.push(entries[key]);
         
     return values;
-  },
+  }
 
-  remove : function(key) {
+  remove(key) {
 
     if (!this.has(key))
       return null;
@@ -84,9 +83,9 @@ scintilla.Map.prototype = {
     this._size--;
     return prop;
 
-  },
+  }
 
-  delete : function(key) {
+  delete(key) {
 
     if (!this.has(key))
       return false;
@@ -95,51 +94,42 @@ scintilla.Map.prototype = {
       this._size--;
 
       return true;
-  },
+  }
 
-  deleteAt : function(key) {
+  deleteAt(key) {
 
     //if (!this.hasTagInKey(key))
     //  return false;
       this._size--;
      delete this._content[key];
 
-  },
+  }
 
-  deleteByIndexedArray : function (array)
+  deleteByIndexedArray(array)
   {
     for (var i = 0; i < array.length; i++) {
       delete this._content[array[i]];
       this._size--;
     }
 
-  },
+  }
 
+  clear() {
 
-  clear : function() {
-
-    for (var property in this._content) {
-
+    for (var property in this._content) 
       delete this._content[property];
-      
-
-    }
+    
 
     this._size = 0;
 
-  },
+  }
 
-  size : function()
-  {
-    return this._size;
-  },
-
-  slowSize : function()
+  slowSize()
   {
     return Object.keys(_contents).length;
-  },
+  }
 
-  each : function(callback)
+  each(callback)
   {
     var content = this._content;
 
@@ -153,6 +143,7 @@ scintilla.Map.prototype = {
     return this;
   }
 
+  get size() {return this._size;}
+
 }
 
-scintilla.Map.prototype.constructor = scintilla.Map;

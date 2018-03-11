@@ -1,32 +1,29 @@
 
 
-scintilla.Set = function(elements) 
-{
-  this._content = [];
-  this._size = 0;
+export default class Set {
 
+    constructor(elements) 
+    {
+        this._content = [];
+        this._size = 0;
 
+        if (Array.isArray(elements))
+        {
+            for (var i = 0; i < elements.length; i++)
+                this.set(elements[i]);
+        }
 
-  if (Array.isArray(elements))
-  {
-      for (var i = 0; i < elements.length; i++)
-          this.set(elements[i]);
-  }
+    }
 
-}
-
-
-scintilla.Set.prototype = {
-
-    set : function(value)
+    set(value)
     {
         if (this._content.indexOf(value) === -1)
             this._content.push(value);
 
         return this;
-    },
+    }
 
-    at : function(value)
+    at(value)
     {
         var index = this._content.indexOf(value);
         if (index > -1)
@@ -35,14 +32,14 @@ scintilla.Set.prototype = {
         } else {
             return null;
         }
-    },
+    }
 
-    has : function(value)
+    has(value)
     {
         return (this._content.indexOf(value) > -1);
-    },
+    }
 
-    delete : function(value)
+    delete(value)
     {
         var idx = this._content.indexOf(value);
 
@@ -50,15 +47,15 @@ scintilla.Set.prototype = {
             this._content.splice(idx, 1);
 
         return this;
-    },
+    }
 
-    clear : function()
+    clear()
     {
         this._content.length = 0;
         return this;
-    },
+    }
 
-    each : function(callback, scope)
+    each(callback, scope)
     {
         var content = this._content.slice();
         var size = content.length;
@@ -82,24 +79,7 @@ scintilla.Set.prototype = {
       return this;
     }
 
+    get size () { return this._content.length; }
+    get length () { return this._content.length; }
 
 }
-
-Object.defineProperty(scintilla.Set.prototype, "size", {
-
-    get: function () {
-        return this._content.length;
-    }
-
-});
-
-Object.defineProperty(scintilla.Set.prototype, "length", {
-
-    get: function () {
-        return this._content.length;
-    }
-
-});
-
-scintilla.Set.prototype.constructor = scintilla.Set;
-

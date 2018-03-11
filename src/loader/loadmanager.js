@@ -1,58 +1,60 @@
 
-
+import { LOADER_STATE, AssetTypeHandler} from './loaderstate'
+import Set from '../structures/set'
+import XHR from './XHR'
+import Utils from '../utils/utils';
 
 // Class LoaderManager
-scintilla.LoadManager = function(game) {
+export default class LoadManager {
+  
+  constructor(game) {
 
-  this.game = game;
-  this.cache = game.cache;
+    this.game = game;
+    this.cache = game.cache;
 
-  this._filesQueue = new scintilla.Set();
-  this._successFiles = new scintilla.Set();
-  this._failedFiles = new scintilla.Set();
-  this._processedFiles = new scintilla.Set();
+    this._filesQueue = new Set();
+    this._successFiles = new Set();
+    this._failedFiles = new Set();
+    this._processedFiles = new Set();
 
-  this._filesQueueCount = 0;
-  this._loadedFilesCount = 0;
+    this._filesQueueCount = 0;
+    this._loadedFilesCount = 0;
 
-  this.isDownloading = false;
-  this._totalFiles = 0;
+    this.isDownloading = false;
+    this._totalFiles = 0;
 
-  var gameConfig = game.config.loader;
+    let gameConfig = game.config.loader;
 
-  this.xhr = scintilla.XHR.createSettings(
-    scintilla.Utils.getValue(config, 'responseType', gameConfig.responseType),
-    scintilla.Utils.getValue(config, 'async', gameConfig.async),
-    //scintilla.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
-    //scintilla.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
-    scintilla.Utils.getValue(config, 'timeout', gameConfig.timeout)
-);
+    this.xhr = XHR.createSettings(
+      Utils.getValue(config, 'responseType', gameConfig.responseType),
+      Utils.getValue(config, 'async', gameConfig.async),
+      //scintilla.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
+      //scintilla.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+      Utils.getValue(config, 'timeout', gameConfig.timeout)
+  );
 
 
-  this.progress = 0;
-  this.path = '';
-  this.baseURL = '';
-  this.state = LOADER_STATE.IDLE;
- 
+    this.progress = 0;
+    this.path = '';
+    this.baseURL = '';
+    this.state = LOADER_STATE.IDLE;
+  
 
-  AssetTypeHandler.inject(this);
+    AssetTypeHandler.inject(this);
 
-};
+  }
 
-scintilla.LoadManager.prototype = {
 
-  setPath : function(path)
-  {
+  setPath(path) {
     if (path !== '' && path.substr(-1) !== '/')
         path = path.concat('/');
 
     this.path = path;
 
     return this;
-  },
+  }
 
-  setBaseURL : function(baseUrl)
-  {
+  setBaseURL(baseUrl) {
     if (baseUrl !== '' && baseUrl.substr(-1) !== '/')
     {
       baseUrl = baseUrl.concat('/');
@@ -61,10 +63,9 @@ scintilla.LoadManager.prototype = {
     this.baseURL = baseUrl || '';
 
     return this;
-  },
+  }
 
-  addAsset : function(asset)
-  {
+  addAsset(asset) {
     if (!this.isOK())
         return -1;
 
@@ -73,9 +74,9 @@ scintilla.LoadManager.prototype = {
     this._filesQueueCount++;
     return asset;
 
-  },
+  }
 
-  reset : function() {
+  reset() {
 
     this.isDownloading = false;
     this._filesQueueCount = 0;
@@ -86,9 +87,9 @@ scintilla.LoadManager.prototype = {
     this.state = LOADER_STATE.IDLE;
 
 
-  },
+  }
 
-  start : function() {
+  start() {
 
     if (!this.isOK())
     {
@@ -115,7 +116,7 @@ scintilla.LoadManager.prototype = {
       this.processFileQueue();
     }
 
-  },
+  }
 
   /*end : function() {
 
@@ -139,9 +140,9 @@ scintilla.LoadManager.prototype = {
 
   },*/
 
-  processFileQueue : function() {
+  processFileQueue() {
 
-    var self = this;
+    let self = this;
 
     this._filesQueue.each(function(file) {
 
@@ -155,10 +156,9 @@ scintilla.LoadManager.prototype = {
 
     });
 
-  },
+  }
 
-  next : function(concludedFile, hasError)
-  {
+  next(concludedFile, hasError) {
       if (hasError)
           this._failedFiles.set(concludedFile);
       else 
@@ -179,10 +179,9 @@ scintilla.LoadManager.prototype = {
           this.loadFinished();
       }
 
-  },
+  }
 
-  loadFinished : function()
-  {
+  loadFinished() {
     if (this.state === LOADER_STATE.PROCESSING)
         return;
   
@@ -204,12 +203,11 @@ scintilla.LoadManager.prototype = {
       },this);
     }
    
-  },
+  }
 
 
-  processingUpdate : function(file)
-  {
-    ;
+  processingUpdate(file) {
+    
     if (file.state === LOADER_STATE.ERROR)
     {
        this._failedFiles.set(file);
@@ -218,10 +216,6 @@ scintilla.LoadManager.prototype = {
         {
             this.queue.delete(file.linkFile);
         }*/
-
-        
-        
-
         return this.deleteFromSuccessQueue(file);
     }
 
@@ -230,19 +224,17 @@ scintilla.LoadManager.prototype = {
 
     return this.deleteFromSuccessQueue(file);
 
+  }
 
-  },
-
-  deleteFromSuccessQueue : function (file) {
+  deleteFromSuccessQueue(file) {
     
       this._successFiles.delete(file);
 
       if (this._successFiles.size === 0 && this.state === LOADER_STATE.PROCESSING)
           this.processingDone();
-  },
+  }
 
-  processingDone : function()
-  {
+  processingDone() {
     console.log("done")
     this._successFiles.clear();
     this._filesQueue.clear();
@@ -284,30 +276,23 @@ scintilla.LoadManager.prototype = {
     this.game.scene.preloadComplete();
     console.log("asdasd");
 
-  },
+  }
 
-  isLoading : function()
-  {
+  isLoading() {
     return (this.state === LOADER_STATE.LOADING || this.state === LOADER_STATE.PROCESSING);
-  },
+  }
 
-  isOK : function()
-  {
+  isOK() {
     return (this.state === LOADER_STATE.IDLE || this.state === LOADER_STATE.DONE || this.state === LOADER_STATE.ERROR);
-  },
+  }
 
-  downloadIsDone : function() {
-
-
+  downloadIsDone() {
     return (this._filesQueue.length == (this._successCount + this._fileErrorCount));
+  }
 
-  },
-
-  updateProgress : function() {
+  updateProgress() {
 
     var progress = 0;
-
-
 
     if (this._filesQueueCount != 0)
     {
@@ -315,20 +300,15 @@ scintilla.LoadManager.prototype = {
     }
      //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
 
-
-
     this.progress = progress;
 
-  },
+  }
 
 
-  totalQueuedFiles: function () {
-
-        return this._filesQueueCount - this._successCount;
-
+  totalQueuedFiles() {
+    return this._filesQueueCount - this._successCount;
   }
 
 
 };
 
-scintilla.LoadManager.prototype.constructor = scintilla.LoadManager;

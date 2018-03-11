@@ -1,60 +1,59 @@
 
 
-scintilla.Time = function(game) {
+export default class Time {
 
-  this.game = game;
+  constructor(game) {
 
-  // START TIME
-  this.startTime = 0;
+    this.game = game;
 
-  // date now
-  this.time = 0;
+    // START TIME
+    this.startTime = 0;
 
-  this.currentTime = 0;
-  this.previousTime = 0;
+    // date now
+    this.time = 0;
 
-  this.elapsed = 0;
-  this.elapsed_mili = 0;
+    this.currentTime = 0;
+    this.previousTime = 0;
 
-  // FOR TIME OUT MODE
-  this.timeOut_toCall = 0;
-  this.timeOut_expected = 0;
+    this.elapsed = 0;
+    this.elapsed_mili = 0;
 
-  // FPS
-  this.fps = 60;
-  this.fpsDesired = 60;
-  this.timeStep_mili = 1 / this.fpsDesired;
-  this.timeStep = 1000 / this.fpsDesired;
+    // FOR TIME OUT MODE
+    this.timeOut_toCall = 0;
+    this.timeOut_expected = 0;
 
-  // lag
-  this.accumalator = 0;
-  this.accumulatorMax = this.timeStep * 10;
-  this.accumulatorDelta = this.timeStep;
+    // FPS
+    this.fps = 60;
+    this.fpsDesired = 60;
+    this.timeStep_mili = 1 / this.fpsDesired;
+    this.timeStep = 1000 / this.fpsDesired;
 
-  this.updateStart = 0;
-  this.updateLast = 0;
-  this.updateAverage = 0;
-  this.updateDelta = 0;
+    // lag
+    this.accumalator = 0;
+    this.accumulatorMax = this.timeStep * 10;
+    this.accumulatorDelta = this.timeStep;
 
-  this.deltaTime = 0;
+    this.updateStart = 0;
+    this.updateLast = 0;
+    this.updateAverage = 0;
+    this.updateDelta = 0;
+
+    this.deltaTime = 0;
+
+    this._lastFpsUpdate = 0;
+    this._framesThisSecond = 0;
+
+  }
 
 
-
-  this._lastFpsUpdate = 0;
-  this._framesThisSecond = 0;
-
-}
-
-scintilla.Time.prototype = {
-
-start : function() {
+start() {
 
   this.startTime = Date.now();
   this.time = Date.now();
 
-},
+}
 
-refresh: function() {
+refresh() {
 
   var previousDateNow = this.time;
 
@@ -67,9 +66,9 @@ refresh: function() {
  //this.elapsed = 0;
  //this._framesThisSecond = 0;
 
-},
+}
 
-update : function(timestamp) {
+update(timestamp) {
 
   // DATE NOW ----------------------------------
   var previousDateNow = this.time;
@@ -181,9 +180,9 @@ update : function(timestamp) {
             }
         }*/
 
-},
+}
 
-fpsUpdate : function(timestamp) {
+fpsUpdate(timestamp) {
 
   // METHOD 2
 
@@ -228,5 +227,3 @@ fpsUpdate : function(timestamp) {
 }
 
 }
-
-scintilla.Time.prototype.constructor = scintilla.Time;

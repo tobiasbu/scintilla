@@ -1,9 +1,12 @@
 
-scintilla.Injector = Class.extend(function() {
+export default class ListInjector {
 
-    this.list = {};
+    constructor()
+    {
+        this.list = {};
+    }
 
-    this.inject = function(toObj)
+    inject(toObj)
     {
         for (var key in this.list)
         {
@@ -11,14 +14,14 @@ scintilla.Injector = Class.extend(function() {
         }
     }
 
-    this.register = function(key, func)
+    register(key, func)
     {
         this.list[key] = func;
     }
 
-    this.destroy = function()
+    destroyfunction()
     {
         this.list = {};
     }
 
-});
+};
