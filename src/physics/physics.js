@@ -1,5 +1,5 @@
 
-Scintilla.Physics = Class.extend( function() {
+scintilla.Physics = Class.extend( function() {
 
 this.game = null;
 this.sat = null;
@@ -15,8 +15,8 @@ this.constructor = function(game) {
 
 this.init = function() {
 
-  this.sat = new Scintilla.SAT();
-  this.response = new Scintilla.SAT.Response();
+  this.sat = new scintilla.SAT();
+  this.response = new scintilla.SAT.Response();
 
 };
 
@@ -111,7 +111,7 @@ for (var i = 0; i < colliadables.length; i++) {
 }
 });
 
-Object.defineProperty(Scintilla.Physics.prototype, "length", {
+Object.defineProperty(scintilla.Physics.prototype, "length", {
 
     get: function() {
         return this.getColliadables().length;

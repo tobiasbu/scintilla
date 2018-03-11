@@ -2,15 +2,15 @@
 
 
 // Class LoaderManager
-Scintilla.LoadManager = function(game) {
+scintilla.LoadManager = function(game) {
 
   this.game = game;
   this.cache = game.cache;
 
-  this._filesQueue = new Scintilla.Set();
-  this._successFiles = new Scintilla.Set();
-  this._failedFiles = new Scintilla.Set();
-  this._processedFiles = new Scintilla.Set();
+  this._filesQueue = new scintilla.Set();
+  this._successFiles = new scintilla.Set();
+  this._failedFiles = new scintilla.Set();
+  this._processedFiles = new scintilla.Set();
 
   this._filesQueueCount = 0;
   this._loadedFilesCount = 0;
@@ -20,12 +20,12 @@ Scintilla.LoadManager = function(game) {
 
   var gameConfig = game.config.loader;
 
-  this.xhr = Scintilla.XHR.createSettings(
-    Scintilla.Utils.getValue(config, 'responseType', gameConfig.responseType),
-    Scintilla.Utils.getValue(config, 'async', gameConfig.async),
-    //Scintilla.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
-    //Scintilla.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
-    Scintilla.Utils.getValue(config, 'timeout', gameConfig.timeout)
+  this.xhr = scintilla.XHR.createSettings(
+    scintilla.Utils.getValue(config, 'responseType', gameConfig.responseType),
+    scintilla.Utils.getValue(config, 'async', gameConfig.async),
+    //scintilla.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
+    //scintilla.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+    scintilla.Utils.getValue(config, 'timeout', gameConfig.timeout)
 );
 
 
@@ -39,7 +39,7 @@ Scintilla.LoadManager = function(game) {
 
 };
 
-Scintilla.LoadManager.prototype = {
+scintilla.LoadManager.prototype = {
 
   setPath : function(path)
   {
@@ -331,4 +331,4 @@ Scintilla.LoadManager.prototype = {
 
 };
 
-Scintilla.LoadManager.prototype.constructor = Scintilla.LoadManager;
+scintilla.LoadManager.prototype.constructor = scintilla.LoadManager;

@@ -1,8 +1,8 @@
 
-Scintilla.textureCache = {};
-Scintilla.textureCacheID = 0;
+scintilla.textureCache = {};
+scintilla.textureCacheID = 0;
 
-Scintilla.Texture = function(source,scaleMode) {
+scintilla.Texture = function(source,scaleMode) {
 
 this.source = source;
 this.loaded = false;
@@ -26,13 +26,13 @@ this.isTiling = false;
 
 }
 
-Scintilla.Texture.prototype.constructor = Scintilla.Texture;
+scintilla.Texture.prototype.constructor = scintilla.Texture;
 
-Scintilla.Texture.createFromCanvas = function(canvas) {
+scintilla.Texture.createFromCanvas = function(canvas) {
 
   if (!canvas._id)
     {
-        canvas._id = 'canvas_' + Scintilla.textureCacheID++;
+        canvas._id = 'canvas_' + scintilla.textureCacheID++;
     }
 
   if (canvas.width === 0)
@@ -45,12 +45,12 @@ Scintilla.Texture.createFromCanvas = function(canvas) {
         canvas.height = 1;
   }
 
-  var texture = Scintilla.textureCache[canvas._id];
+  var texture = scintilla.textureCache[canvas._id];
 
   if (!texture)
   {
-      texture = new Scintilla.Texture(canvas);
-      Scintilla.textureCache[canvas._id] = texture;
+      texture = new scintilla.Texture(canvas);
+      scintilla.textureCache[canvas._id] = texture;
   }
 
     return texture;

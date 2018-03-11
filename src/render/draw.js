@@ -1,5 +1,5 @@
 
-Scintilla.Draw = function(game) {
+scintilla.Draw = function(game) {
 
 this.game = game;
 this.cache = game.cache;
@@ -7,7 +7,7 @@ this.context = game.context;
 
 }
 
-Scintilla.Draw.prototype = {
+scintilla.Draw.prototype = {
 
 font : function(fontname,size) {
 
@@ -105,4 +105,4 @@ if (color === undefined)
 
 }
 
-Scintilla.Draw.prototype.constructor = Scintilla.Draw;
+scintilla.Draw.prototype.constructor = scintilla.Draw;

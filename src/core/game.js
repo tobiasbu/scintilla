@@ -1,21 +1,25 @@
 
+import Config from './config';
+
 /**
 * Main class of engine. Holds all main data.
 * @class Game
 * @constructor
 */
-Scintilla.Game = function (config) {
+export default class Game {
 
   /**
   * @property {string|HTMLElement} parent - The Games DOM parent.
   * @default
   */
+ constructor()
+ {
   this.parent = 'body';
   this.width = 800;
   this.height = 600;
 
   // object
-  this.config = new Scintilla.Config(config);
+  this.config = new Config(config);
 
   // boolean
   this.systemInited = false;
@@ -52,41 +56,11 @@ Scintilla.Game = function (config) {
   this.context = null;
 
   this.parseConfiguration(this.config);
-  //parse config
- /* if (arguments.length === 1 && typeof arguments[0] === 'object')
-   {
 
-     this.parseConfiguration(arguments[0]);
+  this.init();
+ }
 
-   }
-   else
-   {
-       if (typeof width !== 'undefined')
-        this.width = width;
-
-       if (typeof height !== 'undefined')
-        this.height = height;
-
-      if (typeof timeOutMode !== 'undefined')
-        this.timeMode = timeOutMode;
-
-        if (typeof debugMode !== 'undefined')
-        this.debugMode = debugMode;
-   }*/
-
-
-   this.init();
-
-  return this;
-
-}
-
-
-Scintilla.Game.prototype = {
-
-
-
-  parseConfiguration : function(config) {
+  parseConfiguration(config) {
 
     //this.config = config;
 
@@ -111,48 +85,46 @@ Scintilla.Game.prototype = {
         this.parent = config['parent'];
     }
 
-  },
+  }
   /**
     * Initialize engine
     *
     * @method tobiJS.Game#init()
     * @protected
     */
-  init : function() {
+  init() {
 
     if (this.systemInited)
         return;
 
-
-
-    this.canvas = Scintilla.Canvas.create(this.parent,this.width,this.height);
+    this.canvas = scintilla.Canvas.create(this.parent,this.width,this.height);
     this.context = this.canvas.getContext("2d", { alpha: false });
 
-    this.cache = new Scintilla.Cache(this);
-    this.load = new Scintilla.LoadManager(this);
-    this.time = new Scintilla.Time(this);
-    this.universe = new Scintilla.Universe(this);
-    this.world = new Scintilla.World(this);
-    this.draw = new Scintilla.Draw(this);
-    this.render = new Scintilla.Render(this, this.canvas, this.context);
-    this.scene = new Scintilla.SceneManager(this);
-    this.input = new Scintilla.Input(this);
-    this.instance = new Scintilla.Creator(this,this.world);
-    this.component = new Scintilla.GameComponents(this);
-    this.animationCache = new Scintilla.AnimationCache(this);
-    this.sound = new Scintilla.SoundManager(this);
-    this.pool = new Scintilla.Pool(this);
-    this.physics = new Scintilla.Physics(this);
+    this.cache = new scintilla.Cache(this);
+    this.load = new scintilla.LoadManager(this);
+    this.time = new scintilla.Time(this);
+    this.universe = new scintilla.Universe(this);
+    this.world = new scintilla.World(this);
+    this.draw = new scintilla.Draw(this);
+    this.render = new scintilla.Render(this, this.canvas, this.context);
+    this.scene = new scintilla.SceneManager(this);
+    this.input = new scintilla.Input(this);
+    this.instance = new scintilla.Creator(this,this.world);
+    this.component = new scintilla.GameComponents(this);
+    this.animationCache = new scintilla.AnimationCache(this);
+    this.sound = new scintilla.SoundManager(this);
+    this.pool = new scintilla.Pool(this);
+    this.physics = new scintilla.Physics(this);
 
     if (this.debugMode)
-      this.debug = new Scintilla.Debug(this);
+      this.debug = new scintilla.Debug(this);
 
     this.time.start();
     this.input.init();
     this.sound.start();
     this.world.start();
 
-    this.updateGameMethod = new Scintilla.UpdateGame(this,this.timeMode);
+    this.updateGameMethod = new scintilla.UpdateGame(this,this.timeMode);
     this.updateGameMethod.start();
 
 
@@ -161,9 +133,9 @@ Scintilla.Game.prototype = {
     this.isRunning = true;
 
 
-    console.log("tobiJS Created!");
+    console.log("scintilla started!");
 
-  },
+  }
   
   /**
     * core game loop
@@ -171,7 +143,7 @@ Scintilla.Game.prototype = {
     * @method tobiJS.Game#update()
     * @protected
     */
-  update : function(time) {
+  update(time) {
 
     if (this.systemInited) {
 
@@ -230,29 +202,9 @@ Scintilla.Game.prototype = {
 
 
     }
+  }
 
-      //GI.context.fillRect(0, 0, GI.current_room.width, GI.current_room.height);
-
-        /*var instances = this.current_scene.instances;
-
-        //
-
-        instances.forEach( function(instance, value) {
-
-            instance.draw();
-            //console.log("asdasd");
-
-
-        })*/
-
-
-
-
-
-
-  },
-
-  logic : function(timeStep) {
+  logic(timeStep) {
 
     this.scene.preUpdate();
     this.scene.update(timeStep);
@@ -269,9 +221,9 @@ Scintilla.Game.prototype = {
     this.universe._updateTransform();
 
 
-  },
+  }
 
-  destroy : function() {
+  destroy() {
 
     this.updateGameMethod.destroy();
     this.physics.destroy();
@@ -297,11 +249,11 @@ Scintilla.Game.prototype = {
     this.updateGameMethod = null;
 
 
-  },
+  }
 
 }
 
-Scintilla.Game.prototype.constructor = Scintilla.Game;
+//scintilla.Game.prototype.constructor = scintilla.Game;
 
 
-module.exports = Scintilla.Game;
+module.exports = Game;

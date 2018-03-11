@@ -1,5 +1,5 @@
 
-Scintilla.AnimationControl = function(game) {
+scintilla.AnimationControl = function(game) {
 
 this.game = game;
 this.animations = {};
@@ -18,13 +18,13 @@ this.frameSpeed = 1; // frame rate 1 / 60
 
 }
 
-Scintilla.AnimationControl.prototype = {
+scintilla.AnimationControl.prototype = {
 
   add : function(name, image) {
 
 
 
-    return this.animations[name] = new Scintilla.Animation(name,image);
+    return this.animations[name] = new scintilla.Animation(name,image);
 
   },
 

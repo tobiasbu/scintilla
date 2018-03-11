@@ -4,7 +4,7 @@
 * @class Image
 * @constructor
 */
-Scintilla.Image = function(source) {
+scintilla.Image = function(source) {
 
   this.width = 100;
   this.height = 100;
@@ -27,21 +27,21 @@ Scintilla.Image = function(source) {
     return this;
 }
 
-Scintilla.Image.prototype = {
+scintilla.Image.prototype = {
 
 
 
 }
 
-Scintilla.Image.prototype.constructor = Scintilla.Image;
+scintilla.Image.prototype.constructor = scintilla.Image;
 
-Scintilla.Image.load = function(path) {
+scintilla.Image.load = function(path) {
 
 
 
 
 }
 
-Scintilla.Image.onload = function(image) {
+scintilla.Image.onload = function(image) {
 
 }

@@ -1,5 +1,5 @@
 
-Scintilla.Body = Class.extend(function() {
+scintilla.Body = Class.extend(function() {
 
 var _gameObject = null;
 

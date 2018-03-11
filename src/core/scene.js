@@ -1,6 +1,6 @@
 
 
-Scintilla.Scene = function(game) {
+scintilla.Scene = function(game) {
 
   var myGame = null;
 
@@ -28,7 +28,7 @@ Scintilla.Scene = function(game) {
 
 };
 
-Scintilla.Scene.prototype = {
+scintilla.Scene.prototype = {
 
 
 /*preload : function() {},
@@ -69,7 +69,7 @@ instanceDestroy : function(gameObject) {
    var cl = false;
 
    if (arguments.length == 0)
-     obj = new Scintilla.GameObject();
+     obj = new scintilla.GameObject();
    else {
 
      if (clone === undefined)
@@ -97,9 +97,9 @@ instanceDestroy : function(gameObject) {
 
 }
 
-Scintilla.Scene.prototype.constructor = Scintilla.Scene;
+scintilla.Scene.prototype.constructor = scintilla.Scene;
 
-Scintilla.Scene.prototype.setBounds = function(x,y,width,height) {
+scintilla.Scene.prototype.setBounds = function(x,y,width,height) {
 
 this.x = x;
 this.y = y;

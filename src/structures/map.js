@@ -2,13 +2,13 @@
 
 
 // Map simple class
-Scintilla.Map = function() 
+scintilla.Map = function() 
 {
   this._content = {};
   this._size = 0;
 }
 
-Scintilla.Map.prototype = {
+scintilla.Map.prototype = {
 
 
   /* 
@@ -155,4 +155,4 @@ Scintilla.Map.prototype = {
 
 }
 
-Scintilla.Map.prototype.constructor = Scintilla.Map;
+scintilla.Map.prototype.constructor = scintilla.Map;

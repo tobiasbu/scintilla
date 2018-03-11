@@ -1,12 +1,12 @@
 
-Scintilla.AnimationCache = function(game) {
+scintilla.AnimationCache = function(game) {
 
 this.game = game;
-//this.map = new Scintilla.Multimap();
+//this.map = new scintilla.Multimap();
 
 }
 
-Scintilla.AnimationCache.prototype = {
+scintilla.AnimationCache.prototype = {
 
 add : function(spritesheet,container,name) {
 
@@ -17,7 +17,7 @@ add : function(spritesheet,container,name) {
     return null;
   }
 
-  var animation = new Scintilla.Animation(sprite);
+  var animation = new scintilla.Animation(sprite);
 
 
 

@@ -1,27 +1,27 @@
 
-Scintilla.File = Class.extend(function() {
+scintilla.File = Class.extend(function() {
 
     this.constructor = function(config) {
 
-        this.type = Scintilla.Utils.getValue(config, 'type', null);
-        this.tag = Scintilla.Utils.getValue(config, 'tag', null);
+        this.type = scintilla.Utils.getValue(config, 'type', null);
+        this.tag = scintilla.Utils.getValue(config, 'tag', null);
 
         if (this.type == null || this.tag == null)
         {
             throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
         }
 
-        this.url = Scintilla.Utils.getValue(config, 'url', null);
+        this.url = scintilla.Utils.getValue(config, 'url', null);
 
         if (this.url === undefined)
-            this.url = Scintilla.Utils.getValue(config, 'path', '') + this.tag + '.' + GetFastValue(config, 'ext', '');
+            this.url = scintilla.Utils.getValue(config, 'path', '') + this.tag + '.' + GetFastValue(config, 'ext', '');
         else
-            this.url = Scintilla.Utils.getValue(config, 'path', '').concat(this.url);
+            this.url = scintilla.Utils.getValue(config, 'path', '').concat(this.url);
 
-        this.xhrSettings = Scintilla.XHR.createSettings(Scintilla.Utils.getValue(config, 'responseType', undefined));
+        this.xhrSettings = scintilla.XHR.createSettings(scintilla.Utils.getValue(config, 'responseType', undefined));
         
-        if (Scintilla.Utils.getValue(config, 'xhrSettings', false))
-            this.xhrSettings = Scintilla.XHR.merge(this.xhrSettings, Scintilla.Utils.getValue(config, 'xhrSettings', {}));
+        if (scintilla.Utils.getValue(config, 'xhrSettings', false))
+            this.xhrSettings = scintilla.XHR.merge(this.xhrSettings, scintilla.Utils.getValue(config, 'xhrSettings', {}));
 
         
         console.log(this.xhrSettings);
@@ -34,7 +34,7 @@ Scintilla.File = Class.extend(function() {
         this.data = undefined;
         this.source = null;
         this.xhrRequest = null;
-        this.config = Scintilla.Utils.getValue(config,'config',{});
+        this.config = scintilla.Utils.getValue(config,'config',{});
         this.crossOrigin = undefined;
 
         // callbacks
@@ -60,7 +60,7 @@ Scintilla.File = Class.extend(function() {
         {
            
 
-            this.source = Scintilla.Utils.getURL(this.url, gameLoader.baseURL);
+            this.source = scintilla.Utils.getURL(this.url, gameLoader.baseURL);
 
             
             if (this.source.indexOf('data:') === 0 || this.source == null)
@@ -69,7 +69,7 @@ Scintilla.File = Class.extend(function() {
             }
             else
             {
-                this.xhrRequest = Scintilla.XHR.createFileRequest(this, gameLoader.xhr);
+                this.xhrRequest = scintilla.XHR.createFileRequest(this, gameLoader.xhr);
             }
         }
 

@@ -1,17 +1,17 @@
 
 
-Scintilla.Render = function(game, canvas, context) {
+scintilla.Render = function(game, canvas, context) {
 
     this.game = game;
     this.canvas = canvas;
     this.context = context;
     this.__enable = true;
     this.__renderLayers = [];
-    this.__renderLayersMap = new Scintilla.Map();
+    this.__renderLayersMap = new scintilla.Map();
     this.add('default');
 }
 
-Scintilla.Render.prototype = {
+scintilla.Render.prototype = {
 
     add : function(name)
     {
@@ -21,7 +21,7 @@ Scintilla.Render.prototype = {
         }
        
         this.__renderLayersMap.set(name, this.__renderLayers.length);
-        this.__renderLayers.push(new Scintilla.RenderLayer(game, name));
+        this.__renderLayers.push(new scintilla.RenderLayer(game, name));
     },
 
     remove : function(name)
@@ -83,5 +83,5 @@ Scintilla.Render.prototype = {
 
 }
 
-Scintilla.Render.prototype.constructor = Scintilla.Render;
+scintilla.Render.prototype.constructor = scintilla.Render;
 

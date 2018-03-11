@@ -1,6 +1,6 @@
 
 
-Scintilla.CanvasInterpolation = {
+scintilla.CanvasInterpolation = {
 
     crisp : function(canvas)
     {

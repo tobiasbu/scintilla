@@ -1,14 +1,14 @@
 
 // simple helper class -
 // game instances creator
-Scintilla.Creator = function(game, root) {
+scintilla.Creator = function(game, root) {
 
 this.game = game;
 this.root = root;
 
 }
 
-Scintilla.Creator.prototype = {
+scintilla.Creator.prototype = {
 
 addFromPool : function(containerName, node) {
 
@@ -36,7 +36,7 @@ add : function(gameObject, node) {
 
   if (node === undefined || node === null) { node = this.root; }
 
-  if (Scintilla.Utils.isFunction(gameObject)) {
+  if (scintilla.Utils.isFunction(gameObject)) {
     this.create(gameObject);
     return;
   }
@@ -56,7 +56,7 @@ create : function(gameObject, x, y, node) {
 
   var obj = gameObject;
 
-  if (Scintilla.Utils.isFunction(obj)) {
+  if (scintilla.Utils.isFunction(obj)) {
 
     obj = new gameObject();
 

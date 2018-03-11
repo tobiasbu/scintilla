@@ -1,10 +1,10 @@
 
 
-Scintilla.XHR = {
+scintilla.XHR = {
 
     createFileRequest : function(file, settings)
     {
-        var xhrSettings = Scintilla.XHR.merge(settings, file.xhrSettings);
+        var xhrSettings = scintilla.XHR.merge(settings, file.xhrSettings);
 
 
 

@@ -1,6 +1,6 @@
 
 
-Scintilla.Input = function(game) {
+scintilla.Input = function(game) {
 
 this.game = game;
 this.mouse = null;
@@ -8,13 +8,13 @@ this.keyboard = null;
 
 }
 
-Scintilla.Input.prototype = {
+scintilla.Input.prototype = {
 
 init : function() {
 
   //this.mouse = new tobiJS.Mouse(this.game);
-  this.keyboard = new Scintilla.Keyboard(this.game);
-  this.mouse = new Scintilla.Mouse(this.game);
+  this.keyboard = new scintilla.Keyboard(this.game);
+  this.mouse = new scintilla.Mouse(this.game);
   this.keyboard.init();
   this.mouse.init();
 
@@ -36,4 +36,4 @@ reset : function()
 
 }
 
-Scintilla.Input.prototype.constructor = Scintilla.Input;
+scintilla.Input.prototype.constructor = scintilla.Input;

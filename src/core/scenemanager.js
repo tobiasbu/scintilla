@@ -1,8 +1,8 @@
 
-Scintilla.SceneManager = function(game) {
+scintilla.SceneManager = function(game) {
 
 this.game = game;
-this._scenes = new Scintilla.Map();
+this._scenes = new scintilla.Map();
 
 this.current_scene_name = '';
 this.change_scene = null;
@@ -23,13 +23,13 @@ this.onDestroyCallback = null;
 
 }
 
-Scintilla.SceneManager.prototype = {
+scintilla.SceneManager.prototype = {
 
 add : function (sceneName,scene) {
 
   var newScene;
 
-  if (Scintilla.Scene.prototype.isPrototypeOf(scene)) {
+  if (scintilla.Scene.prototype.isPrototypeOf(scene)) {
     newScene = scene;
     newScene.game = this.game;
   } else
@@ -50,7 +50,7 @@ new : function(sceneName)
     return null;
   }
   
-  var newScene = new Scintilla.Scene(this.game);
+  var newScene = new scintilla.Scene(this.game);
   this._scenes.set(sceneName,newScene);
 
   return newScene;
@@ -253,4 +253,4 @@ preUpdate : function() {
 
 }
 
-Scintilla.SceneManager.prototype.constructor = Scintilla.SceneManager;
+scintilla.SceneManager.prototype.constructor = scintilla.SceneManager;

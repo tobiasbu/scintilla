@@ -4,7 +4,7 @@
 * @class Rect
 * @constructor
 */
-Scintilla.Rect = function(x,y,width,height) {
+scintilla.Rect = function(x,y,width,height) {
 
   x = x || 0;
   y = y || 0;
@@ -18,17 +18,17 @@ Scintilla.Rect = function(x,y,width,height) {
 }
 
 
-Scintilla.Rect.prototype = {
+scintilla.Rect.prototype = {
 
   intersects : function(rect) {
 
-      return Scintilla.Rect.intersects(this, rect);
+      return scintilla.Rect.intersects(this, rect);
 
   },
 
   contains : function(x,y) {
 
-    return Scintilla.Rect.contains(this,x,y);
+    return scintilla.Rect.contains(this,x,y);
 
   },
 
@@ -43,9 +43,9 @@ Scintilla.Rect.prototype = {
 
 };
 
-Scintilla.Rect.prototype.constructor = Scintilla.Rect;
+scintilla.Rect.prototype.constructor = scintilla.Rect;
 
-Scintilla.Rect.intersects = function(rect1, rect2) {
+scintilla.Rect.intersects = function(rect1, rect2) {
 
   if (rect1.width <= 0 || rect1.height <= 0 || rect2.width <= 0 || rect2.height <= 0)
     return false;
@@ -56,7 +56,7 @@ Scintilla.Rect.intersects = function(rect1, rect2) {
              rect1.y + rect1.height < rect2.y);
 };
 
-Scintilla.Rect.contains = function(rect, x, y) {
+scintilla.Rect.contains = function(rect, x, y) {
 
   if (rect.width <= 0 && rect.height <= 0 )
     return false;
@@ -68,11 +68,11 @@ Scintilla.Rect.contains = function(rect, x, y) {
 
 };
 
-Scintilla.Rect.intersectionArea = function(rect1,rect2) {
+scintilla.Rect.intersectionArea = function(rect1,rect2) {
 
-    var out = new Scintilla.Rect();
+    var out = new scintilla.Rect();
 
-    if (Scintilla.Rect.intersects(rect1,rect2)) {
+    if (scintilla.Rect.intersects(rect1,rect2)) {
 
        out.y = Math.max(a.y, b.y);
        out.x = Math.max(a.x, b.x);
@@ -85,7 +85,7 @@ Scintilla.Rect.intersectionArea = function(rect1,rect2) {
 
 }
 
-Scintilla.Rect.centerPoint = function() {
+scintilla.Rect.centerPoint = function() {
 
   var vec2 = {};
   vec.x = this.x + this.width / 2;

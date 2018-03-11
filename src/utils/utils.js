@@ -1,11 +1,11 @@
 
-Scintilla.Utils = {
+class Utils {
 
-  isFunction : function(obj) {
+    isFunction(obj) {
     return !!(obj && obj.constructor && obj.call && obj.apply);
-  },
+  }
 
-  getValue : function(obj, key, defaultValue)
+  getValue(obj, key, defaultValue)
   {
     var type = typeof(obj);
 
@@ -16,10 +16,10 @@ Scintilla.Utils = {
     else
         return defaultValue;
 
-  },
+  }
 
   // Get value in complex object
-  getPropertyValue : function (source, key, defaultValue)
+  getPropertyValue(source, key, defaultValue)
     {
         if (!source || typeof source === 'number')
             return defaultValue;
@@ -51,14 +51,14 @@ Scintilla.Utils = {
         {
             return defaultValue;
         }
-    },
+    }
 
-  getFileExtension : function(filename)
+  getFileExtension(filename)
   {
     return filename.substring(filename.lastIndexOf('.')+1, filename.length) || "";
-  },
+  }
 
-  getURL : function(url, baseURL)
+  getURL(url, baseURL)
   {
     if (!url)
         return null;
@@ -71,3 +71,5 @@ Scintilla.Utils = {
   }
 
 };
+
+export default new Utils();

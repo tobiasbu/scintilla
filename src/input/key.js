@@ -1,6 +1,6 @@
 
 
-Scintilla.Key = function(keycode, game) {
+scintilla.Key = function(keycode, game) {
 
     this.game = game;
     this.keyCode = keycode; 
@@ -10,7 +10,7 @@ Scintilla.Key = function(keycode, game) {
     this.press = false;
     this.release = false;
 
-    this._event = Scintilla.KeyEvent.NONE;
+    this._event = scintilla.KeyEvent.NONE;
 
     this.pressTime = 0;
     this.pressDuration = -2500;
@@ -19,7 +19,7 @@ Scintilla.Key = function(keycode, game) {
 
 }
 
-Scintilla.Key.prototype = {
+scintilla.Key.prototype = {
 
     onKeyDown: function()
     {
@@ -83,23 +83,23 @@ Scintilla.Key.prototype = {
         {
             if (this.pressDuration == 0)
             {
-                this._event = Scintilla.KeyEvent.PRESSED;
+                this._event = scintilla.KeyEvent.PRESSED;
             }
 
         } else {
 
             if (this.releaseDuration == 0)
             {
-                this._event = Scintilla.KeyEvent.RELEASED;
+                this._event = scintilla.KeyEvent.RELEASED;
             } else {
-                this._event = Scintilla.KeyEvent.IDLE;
+                this._event = scintilla.KeyEvent.IDLE;
             }
 
         }
 
-        if (this._event == Scintilla.KeyEvent.IDLE)
+        if (this._event == scintilla.KeyEvent.IDLE)
         {
-            this._event = Scintilla.KeyEvent.NONE;
+            this._event = scintilla.KeyEvent.NONE;
         }
         
     },
@@ -127,7 +127,7 @@ Scintilla.Key.prototype = {
     reset: function()
     {   
         this.status = false;
-        this._event = Scintilla.KeyEvent.NONE;
+        this._event = scintilla.KeyEvent.NONE;
         this.press = false;
         this.release = false;
     
@@ -138,7 +138,7 @@ Scintilla.Key.prototype = {
     }
 };
 
-Object.defineProperty(Scintilla.Key.prototype, "enabled", {
+Object.defineProperty(scintilla.Key.prototype, "enabled", {
 
     get: function () {
         return this._enabled;
@@ -159,9 +159,9 @@ Object.defineProperty(Scintilla.Key.prototype, "enabled", {
 
 });
 
-Scintilla.Key.prototype.constructor = Scintilla.Key;
+scintilla.Key.prototype.constructor = scintilla.Key;
 
-Scintilla.KeyEvent = {
+scintilla.KeyEvent = {
     NONE : -1,
     IDLE: 0,
     PRESSED : 1,

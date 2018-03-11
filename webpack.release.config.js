@@ -7,7 +7,7 @@ module.exports = {
     context: `${__dirname}/src/`,
 
     entry: {
-        scintilla : './Scintilla.js'
+        estest : './test.js'
     },
 
     output: {
@@ -15,9 +15,8 @@ module.exports = {
         filename: '[name].js',
         library: 'estest',
         libraryTarget: 'umd',
-        sourceMapFilename: '[file].map',
-        devtoolModuleFilenameTemplate: "webpack:///[resource-path]", // string
-        devtoolFallbackModuleFilenameTemplate: "webpack:///[resource-path]?[hash]", // string
+        //devtoolModuleFilenameTemplate: "webpack:///[resource-path]", // string
+        //devtoolFallbackModuleFilenameTemplate: "webpack:///[resource-path]?[hash]", // string
         umdNamedDefine: false,
     },
 
@@ -27,7 +26,7 @@ module.exports = {
         rules: [
           // rules for modules (configure loaders, parser options, etc.)
           {
-            test: /\.jsx?$/,
+            test: /\.js?$/,
             exclude: /(node_modules|bower_components)/,
             loader: "babel-loader",
             options: {

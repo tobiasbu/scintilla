@@ -1,20 +1,20 @@
 
 
-Scintilla.ShapeType = {
+scintilla.ShapeType = {
 Triangle : 0,
 Rectangle : 1,
 Polygon : 2,
 Circle : 3
 }
 
-Scintilla.Polygon = Class.extend(function() {
+scintilla.Polygon = Class.extend(function() {
 
 var _points = null;
 var _normals = null;
 var _edges = null;
 var type = null;
 var _area = false;
-this.centroid = new Scintilla.Vector();
+this.centroid = new scintilla.Vector();
 this.area = 0;
 
 this.constructor = function(points) {
@@ -83,10 +83,10 @@ this._recalc = function() {
 
     var p1 = points[i];
     var p2 = i < len - 1 ? points[i + 1] : points[0];
-    var e = new Scintilla.Vector().copy(p2).sub(p1);
+    var e = new scintilla.Vector().copy(p2).sub(p1);
     //e.copy(points[(i + 1) % len]).sub(points[i]);
 
-    var n = new Scintilla.Vector().copy(e).perp().normalize();
+    var n = new scintilla.Vector().copy(e).perp().normalize();
 
     if (!_area) {
       a = p1.x*p2.y - p2.x*p1.y;
@@ -115,27 +115,27 @@ this._recalc = function() {
 
 });
 
-Scintilla.Polygon.makeTriangle = function(width,height) {
+scintilla.Polygon.makeTriangle = function(width,height) {
 
   if (height === undefined) height = width;
 
- return new Scintilla.Polygon([
-   new Scintilla.Vector(-width/2,height/2),
-   new Scintilla.Vector(0,-height/2),
-   new Scintilla.Vector(width/2,height/2),
+ return new scintilla.Polygon([
+   new scintilla.Vector(-width/2,height/2),
+   new scintilla.Vector(0,-height/2),
+   new scintilla.Vector(width/2,height/2),
  ]);
 
 };
 
-Scintilla.Polygon.makeRectangle = function(width,height) {
+scintilla.Polygon.makeRectangle = function(width,height) {
 
   if (height === undefined) height = width;
 
- return new Scintilla.Polygon([
-   new Scintilla.Vector(-width/2,-height/2),
-   new Scintilla.Vector(width/2,-height/2),
-   new Scintilla.Vector(width/2,height/2),
-   new Scintilla.Vector(-width/2,height/2)
+ return new scintilla.Polygon([
+   new scintilla.Vector(-width/2,-height/2),
+   new scintilla.Vector(width/2,-height/2),
+   new scintilla.Vector(width/2,height/2),
+   new scintilla.Vector(-width/2,height/2)
  ]);
 
 }

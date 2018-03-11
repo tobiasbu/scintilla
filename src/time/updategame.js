@@ -1,6 +1,6 @@
 
 
-Scintilla.UpdateGame = function(game, timeout) {
+scintilla.UpdateGame = function(game, timeout) {
 
   if (timeout === undefined) { timeout = false; }
 
@@ -29,7 +29,7 @@ this._timeOutCallback = null;
 
 }
 
-Scintilla.UpdateGame.prototype = {
+scintilla.UpdateGame.prototype = {
 
 start : function() {
 

@@ -159,7 +159,7 @@
         "value" : extend
     });
 
-    Scintilla.Class = Jay;
+    scintilla.Class = Jay;
 
 })();
 
@@ -178,7 +178,7 @@
 
 
 /*
-Scintilla._extend = function(dest,source) {
+scintilla._extend = function(dest,source) {
     if(!source) { return dest; }
     for (var prop in source) {
       dest[prop] = source[prop];
@@ -196,15 +196,15 @@ Scintilla._extend = function(dest,source) {
   /*
 
   // The base Class implementation (does nothing)
-  Scintilla.Class = function() {};
+  scintilla.Class = function() {};
 
   // Check if a class is 'instance of'
-  Scintilla.Class.prototype.is = function(className) {
+  scintilla.Class.prototype.is = function(className) {
       return this.className === className;
   }
 
   // Create a new Class that inherits from this class
-  Scintilla.Class.extend = function(className, prop, classMethods) {
+  scintilla.Class.extend = function(className, prop, classMethods) {
 
     var _super = this.prototype, self = this;
 
@@ -250,14 +250,14 @@ Scintilla._extend = function(dest,source) {
     Class.prototype = prototype;
 
     // Enforce the constructor to be what we expect
-    Class.prototype.constructor = Scintilla.Class;
+    Class.prototype.constructor = scintilla.Class;
 
     // And make this class extendable
-    Scintilla.Class.extend = Scintilla.Class.extend;//arguments.callee;
+    scintilla.Class.extend = scintilla.Class.extend;//arguments.callee;
 
     // If there are class-level Methods, add them to the class
     if(classMethods) {
-        Scintilla._extend(Class,classMethods);
+        scintilla._extend(Class,classMethods);
     }
 
     if(className) {

@@ -1,8 +1,8 @@
 
-Scintilla.Transform = Class.extend(function(){
+scintilla.Transform = Class.extend(function(){
 
 // private:
-var _cosSin = new Scintilla.Vector(0,0);
+var _cosSin = new scintilla.Vector(0,0);
 var _oldRotation = -2;
 
 // public:
@@ -12,23 +12,23 @@ this.constructor = function() {
 
   this.rotation = 0;
 
-  this.position = new Scintilla.Vector(0,0);
-  this.scale = new Scintilla.Vector(1,1);
+  this.position = new scintilla.Vector(0,0);
+  this.scale = new scintilla.Vector(1,1);
   this.angle = 0;
 
-  this.matrix = new Scintilla.Matrix();
-  this.worldPosition = new Scintilla.Vector(0,0);
-  this.worldScale =  new Scintilla.Vector(1,1);
+  this.matrix = new scintilla.Matrix();
+  this.worldPosition = new scintilla.Vector(0,0);
+  this.worldScale =  new scintilla.Vector(1,1);
   this.worldRotation = 0;
 
 
-  this.origin = new Scintilla.Vector(0,0);
-  this.bounds = new Scintilla.BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
-  this.globalBounds = new Scintilla.BoundingBox(0,0,1,1); // defined by render
+  this.origin = new scintilla.Vector(0,0);
+  this.bounds = new scintilla.BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
+  this.globalBounds = new scintilla.BoundingBox(0,0,1,1); // defined by render
 
   this.rotation = 0; // radians
 
-  //this._cosSin = new Scintilla.Vector(0,0);
+  //this._cosSin = new scintilla.Vector(0,0);
 
 }
 
@@ -38,9 +38,9 @@ var a, b, c, d, x, y;
 var wt = this.matrix;
 var pt = this.parent.matrix;
 
-  this.rotation = this.angle * Scintilla.Math.degToRad;
+  this.rotation = this.angle * scintilla.Math.degToRad;
 
-  if (this.rotation % Scintilla.Math.PI2)
+  if (this.rotation % scintilla.Math.PI2)
   {
 
     if (this.rotation !== this._oldRotation)
@@ -133,9 +133,9 @@ var pt = this.parent.matrix;
 
 });
 
-//Scintilla.Transform.prototype.constructor = Scintilla.Transform;
+//scintilla.Transform.prototype.constructor = scintilla.Transform;
 
-/*Scintilla.Transform.prototype._newTransform = function() {
+/*scintilla.Transform.prototype._newTransform = function() {
 
 
 
@@ -180,4 +180,4 @@ var pt = this.parent.matrix;
 
 
 
-//Scintilla.Transform.prototype.updateTransform = Scintilla.Transform.prototype._updateTransform;
+//scintilla.Transform.prototype.updateTransform = scintilla.Transform.prototype._updateTransform;

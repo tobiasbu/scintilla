@@ -1,13 +1,13 @@
 
 
 
-Scintilla.Sprite = Scintilla.Renderable.extend(function() {
+scintilla.Sprite = scintilla.Renderable.extend(function() {
 
 this.constructor = function(source) {
 
   this.super();
 
-  this.type = Scintilla.RenderType.Sprite;
+  this.type = scintilla.RenderType.Sprite;
   this.source = source;
 
   if (source != null)

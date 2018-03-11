@@ -1,6 +1,6 @@
 
 
-Scintilla.Set = function(elements) 
+scintilla.Set = function(elements) 
 {
   this._content = [];
   this._size = 0;
@@ -16,7 +16,7 @@ Scintilla.Set = function(elements)
 }
 
 
-Scintilla.Set.prototype = {
+scintilla.Set.prototype = {
 
     set : function(value)
     {
@@ -85,7 +85,7 @@ Scintilla.Set.prototype = {
 
 }
 
-Object.defineProperty(Scintilla.Set.prototype, "size", {
+Object.defineProperty(scintilla.Set.prototype, "size", {
 
     get: function () {
         return this._content.length;
@@ -93,7 +93,7 @@ Object.defineProperty(Scintilla.Set.prototype, "size", {
 
 });
 
-Object.defineProperty(Scintilla.Set.prototype, "length", {
+Object.defineProperty(scintilla.Set.prototype, "length", {
 
     get: function () {
         return this._content.length;
@@ -101,5 +101,5 @@ Object.defineProperty(Scintilla.Set.prototype, "length", {
 
 });
 
-Scintilla.Set.prototype.constructor = Scintilla.Set;
+scintilla.Set.prototype.constructor = scintilla.Set;
 

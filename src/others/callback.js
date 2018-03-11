@@ -1,5 +1,5 @@
 
-Scintilla.Callback = function (contextObject, delegateMethod) {
+scintilla.Callback = function (contextObject, delegateMethod) {
 
  return function() {
 

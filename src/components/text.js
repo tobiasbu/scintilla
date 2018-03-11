@@ -1,17 +1,17 @@
 
-Scintilla.Text = Scintilla.Renderable.extend(function() {
+scintilla.Text = scintilla.Renderable.extend(function() {
 
 this.constructor = function(text, style) {
 
   this.super();
 
 
-  this.type = Scintilla.RenderType.CSSText;
+  this.type = scintilla.RenderType.CSSText;
 
   this.bounds = 0;
-  this.canvas = Scintilla.CanvasList.create(this);
+  this.canvas = scintilla.CanvasList.create(this);
   this.context = this.canvas.getContext('2d');
-  this.texture = new Scintilla.Texture();
+  this.texture = new scintilla.Texture();
 
 
   this.fontStyle = "12px Verdana";

@@ -1,6 +1,6 @@
 
 
-Scintilla.ImageFile = Scintilla.File.extend(function() {
+scintilla.ImageFile = scintilla.File.extend(function() {
 
 this.constructor = function(tag, url, path, xhrSettings, config)
 {
@@ -12,18 +12,18 @@ this.constructor = function(tag, url, path, xhrSettings, config)
     }
     else
     {
-        assetTag = Scintilla.Utils.getValue(tag, 'tag', '');
+        assetTag = scintilla.Utils.getValue(tag, 'tag', '');
     }
 
     var fileConfig = {
         type: 'image',
         tag: assetTag,
-        ext: Scintilla.Utils.getValue(tag, 'ext', Scintilla.Utils.getFileExtension(url)),
-        url: Scintilla.Utils.getValue(tag, 'file', url),
+        ext: scintilla.Utils.getValue(tag, 'ext', scintilla.Utils.getFileExtension(url)),
+        url: scintilla.Utils.getValue(tag, 'file', url),
         path: path,
         responseType: 'blob',
-        xhrSettings: Scintilla.Utils.getValue(tag, 'xhr', xhrSettings),
-        config: Scintilla.Utils.getValue(tag, 'config', config)
+        xhrSettings: scintilla.Utils.getValue(tag, 'xhr', xhrSettings),
+        config: scintilla.Utils.getValue(tag, 'config', config)
     };
 
     this.super(fileConfig);
@@ -40,7 +40,7 @@ this.onProcessing = function(processingCallback)
 
     this.data.onload = function () {
 
-        Scintilla.URLObject.revoke(self.data);
+        scintilla.URLObject.revoke(self.data);
 
         self.onDone();
 
@@ -49,7 +49,7 @@ this.onProcessing = function(processingCallback)
 
     this.data.onerror = function () {
 
-        Scintilla.URLObject.revoke(self.data);
+        scintilla.URLObject.revoke(self.data);
 
         self.state = LOADER_STATE.ERROR;
 
@@ -58,7 +58,7 @@ this.onProcessing = function(processingCallback)
     };
 
 
-    Scintilla.URLObject.create(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
+    scintilla.URLObject.create(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
 }
 
 });
@@ -67,7 +67,7 @@ AssetTypeHandler.register('image', function (tag, url, path, xhrSettings)
 {
 
 
-    this.addAsset(new Scintilla.ImageFile(tag, url, this.path, xhrSettings));
+    this.addAsset(new scintilla.ImageFile(tag, url, this.path, xhrSettings));
 
     return this;
 

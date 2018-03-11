@@ -1,7 +1,7 @@
 
 
 // display and update everything
-Scintilla.Universe = Scintilla.Hierarchy.extend(function() {
+scintilla.Universe = scintilla.Hierarchy.extend(function() {
 
 this.backgroundColor = "rgb(231, 231, 231)";
 
@@ -11,12 +11,12 @@ this.backgroundColor = "rgb(231, 231, 231)";
 
     this.game = game;
     this.name = "__universe";
-    //Scintilla.Hierarchy.call(this,true);
+    //scintilla.Hierarchy.call(this,true);
 
   }
 
 
 });
 
-//Scintilla.Universe.prototype = Object.create(Scintilla.Hierarchy.prototype);
-//Scintilla.Universe.prototype.constructor = Scintilla.Universe;
+//scintilla.Universe.prototype = Object.create(scintilla.Hierarchy.prototype);
+//scintilla.Universe.prototype.constructor = scintilla.Universe;

@@ -1,7 +1,7 @@
 
 // instance of gameobjects and transforms in the world
 // can be a group of gameobjects
-Scintilla.Instance = Scintilla.Hierarchy.extend(function() {
+scintilla.Instance = scintilla.Hierarchy.extend(function() {
 
 // private
 this.game = null;
@@ -361,7 +361,7 @@ this._poolBack = function(callOnDestroy) {
 });
 
 
-Object.defineProperty(Scintilla.Instance.prototype, "length", {
+Object.defineProperty(scintilla.Instance.prototype, "length", {
 
     get: function() {
         return this.children.length;
@@ -386,12 +386,12 @@ if (parent != null) {
 
 
 
-//Scintilla.Instance.prototype =  Object.create(Scintilla.Hierarchy.prototype);
-//Scintilla.Instance.prototype.constructor = Scintilla.Instance;
+//scintilla.Instance.prototype =  Object.create(scintilla.Hierarchy.prototype);
+//scintilla.Instance.prototype.constructor = scintilla.Instance;
 
 
 
-//Scintilla.Instance.prototype.renderCycle = function(context) {
+//scintilla.Instance.prototype.renderCycle = function(context) {
 
 
 

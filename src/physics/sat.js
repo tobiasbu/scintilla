@@ -1,8 +1,8 @@
 
-Scintilla.SAT = Class.extend(function() {
+scintilla.SAT = Class.extend(function() {
 
   var VECTORS = [];
-  for (var v = 0; v < 10; v++) { VECTORS.push(new Scintilla.Vector()); }
+  for (var v = 0; v < 10; v++) { VECTORS.push(new scintilla.Vector()); }
 
   var ARRAYS = [];
   for (var a = 0; a < 5; a++) { ARRAYS.push([]); }
@@ -160,11 +160,11 @@ this.testPolygonPolygon = function(a,b,response) {
 });
 
 
-Scintilla.SAT.Response = function() {
+scintilla.SAT.Response = function() {
     this.a = null;
     this.b = null;
-    this.overlapN = new Scintilla.Vector();
-    this.overlapV = new Scintilla.Vector();
+    this.overlapN = new scintilla.Vector();
+    this.overlapV = new scintilla.Vector();
     this.aInB = true;
     this.bInA = true;
     this.overlap = Number.MAX_VALUE;
@@ -173,7 +173,7 @@ Scintilla.SAT.Response = function() {
     this.clear();
 };
 
-Scintilla.SAT.Response.prototype.clear = function() {
+scintilla.SAT.Response.prototype.clear = function() {
   this.aInB = true;
   this.bInA = true;
   this.overlap = Number.MAX_VALUE;

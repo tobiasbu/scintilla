@@ -3,7 +3,7 @@
  * Create a Canvas object.
  * @function Canvas
  */
-Scintilla.Canvas = {
+scintilla.Canvas = {
 
 
 

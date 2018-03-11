@@ -1,4 +1,8 @@
 
+//Test.log();
+//var t = new Test();
+//t.log();
+
 
 var VIEW = {
     w : 640,
@@ -12,8 +16,8 @@ var config = {
     debug: true
 };
   
-  var game = new Scintilla.Game(config);
-  var scene = game.scene.new('scene');
+  var game = new scintilla.Game(config);
+  /*var scene = game.scene.new('scene');
   var x = 0;
 
 scene.preload = function()
@@ -35,12 +39,12 @@ scene.render = function() {
 
     //x += game.time.deltaTime * 20;
 
-    if (game.input.keyboard.pressed(Scintilla.KeyCode.Space)) 
+    if (game.input.keyboard.pressed(scintilla.KeyCode.Space)) 
     {
         console.log("pressed")
     }
 
-    if (game.input.keyboard.release(Scintilla.KeyCode.Space)) 
+    if (game.input.keyboard.release(scintilla.KeyCode.Space)) 
     {
         console.log("release")
     }
@@ -69,4 +73,4 @@ Tester = function() {
     }
 }
 
-//init();
+//init();*/

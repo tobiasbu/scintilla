@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["Scintilla"] = factory();
+		exports["estest"] = factory();
 	else
-		root["Scintilla"] = factory();
+		root["estest"] = factory();
 })(window, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -119,7 +119,10 @@ module.exports = g;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {/**
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+
+/**
 * @author       Tobias Beise Ulrich
 * @license      MIT
 *
@@ -137,24 +140,80 @@ module.exports = g;
 */
 
 /**
-* @namespace Scintilla
+* @namespace scintilla
 */
-var Scintilla = Scintilla || {
+var scintilla = scintilla || {
   VERSION: '0.0.1',
-  Game : __webpack_require__(/*! ./core/game.js */ "./core/game.js"),
+  Game: __webpack_require__(/*! ./core/game */ "./core/game.js")
 };
 
-Scintilla.ShapeType = {
-Rect : 1,
-Circle : 2,
-Polygon : 3
-}
+scintilla.ShapeType = {
+  Rect: 1,
+  Circle: 2,
+  Polygon: 3
+};
 
+module.exports = scintilla;
 
-module.exports = Scintilla;
-
-global.Scintilla = Scintilla;
+global.scintilla = scintilla;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/webpack/buildin/global.js */ "../node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./core/config.js":
+/*!************************!*\
+  !*** ./core/config.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _utils = __webpack_require__(/*! ../utils/utils */ "./utils/utils.js");
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Config = function Config(config) {
+    _classCallCheck(this, Config);
+
+    if (config === undefined) config = {};
+
+    var callback = _utils2.default.getValue;
+    var callback_2 = _utils2.default.getPropertyValue;
+
+    // view and canvas
+    this.width = callback(config, 'width', 640);
+    this.height = callback(config, 'height', 480);
+    this.parent = callback(config, 'parent', null);
+    this.debug = callback(config, 'debug', false);
+
+    // loader
+    this.loader = {
+        baseURL: callback_2(config, 'loader.baseURL', ''),
+        path: callback_2(config, 'loader.path', ''),
+        responseType: callback_2(config, 'loader.responseType', ''),
+        async: callback_2(config, 'loader.async', true)
+        /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
+            this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
+            this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
+            
+            this.loaderUser = GetValue(config, 'loader.user', '');
+            this.loaderPassword = GetValue(config, 'loader.password', '');
+        this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
+
+    };
+};
+
+exports.default = Config;
 
 /***/ }),
 
@@ -163,315 +222,354 @@ global.Scintilla = Scintilla;
   !*** ./core/game.js ***!
   \**********************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _config = __webpack_require__(/*! ./config */ "./core/config.js");
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
 * Main class of engine. Holds all main data.
 * @class Game
 * @constructor
 */
-Scintilla.Game = function (config) {
+var Game = function () {
 
-  /**
-  * @property {string|HTMLElement} parent - The Games DOM parent.
-  * @default
-  */
-  this.parent = 'body';
-  this.width = 800;
-  this.height = 600;
-
-  // object
-  this.config = new Scintilla.Config(config);
-
-  // boolean
-  this.systemInited = false;
-  this.isRunning = false;
-  this.debugMode = false;
-
-  // float
-  this.timeMode = false;
-
-  // time
-  this._spiraling = 0;
-  this._lastFrameCount = 0;
-
-
-  //objects
-  this.debug = null;
-  this.cache = null;
-  this.load = null;
-  this.canvas = null;
-  this.scene = null;
-  this.sound = null;
-  this.draw = null;
-  this.render = null;
-  this.universe = null;
-  this.world = null;
-  this.input = null;
-  this.time = null;
-  this.component = null;
-  this.instance = null;
-  this.animationCache = null;
-  this.updateGameMethod = null;
-  this.pool = null;
-
-  this.context = null;
-
-  this.parseConfiguration(this.config);
-  //parse config
- /* if (arguments.length === 1 && typeof arguments[0] === 'object')
-   {
-
-     this.parseConfiguration(arguments[0]);
-
-   }
-   else
-   {
-       if (typeof width !== 'undefined')
-        this.width = width;
-
-       if (typeof height !== 'undefined')
-        this.height = height;
-
-      if (typeof timeOutMode !== 'undefined')
-        this.timeMode = timeOutMode;
-
-        if (typeof debugMode !== 'undefined')
-        this.debugMode = debugMode;
-   }*/
-
-
-   this.init();
-
-  return this;
-
-}
-
-
-Scintilla.Game.prototype = {
-
-
-
-  parseConfiguration : function(config) {
-
-    //this.config = config;
-
-    if (config['debug'])
-    {
-        this.debugMode = config['debug'];
-
-    }
-
-    if (config['width'])
-    {
-        this.width = config['width'];
-    }
-
-    if (config['height'])
-    {
-        this.height = config['height'];
-    }
-
-    if (config['parent'])
-    {
-        this.parent = config['parent'];
-    }
-
-  },
-  /**
-    * Initialize engine
-    *
-    * @method tobiJS.Game#init()
-    * @protected
+    /**
+    * @property {string|HTMLElement} parent - The Games DOM parent.
+    * @default
     */
-  init : function() {
+    function Game() {
+        _classCallCheck(this, Game);
 
-    if (this.systemInited)
-        return;
+        this.parent = 'body';
+        this.width = 800;
+        this.height = 600;
 
+        // object
+        this.config = new _config2.default(config);
 
+        // boolean
+        this.systemInited = false;
+        this.isRunning = false;
+        this.debugMode = false;
 
-    this.canvas = Scintilla.Canvas.create(this.parent,this.width,this.height);
-    this.context = this.canvas.getContext("2d", { alpha: false });
+        // float
+        this.timeMode = false;
 
-    this.cache = new Scintilla.Cache(this);
-    this.load = new Scintilla.LoadManager(this);
-    this.time = new Scintilla.Time(this);
-    this.universe = new Scintilla.Universe(this);
-    this.world = new Scintilla.World(this);
-    this.draw = new Scintilla.Draw(this);
-    this.render = new Scintilla.Render(this, this.canvas, this.context);
-    this.scene = new Scintilla.SceneManager(this);
-    this.input = new Scintilla.Input(this);
-    this.instance = new Scintilla.Creator(this,this.world);
-    this.component = new Scintilla.GameComponents(this);
-    this.animationCache = new Scintilla.AnimationCache(this);
-    this.sound = new Scintilla.SoundManager(this);
-    this.pool = new Scintilla.Pool(this);
-    this.physics = new Scintilla.Physics(this);
+        // time
+        this._spiraling = 0;
+        this._lastFrameCount = 0;
 
-    if (this.debugMode)
-      this.debug = new Scintilla.Debug(this);
+        //objects
+        this.debug = null;
+        this.cache = null;
+        this.load = null;
+        this.canvas = null;
+        this.scene = null;
+        this.sound = null;
+        this.draw = null;
+        this.render = null;
+        this.universe = null;
+        this.world = null;
+        this.input = null;
+        this.time = null;
+        this.component = null;
+        this.instance = null;
+        this.animationCache = null;
+        this.updateGameMethod = null;
+        this.pool = null;
 
-    this.time.start();
-    this.input.init();
-    this.sound.start();
-    this.world.start();
+        this.context = null;
 
-    this.updateGameMethod = new Scintilla.UpdateGame(this,this.timeMode);
-    this.updateGameMethod.start();
+        this.parseConfiguration(this.config);
 
-
-
-    this.systemInited = true;
-    this.isRunning = true;
-
-
-    console.log("tobiJS Created!");
-
-  },
-  
-  /**
-    * core game loop
-    *
-    * @method tobiJS.Game#update()
-    * @protected
-    */
-  update : function(time) {
-
-    if (this.systemInited) {
-
-
-
-      this.time.update(time);
-
-      if (this._spiraling > 1) {
-
-          this.time.deltaTime = 0;
-          this._spiraling = 0;
-          this.time.accumalator = 0;
-
-          this.render._render(this.time.accumulatorDelta);
-
-      } else {
-
-      var countFrames = 0;
-
-      while (this.time.accumalator >= this.time.accumulatorDelta) {
-
-        //  this.time.updateStart = window.performance.now();
-
-          this.time.deltaTime = Math.min(this.time.accumalator,this.time.accumulatorDelta) / 1000;
-
-          this.logic(this.time.deltaTime);
-
-          //this.time.updateLast =  window.performance.now();
-        //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
-
-          this.time.accumalator -= this.time.accumulatorDelta;
-
-          countFrames++;
-
-          this.time.refresh();
-
-          if (countFrames >= 240) { // SPIRAL
-              //panic();
-              this.time.accumalator = 0;
-
-              break;
-          }
-      }
-
-        if (countFrames > this._lastFrameCount)
-           this._spiraling++;
-       else if (countFrames < this._lastFrameCount)
-          this._spiraling = 0;
-
-          this._lastFrameCount = countFrames;
-
-            this.render._render(this.time.accumalator/this.time.accumulatorDelta);
-
-      }
-
-
-
+        this.init();
     }
 
-      //GI.context.fillRect(0, 0, GI.current_room.width, GI.current_room.height);
+    _createClass(Game, [{
+        key: 'parseConfiguration',
+        value: function parseConfiguration(config) {
 
-        /*var instances = this.current_scene.instances;
+            //this.config = config;
 
-        //
+            if (config['debug']) {
+                this.debugMode = config['debug'];
+            }
 
-        instances.forEach( function(instance, value) {
+            if (config['width']) {
+                this.width = config['width'];
+            }
 
-            instance.draw();
-            //console.log("asdasd");
+            if (config['height']) {
+                this.height = config['height'];
+            }
+
+            if (config['parent']) {
+                this.parent = config['parent'];
+            }
+        }
+        /**
+          * Initialize engine
+          *
+          * @method tobiJS.Game#init()
+          * @protected
+          */
+
+    }, {
+        key: 'init',
+        value: function init() {
+
+            if (this.systemInited) return;
+
+            this.canvas = scintilla.Canvas.create(this.parent, this.width, this.height);
+            this.context = this.canvas.getContext("2d", { alpha: false });
+
+            this.cache = new scintilla.Cache(this);
+            this.load = new scintilla.LoadManager(this);
+            this.time = new scintilla.Time(this);
+            this.universe = new scintilla.Universe(this);
+            this.world = new scintilla.World(this);
+            this.draw = new scintilla.Draw(this);
+            this.render = new scintilla.Render(this, this.canvas, this.context);
+            this.scene = new scintilla.SceneManager(this);
+            this.input = new scintilla.Input(this);
+            this.instance = new scintilla.Creator(this, this.world);
+            this.component = new scintilla.GameComponents(this);
+            this.animationCache = new scintilla.AnimationCache(this);
+            this.sound = new scintilla.SoundManager(this);
+            this.pool = new scintilla.Pool(this);
+            this.physics = new scintilla.Physics(this);
+
+            if (this.debugMode) this.debug = new scintilla.Debug(this);
+
+            this.time.start();
+            this.input.init();
+            this.sound.start();
+            this.world.start();
+
+            this.updateGameMethod = new scintilla.UpdateGame(this, this.timeMode);
+            this.updateGameMethod.start();
+
+            this.systemInited = true;
+            this.isRunning = true;
+
+            console.log("scintilla started!");
+        }
+
+        /**
+          * core game loop
+          *
+          * @method tobiJS.Game#update()
+          * @protected
+          */
+
+    }, {
+        key: 'update',
+        value: function update(time) {
+
+            if (this.systemInited) {
+
+                this.time.update(time);
+
+                if (this._spiraling > 1) {
+
+                    this.time.deltaTime = 0;
+                    this._spiraling = 0;
+                    this.time.accumalator = 0;
+
+                    this.render._render(this.time.accumulatorDelta);
+                } else {
+
+                    var countFrames = 0;
+
+                    while (this.time.accumalator >= this.time.accumulatorDelta) {
+
+                        //  this.time.updateStart = window.performance.now();
+
+                        this.time.deltaTime = Math.min(this.time.accumalator, this.time.accumulatorDelta) / 1000;
+
+                        this.logic(this.time.deltaTime);
+
+                        //this.time.updateLast =  window.performance.now();
+                        //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
+
+                        this.time.accumalator -= this.time.accumulatorDelta;
+
+                        countFrames++;
+
+                        this.time.refresh();
+
+                        if (countFrames >= 240) {
+                            // SPIRAL
+                            //panic();
+                            this.time.accumalator = 0;
+
+                            break;
+                        }
+                    }
+
+                    if (countFrames > this._lastFrameCount) this._spiraling++;else if (countFrames < this._lastFrameCount) this._spiraling = 0;
+
+                    this._lastFrameCount = countFrames;
+
+                    this.render._render(this.time.accumalator / this.time.accumulatorDelta);
+                }
+            }
+        }
+    }, {
+        key: 'logic',
+        value: function logic(timeStep) {
+
+            this.scene.preUpdate();
+            this.scene.update(timeStep);
+            this.input.update();
+            this.universe.preUpdate(timeStep);
+
+            //this.world.camera.update();
+
+            this.universe.update(timeStep);
+            this.physics.update();
+            this.sound.update();
+
+            this.universe._updateTransform();
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+
+            this.updateGameMethod.destroy();
+            this.physics.destroy();
+            this.universe.destroy();
+            this.sound.destroy();
+            this.input.destroy();
+
+            this.debug = null;
+            this.cache = null;
+            this.load = null;
+            this.canvas = null;
+            this.scene = null;
+            this.sound = null;
+            this.draw = null;
+            this.universe = null;
+            this.world = null;
+            this.input = null;
+            this.time = null;
+            this.render = null;
+            this.component = null;
+            this.instance = null;
+            this.animationCache = null;
+            this.updateGameMethod = null;
+        }
+    }]);
+
+    return Game;
+}();
+
+//scintilla.Game.prototype.constructor = scintilla.Game;
 
 
-        })*/
+exports.default = Game;
+module.exports = Game;
+
+/***/ }),
+
+/***/ "./utils/utils.js":
+/*!************************!*\
+  !*** ./utils/utils.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  },
+var Utils = function () {
+    function Utils() {
+        _classCallCheck(this, Utils);
+    }
 
-  logic : function(timeStep) {
+    _createClass(Utils, [{
+        key: 'isFunction',
+        value: function isFunction(obj) {
+            return !!(obj && obj.constructor && obj.call && obj.apply);
+        }
+    }, {
+        key: 'getValue',
+        value: function getValue(obj, key, defaultValue) {
+            var type = typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
 
-    this.scene.preUpdate();
-    this.scene.update(timeStep);
-    this.input.update();
-    this.universe.preUpdate(timeStep);
+            if (!obj || type === 'number' || type === 'string') return defaultValue;else if (obj.hasOwnProperty(key) && obj[key] !== undefined) return obj[key];else return defaultValue;
+        }
 
+        // Get value in complex object
 
-    //this.world.camera.update();
+    }, {
+        key: 'getPropertyValue',
+        value: function getPropertyValue(source, key, defaultValue) {
+            if (!source || typeof source === 'number') return defaultValue;else if (source.hasOwnProperty(key)) return source[key];else if (key.indexOf('.')) {
+                var keys = key.split('.');
+                var parent = source;
+                var value = defaultValue;
 
-    this.universe.update(timeStep);
-    this.physics.update();
-    this.sound.update();
+                for (var i = 0; i < keys.length; i++) {
+                    if (parent.hasOwnProperty(keys[i])) {
+                        value = parent[keys[i]];
+                        parent = parent[keys[i]];
+                    } else {
+                        value = defaultValue;
+                        break;
+                    }
+                }
 
-    this.universe._updateTransform();
+                return value;
+            } else {
+                return defaultValue;
+            }
+        }
+    }, {
+        key: 'getFileExtension',
+        value: function getFileExtension(filename) {
+            return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || "";
+        }
+    }, {
+        key: 'getURL',
+        value: function getURL(url, baseURL) {
+            if (!url) return null;
 
+            if (url.match(/^(?:blob:|data:|http:\/\/|https:\/\/|\/\/)/)) return url;else return baseURL + url;
+        }
+    }]);
 
-  },
+    return Utils;
+}();
 
-  destroy : function() {
+;
 
-    this.updateGameMethod.destroy();
-    this.physics.destroy();
-    this.universe.destroy();
-    this.sound.destroy();
-    this.input.destroy();
-
-    this.debug = null;
-    this.cache = null;
-    this.load = null;
-    this.canvas = null;
-    this.scene = null;
-    this.sound = null;
-    this.draw = null;
-    this.universe = null;
-    this.world = null;
-    this.input = null;
-    this.time = null;
-    this.render = null;
-    this.component = null;
-    this.instance = null;
-    this.animationCache = null;
-    this.updateGameMethod = null;
-
-
-  },
-
-}
-
-Scintilla.Game.prototype.constructor = Scintilla.Game;
-
-
-module.exports = Scintilla.Game;
+exports.default = new Utils();
 
 /***/ })
 

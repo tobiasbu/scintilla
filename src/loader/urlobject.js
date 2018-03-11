@@ -1,5 +1,5 @@
 
-Scintilla.URLObject = {
+scintilla.URLObject = {
 
     create : function(asset, response, type)
     {

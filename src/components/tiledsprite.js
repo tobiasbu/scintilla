@@ -1,19 +1,19 @@
 
-Scintilla.TiledSprite = Scintilla.Renderable.extend(function() {
+scintilla.TiledSprite = scintilla.Renderable.extend(function() {
 
 
 this.constructor = function(source,width,height) {
 
   this.super();
 
-  this.type = Scintilla.RenderType.TiledSprite;
+  this.type = scintilla.RenderType.TiledSprite;
 
 this.source = source;
 this.setFrame(0,0,width,height);
 
-this.tilePosition = new Scintilla.Vector(0,0);
-this.tileScale = new Scintilla.Vector(1,1);
-this.offset = new Scintilla.Vector(1,1);
+this.tilePosition = new scintilla.Vector(0,0);
+this.tileScale = new scintilla.Vector(1,1);
+this.offset = new scintilla.Vector(1,1);
 
 this.tilePattern = null;
 
@@ -89,8 +89,8 @@ this.createTilling = function() {
     }
     else
     {
-        this.canvasBuffer = new Scintilla.CanvasBuffer(targetWidth, targetHeight);
-        this.tiledTexture = Scintilla.Texture.createFromCanvas(this.canvasBuffer.canvas);
+        this.canvasBuffer = new scintilla.CanvasBuffer(targetWidth, targetHeight);
+        this.tiledTexture = scintilla.Texture.createFromCanvas(this.canvasBuffer.canvas);
         this.tiledTexture.isTiling = true;
         this.tiledTexture.needsUpdate = true;
     }

@@ -1,5 +1,5 @@
 
-Scintilla.Color = {
+scintilla.Color = {
 
 webRGB : function(r,g,b,a) {
 

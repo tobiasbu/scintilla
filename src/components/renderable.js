@@ -1,18 +1,18 @@
 
-Scintilla.RenderType = {
+scintilla.RenderType = {
 Sprite : 1,
 TiledSprite : 2,
 CSSText : 3
 }
 
-Scintilla.Renderable = Class.extend(function() {
+scintilla.Renderable = Class.extend(function() {
 
 this._gameObject = null;
 
 this.constructor = function() {
   this.type = null;
   this.source = null;
-  this.frame = new Scintilla.Rect(0,0,1,1);
+  this.frame = new scintilla.Rect(0,0,1,1);
   this.alpha = 1;
 }
 

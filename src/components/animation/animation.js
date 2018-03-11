@@ -1,17 +1,17 @@
 
 // storage of animation state
-Scintilla.Animation = function(sprite) {
+scintilla.Animation = function(sprite) {
 
 this.source = sprite;
 this.frames = [];
 
 }
 
-Scintilla.Animation.prototype = {
+scintilla.Animation.prototype = {
 
 addFrame : function(x,y,width,height) {
 
-this.frames.push(new Scintilla.Rect(x,y,width,height));
+this.frames.push(new scintilla.Rect(x,y,width,height));
 
 },
 
@@ -56,7 +56,7 @@ getFrame : function(index) {
 
 }
 
-Object.defineProperty(Scintilla.Animation.prototype, "length", {
+Object.defineProperty(scintilla.Animation.prototype, "length", {
 
 get : function() {
   return this.frames.length;

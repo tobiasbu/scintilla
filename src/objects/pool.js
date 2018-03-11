@@ -1,5 +1,5 @@
 
-Scintilla.Pool = Class.extend(function() {
+scintilla.Pool = Class.extend(function() {
 
 this.poolList = {};
 this.game = null;

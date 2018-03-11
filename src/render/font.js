@@ -1,5 +1,5 @@
 
-Scintilla.Font = function(source) {
+scintilla.Font = function(source) {
 
     this.fontFamily = null;
 

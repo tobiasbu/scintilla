@@ -1,6 +1,6 @@
 
 
-Scintilla.Entity = Scintilla.Class.extend(function() {
+scintilla.Entity = scintilla.Class.extend(function() {
 
     
 

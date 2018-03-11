@@ -16,20 +16,20 @@
 */
 
 /**
-* @namespace Scintilla
+* @namespace scintilla
 */
-var Scintilla = Scintilla || {
+var scintilla = scintilla || {
   VERSION: '0.0.1',
-  Game : require('./core/game.js'),
+  Game : require('./core/game'),
 };
 
-Scintilla.ShapeType = {
+scintilla.ShapeType = {
 Rect : 1,
 Circle : 2,
 Polygon : 3
 }
 
 
-module.exports = Scintilla;
+module.exports = scintilla;
 
-global.Scintilla = Scintilla;
+global.scintilla = scintilla;

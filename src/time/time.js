@@ -1,6 +1,6 @@
 
 
-Scintilla.Time = function(game) {
+scintilla.Time = function(game) {
 
   this.game = game;
 
@@ -45,7 +45,7 @@ Scintilla.Time = function(game) {
 
 }
 
-Scintilla.Time.prototype = {
+scintilla.Time.prototype = {
 
 start : function() {
 
@@ -229,4 +229,4 @@ fpsUpdate : function(timestamp) {
 
 }
 
-Scintilla.Time.prototype.constructor = Scintilla.Time;
+scintilla.Time.prototype.constructor = scintilla.Time;

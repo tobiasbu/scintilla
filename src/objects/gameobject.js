@@ -1,5 +1,5 @@
 
-Scintilla.GameObject = Scintilla.Instance.extend(function() {
+scintilla.GameObject = scintilla.Instance.extend(function() {
 
   this.game = null;
   this.pool = null;
@@ -10,7 +10,7 @@ Scintilla.GameObject = Scintilla.Instance.extend(function() {
     if (name === undefined) name = 'gameobject';
 
     this.super(null,null,name);
-    //Scintilla.Instance.call(this,null,null,name,false);
+    //scintilla.Instance.call(this,null,null,name,false);
     this.origin.set(0.5,0.5);
 
   }
@@ -146,14 +146,14 @@ Scintilla.GameObject = Scintilla.Instance.extend(function() {
 
 
 
-//Scintilla.GameObject.prototype = Object.create(Scintilla.Instance.prototype);
-//Scintilla.GameObject.prototype.constructor = Scintilla.GameObject;
+//scintilla.GameObject.prototype = Object.create(scintilla.Instance.prototype);
+//scintilla.GameObject.prototype.constructor = scintilla.GameObject;
 /*
-Scintilla.GameObject.prototype.start = function() {};
-Scintilla.GameObject.prototype.update = function() {};
-Scintilla.GameObject.prototype.destroy = function() {};
+scintilla.GameObject.prototype.start = function() {};
+scintilla.GameObject.prototype.update = function() {};
+scintilla.GameObject.prototype.destroy = function() {};
 
-Scintilla.GameObject.prototype.draw = function(context) {
+scintilla.GameObject.prototype.draw = function(context) {
 
   if (this.renderComponent != null) {
 

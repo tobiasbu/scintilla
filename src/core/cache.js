@@ -4,7 +4,7 @@
 * @class Cache
 * @constructor
 */
-Scintilla.Cache = function(game) {
+scintilla.Cache = function(game) {
 
 this.game = game;
 this._cache = {
@@ -14,7 +14,7 @@ this._cache = {
 
 }
 
-Scintilla.Cache.prototype = {
+scintilla.Cache.prototype = {
 
   addImage : function (tag, url, data) {
 

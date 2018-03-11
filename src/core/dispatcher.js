@@ -1,5 +1,5 @@
 
-Scintilla.Dispatcher = Class.extend(function() {
+scintilla.Dispatcher = Class.extend(function() {
 
 
 this.dispatch = function() {

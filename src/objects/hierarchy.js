@@ -1,10 +1,10 @@
 
 // Hierarchy Tree of instances
 // Instance is a children of the Hierarchy tree
-Scintilla.Hierarchy = Scintilla.Transform.extend(function() {
+scintilla.Hierarchy = scintilla.Transform.extend(function() {
 
 this.children = [];
-//Scintilla.Transform.call(this);
+//scintilla.Transform.call(this);
 
 //if (newTransform)
 //this._newTransform();
@@ -121,10 +121,10 @@ this._updateTransform = function() {
 });
 
 
-//Scintilla.Hierarchy.prototype = Object.create( Scintilla.Transform.prototype );
-//Scintilla.Hierarchy.prototype.constructor = Scintilla.Hierarchy;
+//scintilla.Hierarchy.prototype = Object.create( scintilla.Transform.prototype );
+//scintilla.Hierarchy.prototype.constructor = scintilla.Hierarchy;
 
-//Scintilla.Hierarchy.prototype.updateCycle = Scintilla.Hierarchy.prototype._updateCycle;
+//scintilla.Hierarchy.prototype.updateCycle = scintilla.Hierarchy.prototype._updateCycle;
 
 
       //  if (self.game.world.camera.view.intersects(instance.bounds.box)) {
@@ -144,7 +144,7 @@ this._updateTransform = function() {
 
 //}
 
-//Scintilla.Hierarchy.prototype.renderCycle = Scintilla.Hierarchy.prototype._renderCycle;
+//scintilla.Hierarchy.prototype.renderCycle = scintilla.Hierarchy.prototype._renderCycle;
 /*
 setScene : function(scene) {
 

@@ -1,15 +1,15 @@
 
-Scintilla.BoundingBox = function(x,y,width,height) {
+scintilla.BoundingBox = function(x,y,width,height) {
 
-this.center = new Scintilla.Vector(x+width/2,y+height/2);
-this.size = new Scintilla.Vector(width,height);
-this.min = new Scintilla.Vector(x,y);
-this.max = new Scintilla.Vector(x+width,y+height);
-this.box = new Scintilla.Rect(x,y,width,height);
+this.center = new scintilla.Vector(x+width/2,y+height/2);
+this.size = new scintilla.Vector(width,height);
+this.min = new scintilla.Vector(x,y);
+this.max = new scintilla.Vector(x+width,y+height);
+this.box = new scintilla.Rect(x,y,width,height);
 
 }
 
-Scintilla.BoundingBox.prototype = {
+scintilla.BoundingBox.prototype = {
 
 set : function(minX,minY,maxX,maxY) {
 
@@ -49,7 +49,7 @@ setup : function(pos, scale, rotation, anchor, width, height) {
 
   var callback = null;
 
-  if (rotation instanceof  Scintilla.Vector)
+  if (rotation instanceof  scintilla.Vector)
       callback = this['calcCoordsCosSin'];
     else
       callback = this['calcCoords'];

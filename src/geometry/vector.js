@@ -5,14 +5,14 @@
 * @class Vector
 * @constructor
 */
-Scintilla.Vector = function(x,y) {
+scintilla.Vector = function(x,y) {
 
   this.x = x || 0;
   this.y = y || 0;
 
 }
 
-Scintilla.Vector.prototype = {
+scintilla.Vector.prototype = {
 
 set : function(x,y) {
 
@@ -119,19 +119,19 @@ perp : function() {
 
 dot : function(other) {
 
-  return Scintilla.Vector.dot(this,other);
+  return scintilla.Vector.dot(this,other);
 
 },
 
 project : function(other) {
 
-  return Scintilla.Vector.project(this,other);
+  return scintilla.Vector.project(this,other);
 
 },
 
 clone : function() {
 
-  return new Scintilla.Vector(this.x,this.y);
+  return new scintilla.Vector(this.x,this.y);
 
 },
 
@@ -143,7 +143,7 @@ length : function() {
 
 squaredLenght : function() {
 
-  return Scintilla.Vector.dot(this,this);
+  return scintilla.Vector.dot(this,this);
 
 },
 
@@ -151,38 +151,38 @@ squaredLenght : function() {
 
 }
 
-Scintilla.Vector.prototype.constructor = Scintilla.Vector;
+scintilla.Vector.prototype.constructor = scintilla.Vector;
 
 // static functions
 
-Scintilla.Vector.scalar = function(a, b) {
+scintilla.Vector.scalar = function(a, b) {
 
    return a.x * b.y - a.y * b.x;
 
 };
 
-Scintilla.Vector.distance = function(a, b) {
+scintilla.Vector.distance = function(a, b) {
 
-  return Scintilla.Math.distance(a.x,a.y,b.x,b.y);
-
-};
-
-Scintilla.Vector.angleBetween = function(a, b) {
-
-  return Scintilla.Math.angleBetween(a.x,a.y,b.x,b.y);
+  return scintilla.Math.distance(a.x,a.y,b.x,b.y);
 
 };
 
-Scintilla.Vector.dot = function(a, b) {
+scintilla.Vector.angleBetween = function(a, b) {
+
+  return scintilla.Math.angleBetween(a.x,a.y,b.x,b.y);
+
+};
+
+scintilla.Vector.dot = function(a, b) {
 
   return (a.x * b.x) + (a.y * b.y);
 
 };
 
-Scintilla.Vector.project = function(a,b) {
+scintilla.Vector.project = function(a,b) {
 
-  var dp = Scintilla.Vector.dot(a,b);
-  var proj = new Scintilla.Vector(
+  var dp = scintilla.Vector.dot(a,b);
+  var proj = new scintilla.Vector(
    ( dp / (b.x*b.x + b.y*b.y) ) * b.x,
    ( dp / (b.x*b.x + b.y*b.y) ) * b.y
  );
@@ -192,26 +192,26 @@ Scintilla.Vector.project = function(a,b) {
 };
 
 // project for unit vector
-Scintilla.Vector.projectNormal = function(a,b) {
+scintilla.Vector.projectNormal = function(a,b) {
 
-  var dp = Scintilla.Vector.dot(a,b);
-  var proj = new Scintilla.Vector(   dp / b.x,   dp / b.y );
+  var dp = scintilla.Vector.dot(a,b);
+  var proj = new scintilla.Vector(   dp / b.x,   dp / b.y );
  return proj;
 
 };
 
-Scintilla.Vector.reflect = function(vec,axis) {
+scintilla.Vector.reflect = function(vec,axis) {
 
-  var r = Scintilla.Vector.project(vec,axis);
+  var r = scintilla.Vector.project(vec,axis);
   r.scale(2);
   r.sub(vec);
   return r;
 
 };
 
-Scintilla.Vector.reflectNormal = function(vec,axis) {
+scintilla.Vector.reflectNormal = function(vec,axis) {
 
-  var r = Scintilla.Vector.projectNormal(vec,axis);
+  var r = scintilla.Vector.projectNormal(vec,axis);
   r.scale(2);
   r.sub(vec);
   return r;
@@ -220,11 +220,11 @@ Scintilla.Vector.reflectNormal = function(vec,axis) {
 };
 
 
-Scintilla.Vector.lerp = function(a, b, t) {
+scintilla.Vector.lerp = function(a, b, t) {
 
-  var vec = new Scintilla.Vector(
-    Scintilla.Math.lerp(a.x,b.x,t),
-    Scintilla.Math.lerp(a.y,b.y,t)
+  var vec = new scintilla.Vector(
+    scintilla.Math.lerp(a.x,b.x,t),
+    scintilla.Math.lerp(a.y,b.y,t)
   );
 
   return vec;
@@ -232,7 +232,7 @@ Scintilla.Vector.lerp = function(a, b, t) {
 
 
 
-Object.defineProperty(Scintilla.Vector.prototype, "magnitude", {
+Object.defineProperty(scintilla.Vector.prototype, "magnitude", {
 
 get : function() {
   return Math.sqrt((this.x * this.x) + (this.y * this.y));
@@ -240,7 +240,7 @@ get : function() {
 
 });
 
-Object.defineProperty(Scintilla.Vector.prototype, "normal", {
+Object.defineProperty(scintilla.Vector.prototype, "normal", {
 
 get : function() {
   var mag = this.magnitude;

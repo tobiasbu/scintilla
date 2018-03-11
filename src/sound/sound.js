@@ -1,5 +1,5 @@
 
-Scintilla.Sound = Class.extend(function() {
+scintilla.Sound = Class.extend(function() {
 
 this.constructor = function(game, tag, volume, loop, connect) {
 
@@ -271,7 +271,7 @@ this.update = function() {
         }
 
 
-        var value = Scintilla.Math.lerp(this._oldVolume,this._fadeVolume,t);
+        var value = scintilla.Math.lerp(this._oldVolume,this._fadeVolume,t);
 
         this.volume = value;
 
@@ -324,7 +324,7 @@ this.destroy = function(remove) {
 
 });
 
-Object.defineProperty(Scintilla.Sound.prototype, "volume", {
+Object.defineProperty(scintilla.Sound.prototype, "volume", {
 
     get: function () {
         return this._volume;

@@ -1,11 +1,11 @@
 
-Scintilla.GameComponents = function(game) {
+scintilla.GameComponents = function(game) {
 
 this.game = game;
 
 }
 
-Scintilla.GameComponents.prototype = {
+scintilla.GameComponents.prototype = {
 
 sprite : function(tag) {
 
@@ -17,7 +17,7 @@ sprite : function(tag) {
     else
       sprite = this.game.cache.getAsset('images',tag);
 
-    return new Scintilla.Sprite(sprite);
+    return new scintilla.Sprite(sprite);
 
 
 },
@@ -33,13 +33,13 @@ tiledSprite : function(args) { //tag,width,height
 
 
 
-    return new Scintilla.TiledSprite(sprite,args[1],args[2]);
+    return new scintilla.TiledSprite(sprite,args[1],args[2]);
 
 },
 
 animationControl : function() {
 
-    return new Scintilla.AnimationControl(this.game);
+    return new scintilla.AnimationControl(this.game);
 
 },
 
@@ -50,11 +50,11 @@ collider : function(args) { // type, shape
 
 
     if (type == "triangle")
-      s = Scintilla.Polygon.makeTriangle(args[1],args[2]);
+      s = scintilla.Polygon.makeTriangle(args[1],args[2]);
     else if (type == "rectangle")
-      s = Scintilla.Polygon.makeRectangle(args[1],args[2]);
+      s = scintilla.Polygon.makeRectangle(args[1],args[2]);
 
-      var col = new Scintilla.Collider(s);
+      var col = new scintilla.Collider(s);
 
 
     return col;
@@ -63,14 +63,14 @@ collider : function(args) { // type, shape
 
 body : function(shapeType, width, height) {
 
-  /*var body = new Scintilla.Body();
+  /*var body = new scintilla.Body();
 
   if (shapeType == ShapeType.Triangle)
-    body.setShape(Scintilla.Polygon.makeTriangle(0,0,width,height));
+    body.setShape(scintilla.Polygon.makeTriangle(0,0,width,height));
   else if (shapeType == ShapeType.Rectangle)
-    body.setShape(Scintilla.Polygon.makeRectangle(0,0,width,height));*/
+    body.setShape(scintilla.Polygon.makeRectangle(0,0,width,height));*/
 },
 
 }
 
-Scintilla.GameComponents.prototype.constructor = Scintilla.GameComponents;
+scintilla.GameComponents.prototype.constructor = scintilla.GameComponents;

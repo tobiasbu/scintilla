@@ -17,7 +17,7 @@ y = y translate
 
 */
 
-Scintilla.Matrix = function(a,b,c,d,x,y) {
+scintilla.Matrix = function(a,b,c,d,x,y) {
 
    a = a || 1;
    b = b || 0;
@@ -35,7 +35,7 @@ Scintilla.Matrix = function(a,b,c,d,x,y) {
 
 }
 
-Scintilla.Matrix.prototype = {
+scintilla.Matrix.prototype = {
 
   set : function(a,b,c,d,x,y) {
 
@@ -92,4 +92,4 @@ Scintilla.Matrix.prototype = {
 
 }
 
-Scintilla.Matrix.identity = new Scintilla.Matrix();
+scintilla.Matrix.identity = new scintilla.Matrix();

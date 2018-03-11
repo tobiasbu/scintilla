@@ -1,5 +1,5 @@
 
-Scintilla.Collider = Class.extend( function() {
+scintilla.Collider = Class.extend( function() {
 
   this.shape = null;
   this.isTrigger = false;
@@ -7,15 +7,15 @@ Scintilla.Collider = Class.extend( function() {
   this.offset = null
   this._gameObject = null;
   this.position = null;
-  var _oldScale = new Scintilla.Vector(1,1);
+  var _oldScale = new scintilla.Vector(1,1);
   var _oldRotation = 0;
 
 
   this.constructor = function(shape) {
 
-    this.position = new Scintilla.Vector();
-    this.offset = new Scintilla.Vector();
-    this.bounds = new Scintilla.BoundingBox(0,0,1,1);
+    this.position = new scintilla.Vector();
+    this.offset = new scintilla.Vector();
+    this.bounds = new scintilla.BoundingBox(0,0,1,1);
     this.setShape(shape);
 
   }
@@ -60,7 +60,7 @@ Scintilla.Collider = Class.extend( function() {
 
 
 
-      //if (radians % Scintilla.Math.PI2) {
+      //if (radians % scintilla.Math.PI2) {
 
         var points = this.shape.getPoints();
         var pivot = this.shape.centroid;

@@ -1,6 +1,6 @@
 
 
-Scintilla.RenderLayer = function(game,name) {
+scintilla.RenderLayer = function(game,name) {
 
     this.name = name;
     this.game = game;
@@ -10,7 +10,7 @@ Scintilla.RenderLayer = function(game,name) {
 
 }
 
-Scintilla.RenderLayer.prototype = {
+scintilla.RenderLayer.prototype = {
 
     // Add renderable components
     add : function(renderer) {
@@ -106,10 +106,10 @@ Scintilla.RenderLayer.prototype = {
 
 
 }
-Scintilla.RenderLayer.prototype.constructor = Scintilla.RenderLayer;
+scintilla.RenderLayer.prototype.constructor = scintilla.RenderLayer;
 
 
-Object.defineProperty(Scintilla.RenderLayer.prototype, "length", {
+Object.defineProperty(scintilla.RenderLayer.prototype, "length", {
 
     get: function() {
         return this.__renderers.length;
@@ -117,7 +117,7 @@ Object.defineProperty(Scintilla.RenderLayer.prototype, "length", {
 
 });
 
-Object.defineProperty(Scintilla.RenderLayer.prototype, "name", {
+Object.defineProperty(scintilla.RenderLayer.prototype, "name", {
 
     get: function() {
         return this.__renderers.name;
@@ -125,7 +125,7 @@ Object.defineProperty(Scintilla.RenderLayer.prototype, "name", {
 
 });
 
-Object.defineProperty(Scintilla.RenderLayer.prototype, "enable", {
+Object.defineProperty(scintilla.RenderLayer.prototype, "enable", {
 
     get: function() {
         return this.__enable;

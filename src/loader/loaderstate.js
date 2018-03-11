@@ -1,5 +1,5 @@
 
-var AssetTypeHandler = new Scintilla.Injector();
+var AssetTypeHandler = new scintilla.Injector();
 
 var LOADER_STATE = {
     NONE : 0,

@@ -1,5 +1,5 @@
 
-Scintilla.SoundManager = Class.extend(function() {
+scintilla.SoundManager = Class.extend(function() {
 
 this.game = null;
 
@@ -164,7 +164,7 @@ this.add = function(tag, volume, loop, connect) {
   if (loop === undefined) { loop = false; }
   if (connect === undefined) { connect = true; } // connect to master volume
 
-  var sound = new Scintilla.Sound(this.game, tag, volume, loop, connect);
+  var sound = new scintilla.Sound(this.game, tag, volume, loop, connect);
 
   _sounds.push(sound);
 
@@ -238,7 +238,7 @@ this.destroy = function () {
 
 });
 
-Object.defineProperty(Scintilla.SoundManager.prototype, "length", {
+Object.defineProperty(scintilla.SoundManager.prototype, "length", {
 
 get : function() {
   return this.getSounds().length;

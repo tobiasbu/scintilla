@@ -1,5 +1,5 @@
 
-Scintilla.Injector = Class.extend(function() {
+scintilla.Injector = Class.extend(function() {
 
     this.list = {};
 
