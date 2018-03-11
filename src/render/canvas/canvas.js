@@ -1,18 +1,15 @@
 
 /**
  * Create a Canvas object.
- * @function Canvas
+ * @class Canvas
  */
-scintilla.Canvas = {
+export default (
+    class Canvas {
 
-
-
-  create : function (parent,width, height) {
-
-
+  static create (parent,width, height) {
 
   // default definition
-  var defaultDef = {
+  let defaultDef = {
     width: width,
     height: height,
     id: Math.random().toString(36).substr(2, 9),
@@ -22,9 +19,8 @@ scintilla.Canvas = {
   };
 
   //var CO = Object.assign(defaultDef, options);
-  var CO = defaultDef;
-
-  var canvas;
+  let CO = defaultDef;
+  let canvas;
 
 
   canvas = document.createElement('canvas');
@@ -36,7 +32,7 @@ scintilla.Canvas = {
   //canvas.style.position = 'absolute';
 
 
-  this.appendDOM(canvas,parent);
+  Canvas.appendDOM(canvas,parent);
   //document.body.appendChild(canvas);
   //var context = canvas.getContext("2d");
 
@@ -46,12 +42,13 @@ scintilla.Canvas = {
   //console.log("Canvas Created!");
 
   return canvas;
-},
+}
 
-appendDOM : function(canvas,parent) {
+static appendDOM(canvas,parent) {
 
-  var appendTo;
-  var overflowHidden = true;
+  let appendTo;
+  let overflowHidden = true;
+  let target = null;
 
   //if (overflowHidden === undefined) { overflowHidden = true; }
 
@@ -84,4 +81,4 @@ appendDOM : function(canvas,parent) {
 
 }
 
-}
+})

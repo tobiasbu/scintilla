@@ -1,5 +1,6 @@
 
 import Config from './config';
+import Canvas from '../render/canvas/canvas'
 
 /**
 * Main class of engine. Holds all main data.
@@ -97,7 +98,7 @@ export default class Game {
     if (this.systemInited)
         return;
 
-    this.canvas = scintilla.Canvas.create(this.parent,this.width,this.height);
+    this.canvas = Canvas.create(this.parent,this.width,this.height);
     this.context = this.canvas.getContext("2d", { alpha: false });
 
     this.cache = new scintilla.Cache(this);

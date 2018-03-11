@@ -1,5 +1,5 @@
 
-class Utils {
+var Utils = class {
 
     isFunction(obj) {
     return !!(obj && obj.constructor && obj.call && obj.apply);

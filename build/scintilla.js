@@ -237,6 +237,10 @@ var _config = __webpack_require__(/*! ./config */ "./core/config.js");
 
 var _config2 = _interopRequireDefault(_config);
 
+var _canvas = __webpack_require__(/*! ../render/canvas/canvas */ "./render/canvas/canvas.js");
+
+var _canvas2 = _interopRequireDefault(_canvas);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -335,7 +339,7 @@ var Game = function () {
 
             if (this.systemInited) return;
 
-            this.canvas = scintilla.Canvas.create(this.parent, this.width, this.height);
+            this.canvas = _canvas2.default.create(this.parent, this.width, this.height);
             this.context = this.canvas.getContext("2d", { alpha: false });
 
             this.cache = new scintilla.Cache(this);
@@ -487,6 +491,112 @@ module.exports = Game;
 
 /***/ }),
 
+/***/ "./render/canvas/canvas.js":
+/*!*********************************!*\
+  !*** ./render/canvas/canvas.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Create a Canvas object.
+ * @class Canvas
+ */
+exports.default = function () {
+  function Canvas() {
+    _classCallCheck(this, Canvas);
+  }
+
+  _createClass(Canvas, null, [{
+    key: "create",
+    value: function create(parent, width, height) {
+
+      // default definition
+      var defaultDef = {
+        width: width,
+        height: height,
+        id: Math.random().toString(36).substr(2, 9),
+        class: "",
+        container: "body",
+        style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
+      };
+
+      //var CO = Object.assign(defaultDef, options);
+      var CO = defaultDef;
+      var canvas = void 0;
+
+      canvas = document.createElement('canvas');
+      //canvas.parent = parent;
+      canvas.setAttribute("id", CO.id);
+      canvas.setAttribute("width", CO.width);
+      canvas.setAttribute("height", CO.height);
+      canvas.setAttribute("style", CO.style);
+      //canvas.style.position = 'absolute';
+
+
+      Canvas.appendDOM(canvas, parent);
+      //document.body.appendChild(canvas);
+      //var context = canvas.getContext("2d");
+
+
+      //tobiJS.Canvas.list.parent = document.body;
+
+      //console.log("Canvas Created!");
+
+      return canvas;
+    }
+  }, {
+    key: "appendDOM",
+    value: function appendDOM(canvas, parent) {
+
+      var appendTo = void 0;
+      var overflowHidden = true;
+      var target = null;
+
+      //if (overflowHidden === undefined) { overflowHidden = true; }
+
+      if (parent) {
+        if (typeof parent === 'string') {
+          // hopefully an element ID
+          target = document.getElementById(parent);
+        } else if ((typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' && parent.nodeType === 1) {
+          // quick test for a HTMLelement
+          target = parent;
+        }
+      }
+
+      // Fallback, covers an invalid ID and a non HTMLelement object
+      if (!target) {
+        target = document.body;
+      }
+
+      /*if (overflowHidden && target.style)
+      {
+          target.style.overflow = 'hidden';
+      }*/
+
+      target.appendChild(canvas);
+    }
+  }]);
+
+  return Canvas;
+}();
+
+/***/ }),
+
 /***/ "./utils/utils.js":
 /*!************************!*\
   !*** ./utils/utils.js ***!
@@ -566,8 +676,6 @@ var Utils = function () {
 
     return Utils;
 }();
-
-;
 
 exports.default = new Utils();
 
