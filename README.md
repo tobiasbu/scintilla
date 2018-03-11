@@ -1,4 +1,4 @@
-![Alt text](https://raw.githubusercontent.com/kaltkaffee/tobiJS/master/dist/images/tobijs_splash.png)
+
 # Scintilla
 
 A simple 2D Game framework for HTML5.

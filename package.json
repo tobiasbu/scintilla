@@ -4,7 +4,8 @@
   "description": "Scintilla game engine for web",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode development"
   },
   "repository": {
     "type": "git",
@@ -18,9 +19,19 @@
   "author": "Tobias Ulrich",
   "license": "MIT",
   "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-uglify": "^1.0.1",
+    "normalize.css": "^8.0.0",
+    "uglifyjs-webpack-plugin": "^1.2.3",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.11"
+  },
+  "bugs": {
+    "url": "https://github.com/tobiasbu/tobiJS/issues"
+  },
+  "homepage": "https://github.com/tobiasbu/tobiJS#readme",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
     "normalize.css": "^8.0.0"
   }
 }

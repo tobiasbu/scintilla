@@ -19,7 +19,8 @@
 * @namespace Scintilla
 */
 var Scintilla = Scintilla || {
-  VERSION: '0.2.0'
+  VERSION: '0.0.1',
+  Game : require('./core/game.js'),
 };
 
 Scintilla.ShapeType = {
@@ -28,3 +29,7 @@ Circle : 2,
 Polygon : 3
 }
 
+
+module.exports = Scintilla;
+
+global.Scintilla = Scintilla;
