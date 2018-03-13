@@ -1,73 +1,70 @@
 
 import Map from '../structures/map'
 import RenderLayer from './renderlayer'
+import RenderLayerManagment from './renderlayersmanagement'
 import Canvas from './canvas/canvas'
+import {RENDERING_TYPE} from './define'
+
 
 export default class Render {
     
+
     constructor(game) {
         this.game = game;
 
+        this._backgroundColor = '#000'
         this.canvas = Canvas.create(this.game.parent,this.game.width,this.game.height);
         this.context = this.canvas.getContext("2d", { alpha: false });    
 
-        this.__enable = true;
-        this.__renderLayers = [];
-        this.__renderLayersMap = new Map();
-        this.addLayer('default');
+        this.layer = new RenderLayerManagment(game);
+        this.imageRendering = (game.config.pixelelated) ? RENDERING_TYPE.NEAREST : RENDERING_TYPE.LINEAR;
+        this._alpha = 1;
+        this.clear = true;
     }
 
-    addLayer(name)
+    renderBegin()
     {
-        if (this.contains(name))
+        
+        if (this.clear)
         {
-            throw new Error("Render.add: There is already a RenderLayer called: \"" +  name + "\".");
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
-       
-        this.__renderLayersMap.set(name, this.__renderLayers.length);
-        this.__renderLayers.push(new RenderLayer(game, name));
+
+        this.context.fillStyle = this._backgroundColor;  
+        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    remove(name)
+    renderEnd()
     {
-        if (typeof name !== 'string')
-            throw new Error("Render.remove: The value name is not a string.");
-
-        if (name === "default")
-            throw new Error("Render.remove: You can not remove the \"default\" layer.");
-
-        if (!this.__renderLayersMap.has(name))
-            throw new Error("Render.remove: Could not remove layer. There is no layer named \"" + name + "\".");
-
-        var index = this.__renderLayersMap.get(name);
-        this.__renderLayers.splice(index, 1);
-        this.__renderLayersMap.delete(name);
+        this.context.globalAlpha = 1;
+        this.context.globalCompositeOperation = 'source-over';
     }
 
-    contains(layerName)
-    {
-        if (typeof layerName !== 'string')
-            throw new Error("Render.contains: The value name is not a string.");
-
-        return this.__renderLayers.indexOf(layerName) > -1;
-    }
-
-    _render()
+    render()
     {
         if (!this.__enable)
             return;
 
         this.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.context.globalCompositeOperation = 'source-over';
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.context.fillStyle = '#fff';//this.universe.backgroundColor;
-        this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        for (var i = 0; i < this.__renderLayers.length; i++)
+        // alpha
+        if (this._alpha !== 1)
         {
-            if (this.__renderLayers[i].enable)
+            ctx.globalAlpha = 1;
+            this._alpha = 1;
+        }
+        this.context.globalAlpha = 1;
+
+        // blend
+        this.context.globalCompositeOperation = 'source-over';
+       
+     
+
+        for (var i = 0; i < this.layers.__renderLayers.length; i++)
+        {
+            if (this.layers.__renderLayers[i].enable)
             {
-                this.__renderLayers[i].render();
+                this.layers.__renderLayers[i].render();
             }
         }
 
@@ -81,6 +78,23 @@ export default class Render {
             //console.log("asdasd");
       
       }
+
+    }
+
+    get backgroundColor() {return this._backgroundColor;}
+    set backgroundColor(value) {
+        this._backgroundColor = value;
+    }
+    get alpha() {return this._alpha;}
+    set alpha(value) {
+
+        if (this._alpha !== value)
+        {
+            this.currentContext.globalAlpha = value;
+            this._alpha = value;
+        }
+
+        return this._alpha;
     }
 }
 

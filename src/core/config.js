@@ -24,6 +24,8 @@ export default class Config {
             responseType : callback_2(config, 'loader.responseType', ''),
             async : callback_2(config, 'loader.async', true),
         }
+
+        this.pixelated = callback(config, 'pixelated', false);
         /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
             this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
             this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);

@@ -1,5 +1,7 @@
 
 
+import MathUtils from './mathutils'
+
 /**
 * Class for points and vectors.
 * @class Vector
@@ -136,11 +138,11 @@ export default class Vector {
   }
 
   static distance(a, b) {
-    return Math.distance(a.x,a.y,b.x,b.y);
+    return MathUtils.distance(a.x,a.y,b.x,b.y);
   }
 
   static angleBetween(a, b) {
-    return Math.angleBetween(a.x,a.y,b.x,b.y);
+    return MathUtils.angleBetween(a.x,a.y,b.x,b.y);
   }
 
   static dot(a, b) {
@@ -184,8 +186,8 @@ export default class Vector {
 
   static lerp(a, b, t) {
     var vec = new Vector(
-      scintilla.Math.lerp(a.x,b.x,t),
-      scintilla.Math.lerp(a.y,b.y,t)
+      MathUtils.lerp(a.x,b.x,t),
+      MathUtils.lerp(a.y,b.y,t)
     );
     return vec;
   }

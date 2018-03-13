@@ -1,5 +1,5 @@
 
-scintilla.Color = {
+export const Color = {
 
 webRGB : function(r,g,b,a) {
 
@@ -83,3 +83,5 @@ componentToHex : function(c) {
 }
 
 }
+
+module.exports = Color;

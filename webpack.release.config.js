@@ -1,23 +1,22 @@
 'use strict';
 
 const webpack = require('webpack');
+const uglify = require('uglifyjs-webpack-plugin');
 
 module.exports = {
 
     context: `${__dirname}/src/`,
 
     entry: {
-        estest : './test.js'
+        'scintilla.min' : './Scintilla.js',
     },
 
     output: {
         path: `${__dirname}/build/`,
         filename: '[name].js',
-        library: 'estest',
+        library: 'Scintilla',
         libraryTarget: 'umd',
-        //devtoolModuleFilenameTemplate: "webpack:///[resource-path]", // string
-        //devtoolFallbackModuleFilenameTemplate: "webpack:///[resource-path]?[hash]", // string
-        umdNamedDefine: false,
+        umdNamedDefine: true,
     },
 
     module: {
@@ -36,6 +35,24 @@ module.exports = {
         ]
     },
 
-    devtool: 'source-map'
+    plugins: [
+
+        new uglify({
+            include: /\.min\.js$/,
+            parallel: true,
+            sourceMap: false,
+            uglifyOptions: {
+                compress: true,
+                ie8: false,
+                ecma: 5,
+                output: {
+                    comments: false
+                },
+                warnings: false
+                },
+                warningsFilter: (src) => false
+        })
+
+    ]
 
 }

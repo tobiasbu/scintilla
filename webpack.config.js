@@ -7,13 +7,13 @@ module.exports = {
     context: `${__dirname}/src/`,
 
     entry: {
-        scintilla : './Scintilla.js'
+        'scintilla.dev' : './Scintilla.js'
     },
 
     output: {
         path: `${__dirname}/build/`,
         filename: '[name].js',
-        library: 'estest',
+        library: 'Scintilla',
         libraryTarget: 'umd',
         sourceMapFilename: '[file].map',
         devtoolModuleFilenameTemplate: "webpack:///[resource-path]", // string

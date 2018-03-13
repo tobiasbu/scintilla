@@ -1,7 +1,0 @@
-
-// FUTURE IMPLEMENTATION
-
-/*function Class()
-{
-
-}*/

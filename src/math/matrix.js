@@ -17,27 +17,16 @@ y = y translate
 
 */
 
-scintilla.Matrix = function(a,b,c,d,x,y) {
+export default class Matrix {
+  
+  constructor(a,b,c,d,x,y) {
 
-   a = a || 1;
-   b = b || 0;
-   c = c || 0;
-   d = d || 1;
-   x = x || 0;
-   y = y || 0;
-
-   this.a = a
-   this.b = b;
-   this.c = c;
-   this.d = d;
-   this.x = x;
-   this.y = y;
-
-}
-
-scintilla.Matrix.prototype = {
-
-  set : function(a,b,c,d,x,y) {
+    a = a || 1;
+    b = b || 0;
+    c = c || 0;
+    d = d || 1;
+    x = x || 0;
+    y = y || 0;
 
     this.a = a
     this.b = b;
@@ -46,16 +35,27 @@ scintilla.Matrix.prototype = {
     this.x = x;
     this.y = y;
 
-  },
+  }
 
-  translate : function(x, y) {
+  set(a,b,c,d,x,y) {
+
+    this.a = a
+    this.b = b;
+    this.c = c;
+    this.d = d;
+    this.x = x;
+    this.y = y;
+
+  }
+
+  translate(x, y) {
 
     this.x += x;
     this.y += y;
 
-  },
+  }
 
-  scale : function(x, y) {
+  scale(x, y) {
 
     this.a *= x;
     this.d *= y;
@@ -64,9 +64,9 @@ scintilla.Matrix.prototype = {
     this.x *= x;
     this.y *= y;
 
-  },
+  }
 
-  rotate : function(angle) {
+  rotate(angle) {
 
     var cos = Math.cos(angle);
     var sin = Math.sin(angle);
@@ -82,14 +82,12 @@ scintilla.Matrix.prototype = {
    this.x = x1 * cos - this.y * sin;
    this.y = x1 * sin + this.y * cos;
 
- },
+ }
 
- identity : function() {
+ static identity() {
 
-   return this.set(1, 0, 0, 1, 0, 0);
+   return new Matrix(1, 0, 0, 1, 0, 0);
 
  }
 
 }
-
-scintilla.Matrix.identity = new scintilla.Matrix();

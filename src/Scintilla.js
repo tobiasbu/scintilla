@@ -6,7 +6,7 @@
 *
 * --- Scintilla ---
 *
-* v0.0.2
+* v0.0.1
 *
 * tobiasbu.github.io
 *
@@ -20,10 +20,19 @@
 */
 var scintilla = scintilla || {
   VERSION: '0.0.1',
-  Loader : require('./loader'),
+
+  // DATA STRUCTURES
+  Struct : require('./structures'),
+  // INPUT
   KeyCode : require('./input/keycode'),
   Input : require('./input'),
+  // MATH
+  MathUtils : require('./math/mathutils'),
+  // CORE
+  Loader : require('./loader'),
   Game : require('./core/game'),
+  // UTILITIES
+  Color : require('./utils/color')
 };
 
 scintilla.ShapeType = {
