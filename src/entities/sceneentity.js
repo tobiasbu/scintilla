@@ -16,5 +16,7 @@ export default class SceneEntity extends Entity
         
     }
 
+    set ['transform.position.x'](value) { this.transform.position.x = value; }
+
     
 }

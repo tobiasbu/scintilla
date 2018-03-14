@@ -2,30 +2,24 @@
 
 export default class Scene {
   
-  constructor(game) {
+  constructor(game, name) {
 
-    var myGame = null;
-
-    if (typeof game === 'undefined')
-      myGame = null;
-    else {
-      myGame = game;
-    }
-
-
+    var myGame = game || null;
+    this.name = name || 'New Scene';
     this.game = myGame;
-    this.camera = null;
+    
+    /*this.camera = null;
     this.x = 0;
     this.y = 0;
     this.width = 0;
     this.height = 0;
-    this.view = 0;
+    this.view = 0;*/
 
 
-    if (myGame != null) {
+    /*if (myGame != null) {
       this.width = myGame.width;
       this.height = myGame.height;
-    }
+    }*/
   }
 
   /*preload : function() {},

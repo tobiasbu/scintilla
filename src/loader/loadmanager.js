@@ -175,7 +175,6 @@ export default class LoadManager {
 
       if (this._loadedFilesCount < this._filesQueueCount)
       {
-        console.log("asdasd");
           this.processFileQueue();
       } else  {
         
@@ -200,7 +199,6 @@ export default class LoadManager {
         this.processingDone();
     } else {
      
-      console.log("asdasd");
       this._successFiles.each(function(file) {
         file.onProcessing(this.processingUpdate.bind(this));
       },this);
@@ -238,7 +236,6 @@ export default class LoadManager {
   }
 
   processingDone() {
-    console.log("done")
     this._successFiles.clear();
     this._filesQueue.clear();
 
@@ -277,8 +274,6 @@ export default class LoadManager {
     this.state = LOADER_STATE.DONE;
 
     this.game.scene.preloadComplete();
-    console.log("asdasd");
-
   }
 
   isLoading() {

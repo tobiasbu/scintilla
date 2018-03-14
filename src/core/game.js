@@ -8,7 +8,7 @@ import UpdateTime from '../time/updatetime'
 import Input from '../input/input'
 import Render from '../render/render'
 import Draw from '../render/draw'
-import SceneManager from './scenemanager'
+import SceneManager from '../scene/scenemanager'
 import Physics from '../physics/physics'
 import Debug from '../others/debug'
 
@@ -167,7 +167,7 @@ export default class Game {
           this._spiraling = 0;
           this.time.accumalator = 0;
 
-          this.render.render(this.time.accumulatorDelta);
+          this.display(this.time.accumulatorDelta);
 
       } else {
 
@@ -205,13 +205,20 @@ export default class Game {
 
           this._lastFrameCount = countFrames;
 
-            this.render.render(this.time.accumalator/this.time.accumulatorDelta);
+          this.display(this.time.accumalator/this.time.accumulatorDelta);
+            //this.render.render(this.time.accumalator/this.time.accumulatorDelta);
 
       }
 
 
 
     }
+  }
+
+  display(timeStep) {
+    this.render.renderBegin();
+    this.render.render(timeStep);
+    this.render.renderEnd();
   }
 
   logic(timeStep) {

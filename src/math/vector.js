@@ -11,58 +11,69 @@ export default class Vector {
   
   constructor(x,y) {
 
-    this.x = x || 0;
-    this.y = y || 0;
+    this._x = x || 0;
+    this._y = y || 0;
   }
+
+  set x(value) {
+    this._x = value;
+    return this._x;
+  }
+  get x() {return this._x;}
+  set y(value) {
+    this._y = value;
+    return this._y;
+  }
+  get y() {return this._y;}
 
   set(x,y) {
 
-    this.x = x;
-    this.y = y || x
+    this._x = x;
+    this._y = y || x
 
   }
 
   move(x,y) {
 
-    this.x += x;
-    this.y += y;
+    this._x += x;
+    this._y += y;
 
   }
 
   scale(x, y) {
 
-    this.x *= x;
-    this.y *= y || x;
+    this._x *= x;
+    this._y *= y || x;
     return this;
 
   }
 
   rotate(radians) {
 
-    var x = this.x;
-    var y = this.y;
-    this.x = x * Math.cos(radians) - y * Math.sin(radians);
-    this.y = x * Math.sin(radians) + y * Math.cos(radians);
+    let x = this._x;
+    let y = this._y;
+    this._x = x * Math.cos(radians) - y * Math.sin(radians);
+    this._y = x * Math.sin(radians) + y * Math.cos(radians);
     return this;
 
   }
 
   rotateAround(radians, other) {
 
-    /*var x = this.x;
-    var y = this.y;*/
-    var dx = this.x-other.x;
-    var dy = this.y-other.y;
+    /*var x = this._x;
+    var y = this._y;*/
+    let dx = this._x-other.x;
+    let dy = this._y-other.y;
 
-    var c = Math.cos(radians);
-    var s = Math.sin(radians);
+    let c = Math.cos(radians);
+    let s = Math.sin(radians);
 
-    /*this.x = c * (x-other.x) - s * (y-other.y) + other.x;
-    this.y = s * (x-other.x) + c * (y-other.y) + other.y;*/
+    /*this._x = c * (x-other.x) - s * (y-other.y) + other.x;
+    this._y = s * (x-other.x) + c * (y-other.y) + other.y;*/
 
 
-    this.x =  other.x + (c * dx - s * dy);
-    this.y =  other.y + (s * dx + c * dy);
+    this._x =  other.x + (c * dx - s * dy);
+    this._y =  other.y + (s * dx + c * dy);
 
     return this;
 
@@ -70,46 +81,46 @@ export default class Vector {
 
   copy(otherVector) {
 
-    this.x = otherVector.x;
-    this.y = otherVector.y;
+    this._x = otherVector.x;
+    this._y = otherVector.y;
     return this;
 
   }
 
   normalize() {
 
-    var mag = this.length();
+    let mag = this.length();
     if (mag > 0) {
-      this.x = this.x / mag;
-      this.y = this.y / mag;
+      this._x = this._x / mag;
+      this._y = this._y / mag;
     }
     return this;
 
   }
 
   reverse() {
-    this.x = -this.x;
-    this.y = -this.y;
+    this._x = -this._x;
+    this._y = -this._y;
     return this;
   }
 
   add(other) {
-    this.x += other.x;
-    this.y += other.y;
+    this._x += other.x;
+    this._y += other.y;
     return this;
   }
 
   sub(other) {
-    this.x -= other.x;
-    this.y -= other.y;
+    this._x -= other.x;
+    this._y -= other.y;
     return this;
   }
 
   perp() {
 
-    var x = this.x;
-    this.x = this.y;
-    this.y = -x;
+    let x = this._x;
+    this._x = this._y;
+    this._y = -x;
     return this;
   }
 
@@ -122,7 +133,7 @@ export default class Vector {
   }
 
   clone() {
-    return new Vector(this.x,this.y);
+    return new Vector(this._x,this._y);
   }
 
   length() {
@@ -150,7 +161,7 @@ export default class Vector {
   }
 
   static project(a,b) {
-    var dp = Vector.dot(a,b);
+    let dp = Vector.dot(a,b);
     var proj = new Vector(
       ( dp / (b.x*b.x + b.y*b.y) ) * b.x,
       ( dp / (b.x*b.x + b.y*b.y) ) * b.y
@@ -160,14 +171,14 @@ export default class Vector {
 
   // project for unit vector
   static projectNormal(a,b) {
-    var dp = Vector.dot(a,b);
-    var proj = new Vector(   dp / b.x,   dp / b.y );
+    let dp = Vector.dot(a,b);
+    let proj = new Vector(   dp / b.x,   dp / b.y );
     return proj;
   };
 
   static reflect(vec,axis) {
 
-    var r = Vector.project(vec,axis);
+    let r = Vector.project(vec,axis);
     r.scale(2);
     r.sub(vec);
     return r;
@@ -176,7 +187,7 @@ export default class Vector {
 
   static reflectNormal(vec,axis) {
 
-    var r = Vector.projectNormal(vec,axis);
+    let r = Vector.projectNormal(vec,axis);
     r.scale(2);
     r.sub(vec);
     return r;
@@ -185,17 +196,17 @@ export default class Vector {
 
 
   static lerp(a, b, t) {
-    var vec = new Vector(
+    let vec = new Vector(
       MathUtils.lerp(a.x,b.x,t),
       MathUtils.lerp(a.y,b.y,t)
     );
     return vec;
   }
 
-  get magnitude() {return Math.sqrt((this.x * this.x) + (this.y * this.y));}
+  get magnitude() {return Math.sqrt((this._x * this._x) + (this._y * this._y));}
   get normal() {
-    var mag = this.magnitude;
-    var vec = new tobiJS.Vector(this.x / mag,this.y / mag);
+    let mag = this.magnitude;
+    let vec = new tobiJS.Vector(this._x / mag,this._y / mag);
     return vec;
   }
 

@@ -53,7 +53,7 @@ new(sceneName)
     return null;
   }
   
-  var newScene = new Scene(this.game);
+  var newScene = new Scene(this.game, sceneName);
   this._scenes.set(sceneName,newScene);
 
   return newScene;

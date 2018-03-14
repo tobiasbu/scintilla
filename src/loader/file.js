@@ -28,7 +28,7 @@ export default class File {
             this.xhrSettings = XHR.merge(this.xhrSettings, Utils.getValue(config, 'xhrSettings', {}));
 
         
-        console.log(this.xhrSettings);
+        //console.log(this.xhrSettings);
 
         this.loader = null;
         this.state = LOADER_STATE.PENDING;

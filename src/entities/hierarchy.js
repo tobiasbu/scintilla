@@ -1,124 +1,101 @@
 
 // Hierarchy Tree of instances
 // Instance is a children of the Hierarchy tree
-scintilla.Hierarchy = scintilla.Transform.extend(function() {
+export default class Hierarchy {
 
-this.children = [];
-//scintilla.Transform.call(this);
+  constructor() {
+    this.children = [];
+  }
 
-//if (newTransform)
-//this._newTransform();
+  addChild(child) {
+    return this.addChildAt(child,this.children.length);
+  }
 
-this.constructor = function() {
+  addChildAt(child,index) {
+        if(index >= 0 && index <= this.children.length)
+        {
+            if(child.parent)
+            {
+                child.parent.removeChild(child);
+            }
 
-  this.super();
+            child.parent = this;
 
-};
+            this.children.splice(index, 0, child);
 
-this.addChild = function(child) {
+            this._changeDepth = true;
 
-  return this.addChildAt(child,this.children.length);
+            //if(this.stage)child.setStageReference(this.stage);
 
-};
+            return child;
+        }
+        else
+        {
+            throw new Error(child + 'addChildAt: The index '+ index +' supplied is out of bounds ' + this.children.length);
+        }
+  }
 
-this.addChildAt = function(child,index) {
+  removeChild(child)
+  {
+      var index = this.children.indexOf( child );
 
-      if(index >= 0 && index <= this.children.length)
+      if(index === -1) return;
+
+      return this.removeChildAt( index );
+  }
+
+  removeChildAt(index)
+  {
+    var child = this.getChildAt( index );
+
+    child.parent = undefined;
+    this.children.splice( index, 1 );
+    return child;
+
+  }
+
+
+  getChildAt(index)
+  {
+      if (index < 0 || index >= this.children.length)
       {
-          if(child.parent)
-          {
-              child.parent.removeChild(child);
-          }
-
-          child.parent = this;
-
-          this.children.splice(index, 0, child);
-
-          this._changeDepth = true;
-
-          //if(this.stage)child.setStageReference(this.stage);
-
-          return child;
+          throw new Error('Hierarchy.getChildAt: Index '+ index +' does not exist in the child list');
       }
-      else
-      {
-          throw new Error(child + 'addChildAt: The index '+ index +' supplied is out of bounds ' + this.children.length);
-      }
+      return this.children[index];
+
+  }
 
 
-};
+  preUpdate(time) {
 
-this.removeChild = function(child)
-{
-    var index = this.children.indexOf( child );
-
-    if(index === -1) return;
-
-    return this.removeChildAt( index );
-};
-
-this.removeChildAt = function(index)
-{
-  var child = this.getChildAt( index );
-
-  child.parent = undefined;
-  this.children.splice( index, 1 );
-  return child;
-
-};
-
-
-this.getChildAt = function(index)
-{
-    if (index < 0 || index >= this.children.length)
+    for (var i = 0; i < this.children.length; i++)
     {
-        throw new Error('getChildAt: Supplied index '+ index +' does not exist in the child list, or the supplied DisplayObject must be a child of the caller');
+          this.children[i].preUpdate(time);
+
     }
-    return this.children[index];
-
-};
-
-
-this.preUpdate = function(time) {
-
-  for (var i = 0; i < this.children.length; i++)
-  {
-        this.children[i].preUpdate(time);
 
   }
 
-};
+  update() {
 
-this.update = function() {
-
-  for (var i = 0; i < this.children.length; i++)
-  {
-
-        this.children[i].update();
+    for (var i = 0; i < this.children.length; i++)
+    {
+          this.children[i].update();
+    }
 
 
   }
 
-
-};
-
-this._updateTransform = function() {
-
-
-
-  for (var i = 0; i < this.children.length; i++)
-  {
-
-      this.children[i]._updateTransform();
-
+  _updateTransform() {
+    for (var i = 0; i < this.children.length; i++)
+    {
+        this.children[i]._updateTransform();
+    }
   }
 
 
-};
 
-
-
-});
+}
 
 
 //scintilla.Hierarchy.prototype = Object.create( scintilla.Transform.prototype );

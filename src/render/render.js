@@ -19,6 +19,7 @@ export default class Render {
         this.layer = new RenderLayerManagment(game);
         this.imageRendering = (game.config.pixelelated) ? RENDERING_TYPE.NEAREST : RENDERING_TYPE.LINEAR;
         this._alpha = 1;
+        this._enable = true;
         this.clear = true;
     }
 
@@ -42,7 +43,7 @@ export default class Render {
 
     render()
     {
-        if (!this.__enable)
+        if (!this._enable)
             return;
 
         this.context.setTransform(1, 0, 0, 1, 0, 0);
@@ -53,18 +54,17 @@ export default class Render {
             ctx.globalAlpha = 1;
             this._alpha = 1;
         }
-        this.context.globalAlpha = 1;
 
         // blend
         this.context.globalCompositeOperation = 'source-over';
        
      
 
-        for (var i = 0; i < this.layers.__renderLayers.length; i++)
+        for (let i = 0; i < this.layer.__renderLayers.length; i++)
         {
-            if (this.layers.__renderLayers[i].enable)
+            if (this.layer.__renderLayers[i].enable)
             {
-                this.layers.__renderLayers[i].render();
+                this.layer.__renderLayers[i].render();
             }
         }
 

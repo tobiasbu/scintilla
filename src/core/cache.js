@@ -21,14 +21,11 @@ constructor(game) {
       this.removeTagAt('images',tag);
 
     }
-
     var img = {
             tag: tag,
             url: url,
             data: data,
     };
-
-    console.log(data);
 
     this._cache.images[tag] = img;
 

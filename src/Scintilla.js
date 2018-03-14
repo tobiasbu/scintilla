@@ -28,6 +28,7 @@ var scintilla = scintilla || {
   Input : require('./input'),
   // MATH
   MathUtils : require('./math/mathutils'),
+  Matrix : require('./math/matrix'),
   // CORE
   Loader : require('./loader'),
   Game : require('./core/game'),

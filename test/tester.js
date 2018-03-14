@@ -20,6 +20,14 @@ var config = {
   var scene = game.scene.new('scene');
   var x = 0;
 
+  var mat = new scintilla.Matrix(1);
+  var mat2 = new scintilla.Matrix(3);
+  //mat.set(1,2,5);
+  mat2 = mat2.multiply(mat);
+  mat2.transpose();
+  console.log(mat2.toString());
+  
+
 scene.preload = function()
 {
     game.load.setPath('assets/')
@@ -27,11 +35,7 @@ scene.preload = function()
 }
 
 scene.render = function() {
-
-
     game.draw.sprite('test',VIEW.w / 2 + x,VIEW.h / 2-16,[0.5,0.5]);
-
-    console.log("asdasdas");
     
 }
 
