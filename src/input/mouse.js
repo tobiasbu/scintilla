@@ -1,12 +1,6 @@
 
 
-export const MouseButton = {
-  LEFT_BUTTON : 0,
-  MIDDLE_BUTTON : 1,
-  RIGHT_BUTTON : 2,
-  WHEEL_UP : 3,
-  WHEEL_DOWN : 4
-  };
+import MouseButton from './mousebutton'
   
   export const MouseEvent = {
   NONE : 0,
@@ -14,6 +8,8 @@ export const MouseButton = {
   PRESSED : 2,
   RELEASE : 3
   };
+
+
   
 
 export default class Mouse {

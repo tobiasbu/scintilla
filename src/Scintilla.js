@@ -25,6 +25,7 @@ var scintilla = scintilla || {
   Struct : require('./structures'),
   // INPUT
   KeyCode : require('./input/keycode'),
+  MouseButton : require('./input/mousebutton'),
   Input : require('./input'),
   // MATH
   MathUtils : require('./math/mathutils'),

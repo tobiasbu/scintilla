@@ -1,5 +1,5 @@
 
-var Utils = class {
+class ObjectUtils {
 
     isFunction(obj) {
     return !!(obj && obj.constructor && obj.call && obj.apply);
@@ -53,11 +53,6 @@ var Utils = class {
         }
     }
 
-  getFileExtension(filename)
-  {
-    return filename.substring(filename.lastIndexOf('.')+1, filename.length) || "";
-  }
-
   getURL(url, baseURL)
   {
     if (!url)
@@ -72,4 +67,4 @@ var Utils = class {
 
 };
 
-export default new Utils();
+export default new ObjectUtils();

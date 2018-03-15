@@ -10,6 +10,7 @@ export default class ImageResource extends Resource {
     constructor(source, name) {
 
       super(source, name);
+      
       this.width = 100;
       this.height = 100;
       this.isLoaded = false;

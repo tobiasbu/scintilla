@@ -2,7 +2,7 @@
 import { LOADER_STATE, AssetTypeHandler} from './loaderstate'
 import Set from '../structures/set'
 import XHR from './XHR'
-import Utils from '../utils/utils';
+import ObjectUtils from '../utils/objectutils';
 
 // Class LoaderManager
 export default class LoadManager {
@@ -26,11 +26,11 @@ export default class LoadManager {
     let gameConfig = game.config.loader;
 
     this.xhr = XHR.createSettings(
-      Utils.getValue(config, 'responseType', gameConfig.responseType),
-      Utils.getValue(config, 'async', gameConfig.async),
-      //scintilla.Utils.getPropertyValue(config, 'user', gameConfig.loaderUser),
-      //scintilla.Utils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
-      Utils.getValue(config, 'timeout', gameConfig.timeout)
+      ObjectUtils.getValue(config, 'responseType', gameConfig.responseType),
+      ObjectUtils.getValue(config, 'async', gameConfig.async),
+      //scintilla.ObjectUtils.getPropertyValue(config, 'user', gameConfig.loaderUser),
+      //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+      ObjectUtils.getValue(config, 'timeout', gameConfig.timeout)
   );
 
 

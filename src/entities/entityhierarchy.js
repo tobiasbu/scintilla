@@ -1,4 +1,6 @@
 
+import Entity from './entity'
+
 // Hierarchy Tree of instances
 // Instance is a children of the Hierarchy tree
 export default class EntityHierarchy extends Entity {

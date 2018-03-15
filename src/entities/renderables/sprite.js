@@ -1,6 +1,7 @@
 import Renderable from "./renderable";
 import Rect from "../../math/rect";
 import { EntityType } from "../entitytype";
+import DrawImage from "../../modules/draw/drawImage";
 
 
 export default class Sprite extends Renderable {
@@ -36,9 +37,11 @@ export default class Sprite extends Renderable {
         
     }
 
-    render(context, matrix)
+    render()
     {
         if (!this._visible)
             return;
+
+        //DrawImage(context, )
     }
 }

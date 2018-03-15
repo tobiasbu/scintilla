@@ -2,7 +2,8 @@
 import { LOADER_STATE, AssetTypeHandler} from '../loaderstate'
 import File from '../file'
 import URLObject from '../URLobject'
-import Utils from '../../utils/utils'
+import ObjectUtils from '../../utils/objectutils'
+import PathUtils from '../../utils/pathutils'
 
 export default class ImageFile extends File {
     
@@ -17,18 +18,18 @@ export default class ImageFile extends File {
         }
         else
         {
-            assetTag = Utils.getValue(tag, 'tag', '');
+            assetTag = ObjectUtils.getValue(tag, 'tag', '');
         }
 
         var fileConfig = {
             type: 'image',
             tag: assetTag,
-            ext: Utils.getValue(tag, 'ext', Utils.getFileExtension(url)),
-            url: Utils.getValue(tag, 'file', url),
+            ext: ObjectUtils.getValue(tag, 'ext', PathUtils.getExtension(url)),
+            url: ObjectUtils.getValue(tag, 'file', url),
             path: path,
             responseType: 'blob',
-            xhrSettings: Utils.getValue(tag, 'xhr', xhrSettings),
-            config: Utils.getValue(tag, 'config', config)
+            xhrSettings: ObjectUtils.getValue(tag, 'xhr', xhrSettings),
+            config: ObjectUtils.getValue(tag, 'config', config)
         };
 
         super(fileConfig);
