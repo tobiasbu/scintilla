@@ -1,3 +1,5 @@
+import EntityHierarchy from "../entities/entityhierarchy";
+import Camera from "../entities/camera";
 
 
 export default class Scene {
@@ -7,7 +9,7 @@ export default class Scene {
     var myGame = game || null;
     this.name = name || 'New Scene';
     this.game = myGame;
-    
+    //this.childs = new EntityHierarchy("SceneHierarchy", this.game);
     /*this.camera = null;
     this.x = 0;
     this.y = 0;
@@ -22,22 +24,15 @@ export default class Scene {
     }*/
   }
 
-  /*preload : function() {},
-  loading : function() {},
-  loadingRender : function() {},
-  start : function() {},
-  update : function() {},
-  render : function() {},
-  destroy : function() {},
+  start()
+  {
+    
+  }
 
-  _draw : function() {
+  update()
+  {
 
-    self.game.context.font ="12px Verdana";
-    self.game.context.fillText("FPS: " + Math.round(this.game.clock.fps) + " / 60",0,12);
-    self.game.context.fillText("Instances Count: " + this.instances.length,0,24);
-    self.game.context.fillText("Instances in view: " + this.view,0,36);
-
-  },*/
+  }
 
   instanceDestroy(gameObject) {
 

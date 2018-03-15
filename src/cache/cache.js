@@ -1,3 +1,4 @@
+import ImageResource from "./resources/imageResource";
 
 /**
 * Cache manager - holds file data
@@ -16,16 +17,11 @@ constructor(game) {
 
   addImage(tag, url, data) {
 
-    if (this.tagExists('images',tag)) {
-
+    if (this.tagExists('images',tag))
       this.removeTagAt('images',tag);
 
-    }
-    var img = {
-            tag: tag,
-            url: url,
-            data: data,
-    };
+    
+    var img = new ImageResource(data,tag)
 
     this._cache.images[tag] = img;
 

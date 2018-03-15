@@ -1,11 +1,15 @@
 
 // Hierarchy Tree of instances
 // Instance is a children of the Hierarchy tree
-export default class Hierarchy {
+export default class EntityHierarchy extends Entity {
 
-  constructor() {
+  constructor(name, game) {
+    super(name);    
     this.children = [];
+    this.parent = null;
   }
+
+  get childCount() {return this.children.length;}
 
   addChild(child) {
     return this.addChildAt(child,this.children.length);
@@ -66,7 +70,7 @@ export default class Hierarchy {
   }
 
 
-  preUpdate(time) {
+  /*preUpdate(time) {
 
     for (var i = 0; i < this.children.length; i++)
     {
@@ -91,82 +95,5 @@ export default class Hierarchy {
     {
         this.children[i]._updateTransform();
     }
-  }
-
-
-
+  }*/
 }
-
-
-//scintilla.Hierarchy.prototype = Object.create( scintilla.Transform.prototype );
-//scintilla.Hierarchy.prototype.constructor = scintilla.Hierarchy;
-
-//scintilla.Hierarchy.prototype.updateCycle = scintilla.Hierarchy.prototype._updateCycle;
-
-
-      //  if (self.game.world.camera.view.intersects(instance.bounds.box)) {
-
-          /*var transform = {
-            x : instance.position.x,
-            y : instance.position.y,
-            xscale : instance.scale.x,
-            yscale : instance.scale.y,
-            angle : instance.angle,
-          }*/
-
-
-
-          //self.view++;
-     //}
-
-//}
-
-//scintilla.Hierarchy.prototype.renderCycle = scintilla.Hierarchy.prototype._renderCycle;
-/*
-setScene : function(scene) {
-
-this.scene = scene;
-
-},
-
-update : function() {
-
-  var destroyList = [];
-
-  for (var i = 0; i < this.children.length; i++) {
-    if (!this.children[i]._selfDestroy) {
-      this.children[i].update();
-      this.children[i].bounds.setByGameObject(this.children[i]);
-      this.children[i].updateTransform();
-    } else {
-      destroyList.push(i);
-    }
-  }
-
-  for (var i = destroyList.length-1; i >= 0; i--) {
-
-    var index = destroyList[i];
-
-    if (this.children[index]['destroy'])
-      this.children[index].destroy();
-
-      this.children.splice( index, 1 );
-
-  }
-
-},*/
-
-/*
-
-
-    //self.game.context.fillText("Instances in view: " + this.view,0,36);
-
-//},
-
-/*clear : function() {
-
-
-}
-
-
-}*/

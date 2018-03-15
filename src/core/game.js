@@ -1,7 +1,7 @@
 
 import Config from './config';
 import Canvas from '../render/canvas/canvas'
-import Cache from './cache'
+import Cache from '../cache/cache'
 import LoadManager from '../loader/loadmanager'
 import Time from '../time/time'
 import UpdateTime from '../time/updatetime'

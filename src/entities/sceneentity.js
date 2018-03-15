@@ -1,22 +1,27 @@
 
-import Entity from './entity'
+import EntityHierarchy from './entityhierarchy'
 import BoundingBox from '../math/boundingbox'
 import Transform from '../components/transform'
+import ModuleManager from '../modules/moduleManager';
 
-export default class SceneEntity extends Entity
+export default class SceneEntity extends EntityHierarchy
 {
-    constructor(name)
+    constructor(name, game)
     {
         this._name = name || 'New SceneEntity';
-        this._active = true;
+        this.game = game || null;
         this.transform = new Transform();
-        this.bounds = new BoundingBox();
-        this._isDirty = false;
+        this.type = null;
+        this.pool = null;
+        this.modules = new ModuleManager(this);
+        //this.bounds = new BoundingBox();
+        this._transformDirty = false;
         this._currentScene = null;
         
+        super(this._name)
     }
 
-    set ['transform.position.x'](value) { this.transform.position.x = value; }
+    set ['position.x'](value) { this.transform.position.x = value; }
 
     
 }
