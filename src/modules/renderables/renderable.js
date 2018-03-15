@@ -1,14 +1,15 @@
 
-import SceneEntity from '../sceneentity'
 import BoundingBox from '../../math/boundingbox';
 import { EntityType } from '../entitytype';
+import { Module } from 'module';
 
-export default class Renderable extends SceneEntity
+export default class Renderable extends Module
 {
-    constructor(name, game)
+    constructor(moduleManager)
     {
-        super(name, game);
+        super(moduleManager);
 
+        this.moduleName = "Renderable";
         this._layerID = 0;
         this._depthSorting = 0;
         this._visible = true;
@@ -16,7 +17,7 @@ export default class Renderable extends SceneEntity
         this._depthDirty = true; 
         this.bounds = new BoundingBox();
         this.source = null;
-        this.type = EntityType.Renderable;
+        //this.type = EntityType.Renderable;
     }
 
     get depth() { return this._depthSorting; }

@@ -36,7 +36,7 @@ add : function(gameObject, node) {
 
   if (node === undefined || node === null) { node = this.root; }
 
-  if (scintilla.Utils.isFunction(gameObject)) {
+  if (scintilla.ObjectUtils.isFunction(gameObject)) {
     this.create(gameObject);
     return;
   }
@@ -56,7 +56,7 @@ create : function(gameObject, x, y, node) {
 
   var obj = gameObject;
 
-  if (scintilla.Utils.isFunction(obj)) {
+  if (scintilla.ObjectUtils.isFunction(obj)) {
 
     obj = new gameObject();
 

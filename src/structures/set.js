@@ -1,9 +1,8 @@
 
 
-export default class Set {
+export default class SetData {
 
-    constructor(elements) 
-    {
+    constructor(elements) {
         this._content = [];
         this._size = 0;
 
@@ -15,16 +14,14 @@ export default class Set {
 
     }
 
-    set(value)
-    {
+    set(value) {
         if (this._content.indexOf(value) === -1)
             this._content.push(value);
 
         return this;
     }
 
-    at(value)
-    {
+    at(value) {
         var index = this._content.indexOf(value);
         if (index > -1)
         {
@@ -34,13 +31,11 @@ export default class Set {
         }
     }
 
-    has(value)
-    {
+    has(value) {
         return (this._content.indexOf(value) > -1);
     }
 
-    delete(value)
-    {
+    delete(value) {
         var idx = this._content.indexOf(value);
 
         if (idx > -1)
@@ -49,14 +44,12 @@ export default class Set {
         return this;
     }
 
-    clear()
-    {
+    clear() {
         this._content.length = 0;
         return this;
     }
 
-    each(callback, scope)
-    {
+    each(callback, scope) {
         var content = this._content.slice();
         var size = content.length;
         var i;

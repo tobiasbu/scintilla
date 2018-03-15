@@ -1,5 +1,6 @@
 import EntityHierarchy from "../entities/entityhierarchy";
 import Camera from "../entities/camera";
+import SceneSystem from "./scenesystem";
 
 
 export default class Scene {
@@ -9,6 +10,7 @@ export default class Scene {
     var myGame = game || null;
     this.name = name || 'New Scene';
     this.game = myGame;
+    this.system = new SceneSystem(this);
     //this.childs = new EntityHierarchy("SceneHierarchy", this.game);
     /*this.camera = null;
     this.x = 0;
@@ -24,15 +26,7 @@ export default class Scene {
     }*/
   }
 
-  start()
-  {
-    
-  }
 
-  update()
-  {
-
-  }
 
   instanceDestroy(gameObject) {
 

@@ -1,6 +1,6 @@
 
 import { LOADER_STATE, AssetTypeHandler} from './loaderstate'
-import Set from '../structures/set'
+import SetData from '../structures/set'
 import XHR from './XHR'
 import ObjectUtils from '../utils/objectutils';
 
@@ -12,10 +12,10 @@ export default class LoadManager {
     this.game = game;
     this.cache = game.cache;
 
-    this._filesQueue = new Set();
-    this._successFiles = new Set();
-    this._failedFiles = new Set();
-    this._processedFiles = new Set();
+    this._filesQueue = new SetData();
+    this._successFiles = new SetData();
+    this._failedFiles = new SetData();
+    this._processedFiles = new SetData();
 
     this._filesQueueCount = 0;
     this._loadedFilesCount = 0;

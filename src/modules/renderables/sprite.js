@@ -1,17 +1,16 @@
 import Renderable from "./renderable";
 import Rect from "../../math/rect";
-import { EntityType } from "../entitytype";
-import DrawImage from "../../modules/draw/drawImage";
+import DrawImage from "./drawImage";
 
 
 export default class Sprite extends Renderable {
 
-    constructor(name, game)
+    constructor()
     {
-        super(name,game);
+        super();
 
+        this.moduleName = "Sprite";
         this.frame = new Rect();
-        this.type = EntityType.Sprite;
     }
 
     setFrame(x, y, width, height)
@@ -26,7 +25,7 @@ export default class Sprite extends Renderable {
 
     setSprite(tag) {
 
-        if (this.game != null) {
+        if (this.entity != null) {
             var sprite = this.game.cache.getAsset('images',tag);
             
             if (sprite != null)

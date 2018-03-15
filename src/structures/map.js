@@ -4,8 +4,7 @@
 // Map simple class
 export default class Map {
   
-  constructor() 
-  {
+  constructor() {
     this._content = {};
     this._size = 0;
   }
@@ -43,8 +42,7 @@ export default class Map {
     return (this._content.hasOwnProperty(key));
   }
 
-  contains(value)
-  {
+  contains(value) {
     for (var key in this._content)
     {
       if (entries[key] === value)
@@ -57,13 +55,11 @@ export default class Map {
     return false;
   }
 
-  keys()
-  {
+  keys() {
     return Object.keys(this._content);
   }
 
-  values()
-  {
+  values() {
     var values = [];
     var content = this._content;
 
@@ -105,8 +101,7 @@ export default class Map {
 
   }
 
-  deleteByIndexedArray(array)
-  {
+  deleteByIndexedArray(array) {
     for (var i = 0; i < array.length; i++) {
       delete this._content[array[i]];
       this._size--;
@@ -124,13 +119,11 @@ export default class Map {
 
   }
 
-  slowSize()
-  {
+  slowSize() {
     return Object.keys(_contents).length;
   }
 
-  each(callback)
-  {
+  each(callback) {
     var content = this._content;
 
     for (var property in content) {
