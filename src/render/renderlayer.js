@@ -1,3 +1,4 @@
+import List from "../structures/list";
 
 
 export default class RenderLayer { 
@@ -7,8 +8,8 @@ export default class RenderLayer {
         this._name = layerName;
         this.game = game;
         this.__enable = true;
-        this.__renderers = [];
-        this.__isDirty = true;
+        this.renderList = new List(true);
+        this.__isDirty = false;
     }
 
     // Add renderable components
@@ -17,7 +18,7 @@ export default class RenderLayer {
         if (renderer === undefined)
             return;
 
-        this.__renderers.push(renderer);
+        this.renderList.push(renderer);
         this.renderer.__renderLayer = this;
         this.__isDirty = true;
 
@@ -25,28 +26,21 @@ export default class RenderLayer {
 
     remove(renderer)
     {
-        var index = this.__renderers.indexOf(renderer);
-
-        if(index === -1)
-            return;
-
-        return this.removeChildAt(index);
+        return this.renderList.remove(renderer);
     }
 
     removeAt(index)
     {
-        var child = this.getChildAt(index);
-        this.__renderers.splice( index, 1 );
-        return child;
+        
     }
 
     at(index)
     {
-        if (index < 0 || index >= this.__renderers.length)
+        if (index < 0 || index >= this.__renderers.size)
         {
             throw new Error('RenderLayer.at: Renderer at '+ index +' does not exist in the render layer list: \"' + name + "\".");
         }
-        return this.__renderers[index];
+        return this.renderList.at(index);
 
     }
 
@@ -57,25 +51,24 @@ export default class RenderLayer {
 
         if (this.__isDirty)
         {
-            this._updateDepth();
+            this.renderList.sort(this.sortDepth);
+
             this.__isDirty = false;
         }
 
+        var self = this;
 
-        for (var i = 0; i < this.__renderers.length; i++)
-        {
-            this.__renderers[i].render(this.game.context);
-        }
+        this.renderList.each((element) => {
+            element.render(self.game.context);
+        });
+
     }
 
-    clear()
-    {
-        this.__renderers.splice(0, this.__renderers.length);
-    }
+    sortDepth(a, b) { // sort ascending
 
-    _updateDepth() { // sort ascending
+        return a._depthSorting - b._depthSorting;
 
-        this.__renderers.sort(
+        /*this.__renderers.sort(
 
           function(a, b) {
       
@@ -97,7 +90,7 @@ export default class RenderLayer {
       
       
             }
-          });
+          });*/
 
     }
 

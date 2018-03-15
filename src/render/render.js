@@ -41,7 +41,7 @@ export default class Render {
         this.context.globalCompositeOperation = 'source-over';
     }
 
-    render()
+    render(scene)
     {
         if (!this._enable)
             return;

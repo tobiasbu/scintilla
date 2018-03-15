@@ -20,13 +20,14 @@ var config = {
   var scene = game.scene.new('scene');
   var x = 0;
 
-  var mat = new scintilla.Matrix(1);
+ /* var mat = new scintilla.Matrix(1);
   var mat2 = new scintilla.Matrix(3);
   //mat.set(1,2,5);
   mat2 = mat2.multiply(mat);
   mat2.transpose();
   console.log(mat2.toString());
-  
+  */
+
 
 scene.preload = function()
 {

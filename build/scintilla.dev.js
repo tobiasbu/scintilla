@@ -4274,7 +4274,7 @@ var Render = function () {
         }
     }, {
         key: 'render',
-        value: function render() {
+        value: function render(scene) {
             if (!this._enable) return;
 
             this.context.setTransform(1, 0, 0, 1, 0, 0);
@@ -4350,6 +4350,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _list = __webpack_require__(/*! ../structures/list */ "./structures/list.js");
+
+var _list2 = _interopRequireDefault(_list);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var RenderLayer = function () {
@@ -4359,7 +4365,7 @@ var RenderLayer = function () {
         this._name = layerName;
         this.game = game;
         this.__enable = true;
-        this.__renderers = [];
+        this.renderList = new _list2.default(true);
         this.__isDirty = true;
     }
 
@@ -4372,33 +4378,25 @@ var RenderLayer = function () {
 
             if (renderer === undefined) return;
 
-            this.__renderers.push(renderer);
+            this.renderList.push(renderer);
             this.renderer.__renderLayer = this;
             this.__isDirty = true;
         }
     }, {
         key: 'remove',
         value: function remove(renderer) {
-            var index = this.__renderers.indexOf(renderer);
-
-            if (index === -1) return;
-
-            return this.removeChildAt(index);
+            return this.renderList.remove(renderer);
         }
     }, {
         key: 'removeAt',
-        value: function removeAt(index) {
-            var child = this.getChildAt(index);
-            this.__renderers.splice(index, 1);
-            return child;
-        }
+        value: function removeAt(index) {}
     }, {
         key: 'at',
         value: function at(index) {
-            if (index < 0 || index >= this.__renderers.length) {
+            if (index < 0 || index >= this.__renderers.size) {
                 throw new Error('RenderLayer.at: Renderer at ' + index + ' does not exist in the render layer list: \"' + name + "\".");
             }
-            return this.__renderers[index];
+            return this.renderList.at(index);
         }
     }, {
         key: 'render',
@@ -4406,41 +4404,39 @@ var RenderLayer = function () {
             if (!this.__enable) return;
 
             if (this.__isDirty) {
-                this._updateDepth();
+                this.renderList.sort(this.sortDepth);
+
                 this.__isDirty = false;
             }
 
-            for (var i = 0; i < this.__renderers.length; i++) {
-                this.__renderers[i].render(this.game.context);
-            }
+            var self = this;
+
+            this.renderList.each(function (element) {
+                element.render(self.game.context);
+            });
         }
     }, {
-        key: 'clear',
-        value: function clear() {
-            this.__renderers.splice(0, this.__renderers.length);
-        }
-    }, {
-        key: '_updateDepth',
-        value: function _updateDepth() {
+        key: 'sortDepth',
+        value: function sortDepth(a, b) {
             // sort ascending
 
-            this.__renderers.sort(function (a, b) {
+            return a._depthSorting - b._depthSorting;
 
-                if (a.depth > b.depth) {
-
+            /*this.__renderers.sort(
+                function(a, b) {
+                        if (a.depth > b.depth) {
+                          return 1;
+                        } else if (a.depth < b.depth) {
+                          return -1;
+                        } else {
+                          if (a.z > b.z) {
                     return 1;
-                } else if (a.depth < b.depth) {
-
+                  } else {
                     return -1;
-                } else {
-
-                    if (a.z > b.z) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                  }
+                  
                 }
-            });
+              });*/
         }
     }, {
         key: 'length',
@@ -4577,6 +4573,10 @@ var _camera = __webpack_require__(/*! ../entities/camera */ "./entities/camera.j
 
 var _camera2 = _interopRequireDefault(_camera);
 
+var _scenesystem = __webpack_require__(/*! ./scenesystem */ "./scene/scenesystem.js");
+
+var _scenesystem2 = _interopRequireDefault(_scenesystem);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4588,6 +4588,7 @@ var Scene = function () {
     var myGame = game || null;
     this.name = name || 'New Scene';
     this.game = myGame;
+    this.system = new _scenesystem2.default(this);
     //this.childs = new EntityHierarchy("SceneHierarchy", this.game);
     /*this.camera = null;
     this.x = 0;
@@ -4603,12 +4604,6 @@ var Scene = function () {
   }
 
   _createClass(Scene, [{
-    key: "start",
-    value: function start() {}
-  }, {
-    key: "update",
-    value: function update() {}
-  }, {
     key: "instanceDestroy",
     value: function instanceDestroy(gameObject) {
 
@@ -4911,6 +4906,33 @@ exports.default = SceneManager;
 
 /***/ }),
 
+/***/ "./scene/scenesystem.js":
+/*!******************************!*\
+  !*** ./scene/scenesystem.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SceneSystems = function SceneSystems(scene) {
+    _classCallCheck(this, SceneSystems);
+
+    this.scene = scene;
+    this.game = null;
+};
+
+exports.default = SceneSystems;
+
+/***/ }),
+
 /***/ "./structures/index.js":
 /*!*****************************!*\
   !*** ./structures/index.js ***!
@@ -4922,11 +4944,236 @@ exports.default = SceneManager;
 
 
 module.exports = {
-
-    Set: __webpack_require__(/*! ./set */ "./structures/set.js"),
-    Map: __webpack_require__(/*! ./map */ "./structures/map.js")
-
+    Utils: __webpack_require__(/*! ./useful */ "./structures/useful/index.js"),
+    SetData: __webpack_require__(/*! ./set */ "./structures/set.js"),
+    Map: __webpack_require__(/*! ./map */ "./structures/map.js"),
+    List: __webpack_require__(/*! ./list */ "./structures/list.js")
 };
+
+/***/ }),
+
+/***/ "./structures/list.js":
+/*!****************************!*\
+  !*** ./structures/list.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _mergesort = __webpack_require__(/*! ./useful/mergesort */ "./structures/useful/mergesort.js");
+
+var _mergesort2 = _interopRequireDefault(_mergesort);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var List = function () {
+    function List(elements, unique) {
+        _classCallCheck(this, List);
+
+        this.unique = unique || true;
+        this.childs = [];
+        this.length = 0;
+
+        if (Array.isArray(elements)) {
+            for (var i = 0; i < elements.length; i++) {
+                this.push(elements[i]);
+            }
+        }
+    }
+
+    _createClass(List, [{
+        key: 'push',
+        value: function push(child) {
+
+            if (this.unique) {
+                if (this.indexOf(child) === -1) this.childs.push(child);
+            } else {
+                this.childs.push(child);
+            }
+
+            return child;
+        }
+    }, {
+        key: 'pushFront',
+        value: function pushFront(child) {
+            if (this.unique) {
+                if (this.indexOf(child) === -1) this.childs.unshift(child);
+            } else {
+                this.childs.unshift(child);
+            }
+            return child;
+        }
+    }, {
+        key: 'insert',
+        value: function insert(child, index) {
+
+            if (index === undefined) index = 0;
+
+            if (this.childs.length === 0) return this.push(child);
+
+            if (index >= 0 && index <= this.childs.length) {
+
+                if (this.unique) {
+                    if (this.indexOf(child) === -1) this.childs.splice(index, 0, child);
+                } else {
+                    this.childs.splice(index, 0, child);
+                }
+            }
+
+            return child;
+        }
+    }, {
+        key: 'indexOf',
+        value: function indexOf(child) {
+            return this.childs.indexOf(child);
+        }
+    }, {
+        key: 'at',
+        value: function at(index) {
+            return this.childs[index];
+        }
+    }, {
+        key: 'erase',
+        value: function erase(child) {
+            var idx = this.childs.indexOf(child);
+
+            if (idx !== -1) this.childs.splice(idx, 1);
+
+            return child;
+        }
+    }, {
+        key: 'eraseAt',
+        value: function eraseAt(index) {
+            var child = this.childs[index];
+
+            if (child) this.childs.splice(index, 1);
+
+            return child;
+        }
+    }, {
+        key: 'has',
+        value: function has(child) {
+            return this.childs.indexOf(child) > -1;
+        }
+    }, {
+        key: 'empty',
+        value: function empty() {
+            return this.childs.length == 0;
+        }
+    }, {
+        key: 'clear',
+        value: function clear() {
+            var i = this.childs.length;
+
+            while (i--) {
+                this.remove(this.childs[i]);
+            }
+
+            return this;
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            this.clear();
+            this.childs = [];
+            this.parent = null;
+        }
+    }, {
+        key: 'each',
+        value: function each(callback) {
+            var params = [null];
+
+            for (var i = 1; i < arguments.length; i++) {
+                params.push(arguments[i]);
+            }for (var _i = 0; _i < this.childs.length; _i++) {
+                params[0] = this.childs[_i];
+                callback.apply(params);
+                //break;
+            }
+        }
+    }, {
+        key: 'sort',
+        value: function sort(predicate) {
+            if (predicate === undefined) return;
+            return (0, _mergesort2.default)(this.childs, predicate);
+
+            //childs.sort(predicate);
+        }
+    }, {
+        key: 'swap',
+        value: function swap(childA, childB) {
+
+            if (childA === childB) return;
+
+            var idx0 = this.indexOf(childA);
+            var idx1 = this.indexOf(childB);
+
+            if (idx0 < 0 || idx1 < 0) {
+                throw new Error('List.swap: Could not swap childrens. The objects are not in the list.');
+            }
+
+            this.list[idx0] = childA;
+            this.list[idx1] = childB;
+
+            return this;
+        }
+    }, {
+        key: 'swapByIndex',
+        value: function swapByIndex(indexA, indexB) {
+            if (indexA === indexB) return;
+
+            var cA = this.at(indexA);
+            var cB = this.at(indexB);
+
+            if (cA === undefined || cB === undefined) {
+                throw new Error('List.swapByIndex: Could not swap childrens by index. The objects are not in the list.');
+            }
+
+            this.list[indexA] = cA;
+            this.list[indexB] = cB;
+
+            return this;
+        }
+    }, {
+        key: 'reverse',
+        value: function reverse() {
+            this.childs.reverse();
+            return this;
+        }
+    }, {
+        key: 'size',
+        get: function get() {
+            return this.childs.length;
+        }
+    }, {
+        key: 'first',
+        get: function get() {
+            if (this.list.length > 0) return this.childs[0];else return null;
+        }
+    }, {
+        key: 'last',
+        get: function get() {
+            if (this.childs.length > 0) {
+                var idx = this.childs.length - 1;
+                return this.childs[idx];
+            } else return null;
+        }
+    }]);
+
+    return List;
+}();
+
+exports.default = List;
 
 /***/ }),
 
@@ -5112,9 +5359,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Set = function () {
-    function Set(elements) {
-        _classCallCheck(this, Set);
+var SetData = function () {
+    function SetData(elements) {
+        _classCallCheck(this, SetData);
 
         this._content = [];
         this._size = 0;
@@ -5126,7 +5373,7 @@ var Set = function () {
         }
     }
 
-    _createClass(Set, [{
+    _createClass(SetData, [{
         key: "set",
         value: function set(value) {
             if (this._content.indexOf(value) === -1) this._content.push(value);
@@ -5194,10 +5441,114 @@ var Set = function () {
         }
     }]);
 
-    return Set;
+    return SetData;
 }();
 
-exports.default = Set;
+exports.default = SetData;
+
+/***/ }),
+
+/***/ "./structures/useful/index.js":
+/*!************************************!*\
+  !*** ./structures/useful/index.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    MergeSort: __webpack_require__(/*! ./mergesort */ "./structures/useful/mergesort.js")
+};
+
+/***/ }),
+
+/***/ "./structures/useful/mergesort.js":
+/*!****************************************!*\
+  !*** ./structures/useful/mergesort.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// http://www.stoimen.com/blog/2010/07/02/friday-algorithms-javascript-merge-sort/
+// https://codereview.stackexchange.com/questions/87000/fast-merge-sort-in-javascript
+var MergeSort = function MergeSort(array, predicate) {
+    var size = array.length;
+
+    if (size < 2) return array;
+
+    if (predicate === undefined) {
+        predicate = function predicate(a, b) {
+            return a < b ? -1 : a === b ? 0 : 1;
+        };
+    }
+
+    /*function merge(left, right)
+    {
+        var result = [];
+           while (left.length && right.length) {
+            if (left[0] <= right[0]) {
+                result.push(left.shift());
+            } else {
+                result.push(right.shift());
+            }
+        }
+     
+        while (left.length)
+            result.push(left.shift());
+     
+        while (right.length)
+            result.push(right.shift());
+     
+        return result;
+    }*/
+
+    function merge(begin, begin_right, end) {
+        // Create a copy of the left and right halves.
+        var left_size = begin_right - begin;
+        var right_size = end - begin_right;
+        var left = array.slice(begin, begin_right);
+        var right = array.slice(begin_right, end);
+        // Merge left and right halves back into original array.
+        var i = begin,
+            j = 0,
+            k = 0;
+        while (j < left_size && k < right_size) {
+            if (predicate(left[j], right[k]) <= 0) array[i++] = left[j++];else array[i++] = right[k++];
+        } // At this point, at least one of the two halves is finished.
+        // Copy any remaining elements from left array back to original array.
+        while (j < left_size) {
+            array[i++] = left[j++];
+        } // Copy any remaining elements from right array back to original array.
+        while (k < right_size) {
+            array[i++] = right[k++];
+        }return array;
+    }
+
+    function msort(start, end) {
+        var len = end - start;
+
+        if (len < 2) return;
+
+        var mid = start + (len >>> 1);
+        //let left = list.slice(start, mid);
+        //let right = list.slice(mid, end);
+        msort(start, mid);
+        msort(mid, end);
+        return merge(start, mid, end);
+    }
+
+    //let mid = 0 + (size >>> 1);
+
+    return msort(0, size); //mid,size);
+
+};
+
+module.exports = MergeSort;
 
 /***/ }),
 

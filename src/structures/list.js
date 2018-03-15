@@ -1,4 +1,6 @@
 
+import MergeSort from './useful/mergesort'
+
 export default class List
 {
     constructor(elements, unique)
@@ -131,18 +133,21 @@ export default class List
     each(callback) {
         let params = [ null ];
 
-        for (let i = 0; i < arguments.length; i++)
+        for (let i = 1; i < arguments.length; i++)
             params.push(arguments[i]);
 
         for (let i = 0; i < this.childs.length; i++) {
             params[0] = this.childs[i];
             callback.apply(params);
+           //break;
         }
     }
 
     sort(predicate) {
         if (predicate === undefined) return;
-        return childs.sort(predicate.bind(this));
+        return MergeSort(this.childs, predicate);
+        
+        //childs.sort(predicate);
     }
 
     swap(childA, childB) {

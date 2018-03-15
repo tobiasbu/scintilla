@@ -11,7 +11,7 @@ export default class Renderable extends Module
 
         this.moduleName = "Renderable";
         this._layerID = 0;
-        this._depthSorting = 0;
+        this._depth = 0;
         this._visible = true;
         this._alpha = 1;
         this._depthDirty = true; 
