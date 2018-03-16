@@ -1,19 +1,24 @@
 
+import Map from '../structures/map'
+
 export default class ModuleManager
 {
     constructor(entity)
     {
         this.entity = entity || null;
-        this.modules = [];
+        this.modules = new Map();
     }
 
-    attach()
+    attach(moduleName)
     {
-
+        ModuleRegister.attach(this, moduleName);
     }
 
-    dettach()
+    detach(moduleName, index)
     {
         
     }
+
+
+
 } 

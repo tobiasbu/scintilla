@@ -1,13 +1,14 @@
 import Renderable from "./renderable";
 import Rect from "../../math/rect";
 import DrawImage from "./drawImage";
+import ModuleRegister from "../moduleRegister";
 
 
 export default class Sprite extends Renderable {
 
-    constructor()
+    constructor(moduleManager)
     {
-        super();
+        super(moduleManager);
 
         this.moduleName = "Sprite";
         this.frame = new Rect();
@@ -44,3 +45,10 @@ export default class Sprite extends Renderable {
         //DrawImage(context, )
     }
 }
+
+ModuleRegister.register('sprite', (moduleManager, tag) => {
+
+    var spr = new Sprite(moduleManager);
+    return spr;
+
+});
