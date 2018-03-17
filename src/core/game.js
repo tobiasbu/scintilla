@@ -1,16 +1,12 @@
 
 import Config from './config';
-import Canvas from '../render/canvas/canvas'
-import Cache from '../cache/cache'
-import LoadManager from '../loader/loadmanager'
 import Time from '../time/time'
 import UpdateTime from '../time/updatetime'
 import Input from '../input/input'
-import Render from '../render/render'
-import Draw from '../render/draw'
 import SceneManager from '../scene/scenemanager'
 import Physics from '../physics/physics'
 import Debug from '../others/debug'
+import GameSystemManager from './gameSystemManager';
 
 /**
 * Main class of engine. Holds all main data.
@@ -47,22 +43,13 @@ export default class Game {
 
   //objects
   this.debug = null;
-  this.cache = null;
-  this.load = null;
-  this.canvas = null;
   this.scene = null;
   this.sound = null;
-  this.draw = null;
-  this.render = null;
-  this.universe = null;
-  this.world = null;
   this.input = null;
   this.time = null;
-  this.component = null;
-  this.instance = null;
-  this.animationCache = null;
   this.updateGameMethod = null;
   this.pool = null;
+  this.systems =  null;
 
   this.context = null;
 
@@ -108,32 +95,21 @@ export default class Game {
     if (this.systemInited)
         return;
 
-
-    this.cache = new Cache(this);
-    this.load = new LoadManager(this);
     this.time = new Time(this);
-    //this.universe = new scintilla.Universe(this);
-    //this.world = new scintilla.World(this);
-
-    this.render = new Render(this);
-    this.draw = new Draw(this);
     this.scene = new SceneManager(this);
-    this.input = new Input(this);
-    //this.instance = new scintilla.Creator(this,this.world);
-    //this.component = new scintilla.GameComponents(this);
-    //this.animationCache = new scintilla.AnimationCache(this);
-    //this.sound = new scintilla.SoundManager(this);
-    //this.pool = new scintilla.Pool(this);
     this.physics = new Physics(this);
+    this.system = new GameSystemManager(this);
 
-    if (this.debugMode)
-      this.debug = new Debug(this);
+    this.system.init();
+
+    this.input = new Input(this);
 
     this.time.start();
     this.input.init();
-    //this.sound.start();
-    //this.world.start();
 
+    if (this.debugMode)
+      this.debug = new Debug(this);
+      
     this.updateGameMethod = new UpdateTime(this,this.timeMode);
     this.updateGameMethod.start();
 
@@ -216,9 +192,9 @@ export default class Game {
   }
 
   display(timeStep) {
-    this.render.renderBegin();
-    this.render.render(timeStep);
-    this.render.renderEnd();
+    this.system.render.renderBegin();
+    this.system.render.render(timeStep);
+    this.system.render.renderEnd();
   }
 
   logic(timeStep) {

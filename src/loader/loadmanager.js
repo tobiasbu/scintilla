@@ -3,6 +3,7 @@ import { LOADER_STATE, AssetTypeHandler} from './loaderstate'
 import SetData from '../structures/set'
 import XHR from './XHR'
 import ObjectUtils from '../utils/objectutils';
+import GameSystemManager from '../core/gameSystemManager';
 
 // Class LoaderManager
 export default class LoadManager {
@@ -10,19 +11,24 @@ export default class LoadManager {
   constructor(game) {
 
     this.game = game;
-    this.cache = game.cache;
+    this.cache = null;
 
-    this._filesQueue = new SetData();
-    this._filesLoading = new SetData();
-    this._successFiles = new SetData();
-    this._failedFiles = new SetData();
-    this._processedFiles = new SetData();
+    this._filesQueue = null;
+    this._filesLoading = null;
+    this._successFiles = null;
+    this._failedFiles = null;
+    this._processedFiles = null;
 
-    this._filesQueueCount = 0;
-    this._loadedFilesCount = 0;
+    this._filesQueueCount = null;
+    this._loadedFilesCount = null;
 
     this.isDownloading = false;
     this._totalFiles = 0;
+
+    this.progress = null;
+    this.path = null;
+    this.baseURL = null;
+    this.state = null;
 
     let gameConfig = game.config.loader;
 
@@ -33,16 +39,29 @@ export default class LoadManager {
       //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
       ObjectUtils.getValue(config, 'timeout', gameConfig.timeout)
   );
+  
 
+    AssetTypeHandler.inject(this);
+
+  }
+
+  init()
+  {
+    this.cache = this.game.system.cache;
+
+    this._filesQueue = new SetData();
+    this._filesLoading = new SetData();
+    this._successFiles = new SetData();
+    this._failedFiles = new SetData();
+    this._processedFiles = new SetData();
+
+    this._filesQueueCount = 0;
+    this._loadedFilesCount = 0;
 
     this.progress = 0;
     this.path = '';
     this.baseURL = '';
     this.state = LOADER_STATE.IDLE;
-  
-
-    AssetTypeHandler.inject(this);
-
   }
 
 
@@ -254,7 +273,7 @@ export default class LoadManager {
     this._successFiles.clear();
     this._filesQueue.clear();
 
-    var cache = this.game.cache;
+    var cache = this.cache;
 
     if (this._processedFiles.size > 0)
     {
@@ -328,3 +347,4 @@ export default class LoadManager {
 
 };
 
+GameSystemManager.register('Loader',LoadManager,'load');

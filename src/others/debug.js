@@ -4,8 +4,8 @@ export default class Debug {
   constructor(game) {
 
     this.game = game;
-    this.draw = game.draw;
-    this.context = game.render.context;
+    this.draw = game.system.draw;
+    this.context = game.system.render.context;
     this.x = 8;
     this.y = 12;
     this.lineHeight = 14;

@@ -4,7 +4,7 @@ import File from '../file'
 import ObjectUtils from '../../utils/objectutils'
 import PathUtils from '../../utils/pathutils'
 
-export default class FontFile extends File {
+export default class TextFile extends File {
 
     constructor(tag, url, path, xhrSettings, config)
     {
@@ -30,7 +30,7 @@ export default class FontFile extends File {
         }
 
         var fileConfig = {
-            type: 'font',
+            type: 'text',
             tag: assetTag,
             ext: ObjectUtils.getValue(tag, 'ext', PathUtils.getExtension(url)),
             url: ObjectUtils.getValue(tag, 'file', url),
@@ -74,17 +74,18 @@ export default class FontFile extends File {
         this.state = LOADER_STATE.PROCESSING;
             //this.data = window.URL.createObjectURL(this.xhrRequest.response);
             this.data = this.xhrRequest.responseText;
-            var style = document.createElement('style');
+            /*var style = document.createElement('style');
             style.innerHTML = this.data;
-            document.head.appendChild(style)
+            document.head.appendChild(style)*/
            // console.log("data:" + this.data);
             this.onDone();
+
             processingCallback(this);
     }
 
 }
 
-AssetTypeHandler.register('font', function (tag, url, path, xhrSettings)
+AssetTypeHandler.register('text', function (tag, url, path, xhrSettings)
 {
     let endPointPath = this.path;
 
@@ -96,10 +97,10 @@ AssetTypeHandler.register('font', function (tag, url, path, xhrSettings)
         
     }
 
-    this.addAsset(new FontFile(tag, url, endPointPath, xhrSettings));
+    this.addAsset(new TextFile(tag, url, endPointPath, xhrSettings));
 
     return this;
 
 });
 
-module.exports = FontFile;
+module.exports = TextFile;

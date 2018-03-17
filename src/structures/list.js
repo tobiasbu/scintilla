@@ -89,12 +89,16 @@ export default class List
     }
 
     erase(child) {
+
+        if(deleteChild === undefined) deleteChild = false;
+
         let idx = this.childs.indexOf(child);
+        var childToErase = null;
 
         if (idx !== -1)
-            this.childs.splice(idx, 1);
+            childToErase = this.childs.splice(idx, 1);
         
-        return child;
+        return childToErase;
     }
 
     eraseAt(index) {
@@ -104,6 +108,24 @@ export default class List
             this.childs.splice(index, 1);
 
         return child;
+    }
+
+    eraseList(listToRemove, size)
+    {
+        if (deleteChild === undefined) deleteChild = false;
+        if (size === undefined) size = listToRemove.size;
+
+        for (let i = 0; i < size; i++)
+        {
+            let child = listToRemove.childs[i];
+            this.erase(child);
+            /*let child = this.listToRemove[i];
+            let index = this._instances.indexOf(gameObject);
+
+            if (index > -1)
+               this._instances.splice(index, 1);*/
+            
+        }
     }
 
     has(child) {
@@ -128,6 +150,20 @@ export default class List
         this.clear();
         this.childs = [];
         this.parent = null;
+    }
+
+    concat(otherList, clearOther)
+    {
+        if (clearOther === undefined) clearOther = false;
+
+        if (clearOther) {
+            this.childs = this.childs.concat(otherList.childs.splice(0));
+        } else {
+            this.childs = this.childs.concat(otherList.childs);
+        }
+
+        
+        return this;
     }
 
     each(callback) {

@@ -1,10 +1,19 @@
+import GameSystemManager from "../core/gameSystemManager";
 
 export default class Draw {
   
   constructor(game) {
     this.game = game;
-    this.cache = game.cache;
-    this.context = game.render.context;
+    this.cache = null;
+    this.context = null;
+  }
+
+  init()
+  {
+
+    this.cache = this.game.system.cache;
+    this.context = this.game.system.render.context;
+    return this;
   }
 
   font(fontname,size) {
@@ -98,3 +107,4 @@ export default class Draw {
 
 }
 
+GameSystemManager.register('Draw',Draw,'draw');

@@ -1,4 +1,5 @@
 import ImageResource from "./resources/imageResource";
+import GameSystemManager from "../core/gameSystemManager";
 
 /**
 * Cache manager - holds file data
@@ -123,3 +124,5 @@ constructor(game) {
   // SOUND STUFF
 
 }
+
+GameSystemManager.register('Cache', Cache, 'cache');

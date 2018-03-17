@@ -4,20 +4,21 @@ import RenderLayer from './renderlayer'
 import RenderLayerManagment from './renderlayersmanagement'
 import Canvas from './canvas/canvas'
 import {RENDERING_TYPE} from './define'
+import GameSystemManager from '../core/gameSystemManager';
 
 
 export default class Render {
     
 
     constructor(game) {
+        
         this.game = game;
-
-        this._backgroundColor = '#000'
+        this.layer = new RenderLayerManagment(this.game);
         this.canvas = Canvas.create(this.game.parent,this.game.width,this.game.height);
-        this.context = this.canvas.getContext("2d", { alpha: false });    
-
-        this.layer = new RenderLayerManagment(game);
+        this.context = this.canvas.getContext("2d", { alpha: false });  
         this.imageRendering = (game.config.pixelelated) ? RENDERING_TYPE.NEAREST : RENDERING_TYPE.LINEAR;
+
+        this._backgroundColor = '#000'       
         this._alpha = 1;
         this._enable = true;
         this.clear = true;
@@ -98,3 +99,4 @@ export default class Render {
     }
 }
 
+GameSystemManager.register('Render', Render, 'render');

@@ -147,6 +147,8 @@ var scintilla = scintilla || {
 
   // DATA STRUCTURES
   Struct: __webpack_require__(/*! ./structures */ "./structures/index.js"),
+  // RENDER
+  Render: __webpack_require__(/*! ./render */ "./render/index.js"),
   // INPUT
   KeyCode: __webpack_require__(/*! ./input/keycode */ "./input/keycode.js"),
   MouseButton: __webpack_require__(/*! ./input/mousebutton */ "./input/mousebutton.js"),
@@ -155,6 +157,7 @@ var scintilla = scintilla || {
   MathUtils: __webpack_require__(/*! ./math/mathutils */ "./math/mathutils.js"),
   Matrix: __webpack_require__(/*! ./math/matrix */ "./math/matrix.js"),
   // CORE
+  Cache: __webpack_require__(/*! ./cache/cache */ "./cache/cache.js"),
   Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
   Game: __webpack_require__(/*! ./core/game */ "./core/game.js"),
   // UTILITIES
@@ -194,6 +197,10 @@ var _imageResource = __webpack_require__(/*! ./resources/imageResource */ "./cac
 
 var _imageResource2 = _interopRequireDefault(_imageResource);
 
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -215,7 +222,7 @@ var Cache = function () {
   }
 
   _createClass(Cache, [{
-    key: 'addImage',
+    key: "addImage",
     value: function addImage(tag, url, data) {
 
       if (this.tagExists('images', tag)) this.removeTagAt('images', tag);
@@ -225,7 +232,7 @@ var Cache = function () {
       this._cache.images[tag] = img;
     }
   }, {
-    key: 'addSound',
+    key: "addSound",
     value: function addSound(tag, url, data, webAudio) {
 
       var decoded = false;
@@ -246,7 +253,7 @@ var Cache = function () {
       this._cache.sounds[tag] = audio;
     }
   }, {
-    key: 'soundDecoded',
+    key: "soundDecoded",
     value: function soundDecoded(tag, data) {
 
       var sound = this.getAssetInfo("sounds", tag);
@@ -256,7 +263,7 @@ var Cache = function () {
       sound.isDecoding = false;
     }
   }, {
-    key: 'tagExists',
+    key: "tagExists",
     value: function tagExists(cacheType, tag) {
 
       if (this._cache[cacheType][tag]) return true;
@@ -264,13 +271,13 @@ var Cache = function () {
       return false;
     }
   }, {
-    key: 'removeTagAt',
+    key: "removeTagAt",
     value: function removeTagAt(cacheType, tag) {
 
       delete this._cache[cacheType][tag];
     }
   }, {
-    key: 'getAsset',
+    key: "getAsset",
     value: function getAsset(cacheType, tag) {
       // return the cache container
 
@@ -284,7 +291,7 @@ var Cache = function () {
       }
     }
   }, {
-    key: 'getAssetInfo',
+    key: "getAssetInfo",
     value: function getAssetInfo(cacheType, tag) {
       // return the raw data
 
@@ -299,7 +306,7 @@ var Cache = function () {
       }
     }
   }, {
-    key: 'clear',
+    key: "clear",
     value: function clear() {
 
       //console.log(this._cache[property][tag]);
@@ -321,6 +328,9 @@ var Cache = function () {
 }();
 
 exports.default = Cache;
+
+
+_gameSystemManager2.default.register('Cache', Cache, 'cache');
 
 /***/ }),
 
@@ -495,22 +505,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+//import Canvas from '../render/canvas/canvas'
+//import Cache from '../cache/cache'
+//import LoadManager from '../loader/loadmanager'
+
+//import Render from '../render/render'
+//import Draw from '../render/draw'
+
 
 var _config = __webpack_require__(/*! ./config */ "./core/config.js");
 
 var _config2 = _interopRequireDefault(_config);
-
-var _canvas = __webpack_require__(/*! ../render/canvas/canvas */ "./render/canvas/canvas.js");
-
-var _canvas2 = _interopRequireDefault(_canvas);
-
-var _cache = __webpack_require__(/*! ../cache/cache */ "./cache/cache.js");
-
-var _cache2 = _interopRequireDefault(_cache);
-
-var _loadmanager = __webpack_require__(/*! ../loader/loadmanager */ "./loader/loadmanager.js");
-
-var _loadmanager2 = _interopRequireDefault(_loadmanager);
 
 var _time = __webpack_require__(/*! ../time/time */ "./time/time.js");
 
@@ -524,14 +529,6 @@ var _input = __webpack_require__(/*! ../input/input */ "./input/input.js");
 
 var _input2 = _interopRequireDefault(_input);
 
-var _render = __webpack_require__(/*! ../render/render */ "./render/render.js");
-
-var _render2 = _interopRequireDefault(_render);
-
-var _draw = __webpack_require__(/*! ../render/draw */ "./render/draw.js");
-
-var _draw2 = _interopRequireDefault(_draw);
-
 var _scenemanager = __webpack_require__(/*! ../scene/scenemanager */ "./scene/scenemanager.js");
 
 var _scenemanager2 = _interopRequireDefault(_scenemanager);
@@ -543,6 +540,10 @@ var _physics2 = _interopRequireDefault(_physics);
 var _debug = __webpack_require__(/*! ../others/debug */ "./others/debug.js");
 
 var _debug2 = _interopRequireDefault(_debug);
+
+var _gameSystemManager = __webpack_require__(/*! ./gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -583,22 +584,23 @@ var Game = function () {
 
         //objects
         this.debug = null;
-        this.cache = null;
-        this.load = null;
-        this.canvas = null;
+        //this.cache = null;
+        //this.load = null;
+        //this.canvas = null;
         this.scene = null;
         this.sound = null;
-        this.draw = null;
-        this.render = null;
-        this.universe = null;
-        this.world = null;
+        // this.draw = null;
+        // this.render = null;
+        // this.universe = null;
+        //this.world = null;
         this.input = null;
         this.time = null;
-        this.component = null;
-        this.instance = null;
-        this.animationCache = null;
+        //this.component = null;
+        //this.instance = null;
+        //this.animationCache = null;
         this.updateGameMethod = null;
         this.pool = null;
+        this.systems = null;
 
         this.context = null;
 
@@ -642,27 +644,32 @@ var Game = function () {
 
             if (this.systemInited) return;
 
-            this.cache = new _cache2.default(this);
-            this.load = new _loadmanager2.default(this);
+            //this.cache = new Cache(this);
+            //this.load = new LoadManager(this);
             this.time = new _time2.default(this);
             //this.universe = new scintilla.Universe(this);
             //this.world = new scintilla.World(this);
 
-            this.render = new _render2.default(this);
-            this.draw = new _draw2.default(this);
+            //this.render = new Render(this);
+            //this.draw = new Draw(this);
             this.scene = new _scenemanager2.default(this);
-            this.input = new _input2.default(this);
+
             //this.instance = new scintilla.Creator(this,this.world);
             //this.component = new scintilla.GameComponents(this);
             //this.animationCache = new scintilla.AnimationCache(this);
             //this.sound = new scintilla.SoundManager(this);
             //this.pool = new scintilla.Pool(this);
             this.physics = new _physics2.default(this);
+            this.system = new _gameSystemManager2.default(this);
 
-            if (this.debugMode) this.debug = new _debug2.default(this);
+            this.system.init();
+
+            this.input = new _input2.default(this);
 
             this.time.start();
             this.input.init();
+
+            if (this.debugMode) this.debug = new _debug2.default(this);
             //this.sound.start();
             //this.world.start();
 
@@ -739,9 +746,9 @@ var Game = function () {
     }, {
         key: 'display',
         value: function display(timeStep) {
-            this.render.renderBegin();
-            this.render.render(timeStep);
-            this.render.renderEnd();
+            this.system.render.renderBegin();
+            this.system.render.render(timeStep);
+            this.system.render.renderEnd();
         }
     }, {
         key: 'logic',
@@ -806,6 +813,127 @@ var Game = function () {
 
 exports.default = Game;
 module.exports = Game;
+
+/***/ }),
+
+/***/ "./core/gameSystemManager.js":
+/*!***********************************!*\
+  !*** ./core/gameSystemManager.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _scenesystem = __webpack_require__(/*! ./scenesystem */ "./core/scenesystem.js");
+
+var _scenesystem2 = _interopRequireDefault(_scenesystem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var gameSystems = {};
+
+var GameSystemManager = function () {
+    function GameSystemManager(game) {
+        _classCallCheck(this, GameSystemManager);
+
+        this.game = game;
+        //this.systems = {};
+    }
+
+    _createClass(GameSystemManager, [{
+        key: "init",
+        value: function init() {
+            // register all game systems
+            for (var property in gameSystems) {
+
+                var sys = gameSystems[property];
+                this[sys.name] = new sys.system(this.game);
+            }
+
+            // initialize systems
+            for (var _property in gameSystems) {
+
+                var sys = this[gameSystems[_property].name];
+                if (sys.init === undefined) continue;
+
+                sys.init();
+            }
+        }
+    }, {
+        key: "get",
+        value: function get(system) {
+            return this[system];
+        }
+    }, {
+        key: "inject",
+        value: function inject(scene) {
+
+            scene.game = this._game;
+
+            for (var property in _scenesystem2.default) {
+
+                var _sys = gameSystems[_scenesystem2.default[property]];
+                scene[_sys.name] = this[_sys.name];
+            }
+
+            /*for (let property in gameSystems) {
+                  let sys = gameSystems[property];
+                scene[sys.name] = property[sys.system];
+            }*/
+        }
+    }, {
+        key: "unject",
+        value: function unject(scene) {
+
+            for (var property in gameSystems) {
+                scene[sys.name] = undefined;
+            }
+        }
+    }, {
+        key: "update",
+        value: function update(time, deltaTime) {}
+    }], [{
+        key: "register",
+        value: function register(key, system, systemName) {
+            gameSystems[key] = { name: systemName, system: system };
+        }
+    }]);
+
+    return GameSystemManager;
+}();
+
+exports.default = GameSystemManager;
+
+/***/ }),
+
+/***/ "./core/scenesystem.js":
+/*!*****************************!*\
+  !*** ./core/scenesystem.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+
+var SceneSystem = ['Cache', 'Draw', 'Loader'];
+
+exports.default = SceneSystem;
 
 /***/ }),
 
@@ -1800,7 +1928,7 @@ var Mouse = function () {
         this.x = 0;
         this.y = 0;
         this.game = game;
-        this.canvas = game.render.canvas;
+        this.canvas = game.system.get('render').canvas;
         this.button = 0;
         this.wheelDelta = 0;
         this.active = true;
@@ -2119,141 +2247,6 @@ exports.default = function () {
 
 /***/ }),
 
-/***/ "./loader/assets/cssfile.js":
-/*!**********************************!*\
-  !*** ./loader/assets/cssfile.js ***!
-  \**********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
-
-var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
-
-var _file2 = _interopRequireDefault(_file);
-
-var _objectutils = __webpack_require__(/*! ../../utils/objectutils */ "./utils/objectutils.js");
-
-var _objectutils2 = _interopRequireDefault(_objectutils);
-
-var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathutils.js");
-
-var _pathutils2 = _interopRequireDefault(_pathutils);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var FontFile = function (_File) {
-    _inherits(FontFile, _File);
-
-    function FontFile(tag, url, path, xhrSettings, config) {
-        _classCallCheck(this, FontFile);
-
-        var assetTag = null;
-
-        if (typeof tag === 'string') {
-            assetTag = tag;
-        } else {
-            assetTag = _objectutils2.default.getValue(tag, 'tag', '');
-        }
-
-        var useExternal = false;
-
-        if (path !== undefined) {
-            if (typeof path === "boolean") useExternal = path;
-        }
-
-        var fileConfig = {
-            type: 'font',
-            tag: assetTag,
-            ext: _objectutils2.default.getValue(tag, 'ext', _pathutils2.default.getExtension(url)),
-            url: _objectutils2.default.getValue(tag, 'file', url),
-            path: path,
-            responseType: '',
-            xhrSettings: _objectutils2.default.getValue(tag, 'xhr', xhrSettings),
-            config: _objectutils2.default.getValue(tag, 'config', config),
-            useExternal: useExternal
-        };
-
-        return _possibleConstructorReturn(this, (FontFile.__proto__ || Object.getPrototypeOf(FontFile)).call(this, fileConfig));
-    }
-
-    //onLoad(event) {}
-
-    /*onReadyStateChange(event)
-    {
-          console.log(event.target);
-        if (this.xhrRequest.status == 200)
-        {
-            if (this.xhrRequest.readyState == 4)
-            {
-                this.state = LOADER_STATE.PROCESSING;
-                //this.data = window.URL.createObjectURL(this.xhrRequest.response);
-                this.data = this.xhrRequest.responseText;
-                
-                //console.log(this.data);
-                this.onDone();
-                  //processingCallback(this);
-                super.onLoad(event);
-            }  
-        } else {
-            super.onLoad(event);
-        }
-    }*/
-
-    _createClass(FontFile, [{
-        key: 'onProcessing',
-        value: function onProcessing(processingCallback) {
-            this.state = _loaderstate.LOADER_STATE.PROCESSING;
-            //this.data = window.URL.createObjectURL(this.xhrRequest.response);
-            this.data = this.xhrRequest.responseText;
-            var style = document.createElement('style');
-            style.innerHTML = this.data;
-            document.head.appendChild(style);
-            // console.log("data:" + this.data);
-            this.onDone();
-            processingCallback(this);
-        }
-    }]);
-
-    return FontFile;
-}(_file2.default);
-
-exports.default = FontFile;
-
-
-_loaderstate.AssetTypeHandler.register('font', function (tag, url, path, xhrSettings) {
-    var endPointPath = this.path;
-
-    if (path !== undefined) {
-
-        if (typeof path === "boolean") // external link
-            endPointPath = path;
-    }
-
-    this.addAsset(new FontFile(tag, url, endPointPath, xhrSettings));
-
-    return this;
-});
-
-module.exports = FontFile;
-
-/***/ }),
-
 /***/ "./loader/assets/imagefile.js":
 /*!************************************!*\
   !*** ./loader/assets/imagefile.js ***!
@@ -2384,8 +2377,144 @@ module.exports = ImageFile;
 
 module.exports = {
     ImageFile: __webpack_require__(/*! ./imagefile */ "./loader/assets/imagefile.js"),
-    FontFile: __webpack_require__(/*! ./cssfile */ "./loader/assets/cssfile.js")
+    TextFile: __webpack_require__(/*! ./textfile */ "./loader/assets/textfile.js")
 };
+
+/***/ }),
+
+/***/ "./loader/assets/textfile.js":
+/*!***********************************!*\
+  !*** ./loader/assets/textfile.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+
+var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+
+var _file2 = _interopRequireDefault(_file);
+
+var _objectutils = __webpack_require__(/*! ../../utils/objectutils */ "./utils/objectutils.js");
+
+var _objectutils2 = _interopRequireDefault(_objectutils);
+
+var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathutils.js");
+
+var _pathutils2 = _interopRequireDefault(_pathutils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TextFile = function (_File) {
+    _inherits(TextFile, _File);
+
+    function TextFile(tag, url, path, xhrSettings, config) {
+        _classCallCheck(this, TextFile);
+
+        var assetTag = null;
+
+        if (typeof tag === 'string') {
+            assetTag = tag;
+        } else {
+            assetTag = _objectutils2.default.getValue(tag, 'tag', '');
+        }
+
+        var useExternal = false;
+
+        if (path !== undefined) {
+            if (typeof path === "boolean") useExternal = path;
+        }
+
+        var fileConfig = {
+            type: 'text',
+            tag: assetTag,
+            ext: _objectutils2.default.getValue(tag, 'ext', _pathutils2.default.getExtension(url)),
+            url: _objectutils2.default.getValue(tag, 'file', url),
+            path: path,
+            responseType: '',
+            xhrSettings: _objectutils2.default.getValue(tag, 'xhr', xhrSettings),
+            config: _objectutils2.default.getValue(tag, 'config', config),
+            useExternal: useExternal
+        };
+
+        return _possibleConstructorReturn(this, (TextFile.__proto__ || Object.getPrototypeOf(TextFile)).call(this, fileConfig));
+    }
+
+    //onLoad(event) {}
+
+    /*onReadyStateChange(event)
+    {
+          console.log(event.target);
+        if (this.xhrRequest.status == 200)
+        {
+            if (this.xhrRequest.readyState == 4)
+            {
+                this.state = LOADER_STATE.PROCESSING;
+                //this.data = window.URL.createObjectURL(this.xhrRequest.response);
+                this.data = this.xhrRequest.responseText;
+                
+                //console.log(this.data);
+                this.onDone();
+                  //processingCallback(this);
+                super.onLoad(event);
+            }  
+        } else {
+            super.onLoad(event);
+        }
+    }*/
+
+    _createClass(TextFile, [{
+        key: 'onProcessing',
+        value: function onProcessing(processingCallback) {
+            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            //this.data = window.URL.createObjectURL(this.xhrRequest.response);
+            this.data = this.xhrRequest.responseText;
+            /*var style = document.createElement('style');
+            style.innerHTML = this.data;
+            document.head.appendChild(style)*/
+            // console.log("data:" + this.data);
+            this.onDone();
+
+            processingCallback(this);
+        }
+    }]);
+
+    return TextFile;
+}(_file2.default);
+
+exports.default = TextFile;
+
+
+_loaderstate.AssetTypeHandler.register('text', function (tag, url, path, xhrSettings) {
+    var endPointPath = this.path;
+
+    if (path !== undefined) {
+
+        if (typeof path === "boolean") // external link
+            endPointPath = path;
+    }
+
+    this.addAsset(new TextFile(tag, url, endPointPath, xhrSettings));
+
+    return this;
+});
+
+module.exports = TextFile;
 
 /***/ }),
 
@@ -2553,10 +2682,11 @@ exports.default = File;
 module.exports = {
 
     File: __webpack_require__(/*! ./file */ "./loader/file.js"),
+    XHR: __webpack_require__(/*! ./XHR */ "./loader/XHR.js"),
+    URLObject: __webpack_require__(/*! ./URLobject */ "./loader/URLobject.js"),
     AssetsTypes: __webpack_require__(/*! ./assets */ "./loader/assets/index.js"),
     LoaderState: __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js"),
-    LoaderManager: __webpack_require__(/*! ./loadmanager */ "./loader/loadmanager.js"),
-    XHR: __webpack_require__(/*! ./XHR */ "./loader/XHR.js")
+    LoaderManager: __webpack_require__(/*! ./loadmanager */ "./loader/loadmanager.js")
 
 };
 
@@ -2684,6 +2814,10 @@ var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/obje
 
 var _objectutils2 = _interopRequireDefault(_objectutils);
 
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2694,19 +2828,24 @@ var LoadManager = function () {
     _classCallCheck(this, LoadManager);
 
     this.game = game;
-    this.cache = game.cache;
+    this.cache = null;
 
-    this._filesQueue = new _set2.default();
-    this._filesLoading = new _set2.default();
-    this._successFiles = new _set2.default();
-    this._failedFiles = new _set2.default();
-    this._processedFiles = new _set2.default();
+    this._filesQueue = null;
+    this._filesLoading = null;
+    this._successFiles = null;
+    this._failedFiles = null;
+    this._processedFiles = null;
 
-    this._filesQueueCount = 0;
-    this._loadedFilesCount = 0;
+    this._filesQueueCount = null;
+    this._loadedFilesCount = null;
 
     this.isDownloading = false;
     this._totalFiles = 0;
+
+    this.progress = null;
+    this.path = null;
+    this.baseURL = null;
+    this.state = null;
 
     var gameConfig = game.config.loader;
 
@@ -2715,15 +2854,29 @@ var LoadManager = function () {
     //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
     _objectutils2.default.getValue(config, 'timeout', gameConfig.timeout));
 
-    this.progress = 0;
-    this.path = '';
-    this.baseURL = '';
-    this.state = _loaderstate.LOADER_STATE.IDLE;
-
     _loaderstate.AssetTypeHandler.inject(this);
   }
 
   _createClass(LoadManager, [{
+    key: 'init',
+    value: function init() {
+      this.cache = this.game.system.cache;
+
+      this._filesQueue = new _set2.default();
+      this._filesLoading = new _set2.default();
+      this._successFiles = new _set2.default();
+      this._failedFiles = new _set2.default();
+      this._processedFiles = new _set2.default();
+
+      this._filesQueueCount = 0;
+      this._loadedFilesCount = 0;
+
+      this.progress = 0;
+      this.path = '';
+      this.baseURL = '';
+      this.state = _loaderstate.LOADER_STATE.IDLE;
+    }
+  }, {
     key: 'setPath',
     value: function setPath(path) {
       if (path !== '' && path.substr(-1) !== '/') path = path.concat('/');
@@ -2912,7 +3065,7 @@ var LoadManager = function () {
       this._successFiles.clear();
       this._filesQueue.clear();
 
-      var cache = this.game.cache;
+      var cache = this.cache;
 
       if (this._processedFiles.size > 0) {
         this._processedFiles.each(function (file) {
@@ -2989,6 +3142,8 @@ var LoadManager = function () {
 
 exports.default = LoadManager;
 ;
+
+_gameSystemManager2.default.register('Loader', LoadManager, 'load');
 
 /***/ }),
 
@@ -3697,8 +3852,8 @@ var Debug = function () {
     _classCallCheck(this, Debug);
 
     this.game = game;
-    this.draw = game.draw;
-    this.context = game.render.context;
+    this.draw = game.system.draw;
+    this.context = game.system.render.context;
     this.x = 8;
     this.y = 12;
     this.lineHeight = 14;
@@ -4270,6 +4425,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Draw = function () {
@@ -4277,18 +4438,26 @@ var Draw = function () {
     _classCallCheck(this, Draw);
 
     this.game = game;
-    this.cache = game.cache;
-    this.context = game.render.context;
+    this.cache = null;
+    this.context = null;
   }
 
   _createClass(Draw, [{
-    key: 'font',
+    key: "init",
+    value: function init() {
+
+      this.cache = this.game.system.cache;
+      this.context = this.game.system.render.context;
+      return this;
+    }
+  }, {
+    key: "font",
     value: function font(fontname, size) {
 
       this.context.font = size + "px " + fontname;
     }
   }, {
-    key: 'text',
+    key: "text",
     value: function text(_text, x, y, color) {
 
       if (color === undefined) color = 'black';
@@ -4297,7 +4466,7 @@ var Draw = function () {
       this.context.fillText(_text, x, y);
     }
   }, {
-    key: 'sprite',
+    key: "sprite",
     value: function sprite(tag, x, y, anchor) {
 
       var img = this.cache.getAsset('images', tag);
@@ -4321,17 +4490,17 @@ var Draw = function () {
       }
     }
   }, {
-    key: 'spriteTransformed',
+    key: "spriteTransformed",
     value: function spriteTransformed(tag, x, y, xscale, yscale, angle) {}
   }, {
-    key: 'rectangle',
+    key: "rectangle",
     value: function rectangle(x, y, width, height, color) {
 
       this.context.fillStyle = color;
       this.context.fillRect(x, y, width, height);
     }
   }, {
-    key: 'outlineRectangle',
+    key: "outlineRectangle",
     value: function outlineRectangle(x, y, width, height, color, outlineWidth) {
 
       this.context.beginPath();
@@ -4342,19 +4511,19 @@ var Draw = function () {
       this.context.stroke();
     }
   }, {
-    key: 'alpha',
+    key: "alpha",
     value: function alpha(a) {
 
       this.context.globalAlpha = a;
     }
   }, {
-    key: 'color',
+    key: "color",
     value: function color(_color) {
 
       this.context.fillStyle = _color;
     }
   }, {
-    key: 'boundingbox',
+    key: "boundingbox",
     value: function boundingbox(bb, color) {
 
       if (color === undefined) color = 'black';
@@ -4367,6 +4536,28 @@ var Draw = function () {
 }();
 
 exports.default = Draw;
+
+
+_gameSystemManager2.default.register('Draw', Draw, 'draw');
+
+/***/ }),
+
+/***/ "./render/index.js":
+/*!*************************!*\
+  !*** ./render/index.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    RenderLayer: __webpack_require__(/*! ./renderlayer */ "./render/renderlayer.js"),
+    RenderLayerManagement: __webpack_require__(/*! ./renderlayersmanagement */ "./render/renderlayersmanagement.js"),
+    Render: __webpack_require__(/*! ./render */ "./render/render.js"),
+    Draw: __webpack_require__(/*! ./draw */ "./render/draw.js")
+};
 
 /***/ }),
 
@@ -4404,6 +4595,10 @@ var _canvas2 = _interopRequireDefault(_canvas);
 
 var _define = __webpack_require__(/*! ./define */ "./render/define.js");
 
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4413,13 +4608,12 @@ var Render = function () {
         _classCallCheck(this, Render);
 
         this.game = game;
-
-        this._backgroundColor = '#000';
+        this.layer = new _renderlayersmanagement2.default(this.game);
         this.canvas = _canvas2.default.create(this.game.parent, this.game.width, this.game.height);
         this.context = this.canvas.getContext("2d", { alpha: false });
-
-        this.layer = new _renderlayersmanagement2.default(game);
         this.imageRendering = game.config.pixelelated ? _define.RENDERING_TYPE.NEAREST : _define.RENDERING_TYPE.LINEAR;
+
+        this._backgroundColor = '#000';
         this._alpha = 1;
         this._enable = true;
         this.clear = true;
@@ -4501,6 +4695,9 @@ var Render = function () {
 }();
 
 exports.default = Render;
+
+
+_gameSystemManager2.default.register('Render', Render, 'render');
 
 /***/ }),
 
@@ -4743,22 +4940,15 @@ var _camera = __webpack_require__(/*! ../entities/camera */ "./entities/camera.j
 
 var _camera2 = _interopRequireDefault(_camera);
 
-var _scenesystem = __webpack_require__(/*! ./scenesystem */ "./scene/scenesystem.js");
-
-var _scenesystem2 = _interopRequireDefault(_scenesystem);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Scene = function () {
-  function Scene(game, name) {
+  function Scene(name) {
     _classCallCheck(this, Scene);
 
-    var myGame = game || null;
     this.name = name || 'New Scene';
-    this.game = myGame;
-    this.system = new _scenesystem2.default(this);
     //this.childs = new EntityHierarchy("SceneHierarchy", this.game);
     /*this.camera = null;
     this.x = 0;
@@ -4956,6 +5146,9 @@ var SceneManager = function () {
             this.onUpdateCallback = this.current_scene['update'] || null;
             this.onRenderCallback = this.current_scene['render'] || null;
             this.onDestroyCallback = this.current_scene['destroy'] || null;
+
+            this.game.system.inject(this.current_scene);
+
             this.current_scene_name = sceneName;
 
             this.game.time.refresh();
@@ -4971,6 +5164,8 @@ var SceneManager = function () {
         value: function clearCurrentScene() {
 
             if (this.current_scene_name) {
+
+                this.game.system.unject(this.current_scene);
 
                 if (this.onDestroyCallback) {
                     this.onDestroyCallback.call(this.current_scene, this.game);
@@ -5001,14 +5196,14 @@ var SceneManager = function () {
 
                 if (this.onPreloadCallback) {
 
-                    this.game.load.reset();
+                    this.game.system.load.reset();
                     this.onPreloadCallback.call(this.current_scene, this.game);
 
-                    if (this.game.load.totalQueuedFiles === 0) {
+                    if (this.game.system.load.totalQueuedFiles === 0) {
                         this.preloadComplete();
                     } else {
 
-                        this.game.load.start();
+                        this.game.system.load.start();
                     }
                 } else {
 
@@ -5039,11 +5234,13 @@ var SceneManager = function () {
 
             if (this._setup) {
 
-                if (this.onUpdateCallback) {
+                /*if (this.onUpdateCallback)
+                {
                     this.onUpdateCallback.call(this.current_scene, this.game);
-                }
+                }*/
 
                 //this.current_scene._update();
+
             } else {
 
                 if (this.onLoadingCallback) {
@@ -5073,36 +5270,6 @@ var SceneManager = function () {
 }();
 
 exports.default = SceneManager;
-
-/***/ }),
-
-/***/ "./scene/scenesystem.js":
-/*!******************************!*\
-  !*** ./scene/scenesystem.js ***!
-  \******************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var SceneSystem = function SceneSystem(scene) {
-    _classCallCheck(this, SceneSystem);
-
-    this.scene = scene;
-    this.game = null;
-    this.instances = null;
-    this.layers = null;
-    this.create = null;
-};
-
-exports.default = SceneSystem;
 
 /***/ }),
 
@@ -5218,11 +5385,15 @@ var List = function () {
     }, {
         key: 'erase',
         value: function erase(child) {
+
+            if (deleteChild === undefined) deleteChild = false;
+
             var idx = this.childs.indexOf(child);
+            var childToErase = null;
 
-            if (idx !== -1) this.childs.splice(idx, 1);
+            if (idx !== -1) childToErase = this.childs.splice(idx, 1);
 
-            return child;
+            return childToErase;
         }
     }, {
         key: 'eraseAt',
@@ -5232,6 +5403,21 @@ var List = function () {
             if (child) this.childs.splice(index, 1);
 
             return child;
+        }
+    }, {
+        key: 'eraseList',
+        value: function eraseList(listToRemove, size) {
+            if (deleteChild === undefined) deleteChild = false;
+            if (size === undefined) size = listToRemove.size;
+
+            for (var i = 0; i < size; i++) {
+                var child = listToRemove.childs[i];
+                this.erase(child);
+                /*let child = this.listToRemove[i];
+                let index = this._instances.indexOf(gameObject);
+                  if (index > -1)
+                   this._instances.splice(index, 1);*/
+            }
         }
     }, {
         key: 'has',
@@ -5260,6 +5446,19 @@ var List = function () {
             this.clear();
             this.childs = [];
             this.parent = null;
+        }
+    }, {
+        key: 'concat',
+        value: function concat(otherList, clearOther) {
+            if (clearOther === undefined) clearOther = false;
+
+            if (clearOther) {
+                this.childs = this.childs.concat(otherList.childs.splice(0));
+            } else {
+                this.childs = this.childs.concat(otherList.childs);
+            }
+
+            return this;
         }
     }, {
         key: 'each',

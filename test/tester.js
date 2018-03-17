@@ -31,13 +31,13 @@ var config = {
 
 scene.preload = function()
 {
-    game.load.setPath('assets/')
-    game.load.image('test','img/block.png');
-    game.load.font('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
+    this.load.setPath('assets/')
+    this.load.image('test','img/block.png');
+    //game.load.text('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
 }
 
 scene.render = function() {
-    game.draw.sprite('test',VIEW.w / 2 + x,VIEW.h / 2-16,[0.5,0.5]);
+    this.draw.sprite('test',VIEW.w / 2 + x,VIEW.h / 2-16,[0.5,0.5]);
     
 }
 

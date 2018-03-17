@@ -103,6 +103,7 @@ remove(sceneName) {
 
 setupScene(sceneName) {
 
+
   this.current_scene = this._scenes.get(sceneName);
   this.onStartCallback = this.current_scene['start'] || null;
   this.onLoadingCallback = this.current_scene['loading'] || null;
@@ -111,9 +112,13 @@ setupScene(sceneName) {
   this.onUpdateCallback = this.current_scene['update'] || null;
   this.onRenderCallback = this.current_scene['render'] || null;
   this.onDestroyCallback = this.current_scene['destroy'] || null;
+
+  this.game.system.inject(this.current_scene);
+
   this.current_scene_name = sceneName;
 
   this.game.time.refresh();
+
 
   //this.current_scene.camera = this.game.world.camera;
 
@@ -127,6 +132,8 @@ clearCurrentScene() {
 
   if (this.current_scene_name)
   {
+
+    this.game.system.unject(this.current_scene);
 
     if (this.onDestroyCallback)
     {
@@ -164,16 +171,16 @@ preUpdate() {
 
     if (this.onPreloadCallback) {
 
-      this.game.load.reset();
+      this.game.system.load.reset();
       this.onPreloadCallback.call(this.current_scene, this.game);
 
-      if (this.game.load.totalQueuedFiles === 0)
+      if (this.game.system.load.totalQueuedFiles === 0)
       {
         this.preloadComplete();
 
       } else {
 
-        this.game.load.start();
+        this.game.system.load.start();
       }
 
     } else {
@@ -210,10 +217,12 @@ preUpdate() {
 
       if (this._setup) {
 
-        if (this.onUpdateCallback)
+        /*if (this.onUpdateCallback)
         {
             this.onUpdateCallback.call(this.current_scene, this.game);
-        }
+        }*/
+
+
 
         //this.current_scene._update();
 
