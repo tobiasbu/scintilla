@@ -11,10 +11,10 @@ class ModuleProxyRegister
 
     attach(manager, moduleType, args)
     {
-        if (!this.manager.modules[moduleType])
-            this.manager.modules[moduleType] = new List();
+        //if (!this.manager.modules[moduleType])
+        //    this.manager.modules[moduleType] = new List();
 
-        this.manager.modules[moduleType].push(this.modules[moduleType].call(args));
+        this.manager.modules[moduleType] = this.modules[moduleType].call(manager, args);
     }
 
     static register(moduleType, func)

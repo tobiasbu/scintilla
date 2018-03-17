@@ -747,17 +747,24 @@ var Game = function () {
         key: 'logic',
         value: function logic(timeStep) {
 
+            // Core Managers
+
+            this.input.update();
+            //this.sound.update();
+
+            // Scene Update
+            this.physics.update();
             this.scene.preUpdate();
             this.scene.update(timeStep);
-            this.input.update();
+
             //this.universe.preUpdate(timeStep);
 
 
             //this.world.camera.update();
 
             //this.universe.update(timeStep);
-            this.physics.update();
-            //this.sound.update();
+
+            //
 
             //this.universe._updateTransform();
 
@@ -2058,12 +2065,14 @@ exports.default = function () {
             var xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.open("GET", file.source, xhrSettings.async);
 
-            xmlHttpRequest.responseType = file.xhrSettings.responseType;
+            if (file.xhrSettings.responseType !== undefined) xmlHttpRequest.responseType = file.xhrSettings.responseType;
             xmlHttpRequest.timeout = xhrSettings.timeout;
 
             xmlHttpRequest.onload = file.onLoad.bind(file);
             xmlHttpRequest.onerror = file.onError.bind(file);
             xmlHttpRequest.onprogress = file.onProgress.bind(file);
+
+            if (file.onReadyStateChange !== undefined) xmlHttpRequest.onreadystatechange = file.onReadyStateChange.bind(file);
 
             xmlHttpRequest.send();
 
@@ -2107,6 +2116,141 @@ exports.default = function () {
 
     return XHR;
 }();
+
+/***/ }),
+
+/***/ "./loader/assets/cssfile.js":
+/*!**********************************!*\
+  !*** ./loader/assets/cssfile.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+
+var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+
+var _file2 = _interopRequireDefault(_file);
+
+var _objectutils = __webpack_require__(/*! ../../utils/objectutils */ "./utils/objectutils.js");
+
+var _objectutils2 = _interopRequireDefault(_objectutils);
+
+var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathutils.js");
+
+var _pathutils2 = _interopRequireDefault(_pathutils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var FontFile = function (_File) {
+    _inherits(FontFile, _File);
+
+    function FontFile(tag, url, path, xhrSettings, config) {
+        _classCallCheck(this, FontFile);
+
+        var assetTag = null;
+
+        if (typeof tag === 'string') {
+            assetTag = tag;
+        } else {
+            assetTag = _objectutils2.default.getValue(tag, 'tag', '');
+        }
+
+        var useExternal = false;
+
+        if (path !== undefined) {
+            if (typeof path === "boolean") useExternal = path;
+        }
+
+        var fileConfig = {
+            type: 'font',
+            tag: assetTag,
+            ext: _objectutils2.default.getValue(tag, 'ext', _pathutils2.default.getExtension(url)),
+            url: _objectutils2.default.getValue(tag, 'file', url),
+            path: path,
+            responseType: '',
+            xhrSettings: _objectutils2.default.getValue(tag, 'xhr', xhrSettings),
+            config: _objectutils2.default.getValue(tag, 'config', config),
+            useExternal: useExternal
+        };
+
+        return _possibleConstructorReturn(this, (FontFile.__proto__ || Object.getPrototypeOf(FontFile)).call(this, fileConfig));
+    }
+
+    //onLoad(event) {}
+
+    /*onReadyStateChange(event)
+    {
+          console.log(event.target);
+        if (this.xhrRequest.status == 200)
+        {
+            if (this.xhrRequest.readyState == 4)
+            {
+                this.state = LOADER_STATE.PROCESSING;
+                //this.data = window.URL.createObjectURL(this.xhrRequest.response);
+                this.data = this.xhrRequest.responseText;
+                
+                //console.log(this.data);
+                this.onDone();
+                  //processingCallback(this);
+                super.onLoad(event);
+            }  
+        } else {
+            super.onLoad(event);
+        }
+    }*/
+
+    _createClass(FontFile, [{
+        key: 'onProcessing',
+        value: function onProcessing(processingCallback) {
+            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            //this.data = window.URL.createObjectURL(this.xhrRequest.response);
+            this.data = this.xhrRequest.responseText;
+            var style = document.createElement('style');
+            style.innerHTML = this.data;
+            document.head.appendChild(style);
+            // console.log("data:" + this.data);
+            this.onDone();
+            processingCallback(this);
+        }
+    }]);
+
+    return FontFile;
+}(_file2.default);
+
+exports.default = FontFile;
+
+
+_loaderstate.AssetTypeHandler.register('font', function (tag, url, path, xhrSettings) {
+    var endPointPath = this.path;
+
+    if (path !== undefined) {
+
+        if (typeof path === "boolean") // external link
+            endPointPath = path;
+    }
+
+    this.addAsset(new FontFile(tag, url, endPointPath, xhrSettings));
+
+    return this;
+});
+
+module.exports = FontFile;
 
 /***/ }),
 
@@ -2239,7 +2383,8 @@ module.exports = ImageFile;
 
 
 module.exports = {
-    ImageFile: __webpack_require__(/*! ./imagefile */ "./loader/assets/imagefile.js")
+    ImageFile: __webpack_require__(/*! ./imagefile */ "./loader/assets/imagefile.js"),
+    FontFile: __webpack_require__(/*! ./cssfile */ "./loader/assets/cssfile.js")
 };
 
 /***/ }),
@@ -2280,14 +2425,17 @@ var File = function () {
 
         this.type = _objectutils2.default.getValue(config, 'type', null);
         this.tag = _objectutils2.default.getValue(config, 'tag', null);
+        this.useExternal = _objectutils2.default.getValue(config, 'useExternal', false);
 
         if (this.type == null || this.tag == null) {
             throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
         }
 
-        this.url = _objectutils2.default.getValue(config, 'url', null);
+        this.url = _objectutils2.default.getValue(config, 'url', undefined);
 
-        if (this.url === undefined) this.url = _objectutils2.default.getValue(config, 'path', '') + this.tag + '.' + _objectutils2.default.getValue(config, 'ext', '');else this.url = _objectutils2.default.getValue(config, 'path', '').concat(this.url);
+        if (this.url === undefined) this.url = _objectutils2.default.getValue(config, 'path', '') + this.tag + '.' + _objectutils2.default.getValue(config, 'ext', '');else {
+            if (!this.useExternal) this.url = _objectutils2.default.getValue(config, 'path', '').concat(this.url);
+        }
 
         this.xhrSettings = _XHR2.default.createSettings(_objectutils2.default.getValue(config, 'responseType', undefined));
 
@@ -2335,6 +2483,7 @@ var File = function () {
     }, {
         key: 'onLoad',
         value: function onLoad(event) {
+
             this.XHRreset();
 
             if (event.target && event.target.status !== 200) this.loader.next(this, true);else this.loader.next(this, false);
@@ -2342,6 +2491,8 @@ var File = function () {
     }, {
         key: 'onError',
         value: function onError() {
+            console.error("Loader.File: Error to load file.");
+
             this.XHRreset();
 
             this.loader.next(this, true);
@@ -2354,8 +2505,6 @@ var File = function () {
                 this.totalBytes = event.total;
 
                 this.progress = Math.min(this.loadedBytes / this.totalBytes, 1);
-
-                //this.loader.emit('fileprogress', this, this.progress);
             }
         }
     }, {
@@ -2375,9 +2524,12 @@ var File = function () {
     }, {
         key: 'XHRreset',
         value: function XHRreset() {
-            this.xhrRequest.onload = undefined;
-            this.xhrRequest.onerror = undefined;
-            this.xhrRequest.onprogress = undefined;
+            if (this.xhrRequest) {
+                this.xhrRequest.onload = undefined;
+                this.xhrRequest.onerror = undefined;
+                this.xhrRequest.onprogress = undefined;
+                this.xhrRequest.onreadystatechange = undefined;
+            }
         }
     }]);
 
@@ -2545,6 +2697,7 @@ var LoadManager = function () {
     this.cache = game.cache;
 
     this._filesQueue = new _set2.default();
+    this._filesLoading = new _set2.default();
     this._successFiles = new _set2.default();
     this._failedFiles = new _set2.default();
     this._processedFiles = new _set2.default();
@@ -2630,13 +2783,13 @@ var LoadManager = function () {
       this._filesQueueCount = this._filesQueue.size;
 
       if (this._filesQueue.size === 0) {
-        console.log(0);
+        //console.log(0);
         this.loadFinished();
       } else {
         this.isDownloading = true;
         this._successFiles.clear();
         this._failedFiles.clear();
-        //this._filesQueue.clear();
+        this._filesLoading.clear();
 
         this.processFileQueue();
       }
@@ -2671,23 +2824,36 @@ var LoadManager = function () {
 
         if (file.state === _loaderstate.LOADER_STATE.FINISHED || file.state === _loaderstate.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
           {
-            file.load(self);
+
+            self._filesLoading.set(file);
+
+            self._filesQueue.delete(file);
+
+            self.loadAsset(file);
           }
       });
     }
   }, {
+    key: 'loadAsset',
+    value: function loadAsset(file) {
+      file.load(this);
+    }
+  }, {
     key: 'next',
     value: function next(concludedFile, hasError) {
+
       if (hasError) this._failedFiles.set(concludedFile);else this._successFiles.set(concludedFile);
 
-      this._filesQueue.delete(concludedFile);
+      this._filesLoading.delete(concludedFile);
+      //this._filesQueue.delete(concludedFile);
       this._loadedFilesCount++;
 
       this.updateProgress();
 
-      if (this._loadedFilesCount < this._filesQueueCount) {
-        this.processFileQueue();
-      } else {
+      if (this._filesQueue.size > 0) //(this._loadedFilesCount < this._filesQueueCount)
+        {
+          this.processFileQueue();
+        } else if (this._filesLoading.size === 0) {
 
         this.loadFinished();
       }
@@ -2695,6 +2861,7 @@ var LoadManager = function () {
   }, {
     key: 'loadFinished',
     value: function loadFinished() {
+
       if (this.state === _loaderstate.LOADER_STATE.PROCESSING) return;
 
       this.progress = 1;
@@ -2751,6 +2918,9 @@ var LoadManager = function () {
         this._processedFiles.each(function (file) {
 
           switch (file.type) {
+            default:
+              break;
+
             case 'image':
               {
                 cache.addImage(file.tag, file.url, file.data);
@@ -4366,7 +4536,7 @@ var RenderLayer = function () {
         this.game = game;
         this.__enable = true;
         this.renderList = new _list2.default(true);
-        this.__isDirty = true;
+        this.__isDirty = false;
     }
 
     // Add renderable components
@@ -4922,14 +5092,17 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var SceneSystems = function SceneSystems(scene) {
-    _classCallCheck(this, SceneSystems);
+var SceneSystem = function SceneSystem(scene) {
+    _classCallCheck(this, SceneSystem);
 
     this.scene = scene;
     this.game = null;
+    this.instances = null;
+    this.layers = null;
+    this.create = null;
 };
 
-exports.default = SceneSystems;
+exports.default = SceneSystem;
 
 /***/ }),
 

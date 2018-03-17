@@ -9,18 +9,23 @@ export default class File {
 
         this.type = ObjectUtils.getValue(config, 'type', null);
         this.tag = ObjectUtils.getValue(config, 'tag', null);
+        this.useExternal =  ObjectUtils.getValue(config, 'useExternal', false);
 
         if (this.type == null || this.tag == null)
         {
             throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
         }
 
-        this.url = ObjectUtils.getValue(config, 'url', null);
+        this.url = ObjectUtils.getValue(config, 'url', undefined);
 
         if (this.url === undefined)
             this.url = ObjectUtils.getValue(config, 'path', '') + this.tag + '.' + ObjectUtils.getValue(config, 'ext', '');
         else
-            this.url = ObjectUtils.getValue(config, 'path', '').concat(this.url);
+        {
+            if (!this.useExternal)
+                this.url = ObjectUtils.getValue(config, 'path', '').concat(this.url);
+
+        }
 
         this.xhrSettings = XHR.createSettings(ObjectUtils.getValue(config, 'responseType', undefined));
         
@@ -29,7 +34,7 @@ export default class File {
 
         
         //console.log(this.xhrSettings);
-
+       
         this.loader = null;
         this.state = LOADER_STATE.PENDING;
         this.totalBytes = 0;
@@ -80,17 +85,21 @@ export default class File {
 
     onLoad(event)
     {
+       
         this.XHRreset();
 
         if (event.target && event.target.status !== 200)
             this.loader.next(this, true);
         else
             this.loader.next(this, false);
-
+        
+                
     }
 
     onError()
     {
+        console.error("Loader.File: Error to load file.")
+
         this.XHRreset();
 
         this.loader.next(this, true);
@@ -105,7 +114,6 @@ export default class File {
 
             this.progress = Math.min((this.loadedBytes / this.totalBytes), 1);
 
-            //this.loader.emit('fileprogress', this, this.progress);
         }
     }
 
@@ -126,9 +134,13 @@ export default class File {
 
     XHRreset()
     {
-        this.xhrRequest.onload = undefined;
-        this.xhrRequest.onerror = undefined;
-        this.xhrRequest.onprogress = undefined;
+        if (this.xhrRequest)
+        {
+            this.xhrRequest.onload = undefined;
+            this.xhrRequest.onerror = undefined;
+            this.xhrRequest.onprogress = undefined;
+            this.xhrRequest.onreadystatechange = undefined;
+        }
     }
 
 

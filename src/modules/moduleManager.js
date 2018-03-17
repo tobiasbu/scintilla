@@ -9,7 +9,7 @@ export default class ModuleManager
         this.modules = new Map();
     }
 
-    attach(moduleName)
+    add(moduleName)
     {
         ModuleRegister.attach(this, moduleName);
     }

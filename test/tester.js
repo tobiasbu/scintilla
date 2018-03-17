@@ -33,6 +33,7 @@ scene.preload = function()
 {
     game.load.setPath('assets/')
     game.load.image('test','img/block.png');
+    game.load.font('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
 }
 
 scene.render = function() {

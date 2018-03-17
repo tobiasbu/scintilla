@@ -10,12 +10,16 @@ export default (
         var xmlHttpRequest = new XMLHttpRequest();
         xmlHttpRequest.open("GET", file.source, xhrSettings.async);
 
-        xmlHttpRequest.responseType = file.xhrSettings.responseType;
+        if (file.xhrSettings.responseType !== undefined)
+            xmlHttpRequest.responseType = file.xhrSettings.responseType;
         xmlHttpRequest.timeout = xhrSettings.timeout;
 
         xmlHttpRequest.onload = file.onLoad.bind(file);
         xmlHttpRequest.onerror = file.onError.bind(file);
         xmlHttpRequest.onprogress = file.onProgress.bind(file);
+        
+        if (file.onReadyStateChange !== undefined)
+            xmlHttpRequest.onreadystatechange = file.onReadyStateChange.bind(file);
 
         xmlHttpRequest.send();
 

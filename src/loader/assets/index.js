@@ -1,5 +1,5 @@
 
-module.exports = 
-{
-    ImageFile : require('./imagefile')
+module.exports = {
+    ImageFile : require('./imagefile'),
+    FontFile : require('./cssfile')
 }

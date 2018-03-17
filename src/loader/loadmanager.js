@@ -13,6 +13,7 @@ export default class LoadManager {
     this.cache = game.cache;
 
     this._filesQueue = new SetData();
+    this._filesLoading = new SetData();
     this._successFiles = new SetData();
     this._failedFiles = new SetData();
     this._processedFiles = new SetData();
@@ -106,7 +107,7 @@ export default class LoadManager {
 
     if (this._filesQueue.size === 0)
     {
-      console.log(0);
+      //console.log(0);
       this.loadFinished();
     }
     else
@@ -114,7 +115,7 @@ export default class LoadManager {
       this.isDownloading = true;
       this._successFiles.clear();
       this._failedFiles.clear();
-      //this._filesQueue.clear();
+      this._filesLoading.clear();
 
       this.processFileQueue();
     }
@@ -145,7 +146,7 @@ export default class LoadManager {
 
   processFileQueue() {
 
-    let self = this;
+    var self = this;
 
     this._filesQueue.each(function(file) {
 
@@ -154,29 +155,42 @@ export default class LoadManager {
       if (file.state === LOADER_STATE.FINISHED ||
          file.state === LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
       {
-        file.load(self);
+        
+
+        self._filesLoading.set(file);
+
+        self._filesQueue.delete(file);
+
+        self.loadAsset(file);
       }
 
     });
 
   }
 
+  loadAsset(file)
+  {
+    file.load(this);
+  }
+
   next(concludedFile, hasError) {
+
       if (hasError)
           this._failedFiles.set(concludedFile);
       else 
           this._successFiles.set(concludedFile);
       
 
-      this._filesQueue.delete(concludedFile);
+      this._filesLoading.delete(concludedFile);
+      //this._filesQueue.delete(concludedFile);
       this._loadedFilesCount++;
 
       this.updateProgress();
 
-      if (this._loadedFilesCount < this._filesQueueCount)
+      if (this._filesQueue.size > 0)//(this._loadedFilesCount < this._filesQueueCount)
       {
           this.processFileQueue();
-      } else  {
+      } else if (this._filesLoading.size === 0) {
         
           this.loadFinished();
       }
@@ -184,6 +198,7 @@ export default class LoadManager {
   }
 
   loadFinished() {
+
     if (this.state === LOADER_STATE.PROCESSING)
         return;
   
@@ -247,6 +262,9 @@ export default class LoadManager {
 
         switch (file.type)
         {
+          default:
+            break;
+
           case 'image': {
             cache.addImage(file.tag,file.url,file.data);
             break;

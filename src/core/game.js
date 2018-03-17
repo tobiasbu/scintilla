@@ -223,17 +223,24 @@ export default class Game {
 
   logic(timeStep) {
 
+    // Core Managers
+
+    this.input.update();
+    //this.sound.update();
+
+    // Scene Update
+    this.physics.update();
     this.scene.preUpdate();
     this.scene.update(timeStep);
-    this.input.update();
+    
     //this.universe.preUpdate(timeStep);
 
 
     //this.world.camera.update();
 
     //this.universe.update(timeStep);
-    this.physics.update();
-    //this.sound.update();
+    
+    //
 
     //this.universe._updateTransform();
 
