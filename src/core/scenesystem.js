@@ -4,7 +4,7 @@ var SceneSystem = [
     'Cache',
     'Draw',
     'Loader',
-   // 'EntityFactory'
+    'EntityFactory'
 ]
 
 export default SceneSystem;

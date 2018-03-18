@@ -46,9 +46,13 @@ export default class Sprite extends Renderable {
     }
 }
 
-ModuleRegister.register('sprite', (moduleManager, tag) => {
+ModuleRegister.register('sprite', 'render', (moduleManager, tag) => {
 
     var spr = new Sprite(moduleManager);
+
+    if (tag !== undefined)
+        spr.setSprite(tag)
+
     return spr;
 
 });

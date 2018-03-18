@@ -1,9 +1,9 @@
 
 export default class Module
 {
-    constructor(moduleManager)
+    constructor(moduleManager, name)
     {
-        this.moduleName = "None";
+        this.moduleName = name || "None";
         this._enabled = true;
         this.entity = null;
         this.parent = moduleManager || null;

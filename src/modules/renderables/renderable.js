@@ -1,15 +1,15 @@
 
 import BoundingBox from '../../math/boundingbox';
-import { EntityType } from '../entitytype';
-import { Module } from 'module';
+//import { EntityType } from '../entitytype';
+import Module from '../module';
 
 export default class Renderable extends Module
 {
     constructor(moduleManager)
     {
-        super(moduleManager);
+        super('Renderable', moduleManager);
 
-        this.moduleName = "Renderable";
+        //this.moduleName = "Renderable";
         this._layerID = 0;
         this._depth = 0;
         this._visible = true;
@@ -17,6 +17,8 @@ export default class Renderable extends Module
         this._depthDirty = true; 
         this.bounds = new BoundingBox();
         this.source = null;
+
+        
         //this.type = EntityType.Renderable;
     }
 

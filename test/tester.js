@@ -18,6 +18,11 @@ var config = {
   
   var game = new scintilla.Game(config);
   var scene = game.scene.new('scene');
+  game.system.render.layer.add('gui');
+  if (game.system.render.layer.contains('gui'))
+  {
+      console.log('yes');
+  }
   var x = 0;
 
  /* var mat = new scintilla.Matrix(1);
@@ -29,11 +34,14 @@ var config = {
   */
 
 
-scene.preload = function()
-{
+scene.preload = function() {
     this.load.setPath('assets/')
     this.load.image('test','img/block.png');
     //game.load.text('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
+}
+
+scene.start = function() {
+    var spr = this.create.sprite('test');
 }
 
 scene.render = function() {

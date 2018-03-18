@@ -1,5 +1,10 @@
 
-require('../math')
+import Vector from '../math/vector'
+import Matrix from '../math/matrix'
+import BoundingBox from '../math/boundingbox'
+//Vector = Math.Vector;
+//Matrix = Math.Matrix;
+//BoundingBox = Math.BoundingBox;
 
 export default class Transform {
 

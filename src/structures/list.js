@@ -169,12 +169,14 @@ export default class List
     each(callback) {
         let params = [ null ];
 
-        for (let i = 1; i < arguments.length; i++)
+        var content = this.childs;
+
+        for (let i = 0; i < arguments.length; i++)
             params.push(arguments[i]);
 
-        for (let i = 0; i < this.childs.length; i++) {
-            params[0] = this.childs[i];
-            callback.apply(params);
+        for (let i = 0; i < content.length; i++) {
+            //params[0] = this.childs[i];
+            callback(content[i], params);
            //break;
         }
     }

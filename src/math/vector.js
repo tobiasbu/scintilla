@@ -211,3 +211,5 @@ export default class Vector {
   }
 
 }
+
+module.exports = Vector;

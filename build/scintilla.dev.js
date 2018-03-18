@@ -156,6 +156,9 @@ var scintilla = scintilla || {
   // MATH
   MathUtils: __webpack_require__(/*! ./math/mathutils */ "./math/mathutils.js"),
   Matrix: __webpack_require__(/*! ./math/matrix */ "./math/matrix.js"),
+  // ENTITIES
+  Module: __webpack_require__(/*! ./modules */ "./modules/index.js"),
+  Entity: __webpack_require__(/*! ./entities */ "./entities/index.js"),
   // CORE
   Cache: __webpack_require__(/*! ./cache/cache */ "./cache/cache.js"),
   Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
@@ -505,13 +508,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-//import Canvas from '../render/canvas/canvas'
-//import Cache from '../cache/cache'
-//import LoadManager from '../loader/loadmanager'
-
-//import Render from '../render/render'
-//import Draw from '../render/draw'
-
 
 var _config = __webpack_require__(/*! ./config */ "./core/config.js");
 
@@ -584,20 +580,10 @@ var Game = function () {
 
         //objects
         this.debug = null;
-        //this.cache = null;
-        //this.load = null;
-        //this.canvas = null;
         this.scene = null;
         this.sound = null;
-        // this.draw = null;
-        // this.render = null;
-        // this.universe = null;
-        //this.world = null;
         this.input = null;
         this.time = null;
-        //this.component = null;
-        //this.instance = null;
-        //this.animationCache = null;
         this.updateGameMethod = null;
         this.pool = null;
         this.systems = null;
@@ -644,21 +630,8 @@ var Game = function () {
 
             if (this.systemInited) return;
 
-            //this.cache = new Cache(this);
-            //this.load = new LoadManager(this);
             this.time = new _time2.default(this);
-            //this.universe = new scintilla.Universe(this);
-            //this.world = new scintilla.World(this);
-
-            //this.render = new Render(this);
-            //this.draw = new Draw(this);
             this.scene = new _scenemanager2.default(this);
-
-            //this.instance = new scintilla.Creator(this,this.world);
-            //this.component = new scintilla.GameComponents(this);
-            //this.animationCache = new scintilla.AnimationCache(this);
-            //this.sound = new scintilla.SoundManager(this);
-            //this.pool = new scintilla.Pool(this);
             this.physics = new _physics2.default(this);
             this.system = new _gameSystemManager2.default(this);
 
@@ -670,8 +643,6 @@ var Game = function () {
             this.input.init();
 
             if (this.debugMode) this.debug = new _debug2.default(this);
-            //this.sound.start();
-            //this.world.start();
 
             this.updateGameMethod = new _updatetime2.default(this, this.timeMode);
             this.updateGameMethod.start();
@@ -931,7 +902,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 
-var SceneSystem = ['Cache', 'Draw', 'Loader'];
+var SceneSystem = ['Cache', 'Draw', 'Loader', 'EntityFactory'];
 
 exports.default = SceneSystem;
 
@@ -1107,6 +1078,72 @@ exports.default = Entity;
 
 /***/ }),
 
+/***/ "./entities/entityFactory.js":
+/*!***********************************!*\
+  !*** ./entities/entityFactory.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
+var _sceneentity = __webpack_require__(/*! ./sceneentity */ "./entities/sceneentity.js");
+
+var _sceneentity2 = _interopRequireDefault(_sceneentity);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EntityFactory = function () {
+    function EntityFactory(game) {
+        _classCallCheck(this, EntityFactory);
+
+        this.game = game;
+        this.scene = game.scene;
+        this.entityList = null;
+    }
+
+    _createClass(EntityFactory, [{
+        key: "init",
+        value: function init() {
+            this.entityList = this.game.system.entityList;
+        }
+    }, {
+        key: "sprite",
+        value: function sprite(tag) {
+            var entity = new _sceneentity2.default();
+            entity.modules.attach.sprite(tag);
+
+            if (this.scene.current_scene !== null) {
+                this.entityList.add(entity);
+            }
+
+            return entity;
+        }
+    }]);
+
+    return EntityFactory;
+}();
+
+exports.default = EntityFactory;
+
+
+_gameSystemManager2.default.register('EntityFactory', EntityFactory, 'create');
+
+/***/ }),
+
 /***/ "./entities/entityhierarchy.js":
 /*!*************************************!*\
   !*** ./entities/entityhierarchy.js ***!
@@ -1234,6 +1271,199 @@ var EntityHierarchy = function (_Entity) {
 }(_entity2.default);
 
 exports.default = EntityHierarchy;
+
+/***/ }),
+
+/***/ "./entities/entityupdatelist.js":
+/*!**************************************!*\
+  !*** ./entities/entityupdatelist.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _list = __webpack_require__(/*! ../structures/list */ "./structures/list.js");
+
+var _list2 = _interopRequireDefault(_list);
+
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EntityUpdateList = function () {
+    function EntityUpdateList(game) {
+        _classCallCheck(this, EntityUpdateList);
+
+        this.game = this.game;
+        this._instances = null;
+        this._destroyInstances = null;
+        this._pendingInstances = null;
+    }
+
+    _createClass(EntityUpdateList, [{
+        key: "init",
+        value: function init() {
+            this._instances = new _list2.default();
+            this._destroyInstances = new _list2.default();
+            this._pendingInstances = new _list2.default();
+        }
+    }, {
+        key: "add",
+        value: function add(instance) {
+            if (this._instances.indexOf(instance) === -1 && this._pendingInstances.indexOf(instance) === -1) {
+                this._pendingInstances.push(instance);
+            }
+
+            return instance;
+        }
+    }, {
+        key: "remove",
+        value: function remove(instance) {}
+    }, {
+        key: "update",
+        value: function update() {
+
+            this._instances.each(function (element) {
+
+                if (element.active) {
+                    element.updateTransform();
+
+                    element.modules.updateModules();
+
+                    if (element.update !== undefined) element.update();
+                }
+            });
+        }
+    }, {
+        key: "lateUpdate",
+        value: function lateUpdate() {
+            var removeSize = this._destroyInstances.size;
+            var insertSize = this._pendingInstances.size;
+
+            if (insertSize === 0 && insertSize === 0) return;
+
+            this._instances.eraseList(this._destroyInstances, removeSize, true);
+
+            this._instances.concat(this._pendingInstances, true);
+
+            this._pendingInstances.childs.length = 0;
+            this._destroyInstances.childs.length = 0;
+        }
+    }]);
+
+    return EntityUpdateList;
+}();
+
+exports.default = EntityUpdateList;
+
+
+_gameSystemManager2.default.register('EntityUpdateList', EntityUpdateList, 'entityList');
+
+/***/ }),
+
+/***/ "./entities/index.js":
+/*!***************************!*\
+  !*** ./entities/index.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Entity: __webpack_require__(/*! ./entity */ "./entities/entity.js"),
+    SceneEntity: __webpack_require__(/*! ./sceneentity */ "./entities/sceneentity.js"),
+    EntityUpdateList: __webpack_require__(/*! ./entityupdatelist */ "./entities/entityupdatelist.js"),
+    EntityFactory: __webpack_require__(/*! ./entityFactory */ "./entities/entityFactory.js")
+};
+
+/***/ }),
+
+/***/ "./entities/sceneentity.js":
+/*!*********************************!*\
+  !*** ./entities/sceneentity.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _entityhierarchy = __webpack_require__(/*! ./entityhierarchy */ "./entities/entityhierarchy.js");
+
+var _entityhierarchy2 = _interopRequireDefault(_entityhierarchy);
+
+var _boundingbox = __webpack_require__(/*! ../math/boundingbox */ "./math/boundingbox.js");
+
+var _boundingbox2 = _interopRequireDefault(_boundingbox);
+
+var _transform = __webpack_require__(/*! ../modules/transform */ "./modules/transform.js");
+
+var _transform2 = _interopRequireDefault(_transform);
+
+var _moduleManager = __webpack_require__(/*! ../modules/moduleManager */ "./modules/moduleManager.js");
+
+var _moduleManager2 = _interopRequireDefault(_moduleManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var SceneEntity = function (_EntityHierarchy) {
+    _inherits(SceneEntity, _EntityHierarchy);
+
+    function SceneEntity(name, game) {
+        _classCallCheck(this, SceneEntity);
+
+        name = name || 'New SceneEntity';
+
+        var _this = _possibleConstructorReturn(this, (SceneEntity.__proto__ || Object.getPrototypeOf(SceneEntity)).call(this, name, game || null));
+
+        _this.transform = new _transform2.default();
+        _this.type = null;
+        _this.pool = null;
+        _this.modules = new _moduleManager2.default(_this);
+        //this.bounds = new BoundingBox();
+        _this._transformDirty = false;
+        _this._currentScene = null;
+
+        return _this;
+    }
+
+    _createClass(SceneEntity, [{
+        key: 'position.x',
+        set: function set(value) {
+            this.transform.position.x = value;
+        }
+    }]);
+
+    return SceneEntity;
+}(_entityhierarchy2.default);
+
+exports.default = SceneEntity;
 
 /***/ }),
 
@@ -3147,6 +3377,225 @@ _gameSystemManager2.default.register('Loader', LoadManager, 'load');
 
 /***/ }),
 
+/***/ "./math/boundingbox.js":
+/*!*****************************!*\
+  !*** ./math/boundingbox.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _vector = __webpack_require__(/*! ./vector */ "./math/vector.js");
+
+var _vector2 = _interopRequireDefault(_vector);
+
+var _rect = __webpack_require__(/*! ./rect */ "./math/rect.js");
+
+var _rect2 = _interopRequireDefault(_rect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var BoundingBox = function () {
+  function BoundingBox(x, y, width, height) {
+    _classCallCheck(this, BoundingBox);
+
+    var xx = x || 0;
+    var yy = y || 0;
+    var w = width || 0;
+    var h = height || 0;
+    //this.center = new scintilla.Vector(x+width/2,y+height/2);
+    //this.size = new scintilla.Vector(width,height);
+    this.min = new _vector2.default(xx, yy);
+    this.max = new _vector2.default(xx + w, yy + h);
+    this.box = new _rect2.default(xx, yy, w, h);
+  }
+
+  _createClass(BoundingBox, [{
+    key: 'intersects',
+    value: function intersects(value) {
+      if (BoundingBox.prototype.isPrototypeOf(value)) {
+        // TODO
+      }
+    }
+  }, {
+    key: 'contains',
+    value: function contains(value) {
+      // TODO
+    }
+  }, {
+    key: 'set',
+    value: function set(minX, minY, maxX, maxY) {
+
+      this.min.set(minX, minY);
+      this.max.set(maxX, maxY);
+      this.box.set(this.min.x, this.min.y, this.max.x - this.min.x, this.max.y - this.min.y);
+    }
+
+    // position (vector)
+    // scale (vector)
+    // rotation (vector x = cos, y = sin)
+
+  }, {
+    key: 'setup',
+    value: function setup(pos, scale, rotation, anchor, width, height) {
+
+      var coords = [];
+      var negx = 1;
+      var negy = 1;
+
+      if (scale.x < 0) negx = -1;
+      if (scale.y < 0) negy = -1;
+
+      this.size.x = width * scale.x * negx;
+      this.size.y = height * scale.y * negy;
+      anchor.x *= scale.x * negx;
+      anchor.y *= scale.y * negy;
+      pos.x -= anchor.x;
+      pos.y -= anchor.y;
+      anchor.x += pos.x;
+      anchor.y += pos.y;
+
+      var callback = null;
+
+      if (rotation instanceof scintilla.Vector) callback = this['calcCoordsCosSin'];else callback = this['calcCoords'];
+
+      coords[0] = callback(pos.x, pos.y, anchor, rotation);
+      coords[1] = callback(pos.x + this.size.x, pos.y, anchor, rotation);
+
+      coords[2] = callback(pos.x, pos.y + this.size.y, anchor, rotation);
+      coords[3] = callback(pos.x + this.size.x, pos.y + this.size.y, anchor, rotation);
+
+      this.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+      this.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+
+      this.max.x = Math.max(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+      this.max.y = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+      this.center.x = pos.x + (this.max.x - this.min.x) / 2;
+      this.center.y = pos.y + (this.max.y - this.min.y) / 2;
+      this.box.set(this.min.x, this.min.y, this.max.x - this.min.x, this.max.y - this.min.y);
+    }
+
+    /*setBySprite : function(sprite, position, scale, rotation) {
+          //this.set(position,scale,rotation,);
+      }*/
+
+  }, {
+    key: 'setByGameObject',
+    value: function setByGameObject(gameObject, local) {
+
+      //if (gameObject.render != null) {
+
+      if (local) {
+        this.setup(gameObject.position, gameObject.scale, gameObject._cosSin, gameObject.render.origin, gameObject.render.width, gameObject.render.height);
+      } else {
+
+        var frame = gameObject.component['render'].frame;
+
+        var pos = { x: gameObject.worldPosition.x, y: gameObject.worldPosition.y };
+        var org = {
+          x: gameObject.origin.x * frame.width,
+          y: gameObject.origin.y * frame.height };
+
+        pos.x += gameObject.game.camera.view.x;
+        pos.y += gameObject.game.camera.view.y;
+
+        this.setup(pos, gameObject.worldScale, gameObject.worldRotation, org, frame.width, frame.height);
+      }
+
+      return this;
+    }
+  }, {
+    key: 'setByPosition',
+    value: function setByPosition(position) {
+
+      this.min.set(position.x, position.y);
+      this.max.set(position.x + 1, position.y + 1);
+      this.box.set(position.x, position.y, 1, 1);
+    }
+  }, {
+    key: 'setByShape',
+    value: function setByShape(shape, position) {
+
+      var minX = Infinity,
+          minY = Infinity,
+          maxX = -Infinity,
+          maxY = -Infinity;
+      var type = shape.getType();
+
+      if (type == "Polygon") {
+
+        var points = shape.getPoints();
+
+        points.forEach(function (point) {
+          minX = Math.min(minX, point.x);
+          minY = Math.min(minY, point.y);
+          maxX = Math.max(maxX, point.x);
+          maxY = Math.max(maxY, point.y);
+        });
+      }
+
+      if (position !== undefined) {
+        minX += position.x;
+        minY += position.y;
+        maxX += position.x;
+        maxY += position.y;
+      }
+
+      this.min.set(minX, minY);
+      this.max.set(maxX, maxY);
+      this.box.set(minX, minY, maxX - minX, maxY - minY);
+    }
+  }, {
+    key: 'calcCoordsCosSin',
+    value: function calcCoordsCosSin(x, y, anchor, cos_and_sin) {
+
+      var coord = { x: 0, y: 0 };
+
+      coord.x = anchor.x + (x - anchor.x) * cos_and_sin.x - (y - anchor.y) * cos_and_sin.y;
+      coord.y = anchor.y - (x - anchor.x) * cos_and_sin.y - (y - anchor.y) * cos_and_sin.x;
+
+      return coord;
+    }
+  }, {
+    key: 'calcCoords',
+    value: function calcCoords(x, y, anchor, rotation) {
+
+      var coord = { x: 0, y: 0 };
+
+      coord.x = anchor.x + (x - anchor.x) * Math.cos(rotation) - (y - anchor.y) * Math.sin(rotation);
+      coord.y = anchor.y - (x - anchor.x) * Math.sin(rotation) - (y - anchor.y) * Math.cos(rotation);
+
+      return coord;
+    }
+  }, {
+    key: 'center',
+    get: function get() {
+      return new _vector2.default((this.max.x - this.min.x) / 2, (this.max.y - this.min.y) / 2);
+    }
+  }, {
+    key: 'size',
+    get: function get() {
+      return new _vector2.default(this.max.x - this.min.x, this.max.y - this.min.y);
+    }
+  }]);
+
+  return BoundingBox;
+}();
+
+exports.default = BoundingBox;
+
+/***/ }),
+
 /***/ "./math/mathutils.js":
 /*!***************************!*\
   !*** ./math/mathutils.js ***!
@@ -3826,6 +4275,678 @@ var Vector = function () {
 }();
 
 exports.default = Vector;
+
+
+module.exports = Vector;
+
+/***/ }),
+
+/***/ "./modules/index.js":
+/*!**************************!*\
+  !*** ./modules/index.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Module: __webpack_require__(/*! ./module */ "./modules/module.js"),
+    ModuleRegister: __webpack_require__(/*! ./moduleRegister */ "./modules/moduleRegister.js"),
+    ModuleAttacher: __webpack_require__(/*! ./moduleAttacher */ "./modules/moduleAttacher.js"),
+
+    Transform: __webpack_require__(/*! ./transform */ "./modules/transform.js"),
+    Renderables: __webpack_require__(/*! ./renderables */ "./modules/renderables/index.js")
+};
+
+/***/ }),
+
+/***/ "./modules/module.js":
+/*!***************************!*\
+  !*** ./modules/module.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Module = function () {
+    function Module(moduleManager, name) {
+        _classCallCheck(this, Module);
+
+        this.moduleName = name || "None";
+        this._enabled = true;
+        this.entity = null;
+        this.parent = moduleManager || null;
+        this.game = moduleManager.game || null;
+    }
+
+    _createClass(Module, [{
+        key: "enabled",
+        get: function get() {
+            return this._enabled;
+        },
+        set: function set(value) {
+            value = !!value;
+
+            if (value !== this._enabled) {
+                this._enabled = value;
+            }
+        }
+    }]);
+
+    return Module;
+}();
+
+exports.default = Module;
+
+/***/ }),
+
+/***/ "./modules/moduleAttacher.js":
+/*!***********************************!*\
+  !*** ./modules/moduleAttacher.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _moduleRegister = __webpack_require__(/*! ./moduleRegister */ "./modules/moduleRegister.js");
+
+var _moduleRegister2 = _interopRequireDefault(_moduleRegister);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModuleAttacher = function () {
+    function ModuleAttacher(moduleManager) {
+        _classCallCheck(this, ModuleAttacher);
+
+        this.moduleManager = moduleManager;
+    }
+
+    _createClass(ModuleAttacher, [{
+        key: "sprite",
+        value: function sprite(tag) {
+            return _moduleRegister2.default.attach(this.moduleManager, 'sprite', tag);
+        }
+    }]);
+
+    return ModuleAttacher;
+}();
+
+exports.default = ModuleAttacher;
+
+/***/ }),
+
+/***/ "./modules/moduleManager.js":
+/*!**********************************!*\
+  !*** ./modules/moduleManager.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+
+var _map2 = _interopRequireDefault(_map);
+
+var _moduleAttacher = __webpack_require__(/*! ./moduleAttacher */ "./modules/moduleAttacher.js");
+
+var _moduleAttacher2 = _interopRequireDefault(_moduleAttacher);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModuleManager = function () {
+    function ModuleManager(entity) {
+        _classCallCheck(this, ModuleManager);
+
+        this.entity = entity || null;
+        this.modules = new _map2.default();
+        this.attach = new _moduleAttacher2.default(this);
+    }
+
+    _createClass(ModuleManager, [{
+        key: 'detach',
+        value: function detach(moduleName, index) {}
+    }]);
+
+    return ModuleManager;
+}();
+
+exports.default = ModuleManager;
+
+/***/ }),
+
+/***/ "./modules/moduleRegister.js":
+/*!***********************************!*\
+  !*** ./modules/moduleRegister.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+
+var _map2 = _interopRequireDefault(_map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModuleProxyRegister = function () {
+    function ModuleProxyRegister() {
+        _classCallCheck(this, ModuleProxyRegister);
+
+        this.proxyModules = new _map2.default();
+    }
+
+    _createClass(ModuleProxyRegister, [{
+        key: 'attach',
+        value: function attach(manager, moduleName, args) {
+            var modules = manager.modules;
+
+            if (modules.has(moduleName)) throw new Error('ModuleManager.attach: Could not attach module ' + moduleName + '. Already exists');
+
+            if (!this.proxyModules.has(moduleName)) throw new Error('ModuleManager.attach: Module type ' + moduleName + ' don\'t exists.');
+
+            var mod = this.proxyModules.get(moduleName).func.call(manager, args);
+            modules.set(moduleName, mod);
+            return mod;
+        }
+    }, {
+        key: 'register',
+        value: function register(moduleName, moduleType, func) {
+            if (!ModuleRegister.proxyModules.has(moduleName)) ModuleRegister.proxyModules.set(moduleName, { type: moduleType, func: func });
+        }
+    }]);
+
+    return ModuleProxyRegister;
+}();
+
+var ModuleRegister = new ModuleProxyRegister();
+
+exports.default = ModuleRegister;
+
+/***/ }),
+
+/***/ "./modules/renderables/drawImage.js":
+/*!******************************************!*\
+  !*** ./modules/renderables/drawImage.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+
+function DrawImage(context, source, transform, frame) {
+    if (context === undefined) return;
+
+    if (source === undefined || source == null) return;
+
+    var resolution = 1;
+    var matrix = transform.matrix;
+    var origin = transform.origin;
+
+    // destination
+    var dx = origin.x * -frame.width / resolution;
+    var dy = origin.y * -frame.height / resolution;
+
+    context.setTransform(matrix.a[0], matrix.a[1], // 2
+    matrix.a[3], matrix.a[4], // 5
+    matrix.a[6] * resolution, matrix.a[7] * resolution);
+
+    context.globalAlpha = this.alpha;
+
+    context.drawImage(source, // image
+    frame.x, // sx - pos crop x
+    frame.y, // sy - pos crop y
+    frame.width, // sWidth - crop width
+    frame.height, // sHeight - crop height
+    dx, // destination x
+    dy, // destination y
+    frame.width / resolution, frame.height / resolution);
+}
+
+exports.default = DrawImage;
+
+/***/ }),
+
+/***/ "./modules/renderables/index.js":
+/*!**************************************!*\
+  !*** ./modules/renderables/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Renderable: __webpack_require__(/*! ./renderable */ "./modules/renderables/renderable.js"),
+    Sprite: __webpack_require__(/*! ./sprite */ "./modules/renderables/sprite.js")
+
+};
+
+/***/ }),
+
+/***/ "./modules/renderables/renderable.js":
+/*!*******************************************!*\
+  !*** ./modules/renderables/renderable.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _boundingbox = __webpack_require__(/*! ../../math/boundingbox */ "./math/boundingbox.js");
+
+var _boundingbox2 = _interopRequireDefault(_boundingbox);
+
+var _module = __webpack_require__(/*! ../module */ "./modules/module.js");
+
+var _module2 = _interopRequireDefault(_module);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+//import { EntityType } from '../entitytype';
+
+
+var Renderable = function (_Module) {
+    _inherits(Renderable, _Module);
+
+    function Renderable(moduleManager) {
+        _classCallCheck(this, Renderable);
+
+        //this.moduleName = "Renderable";
+        var _this = _possibleConstructorReturn(this, (Renderable.__proto__ || Object.getPrototypeOf(Renderable)).call(this, 'Renderable', moduleManager));
+
+        _this._layerID = 0;
+        _this._depth = 0;
+        _this._visible = true;
+        _this._alpha = 1;
+        _this._depthDirty = true;
+        _this.bounds = new _boundingbox2.default();
+        _this.source = null;
+
+        //this.type = EntityType.Renderable;
+        return _this;
+    }
+
+    _createClass(Renderable, [{
+        key: 'setSource',
+        value: function setSource(source) {
+            if (source === undefined) return;
+
+            if (this.source != source) this.source = source;
+        }
+    }, {
+        key: 'render',
+        value: function render(context, matrix) {
+            if (!this._visible) return;
+        }
+    }, {
+        key: 'depth',
+        get: function get() {
+            return this._depthSorting;
+        },
+        set: function set(value) {
+            if (value != this._depthSorting) {
+                this._depthSorting = value;
+                this._depthDirty = true;
+            }
+            return this;
+        }
+    }, {
+        key: 'visible',
+        get: function get() {
+            return this._visible;
+        },
+        set: function set(value) {
+            this._visible = value;
+            return this;
+        }
+    }, {
+        key: 'layerName',
+        get: function get() {}
+    }, {
+        key: 'layer',
+        get: function get() {
+            return this._layerID;
+        },
+        set: function set(value) {
+            if (this.game != null) {
+                if (value === 'number') {
+                    //this.game.render.get
+                }
+            }
+        }
+    }, {
+        key: 'alpha',
+        get: function get() {
+            return this._alpha;
+        },
+        set: function set(value) {
+            this._alpha = alpha;
+            return this;
+        }
+    }]);
+
+    return Renderable;
+}(_module2.default);
+
+exports.default = Renderable;
+
+/***/ }),
+
+/***/ "./modules/renderables/sprite.js":
+/*!***************************************!*\
+  !*** ./modules/renderables/sprite.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _renderable = __webpack_require__(/*! ./renderable */ "./modules/renderables/renderable.js");
+
+var _renderable2 = _interopRequireDefault(_renderable);
+
+var _rect = __webpack_require__(/*! ../../math/rect */ "./math/rect.js");
+
+var _rect2 = _interopRequireDefault(_rect);
+
+var _drawImage = __webpack_require__(/*! ./drawImage */ "./modules/renderables/drawImage.js");
+
+var _drawImage2 = _interopRequireDefault(_drawImage);
+
+var _moduleRegister = __webpack_require__(/*! ../moduleRegister */ "./modules/moduleRegister.js");
+
+var _moduleRegister2 = _interopRequireDefault(_moduleRegister);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Sprite = function (_Renderable) {
+    _inherits(Sprite, _Renderable);
+
+    function Sprite(moduleManager) {
+        _classCallCheck(this, Sprite);
+
+        var _this = _possibleConstructorReturn(this, (Sprite.__proto__ || Object.getPrototypeOf(Sprite)).call(this, moduleManager));
+
+        _this.moduleName = "Sprite";
+        _this.frame = new _rect2.default();
+        return _this;
+    }
+
+    _createClass(Sprite, [{
+        key: "setFrame",
+        value: function setFrame(x, y, width, height) {
+            this.frame.set(x, y, width, height);
+        }
+    }, {
+        key: "setFrameRect",
+        value: function setFrameRect(rect) {
+            this.frame.set(x, y, width, height);
+        }
+    }, {
+        key: "setSprite",
+        value: function setSprite(tag) {
+
+            if (this.entity != null) {
+                var sprite = this.game.cache.getAsset('images', tag);
+
+                if (sprite != null) this.setImage(sprite);
+            } else {
+                throw new Error("Sprite.setSprite: Can not set Sprite. The entity is not in the game");
+            }
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            if (!this._visible) return;
+
+            //DrawImage(context, )
+        }
+    }]);
+
+    return Sprite;
+}(_renderable2.default);
+
+exports.default = Sprite;
+
+
+_moduleRegister2.default.register('sprite', 'render', function (moduleManager, tag) {
+
+    var spr = new Sprite(moduleManager);
+
+    if (tag !== undefined) spr.setSprite(tag);
+
+    return spr;
+});
+
+/***/ }),
+
+/***/ "./modules/transform.js":
+/*!******************************!*\
+  !*** ./modules/transform.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _vector = __webpack_require__(/*! ../math/vector */ "./math/vector.js");
+
+var _vector2 = _interopRequireDefault(_vector);
+
+var _matrix = __webpack_require__(/*! ../math/matrix */ "./math/matrix.js");
+
+var _matrix2 = _interopRequireDefault(_matrix);
+
+var _boundingbox = __webpack_require__(/*! ../math/boundingbox */ "./math/boundingbox.js");
+
+var _boundingbox2 = _interopRequireDefault(_boundingbox);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+//Vector = Math.Vector;
+//Matrix = Math.Matrix;
+//BoundingBox = Math.BoundingBox;
+
+var Transform = function () {
+
+    // private:
+    //var _cosSin = new scintilla.Vector(0,0);
+    //var _oldRotation = -2;
+
+    // public:
+    function Transform() {
+        _classCallCheck(this, Transform);
+
+        this.parent = null;
+
+        this.rotation = 0;
+
+        this.position = new _vector2.default(0, 0);
+        this.scale = new _vector2.default(1, 1);
+        this.angle = 0;
+
+        this.matrix = new _matrix2.default();
+        this.worldPosition = new _vector2.default(0, 0);
+        this.worldScale = new _vector2.default(1, 1);
+        this.worldRotation = 0;
+
+        this.origin = new _vector2.default(0, 0);
+        this.bounds = new _boundingbox2.default(0, 0, 1, 1); // the full bounds of the node - defined by render
+        this.globalBounds = new _boundingbox2.default(0, 0, 1, 1); // defined by render
+
+        this.rotation = 0; // radians
+
+        //this._cosSin = new scintilla.Vector(0,0);
+    }
+
+    _createClass(Transform, [{
+        key: 'update',
+        value: function update() {
+
+            var a, b, c, d, x, y;
+            var wt = this.matrix;
+            var pt = this.parent.matrix;
+
+            this.rotation = this.angle * scintilla.Math.degToRad;
+
+            if (this.rotation % scintilla.Math.PI2) {
+
+                if (this.rotation !== this._oldRotation) {
+                    this._oldRotation = this.rotation;
+                    _cosSin.y = Math.sin(this.rotation);
+                    _cosSin.x = Math.cos(this.rotation);
+                }
+
+                a = _cosSin.x * this.scale.x;
+                b = _cosSin.y * this.scale.x;
+                c = -_cosSin.y * this.scale.y;
+                d = _cosSin.x * this.scale.y;
+                x = this.position.x;
+                y = this.position.y;
+
+                // anchor from image
+                //if (this.renderComponent != null) {
+
+                //var anchor = this.renderComponent.origin;
+
+                x -= this.origin.x * a + this.origin.y * c;
+                y -= this.origin.x * b + this.origin.y * d;
+                //}
+
+                // concat the parent matrix with the objects transform.
+                wt.a = a * pt.a + b * pt.c;
+                wt.b = a * pt.b + b * pt.d;
+                wt.c = c * pt.a + d * pt.c;
+                wt.d = c * pt.b + d * pt.d;
+                wt.x = x * pt.a + y * pt.c + pt.x;
+                wt.y = x * pt.b + y * pt.d + pt.y;
+            } else {
+
+                a = this.scale.x;
+                d = this.scale.y;
+                x = this.position.x;
+                y = this.position.y;
+
+                //if (this.renderComponent != null) {
+                //var anchor = this.renderComponent.origin;
+                x -= this.origin.x * a;
+                y -= this.origin.y * d;
+                //}
+
+                wt.a = a * pt.a;
+                wt.b = a * pt.b;
+                wt.c = d * pt.c;
+                wt.d = d * pt.d;
+                wt.x = x * pt.a + y * pt.c + pt.x;
+                wt.y = x * pt.b + y * pt.d + pt.y;
+            }
+
+            this.worldPosition.set(wt.x, wt.y);
+            this.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
+            this.worldRotation = Math.atan2(-wt.c, wt.d);
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+
+            delete this.position;
+            delete this.scale;
+            delete this.matrix;
+            delete this.worldPosition;
+            delete this.worldScale;
+            delete this.origin;
+            delete this.bounds;
+            delete this.globalBounds;
+        }
+    }]);
+
+    return Transform;
+}();
+
+exports.default = Transform;
 
 /***/ }),
 
@@ -4652,10 +5773,10 @@ var Render = function () {
             // blend
             this.context.globalCompositeOperation = 'source-over';
 
-            for (var i = 0; i < this.layer.__renderLayers.length; i++) {
-                if (this.layer.__renderLayers[i].enable) {
-                    this.layer.__renderLayers[i].render();
-                }
+            for (var i = 0; i < this.layer.renderLayers.length; i++) {
+                if (!this.layer.renderLayers[i].enable) continue;
+
+                this.layer.renderLayers[i].render();
             }
 
             this.game.scene.render();
@@ -4863,6 +5984,10 @@ var _renderlayer = __webpack_require__(/*! ./renderlayer */ "./render/renderlaye
 
 var _renderlayer2 = _interopRequireDefault(_renderlayer);
 
+var _list = __webpack_require__(/*! ../structures/list */ "./structures/list.js");
+
+var _list2 = _interopRequireDefault(_list);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4872,20 +5997,21 @@ var RenderLayersManagement = function () {
         _classCallCheck(this, RenderLayersManagement);
 
         this.game = game;
-        this.__renderLayers = [];
-        this.__renderLayersMap = new _map2.default();
+        this.renderLayers = new _list2.default();
+        //this.__renderLayersMap = new Map();
         this.add('default');
     }
 
     _createClass(RenderLayersManagement, [{
         key: 'add',
         value: function add(name) {
+
             if (this.contains(name)) {
                 throw new Error("Render.add: There is already a RenderLayer called: \"" + name + "\".");
             }
 
-            this.__renderLayersMap.set(name, this.__renderLayers.length);
-            this.__renderLayers.push(new _renderlayer2.default(this.game, name));
+            //this.__renderLayersMap.set(name, this.__renderLayers.length);
+            this.renderLayers.push(new _renderlayer2.default(this.game, name));
         }
     }, {
         key: 'remove',
@@ -4897,15 +6023,21 @@ var RenderLayersManagement = function () {
             if (!this.__renderLayersMap.has(name)) throw new Error("Render.remove: Could not remove layer. There is no layer named \"" + name + "\".");
 
             var index = this.__renderLayersMap.get(name);
-            this.__renderLayers.splice(index, 1);
-            this.__renderLayersMap.delete(name);
+
+            this.renderLayers.erase(name);
         }
     }, {
         key: 'contains',
         value: function contains(layerName) {
             if (typeof layerName !== 'string') throw new Error("Render.contains: The value name is not a string.");
 
-            return this.__renderLayers.indexOf(layerName) > -1;
+            this.renderLayers.each(function (layer) {
+                if (layer.name == layerName) {
+                    return true;
+                }
+            });
+
+            return false;
         }
     }]);
 
@@ -5465,11 +6597,13 @@ var List = function () {
         value: function each(callback) {
             var params = [null];
 
-            for (var i = 1; i < arguments.length; i++) {
+            var content = this.childs;
+
+            for (var i = 0; i < arguments.length; i++) {
                 params.push(arguments[i]);
-            }for (var _i = 0; _i < this.childs.length; _i++) {
-                params[0] = this.childs[_i];
-                callback.apply(params);
+            }for (var _i = 0; _i < content.length; _i++) {
+                //params[0] = this.childs[i];
+                callback(content[_i], params);
                 //break;
             }
         }

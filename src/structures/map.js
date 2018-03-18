@@ -39,7 +39,7 @@ export default class Map {
   }
 
   has(key) {
-    return (this._content.hasOwnProperty(key));
+    return this._content.hasOwnProperty(key);
   }
 
   contains(value) {

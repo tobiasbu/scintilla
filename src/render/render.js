@@ -61,12 +61,13 @@ export default class Render {
        
      
 
-        for (let i = 0; i < this.layer.__renderLayers.length; i++)
+        for (let i = 0; i < this.layer.renderLayers.length; i++)
         {
-            if (this.layer.__renderLayers[i].enable)
-            {
-                this.layer.__renderLayers[i].render();
-            }
+            if (!this.layer.renderLayers[i].enable)
+                continue;
+
+                this.layer.renderLayers[i].render();
+            
         }
 
         this.game.scene.render();

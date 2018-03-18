@@ -21,7 +21,9 @@ export default class EntityUpdateList {
 
     add(instance) {
         if (this._instances.indexOf(instance) === -1 && this._pendingInstances.indexOf(instance) === -1)
+        {
             this._pendingInstances.push(instance);
+        }
 
         return instance;
     }

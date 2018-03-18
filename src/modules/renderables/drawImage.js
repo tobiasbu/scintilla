@@ -1,5 +1,6 @@
 
-export default DrawImage = function(context, source, transform, frame)
+
+function DrawImage(context, source, transform, frame)
 {
     if (context === undefined) return;
 
@@ -36,3 +37,6 @@ export default DrawImage = function(context, source, transform, frame)
       
         
 }
+
+
+export default DrawImage;

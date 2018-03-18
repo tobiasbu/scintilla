@@ -1,26 +1,34 @@
 
 
-import List from '../structures/list'
+import Map from '../structures/map'
+
 
 class ModuleProxyRegister
 {
     constructor()
     {
-        this.entityModules = {};
+        this.proxyModules = new Map();
     }
 
-    attach(manager, moduleType, args)
+    attach(manager, moduleName, args)
     {
-        //if (!this.manager.modules[moduleType])
-        //    this.manager.modules[moduleType] = new List();
+        let modules = manager.modules;
 
-        this.manager.modules[moduleType] = this.modules[moduleType].call(manager, args);
+        if (modules.has(moduleName))
+            throw new Error('ModuleManager.attach: Could not attach module ' + moduleName + '. Already exists');
+
+        if (!this.proxyModules.has(moduleName))
+            throw new Error('ModuleManager.attach: Module type ' + moduleName + ' don\'t exists.');
+
+        var mod = this.proxyModules.get(moduleName).func.call(manager, args);
+        modules.set(moduleName, mod);
+        return mod;
     }
 
-    static register(moduleType, func)
+    register(moduleName, moduleType, func)
     {
-        if (!ModuleRegister.entityModules.hasOwnProperty(moduleType))
-            ModuleRegister.entityModules[moduleType] = func;
+        if (!ModuleRegister.proxyModules.has(moduleName))
+            ModuleRegister.proxyModules.set(moduleName, { type: moduleType, func: func });
         
     }    
 }

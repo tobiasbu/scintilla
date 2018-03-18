@@ -1,5 +1,6 @@
 
 import Map from '../structures/map'
+import ModuleAttacher from './moduleAttacher'
 
 export default class ModuleManager
 {
@@ -7,11 +8,7 @@ export default class ModuleManager
     {
         this.entity = entity || null;
         this.modules = new Map();
-    }
-
-    add(moduleName)
-    {
-        ModuleRegister.attach(this, moduleName);
+        this.attach = new ModuleAttacher(this);
     }
 
     detach(moduleName, index)
