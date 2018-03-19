@@ -85,14 +85,14 @@ class Matrix {
 
   }
 
-  translate(x, y) {
+  setTranslation(x, y) {
 
     this.a[6] = x;
     this.a[7] = y;
     return this;
   }
 
-  move(x, y) {
+  translate(x, y) {
 
     this.a[6] += x;
     this.a[7] += y;
@@ -122,7 +122,7 @@ class Matrix {
 
   }
 
-  rotate(angle) {
+  eulerRotate(angle) {
 
     var cos = Math.cos(angle);
     var sin = Math.sin(angle);
@@ -140,6 +140,12 @@ class Matrix {
    return this;
 
  }
+
+ compute(position, scale, angle, origin = {x:0,y:0})
+ {
+
+ }
+
 
  multiply(otherMatrix) {
     return Matrix.multiply(this, otherMatrix);
@@ -163,6 +169,10 @@ class Matrix {
 
    return str;
     
+ }
+ 
+ static radianRotation(x, y) {
+
  }
 
  static identity() { return new Matrix(1); }

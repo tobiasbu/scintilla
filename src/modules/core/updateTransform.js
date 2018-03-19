@@ -50,9 +50,9 @@ function UpdateTransform(transform, parentMatrix) {
 
         //transform.identity();
 
-        wt.translate(x, y);
-        //.rotate()
-        //.scale()
+       // wt.compute(transform.position, transform.scale, )
+        //.setRotation(transform._cosSin.x,  transform._cosSin.y)
+        //.scale(transform.scale.x, transform.scale.y)
         
 
         console.log(transform.matrix.toString());
