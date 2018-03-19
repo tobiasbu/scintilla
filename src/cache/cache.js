@@ -81,7 +81,7 @@ constructor(game) {
 
       var asset = this._cache[cacheType][tag];
 
-        return asset.data;
+        return asset;
 
 
     } else {

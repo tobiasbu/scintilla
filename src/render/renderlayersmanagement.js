@@ -46,14 +46,15 @@ export default class RenderLayersManagement {
         if (typeof layerName !== 'string')
             throw new Error("Render.contains: The value name is not a string.");
 
-        this.renderLayers.each(function(layer) {
+        let val = this.renderLayers.each(function(layer) {
+           
             if (layer.name == layerName)
             {
                 return true;
             }
         });
 
-        return false;
+        return val || false;
     }
 
 }

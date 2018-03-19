@@ -10,7 +10,7 @@ export default class Debug {
     this.y = 12;
     this.lineHeight = 14;
     this.column = 100;
-    this.font ="12px Verdana";
+    this.font ="10px Verdana";
     this.textColor = 'white';
     this.bgcolor = 'black';
     this.textShadow = 'black';
@@ -27,8 +27,8 @@ export default class Debug {
     this.draw.alpha(1);
     this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
     //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
-    //this.drawLine("Instances count " + this.game.world.length);
-    this.drawLine("Colliders count " + this.game.physics.length);
+    this.drawLine("Instances " + this.game.system.entityList.length);
+    this.drawLine("Draw Calls " + this.game.system.render.drawCalls);/*this.game.physics.length);*/
     this.x += this.game.width / 2;
     this.y = 12+8;
     //this.drawLine("Sounds count " + this.game.sound.length);

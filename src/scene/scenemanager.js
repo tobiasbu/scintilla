@@ -7,6 +7,7 @@ export default class SceneManager {
   constructor(game) {
 
     this.game = game;
+    this.entityUpdateList = null;
     this._scenes = new Map();
 
     this.current_scene_name = '';
@@ -25,6 +26,11 @@ export default class SceneManager {
     this.onRenderCallback = null;
     this.onDestroyCallback = null;
 
+  }
+
+  init()
+  {
+    this.entityUpdateList = this.game.system.entityList;
   }
 
 
@@ -217,6 +223,12 @@ preUpdate() {
 
       if (this._setup) {
 
+        if (this.current_scene != null)
+        {
+            this.entityUpdateList.update();
+
+            this.entityUpdateList.lateUpdate();
+        }
         /*if (this.onUpdateCallback)
         {
             this.onUpdateCallback.call(this.current_scene, this.game);

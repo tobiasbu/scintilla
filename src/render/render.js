@@ -22,6 +22,7 @@ export default class Render {
         this._alpha = 1;
         this._enable = true;
         this.clear = true;
+        this.drawCalls = 0;
     }
 
     renderBegin()
@@ -34,6 +35,8 @@ export default class Render {
 
         this.context.fillStyle = this._backgroundColor;  
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.drawCalls = 0;
     }
 
     renderEnd()
@@ -59,15 +62,18 @@ export default class Render {
         // blend
         this.context.globalCompositeOperation = 'source-over';
        
-     
+        
 
         for (let i = 0; i < this.layer.renderLayers.length; i++)
         {
-            if (!this.layer.renderLayers[i].enable)
+            let layer = this.layer.renderLayers.at(i);
+
+            if (!layer.enable)
                 continue;
 
-                this.layer.renderLayers[i].render();
+                layer.render(this.context);
             
+            this.drawCalls += layer.drawCalls;
         }
 
         this.game.scene.render();

@@ -6,11 +6,14 @@ export default class RenderLayer {
     constructor(game,layerName) {
 
         this._name = layerName;
-        this.game = game;
-        this.__enable = true;
+        this.game = game;       
         this.renderList = new List(true);
+        this.__drawCalls = 0;
+        this.__enable = true;
         this.__isDirty = false;
     }
+
+    get drawCalls() {return this.__drawCalls;}
 
     // Add renderable components
     add(renderer) {
@@ -19,7 +22,7 @@ export default class RenderLayer {
             return;
 
         this.renderList.push(renderer);
-        this.renderer.__renderLayer = this;
+       // this.renderer.__renderLayer = this;
         this.__isDirty = true;
 
     }
@@ -44,10 +47,14 @@ export default class RenderLayer {
 
     }
 
-    render()
+    render(context)
     {
+        this.__drawCalls = 0;
+
         if (!this.__enable)
             return;
+
+        
 
         if (this.__isDirty)
         {
@@ -59,7 +66,8 @@ export default class RenderLayer {
         var self = this;
 
         this.renderList.each((element) => {
-            element.render(self.game.context);
+            if (element.render(context))
+                self.__drawCalls++;
         });
 
     }

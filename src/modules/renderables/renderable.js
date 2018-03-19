@@ -7,7 +7,7 @@ export default class Renderable extends Module
 {
     constructor(moduleManager)
     {
-        super('Renderable', moduleManager);
+        super('render', moduleManager);
 
         //this.moduleName = "Renderable";
         this._layerID = 0;

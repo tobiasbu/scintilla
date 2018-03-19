@@ -1,7 +1,7 @@
 
 import EntityHierarchy from './entityhierarchy'
 import BoundingBox from '../math/boundingbox'
-import Transform from '../modules/transform'
+import Transform from '../modules/core/transform'
 import ModuleManager from '../modules/moduleManager';
 
 export default class SceneEntity extends EntityHierarchy
@@ -15,13 +15,15 @@ export default class SceneEntity extends EntityHierarchy
         this.pool = null;
         this.modules = new ModuleManager(this);
         //this.bounds = new BoundingBox();
-        this._transformDirty = false;
-        this._currentScene = null;
+        //this._transformDirty = false;
+        //this._currentScene = null;
         
         
     }
 
-    set ['position.x'](value) { this.transform.position.x = value; }
-
+    get ['position']() { return this.transform.position; }
+    set ['position'](value) { this.transform.position = value; this.transform._isDirty = true; }
+    set ['position.x'](value) { this.transform.position.x = value; this.transform._isDirty = true;}
+    set ['position.y'](value) { this.transform.position.y = value; this.transform._isDirty = true;}
     
 }

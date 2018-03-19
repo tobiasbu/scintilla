@@ -7,7 +7,6 @@ export default class List
     {
         this.unique = unique || true;
         this.childs = [];
-        this.length = 0;
 
         if (Array.isArray(elements))
         {
@@ -18,6 +17,7 @@ export default class List
     }
 
     get size() {return this.childs.length;}
+    get length() {return this.childs.length;}
 
     get first() {
         if (this.list.length > 0) 
@@ -90,8 +90,6 @@ export default class List
 
     erase(child) {
 
-        if(deleteChild === undefined) deleteChild = false;
-
         let idx = this.childs.indexOf(child);
         var childToErase = null;
 
@@ -112,7 +110,7 @@ export default class List
 
     eraseList(listToRemove, size)
     {
-        if (deleteChild === undefined) deleteChild = false;
+        
         if (size === undefined) size = listToRemove.size;
 
         for (let i = 0; i < size; i++)
@@ -140,7 +138,7 @@ export default class List
         let i = this.childs.length;
 
         while(i--) {
-            this.remove(this.childs[i]);
+            this.erase(this.childs[i]);
         }
 
         return this;
@@ -176,7 +174,9 @@ export default class List
 
         for (let i = 0; i < content.length; i++) {
             //params[0] = this.childs[i];
-            callback(content[i], params);
+            let r = callback(content[i], params);
+            if (r !== undefined)
+                return r;
            //break;
         }
     }

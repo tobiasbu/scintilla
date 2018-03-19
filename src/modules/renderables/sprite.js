@@ -4,13 +4,14 @@ import DrawImage from "./drawImage";
 import ModuleRegister from "../moduleRegister";
 
 
+
 export default class Sprite extends Renderable {
 
     constructor(moduleManager)
     {
         super(moduleManager);
 
-        this.moduleName = "Sprite";
+        this._type = "sprite";
         this.frame = new Rect();
     }
 
@@ -26,32 +27,51 @@ export default class Sprite extends Renderable {
 
     setSprite(tag) {
 
-        if (this.entity != null) {
-            var sprite = this.game.cache.getAsset('images',tag);
-            
-            if (sprite != null)
-                this.setImage(sprite);
+        if (this.entity != null || this.entity !== undefined) {
+            var sprite = this.entity.game.system.cache.getAsset('images',tag);
+           
+            if (sprite != null) {
+                this.setSource(sprite.data, true);
+            }
         } else {
             throw new Error("Sprite.setSprite: Can not set Sprite. The entity is not in the game");
         }
         
     }
 
-    render()
+    setSource(image, changeFrame) {
+
+        if (changeFrame === undefined) changeFrame = false;
+      
+        if (this.source != image)
+          this.source = image;
+      
+        if (changeFrame)
+            this.setFrame(0,0,this.source.width,this.source.height);
+      
+      
+    }
+
+    render(context)
     {
         if (!this._visible)
-            return;
+            return false;
 
-        //DrawImage(context, )
+
+
+        return DrawImage(context, this.source, this.entity.transform, this.frame);
     }
 }
 
-ModuleRegister.register('sprite', 'render', (moduleManager, tag) => {
+ModuleRegister.register('sprite', function(moduleManager, tag) {
 
     var spr = new Sprite(moduleManager);
 
     if (tag !== undefined)
+    {   
         spr.setSprite(tag)
+    } 
+
 
     return spr;
 

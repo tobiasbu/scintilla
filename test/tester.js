@@ -3,6 +3,7 @@
 //var t = new Test();
 //t.log();
 
+//import scintilla from '../src/Scintilla'
 
 var VIEW = {
     w : 640,
@@ -40,17 +41,26 @@ scene.preload = function() {
     //game.load.text('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
 }
 
+var t = null;
+
 scene.start = function() {
-    var spr = this.create.sprite('test');
+    t = this.create.sprite('test');
+    t.position.x = 100;
+    t.position.y = 100;
+    t.update = function(){
+        this.position.x += this.game.time.deltaTime * 20;
+    }
 }
 
 scene.render = function() {
-    this.draw.sprite('test',VIEW.w / 2 + x,VIEW.h / 2-16,[0.5,0.5]);
+    
+    //this.draw.sprite('test',VIEW.w / 2 + x,VIEW.h / 2-16,[0.5,0.5]);
     
 }
 
   scene.update = function() {
 
+    
     //x += game.time.deltaTime * 20;
 
     if (game.input.keyboard.pressed(scintilla.KeyCode.Space)) 

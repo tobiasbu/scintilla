@@ -2,10 +2,13 @@
 
 function DrawImage(context, source, transform, frame)
 {
-    if (context === undefined) return;
+    
 
-    if (source === undefined || source == null) return;
+    if (context === undefined) return false;
 
+    if (source === undefined || source == null) return false;
+
+   
 
     let resolution = 1;
     let matrix = transform.matrix;
@@ -15,13 +18,15 @@ function DrawImage(context, source, transform, frame)
     let dx = origin.x * -frame.width / resolution;
     let dy = origin.y * -frame.height / resolution;
 
+  
+
     context.setTransform(
         matrix.a[0], matrix.a[1], // 2
         matrix.a[3], matrix.a[4], // 5
         matrix.a[6] * resolution,
         matrix.a[7] * resolution);
     
-    context.globalAlpha = this.alpha;
+    //context.globalAlpha = this.alpha;
     
     context.drawImage(
             source, // image
@@ -35,6 +40,7 @@ function DrawImage(context, source, transform, frame)
             frame.height / resolution
             );
       
+        return true;
         
 }
 

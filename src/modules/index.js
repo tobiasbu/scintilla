@@ -4,6 +4,6 @@ module.exports = {
     ModuleRegister : require('./moduleRegister'),
     ModuleAttacher : require('./moduleAttacher'),
 
-    Transform : require('./transform'),
+    Transform : require('./core/transform'),
     Renderables : require('./renderables')
 }

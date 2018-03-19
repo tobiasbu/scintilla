@@ -6,7 +6,7 @@ import Entity from './entity'
 export default class EntityHierarchy extends Entity {
 
   constructor(name, game) {
-    super(name);    
+    super(name, game);    
     this.children = [];
     this.parent = null;
   }

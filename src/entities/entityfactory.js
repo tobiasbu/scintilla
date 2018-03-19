@@ -5,17 +5,18 @@ export default class EntityFactory {
     
     constructor(game) {
         this.game = game;
-        this.scene = game.scene;
+        this.scene = null;
         this.entityList = null;
     }
 
     init()
     {
         this.entityList = this.game.system.entityList;
+        this.scene = this.game.scene;
     }
 
-    sprite(tag) {
-        var entity = new SceneEntity();
+    sprite(tag, entityName) {
+        var entity = new SceneEntity(entityName,this.game);
         entity.modules.attach.sprite(tag);
 
         if (this.scene.current_scene !== null)

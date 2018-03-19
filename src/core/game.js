@@ -96,14 +96,17 @@ export default class Game {
         return;
 
     this.time = new Time(this);
-    this.scene = new SceneManager(this);
     this.physics = new Physics(this);
+    this.input = new Input(this);
+    this.scene = new SceneManager(this);
     this.system = new GameSystemManager(this);
-
+    
+    
     this.system.init();
 
-    this.input = new Input(this);
+    
 
+    this.scene.init();
     this.time.start();
     this.input.init();
 
@@ -208,6 +211,8 @@ export default class Game {
     this.physics.update();
     this.scene.preUpdate();
     this.scene.update(timeStep);
+
+    
     
     //this.universe.preUpdate(timeStep);
 

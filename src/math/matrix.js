@@ -6,9 +6,9 @@
 * | c | d | y |
 * | 0 | 0 | 1 |
 
-* | 0 | 2 | 4 | * | a | c | x |
-* | 1 | 3 | 5 | * | b | d | y |
-* | 0 | 0 | 1 | * | 0 | 0 | 1 |
+* | 0 | 3 | 6 | * | a | c | x |
+* | 1 | 4 | 7 | * | b | d | y |
+* | 2 | 5 | 8 | * | 0 | 0 | 1 |
 
 a = scalex
 b = cos
@@ -87,11 +87,19 @@ class Matrix {
 
   translate(x, y) {
 
-    this.a[4] += x;
-    this.a[5] += y;
+    this.a[6] = x;
+    this.a[7] = y;
     return this;
-
   }
+
+  move(x, y) {
+
+    this.a[6] += x;
+    this.a[7] += y;
+    return this;
+  }
+
+
 
   scale(x, y) {
 
