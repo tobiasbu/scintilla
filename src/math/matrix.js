@@ -2,19 +2,19 @@
 /*
 
 
-* | a | b | x |
-* | c | d | y |
+* | a | b | x | * | 0 | 2 | 4 |
+* | c | d | y | * | 1 | 3 | 5 |
 * | 0 | 0 | 1 |
 
 * | 0 | 3 | 6 | * | a | c | x |
 * | 1 | 4 | 7 | * | b | d | y |
 * | 2 | 5 | 8 | * | 0 | 0 | 1 |
 
-a = scalex
+a = scale_x
 b = cos
 x = x translate
 
-c = scaley
+c = scale_y
 d = sin
 y = y translate
 
@@ -25,7 +25,7 @@ HTML5/CSS3 uses matrices in column-major order based.
 class Matrix {
   
   /*
-  * Constructor is idetity only
+  * Constructor is identity only
   */
   constructor(a, b) {
 
@@ -51,7 +51,7 @@ class Matrix {
     this.a[4] = a;
     this.a[5] = b;
     // third column
-    this.a[6] = b;
+    this.a[6] = b; 
     this.a[7] = b;
     this.a[8] = a;
     //this.at = null;
@@ -67,88 +67,149 @@ class Matrix {
     return this;
   }
 
-  setAll(a, b, c, d, e, f, g, h, i) {
+  setIdentity() {
+    return this.setTransform(
+      1,0,0,
+      0,1,0,
+      0,0,1
+    );
+  }
+
+  setTransform(a, b, c, d, e, f, g, h, i) {
 
     this.a[0] = a;
     this.a[1] = b;
-    this.a[2] = c;
+    this.a[2] = c; // 0
 
     this.a[3] = d;
     this.a[4] = e;
-    this.a[5] = f;
+    this.a[5] = f; // 0
 
-    this.a[6] = g;
-    this.a[7] = h;
+    this.a[6] = g; // x
+    this.a[7] = h; // y
     this.a[8] = i;
 
     return this;
 
   }
 
-  setTranslation(x, y) {
-
-    this.a[6] = x;
-    this.a[7] = y;
-    return this;
-  }
-
   translate(x, y) {
 
-    this.a[6] += x;
-    this.a[7] += y;
+
+  /* | a | b | x | * | 0 | 2 | 4 |
+  *  | c | d | y | * | 1 | 3 | 5 |
+
+  * | 0 | 3 | 6 | * | a | c | x |
+  * | 1 | 4 | 7 | * | b | d | y |
+  * | 2 | 5 | 8 |
+  */
+    // 4 = 0 * x * 2 * y + 4
+    // 6 = 0 * x * 3 * y + 6
+
+    // 5 = 1 * x + 3 * y + 5
+    // 7 = 1 * x + 4 * y + 7
+    this.a[6] = this.a[0] * x + this.a[3] * y + this.a[6];
+    this.a[7] = this.a[1] * x + this.a[4] * y + this.a[7];
     return this;
   }
-
-
 
   scale(x, y) {
 
     this.a[0] *= x; // a
     this.a[1] *= x; // b
 
-    this.a[2] *= y; // c
-    this.a[3] *= y; // d
+    this.a[3] *= y; // c
+    this.a[4] *= y; // d
 
-    this.a[4] *= x; // x
-    this.a[5] *= y; // y
+    this.a[6] *= x; // x
+    this.a[7] *= y; // y
     return this;
-
-    /*this.a *= x;
-    this.d *= y;
-    this.c *= x;
-    this.b *= y;
-    this.x *= x;
-    this.y *= y;*/
 
   }
 
-  eulerRotate(angle) {
+  rotate(radianAngle) {
+    let cos = Math.cos(radianAngle);
+    let sin = Math.sin(radianAngle);
 
-    var cos = Math.cos(angle);
-    var sin = Math.sin(angle);
-
-    var a1 = this.a;
-    var c1 = this.c;
-    var x1 = this.x;
-
-   this.a = a1 * cos-this.b * sin;
-   this.b = a1 * sin+this.b * cos;
-   this.c = c1 * cos-this.d * sin;
-   this.d = c1 * sin+this.d * cos;
-   this.x = x1 * cos - this.y * sin;
-   this.y = x1 * sin + this.y * cos;
-   return this;
-
+    return this.radianRotate(cos, sin);
  }
 
- compute(position, scale, angle, origin = {x:0,y:0})
- {
+ radianRotate(cos, sin) {
+ return this.transform(cos, sin, -sin, cos, 0, 0);
+ }
 
+ transform(a, b, c, d, x, y) {
+  let a00 = this.a[0]; // a
+  let a01 = this.a[1]; // b
+
+  let a10 = this.a[3]; // c
+  let a11 = this.a[4]; // d
+
+  let a20 = this.a[5]; // x
+  let a21 = this.a[6]; // y
+
+  this.a[0] = a * a00 + b * a10; // a * a0 + b * c0;
+  this.a[1] = a * a01 + b * a11; // a * b0 + b * d0;
+
+  this.a[3] = c * a00 + d * a10; // c * a0 + d * c0;
+  this.a[4] = c * a01 + d * a11; // c * b0 + d * d0;
+
+  this.a[6] = x * a00 + y * a10 + a20; // x * a0 + y * c0 + x0;
+  this.a[7] = x * a01 + y * a11 + a21; // x * b0 + y * d0 + y0;
+
+  return this;
+ }  
+
+ setModelMatrix(position, scale, rotation, origin) {
+    this.a[0] = rotation.x * scale.x; // a
+    this.a[1] = rotation.y * scale.x; // b
+    this.a[3] = -rotation.y * scale.y; // c
+    this.a[4] =  rotation.x * scale.y; // d
+    this.a[6] = position.x; // x
+    this.a[7] = position.y; // y
+
+    if (origin !== undefined) {
+      this.a[6] -= origin.x * this.a[0] + origin.y * this.a[3];
+      this.a[7] -= origin.y * this.a[1] + origin.y * this.a[4];
+    }
+
+    return this;
+    /*
+    a  =  transform._cosSin.x * transform.scale.x;
+    b  = transform._cosSin.y * transform.scale.x;
+    c  = -transform._cosSin.y * transform.scale.y;
+    d  =  transform._cosSin.x * transform.scale.y;
+    x =  transform.position.x;
+    y =  transform.position.y;
+
+    x -= transform.origin.x * a + transform.origin.y * c;
+    y -= transform.origin.y * b + transform.origin.y * d;
+    */
+
+    
  }
 
 
- multiply(otherMatrix) {
-    return Matrix.multiply(this, otherMatrix);
+ multiply(other) {
+
+    // faster way
+    let a00 = matrix[0]; // a - 0
+    let a01 = matrix[1]; // b - 1
+    let a10 = matrix[2]; // c - 3
+    let a11 = matrix[3]; // d - 4
+    let a20 = matrix[4]; // x - 6
+    let a21 = matrix[5]; // y - 7
+
+    this.a[0] = other.a[0] * a00 + other.a[1] * a10; // a1 * a0 + b1 * c0;
+    this.a[1] = other.a[0] * a01 + other.a[1] * a11; // a1 * b0 + b1 * d0;
+
+    this.a[3] = other.a[3] * a00 + other.a[4] * a10; // c1 * a0 + d1 * c0;
+    this.a[4] = other.a[3] * a01 + other.a[4] * a11; // c1 * b0 + d1 * d0;
+
+    this.a[6] = other.a[6] * a00 + other.a[7] * a10 + a20; // x1 * a0 + y1 * c0 + x0;
+    this.a[7] = other.a[6] * a01 + other.a[7] * a11 + a21; // x1 * b0 + y1 * d0 + y0;
+
+    return this;
  }
 
  transpose() {
@@ -156,7 +217,7 @@ class Matrix {
  }
 
  toString() {
-   var str = "";
+  let str = "";
    for(let y = 0; y < 3; y++) {
       for(let x = 0; x < 3; x++) {
         let val = this.at(x, y); 
@@ -171,17 +232,14 @@ class Matrix {
     
  }
  
- static radianRotation(x, y) {
-
- }
-
+ 
  static identity() { return new Matrix(1); }
 
  static zero() { return new Matrix(0); }
 
  static transpose(mat) {
 
-  var mat = Matrix.zero();
+  let mat = Matrix.zero();
   return mat.setAll(
     mat.a[0], mat.a[3], mat.a[6],
     mat.a[1], mat.a[4], mat.a[7],
