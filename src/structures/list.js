@@ -170,10 +170,10 @@ export default class List
         var content = this.childs;
 
         for (let i = 0; i < arguments.length; i++)
-            params.push(arguments[i]);
+            params.push(arguments[i+1]);
 
         for (let i = 0; i < content.length; i++) {
-            //params[0] = this.childs[i];
+            params[0] = i;
             let r = callback(content[i], params);
             if (r !== undefined)
                 return r;
