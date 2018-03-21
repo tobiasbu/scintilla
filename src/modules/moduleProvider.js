@@ -3,7 +3,7 @@
 import Map from '../structures/map'
 
 
-class ModuleProxyRegister
+class ModuleProviderManager
 {
     constructor()
     {
@@ -27,12 +27,12 @@ class ModuleProxyRegister
 
     register(moduleName, func)
     {
-        if (!ModuleRegister.proxyModules.has(moduleName))
-            ModuleRegister.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
+        if (!ModuleProvider.proxyModules.has(moduleName))
+        ModuleProvider.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
         
     }    
 }
 
-var ModuleRegister = new ModuleProxyRegister();
+var ModuleProvider = new ModuleProviderManager();
 
-export default ModuleRegister;
+export default ModuleProvider;

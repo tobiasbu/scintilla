@@ -1,7 +1,7 @@
 import Renderable from "./renderable";
 import Rect from "../../math/rect";
 import DrawImage from "./drawImage";
-import ModuleRegister from "../moduleRegister";
+import ModuleProvider from "../moduleProvider";
 
 
 
@@ -63,7 +63,7 @@ export default class Sprite extends Renderable {
     }
 }
 
-ModuleRegister.register('sprite', function(moduleManager, tag) {
+ModuleProvider.register('sprite', function(moduleManager, tag) {
 
     var spr = new Sprite(moduleManager);
 

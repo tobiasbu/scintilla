@@ -1,7 +1,7 @@
 
 module.exports = {
     Module : require('./module'),
-    ModuleRegister : require('./moduleRegister'),
+    ModuleProvider : require('./moduleProvider'),
     ModuleAttacher : require('./moduleAttacher'),
 
     Transform : require('./core/transform'),

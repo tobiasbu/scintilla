@@ -193,12 +193,12 @@ class Matrix {
  multiply(other) {
 
     // faster way
-    let a00 = matrix[0]; // a - 0
-    let a01 = matrix[1]; // b - 1
-    let a10 = matrix[2]; // c - 3
-    let a11 = matrix[3]; // d - 4
-    let a20 = matrix[4]; // x - 6
-    let a21 = matrix[5]; // y - 7
+    let a00 = this.a[0]; // a - 0
+    let a01 = this.a[1]; // b - 1
+    let a10 = this.a[3]; // c - 3
+    let a11 = this.a[4]; // d - 4
+    let a20 = this.a[6]; // x - 6
+    let a21 = this.a[7]; // y - 7
 
     this.a[0] = other.a[0] * a00 + other.a[1] * a10; // a1 * a0 + b1 * c0;
     this.a[1] = other.a[0] * a01 + other.a[1] * a11; // a1 * b0 + b1 * d0;
@@ -213,7 +213,11 @@ class Matrix {
  }
 
  transpose() {
-  return Matrix.transpose(this);
+  return this.setAll(
+    mat.a[0], mat.a[3], mat.a[6],
+    mat.a[1], mat.a[4], mat.a[7],
+    mat.a[2], mat.a[5], mat.a[8],
+  );
  }
 
  toString() {
@@ -238,9 +242,8 @@ class Matrix {
  static zero() { return new Matrix(0); }
 
  static transpose(mat) {
-
-  let mat = Matrix.zero();
-  return mat.setAll(
+  let copy = Matrix.zero;
+  return copy.setAll(
     mat.a[0], mat.a[3], mat.a[6],
     mat.a[1], mat.a[4], mat.a[7],
     mat.a[2], mat.a[5], mat.a[8],

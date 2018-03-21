@@ -39,16 +39,15 @@ function UpdateTransform(transform, parentMatrix) {
         }
 
 
-
-        //transform.identity();
-
-       // wt.compute(transform.position, transform.scale, )
-        //.setRotation(transform._cosSin.x,  transform._cosSin.y)
-        //.scale(transform.scale.x, transform.scale.y)
-        
-
-        wt.setModelMatrix(transform.position,transform.scale,transform.rotation,transform.origin)
+        console.clear();
+        wt.setModelMatrix(
+          transform.position, 
+          transform.scale, 
+          transform._cosSin, 
+          transform.origin)
         .multiply(pt);
+
+        console.log(wt.toString());
         // concat the parent matrix with the objects transform.
         /*wt.a[0]  = a  * pt.a[0] + b  * pt.a[1]; // a = a * a + b * c
         wt.a[3]  = a  * pt.a[3] + b  * pt.a[4]; // b = a * b + b * d

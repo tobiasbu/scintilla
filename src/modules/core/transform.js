@@ -33,7 +33,6 @@ export default class Transform {
     this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
     this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
 
-    this.rotation = 0; // radians
     this._isDirty = true;
     this._cosSin = {x:0,y:0};
 
@@ -49,6 +48,7 @@ export default class Transform {
       delete this.origin;
       delete this.bounds;
       delete this.globalBounds;
+      delete this._cosSin;
 
     }
   }

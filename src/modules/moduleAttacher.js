@@ -1,4 +1,4 @@
-import ModuleRegister from "./moduleRegister";
+import ModuleProvider from "./moduleProvider";
 
 
 export default class ModuleAttacher
@@ -8,6 +8,6 @@ export default class ModuleAttacher
     }
 
     sprite(tag) {
-        return ModuleRegister.attach(this.moduleManager, 'sprite', tag);
+        return ModuleProvider.attach(this.moduleManager, 'sprite', tag);
     }
 }

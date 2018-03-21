@@ -1511,6 +1511,50 @@ var SceneEntity = function (_EntityHierarchy) {
         set: function set(value) {
             this.transform.position.y = value;this.transform._isDirty = true;
         }
+    }, {
+        key: 'origin',
+        get: function get() {
+            return this.transform.origin;
+        },
+        set: function set(value) {
+            this.transform.origin = value;this.transform._isDirty = true;
+        }
+    }, {
+        key: 'origin.x',
+        set: function set(value) {
+            this.transform.origin.x = value;this.transform._isDirty = true;
+        }
+    }, {
+        key: 'origin.y',
+        set: function set(value) {
+            this.transform.origin.y = value;this.transform._isDirty = true;
+        }
+    }, {
+        key: 'scale',
+        get: function get() {
+            return this.transform.scale;
+        },
+        set: function set(value) {
+            this.transform.scale = value;this.transform._isDirty = true;
+        }
+    }, {
+        key: 'scale.x',
+        set: function set(value) {
+            this.transform.scale.x = value;this.transform._isDirty = true;
+        }
+    }, {
+        key: 'scale.y',
+        set: function set(value) {
+            this.transform.scale.y = value;this.transform._isDirty = true;
+        }
+    }, {
+        key: 'angle',
+        get: function get() {
+            return this.transform.angle;
+        },
+        set: function set(value) {
+            this.transform.angle = value;this.transform._isDirty = true;
+        }
     }]);
 
     return SceneEntity;
@@ -3761,19 +3805,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /*
 
 
-* | a | b | x |
-* | c | d | y |
+* | a | b | x | * | 0 | 2 | 4 |
+* | c | d | y | * | 1 | 3 | 5 |
 * | 0 | 0 | 1 |
 
 * | 0 | 3 | 6 | * | a | c | x |
 * | 1 | 4 | 7 | * | b | d | y |
 * | 2 | 5 | 8 | * | 0 | 0 | 1 |
 
-a = scalex
+a = scale_x
 b = cos
 x = x translate
 
-c = scaley
+c = scale_y
 d = sin
 y = y translate
 
@@ -3784,7 +3828,7 @@ HTML5/CSS3 uses matrices in column-major order based.
 var Matrix = function () {
 
   /*
-  * Constructor is idetity only
+  * Constructor is identity only
   */
   function Matrix(a, b) {
     _classCallCheck(this, Matrix);
@@ -3828,19 +3872,24 @@ var Matrix = function () {
       return this;
     }
   }, {
-    key: "setAll",
-    value: function setAll(a, b, c, d, e, f, g, h, i) {
+    key: "setIdentity",
+    value: function setIdentity() {
+      return this.setTransform(1, 0, 0, 0, 1, 0, 0, 0, 1);
+    }
+  }, {
+    key: "setTransform",
+    value: function setTransform(a, b, c, d, e, f, g, h, i) {
 
       this.a[0] = a;
       this.a[1] = b;
-      this.a[2] = c;
+      this.a[2] = c; // 0
 
       this.a[3] = d;
       this.a[4] = e;
-      this.a[5] = f;
+      this.a[5] = f; // 0
 
-      this.a[6] = g;
-      this.a[7] = h;
+      this.a[6] = g; // x
+      this.a[7] = h; // y
       this.a[8] = i;
 
       return this;
@@ -3849,16 +3898,19 @@ var Matrix = function () {
     key: "translate",
     value: function translate(x, y) {
 
-      this.a[6] = x;
-      this.a[7] = y;
-      return this;
-    }
-  }, {
-    key: "move",
-    value: function move(x, y) {
+      /* | a | b | x | * | 0 | 2 | 4 |
+      *  | c | d | y | * | 1 | 3 | 5 |
+        * | 0 | 3 | 6 | * | a | c | x |
+      * | 1 | 4 | 7 | * | b | d | y |
+      * | 2 | 5 | 8 |
+      */
+      // 4 = 0 * x * 2 * y + 4
+      // 6 = 0 * x * 3 * y + 6
 
-      this.a[6] += x;
-      this.a[7] += y;
+      // 5 = 1 * x + 3 * y + 5
+      // 7 = 1 * x + 4 * y + 7
+      this.a[6] = this.a[0] * x + this.a[3] * y + this.a[6];
+      this.a[7] = this.a[1] * x + this.a[4] * y + this.a[7];
       return this;
     }
   }, {
@@ -3868,48 +3920,103 @@ var Matrix = function () {
       this.a[0] *= x; // a
       this.a[1] *= x; // b
 
-      this.a[2] *= y; // c
-      this.a[3] *= y; // d
+      this.a[3] *= y; // c
+      this.a[4] *= y; // d
 
-      this.a[4] *= x; // x
-      this.a[5] *= y; // y
+      this.a[6] *= x; // x
+      this.a[7] *= y; // y
       return this;
-
-      /*this.a *= x;
-      this.d *= y;
-      this.c *= x;
-      this.b *= y;
-      this.x *= x;
-      this.y *= y;*/
     }
   }, {
     key: "rotate",
-    value: function rotate(angle) {
+    value: function rotate(radianAngle) {
+      var cos = Math.cos(radianAngle);
+      var sin = Math.sin(radianAngle);
 
-      var cos = Math.cos(angle);
-      var sin = Math.sin(angle);
+      return this.radianRotate(cos, sin);
+    }
+  }, {
+    key: "radianRotate",
+    value: function radianRotate(cos, sin) {
+      return this.transform(cos, sin, -sin, cos, 0, 0);
+    }
+  }, {
+    key: "transform",
+    value: function transform(a, b, c, d, x, y) {
+      var a00 = this.a[0]; // a
+      var a01 = this.a[1]; // b
 
-      var a1 = this.a;
-      var c1 = this.c;
-      var x1 = this.x;
+      var a10 = this.a[3]; // c
+      var a11 = this.a[4]; // d
 
-      this.a = a1 * cos - this.b * sin;
-      this.b = a1 * sin + this.b * cos;
-      this.c = c1 * cos - this.d * sin;
-      this.d = c1 * sin + this.d * cos;
-      this.x = x1 * cos - this.y * sin;
-      this.y = x1 * sin + this.y * cos;
+      var a20 = this.a[5]; // x
+      var a21 = this.a[6]; // y
+
+      this.a[0] = a * a00 + b * a10; // a * a0 + b * c0;
+      this.a[1] = a * a01 + b * a11; // a * b0 + b * d0;
+
+      this.a[3] = c * a00 + d * a10; // c * a0 + d * c0;
+      this.a[4] = c * a01 + d * a11; // c * b0 + d * d0;
+
+      this.a[6] = x * a00 + y * a10 + a20; // x * a0 + y * c0 + x0;
+      this.a[7] = x * a01 + y * a11 + a21; // x * b0 + y * d0 + y0;
+
       return this;
     }
   }, {
+    key: "setModelMatrix",
+    value: function setModelMatrix(position, scale, rotation, origin) {
+      this.a[0] = rotation.x * scale.x; // a
+      this.a[1] = rotation.y * scale.x; // b
+      this.a[3] = -rotation.y * scale.y; // c
+      this.a[4] = rotation.x * scale.y; // d
+      this.a[6] = position.x; // x
+      this.a[7] = position.y; // y
+
+      if (origin !== undefined) {
+        this.a[6] -= origin.x * this.a[0] + origin.y * this.a[3];
+        this.a[7] -= origin.y * this.a[1] + origin.y * this.a[4];
+      }
+
+      return this;
+      /*
+      a  =  transform._cosSin.x * transform.scale.x;
+      b  = transform._cosSin.y * transform.scale.x;
+      c  = -transform._cosSin.y * transform.scale.y;
+      d  =  transform._cosSin.x * transform.scale.y;
+      x =  transform.position.x;
+      y =  transform.position.y;
+        x -= transform.origin.x * a + transform.origin.y * c;
+      y -= transform.origin.y * b + transform.origin.y * d;
+      */
+    }
+  }, {
     key: "multiply",
-    value: function multiply(otherMatrix) {
-      return Matrix.multiply(this, otherMatrix);
+    value: function multiply(other) {
+
+      // faster way
+      var a00 = this.a[0]; // a - 0
+      var a01 = this.a[1]; // b - 1
+      var a10 = this.a[3]; // c - 3
+      var a11 = this.a[4]; // d - 4
+      var a20 = this.a[6]; // x - 6
+      var a21 = this.a[7]; // y - 7
+
+      this.a[0] = other.a[0] * a00 + other.a[1] * a10; // a1 * a0 + b1 * c0;
+      this.a[1] = other.a[0] * a01 + other.a[1] * a11; // a1 * b0 + b1 * d0;
+
+      this.a[3] = other.a[3] * a00 + other.a[4] * a10; // c1 * a0 + d1 * c0;
+      this.a[4] = other.a[3] * a01 + other.a[4] * a11; // c1 * b0 + d1 * d0;
+
+      this.a[6] = other.a[6] * a00 + other.a[7] * a10 + a20; // x1 * a0 + y1 * c0 + x0;
+      this.a[7] = other.a[6] * a01 + other.a[7] * a11 + a21; // x1 * b0 + y1 * d0 + y0;
+
+      return this;
     }
   }, {
     key: "transpose",
     value: function transpose() {
-      return Matrix.transpose(this);
+      return this.setAll(mat.a[0], mat.a[3], mat.a[6], mat.a[1], mat.a[4], mat.a[7], mat.a[2], mat.a[5], mat.a[8]);
     }
   }, {
     key: "toString",
@@ -3940,9 +4047,8 @@ var Matrix = function () {
   }, {
     key: "transpose",
     value: function transpose(mat) {
-
-      var mat = Matrix.zero();
-      return mat.setAll(mat.a[0], mat.a[3], mat.a[6], mat.a[1], mat.a[4], mat.a[7], mat.a[2], mat.a[5], mat.a[8]);
+      var copy = Matrix.zero;
+      return copy.setAll(mat.a[0], mat.a[3], mat.a[6], mat.a[1], mat.a[4], mat.a[7], mat.a[2], mat.a[5], mat.a[8]);
     }
   }, {
     key: "multiply",
@@ -4405,7 +4511,6 @@ var Transform = function () {
         this.bounds = new _boundingbox2.default(0, 0, 1, 1); // the full bounds of the node - defined by render
         this.globalBounds = new _boundingbox2.default(0, 0, 1, 1); // defined by render
 
-        this.rotation = 0; // radians
         this._isDirty = true;
         this._cosSin = { x: 0, y: 0 };
     }
@@ -4422,6 +4527,7 @@ var Transform = function () {
             delete this.origin;
             delete this.bounds;
             delete this.globalBounds;
+            delete this._cosSin;
         }
     }]);
 
@@ -4488,7 +4594,7 @@ exports.default = UpdateModules;
 
 
 Object.defineProperty(exports, "__esModule", {
-        value: true
+    value: true
 });
 
 var _mathutils = __webpack_require__(/*! ../../math/mathutils */ "./math/mathutils.js");
@@ -4515,77 +4621,61 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function UpdateTransform(transform, parentMatrix) {
 
-        if (parentMatrix === undefined) parentMatrix = null;
+    if (parentMatrix === undefined) parentMatrix = null;
 
-        if (!transform._isDirty) return;
+    if (!transform._isDirty) return;
 
-        var a = void 0,
-            b = void 0,
-            c = void 0,
-            d = void 0,
-            x = void 0,
-            y = void 0;
-        var wt = transform.matrix;
-        var pt = parentMatrix || _matrix2.default.identity();
+    var a = void 0,
+        b = void 0,
+        c = void 0,
+        d = void 0,
+        x = void 0,
+        y = void 0;
+    var wt = transform.matrix;
+    var pt = parentMatrix || _matrix2.default.identity();
 
-        transform.rotation = transform.angle * _mathutils2.default.degToRad;
+    transform.rotation = transform.angle * _mathutils2.default.degToRad;
 
-        //if (transform.rotation % MathUtils.TAU)
-        {
+    //if (transform.rotation % MathUtils.TAU)
+    {
 
-                if (transform.rotation !== transform._oldRotation) {
-                        transform._oldRotation = transform.rotation;
-                        transform._cosSin.y = Math.sin(transform.rotation);
-                        transform._cosSin.x = Math.cos(transform.rotation);
-                }
-
-                a = transform._cosSin.x * transform.scale.x;
-                b = transform._cosSin.y * transform.scale.x;
-                c = -transform._cosSin.y * transform.scale.y;
-                d = transform._cosSin.x * transform.scale.y;
-                x = transform.position.x;
-                y = transform.position.y;
-
-                x -= transform.origin.x * a + transform.origin.y * c;
-                y -= transform.origin.y * b + transform.origin.y * d;
-
-                //transform.identity();
-
-                wt.translate(x, y);
-                //.rotate()
-                //.scale()
-
-
-                console.log(transform.matrix.toString());
-
-                wt = wt.multiply(pt);
-                // concat the parent matrix with the objects transform.
-                /*wt.a[0]  = a  * pt.a[0] + b  * pt.a[1]; // a = a * a + b * c
-                wt.a[3]  = a  * pt.a[3] + b  * pt.a[4]; // b = a * b + b * d
-                wt.a[1]  = c  * pt.a[0] + d  * pt.a[1]; // c = c * a + d * c
-                wt.a[4]  = c  * pt.b + d  * pt.d; // d
-                wt.a[6] = x * pt.a + y * pt.c + pt.x; // x
-                wt.a[7] = x * pt.b + y * pt.d + pt.y; // y*/
-
-                //} else {
-
-                /*a  = transform.scale.x;
-                d  = transform.scale.y;
-                x =  transform.position.x;
-                y =  transform.position.y;
-                x -= transform.origin.x * a;
-                y -= transform.origin.y * d;
-                  wt.a  = a  * pt.a;
-                wt.b  = a  * pt.b;
-                wt.c  = d  * pt.c;
-                wt.d  = d  * pt.d;
-                wt.x = x * pt.a + y * pt.c + pt.x;
-                wt.y = x * pt.b + y * pt.d + pt.y;*/
+        if (transform.rotation !== transform._oldRotation) {
+            transform._oldRotation = transform.rotation;
+            transform._cosSin.y = Math.sin(transform.rotation);
+            transform._cosSin.x = Math.cos(transform.rotation);
         }
 
-        transform.worldPosition.set(wt.x, wt.y);
-        transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
-        transform.worldRotation = Math.atan2(-wt.c, wt.d);
+        console.clear();
+        wt.setModelMatrix(transform.position, transform.scale, transform._cosSin, transform.origin).multiply(pt);
+
+        console.log(wt.toString());
+        // concat the parent matrix with the objects transform.
+        /*wt.a[0]  = a  * pt.a[0] + b  * pt.a[1]; // a = a * a + b * c
+        wt.a[3]  = a  * pt.a[3] + b  * pt.a[4]; // b = a * b + b * d
+        wt.a[1]  = c  * pt.a[0] + d  * pt.a[1]; // c = c * a + d * c
+        wt.a[4]  = c  * pt.b + d  * pt.d; // d
+        wt.a[6] = x * pt.a + y * pt.c + pt.x; // x
+        wt.a[7] = x * pt.b + y * pt.d + pt.y; // y*/
+
+        //} else {
+
+        /*a  = transform.scale.x;
+        d  = transform.scale.y;
+        x =  transform.position.x;
+        y =  transform.position.y;
+        x -= transform.origin.x * a;
+        y -= transform.origin.y * d;
+          wt.a  = a  * pt.a;
+        wt.b  = a  * pt.b;
+        wt.c  = d  * pt.c;
+        wt.d  = d  * pt.d;
+        wt.x = x * pt.a + y * pt.c + pt.x;
+        wt.y = x * pt.b + y * pt.d + pt.y;*/
+    }
+
+    //transform.worldPosition.set(wt.x ,wt.y);
+    //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
+    //transform.worldRotation = Math.atan2(-wt.c, wt.d);
 }
 
 exports.default = UpdateTransform;
@@ -4604,7 +4694,7 @@ exports.default = UpdateTransform;
 
 module.exports = {
     Module: __webpack_require__(/*! ./module */ "./modules/module.js"),
-    ModuleRegister: __webpack_require__(/*! ./moduleRegister */ "./modules/moduleRegister.js"),
+    ModuleProvider: __webpack_require__(/*! ./moduleProvider */ "./modules/moduleProvider.js"),
     ModuleAttacher: __webpack_require__(/*! ./moduleAttacher */ "./modules/moduleAttacher.js"),
 
     Transform: __webpack_require__(/*! ./core/transform */ "./modules/core/transform.js"),
@@ -4699,9 +4789,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _moduleRegister = __webpack_require__(/*! ./moduleRegister */ "./modules/moduleRegister.js");
+var _moduleProvider = __webpack_require__(/*! ./moduleProvider */ "./modules/moduleProvider.js");
 
-var _moduleRegister2 = _interopRequireDefault(_moduleRegister);
+var _moduleProvider2 = _interopRequireDefault(_moduleProvider);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4717,7 +4807,7 @@ var ModuleAttacher = function () {
     _createClass(ModuleAttacher, [{
         key: "sprite",
         value: function sprite(tag) {
-            return _moduleRegister2.default.attach(this.moduleManager, 'sprite', tag);
+            return _moduleProvider2.default.attach(this.moduleManager, 'sprite', tag);
         }
     }]);
 
@@ -4782,9 +4872,9 @@ exports.default = ModuleManager;
 
 /***/ }),
 
-/***/ "./modules/moduleRegister.js":
+/***/ "./modules/moduleProvider.js":
 /*!***********************************!*\
-  !*** ./modules/moduleRegister.js ***!
+  !*** ./modules/moduleProvider.js ***!
   \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -4806,14 +4896,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModuleProxyRegister = function () {
-    function ModuleProxyRegister() {
-        _classCallCheck(this, ModuleProxyRegister);
+var ModuleProviderManager = function () {
+    function ModuleProviderManager() {
+        _classCallCheck(this, ModuleProviderManager);
 
         this.proxyModules = new _map2.default();
     }
 
-    _createClass(ModuleProxyRegister, [{
+    _createClass(ModuleProviderManager, [{
         key: 'attach',
         value: function attach(manager, moduleName, args) {
             var modules = manager.attached;
@@ -4829,16 +4919,16 @@ var ModuleProxyRegister = function () {
     }, {
         key: 'register',
         value: function register(moduleName, func) {
-            if (!ModuleRegister.proxyModules.has(moduleName)) ModuleRegister.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
+            if (!ModuleProvider.proxyModules.has(moduleName)) ModuleProvider.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
         }
     }]);
 
-    return ModuleProxyRegister;
+    return ModuleProviderManager;
 }();
 
-var ModuleRegister = new ModuleProxyRegister();
+var ModuleProvider = new ModuleProviderManager();
 
-exports.default = ModuleRegister;
+exports.default = ModuleProvider;
 
 /***/ }),
 
@@ -5060,9 +5150,9 @@ var _drawImage = __webpack_require__(/*! ./drawImage */ "./modules/renderables/d
 
 var _drawImage2 = _interopRequireDefault(_drawImage);
 
-var _moduleRegister = __webpack_require__(/*! ../moduleRegister */ "./modules/moduleRegister.js");
+var _moduleProvider = __webpack_require__(/*! ../moduleProvider */ "./modules/moduleProvider.js");
 
-var _moduleRegister2 = _interopRequireDefault(_moduleRegister);
+var _moduleProvider2 = _interopRequireDefault(_moduleProvider);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5134,7 +5224,7 @@ var Sprite = function (_Renderable) {
 exports.default = Sprite;
 
 
-_moduleRegister2.default.register('sprite', function (moduleManager, tag) {
+_moduleProvider2.default.register('sprite', function (moduleManager, tag) {
 
     var spr = new Sprite(moduleManager);
 
@@ -6820,9 +6910,9 @@ var List = function () {
             var content = this.childs;
 
             for (var i = 0; i < arguments.length; i++) {
-                params.push(arguments[i]);
+                params.push(arguments[i + 1]);
             }for (var _i = 0; _i < content.length; _i++) {
-                //params[0] = this.childs[i];
+                params[0] = _i;
                 var r = callback(content[_i], params);
                 if (r !== undefined) return r;
                 //break;

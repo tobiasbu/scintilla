@@ -47,8 +47,10 @@ scene.start = function() {
     t = this.create.sprite('test');
     t.position.x = 100;
     t.position.y = 100;
+    t.origin.set(0.5,0.5);
     t.update = function(){
-        this.position.x += this.game.time.deltaTime * 20;
+        this.angle += this.game.time.deltaTime * 20;
+        this.position.x += 10 * this.game.time.deltaTime;
     }
 }
 
