@@ -1,7 +1,7 @@
 
-export const Color = {
+export default Color = {
 
-webRGB : function(r,g,b,a) {
+rgba : function(r,g,b,a) {
 
   return 'rgba(' + r.toString() + ',' + g.toString() + ',' + b.toString() + ',' + (a / 255).toString() + ')';
 
@@ -37,7 +37,7 @@ HSLtoRGB : function(h,s,l,a) {
   result.b = Math.floor((result.b * 255));
 
 
-  return this.webRGB(result.r,result.g,result.b,alp);
+  return this.rgba(result.r,result.g,result.b,alp);
 
 },
 
@@ -68,7 +68,7 @@ hueToColor : function(p, q, t) {
 /*
 Source code: http://jsfiddle.net/mushigh/myoskaos/
 */
-RGBtoHex : function(r,g,b) {
+rgbToHex : function(r,g,b) {
 
   return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
 

@@ -115,7 +115,7 @@ export default class List
 
         for (let i = 0; i < size; i++)
         {
-            let child = listToRemove.childs[i];
+            var child = listToRemove.childs[i];
             this.erase(child);
             /*let child = this.listToRemove[i];
             let index = this._instances.indexOf(gameObject);

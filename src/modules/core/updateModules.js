@@ -1,4 +1,5 @@
 import Renderable from "../renderables/renderable";
+import UpdateBounds from "./updateBounds";
 
 
 export default function UpdateModules(modulesManager, game)
@@ -23,5 +24,13 @@ export default function UpdateModules(modulesManager, game)
 
         modulesManager._pendingModules.clear();
     }
+
+    let entity = modulesManager.entity;
+
+
+    let render = modulesManager.attached.render;
+    if (render !== undefined || render !== null)
+        render.moduleUpdate();
+    
 }
 

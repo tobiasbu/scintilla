@@ -30,8 +30,8 @@ export default class Transform {
 
 
     this.origin = new Vector(0,0);
-    this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
-    this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
+    //this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
+    //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
 
     this._isDirty = true;
     this._cosSin = {x:0,y:0};

@@ -28,8 +28,8 @@ export default function UpdateTransform(transform, parentMatrix) {
 
     transform.rotation = transform.angle * MathUtils.degToRad;
 
-      //if (transform.rotation % MathUtils.TAU)
-      {
+      //if (transform.rotation % MathUtils.TAU) {
+      
 
         if (transform.rotation !== transform._oldRotation)
         {
@@ -47,7 +47,7 @@ export default function UpdateTransform(transform, parentMatrix) {
           transform.origin)
         .multiply(pt);
 
-        console.log(wt.toString());
+        //console.log(wt.toString());
         // concat the parent matrix with the objects transform.
         /*wt.a[0]  = a  * pt.a[0] + b  * pt.a[1]; // a = a * a + b * c
         wt.a[3]  = a  * pt.a[3] + b  * pt.a[4]; // b = a * b + b * d
@@ -74,7 +74,7 @@ export default function UpdateTransform(transform, parentMatrix) {
         wt.y = x * pt.b + y * pt.d + pt.y;*/
 
 
-      }
+      // }
 
       //transform.worldPosition.set(wt.x ,wt.y);
       //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));

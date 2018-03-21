@@ -52,12 +52,18 @@ export default class Sprite extends Renderable {
       
     }
 
+    moduleUpdate() {
+
+        if (!this.entity.transform._isDirty)
+            return;
+
+        UpdateBounds(this.bounds, this.frame, this.entity.transform);
+    }
+
     render(context)
     {
         if (!this._visible)
             return false;
-
-
 
         return DrawImage(context, this.source, this.entity.transform, this.frame);
     }

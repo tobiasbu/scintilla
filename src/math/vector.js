@@ -11,69 +11,70 @@ export default class Vector {
   
   constructor(x,y) {
 
-    this._x = x || 0;
-    this._y = y || 0;
+    this.x = x || 0;
+    this.y = y || 0;
   }
 
+  /*
   set x(value) {
-    this._x = value;
-    return this._x;
+    this.x = value;
+    return this.x;
   }
-  get x() {return this._x;}
+  get x() {return this.x;}
   set y(value) {
-    this._y = value;
-    return this._y;
+    this.y = value;
+    return this.y;
   }
-  get y() {return this._y;}
+  get y() {return this.y;}*/
 
   set(x,y) {
 
-    this._x = x;
-    this._y = y || x
+    this.x = x;
+    this.y = y || x
 
   }
 
   move(x,y) {
 
-    this._x += x;
-    this._y += y;
+    this.x += x;
+    this.y += y;
 
   }
 
   scale(x, y) {
 
-    this._x *= x;
-    this._y *= y || x;
+    this.x *= x;
+    this.y *= y || x;
     return this;
 
   }
 
   rotate(radians) {
 
-    let x = this._x;
-    let y = this._y;
-    this._x = x * Math.cos(radians) - y * Math.sin(radians);
-    this._y = x * Math.sin(radians) + y * Math.cos(radians);
+    let x = this.x;
+    let y = this.y;
+    this.x = x * Math.cos(radians) - y * Math.sin(radians);
+    this.y = x * Math.sin(radians) + y * Math.cos(radians);
     return this;
 
   }
 
   rotateAround(radians, other) {
 
-    /*var x = this._x;
-    var y = this._y;*/
-    let dx = this._x-other.x;
-    let dy = this._y-other.y;
+    /*var x = this.x;
+    var y = this.y;*/
+    let dx = this.x-other.x;
+    let dy = this.y-other.y;
 
     let c = Math.cos(radians);
     let s = Math.sin(radians);
 
-    /*this._x = c * (x-other.x) - s * (y-other.y) + other.x;
-    this._y = s * (x-other.x) + c * (y-other.y) + other.y;*/
+    /*this.x = c * (x-other.x) - s * (y-other.y) + other.x;
+    this.y = s * (x-other.x) + c * (y-other.y) + other.y;*/
 
 
-    this._x =  other.x + (c * dx - s * dy);
-    this._y =  other.y + (s * dx + c * dy);
+    this.x =  other.x + (c * dx - s * dy);
+    this.y =  other.y + (s * dx + c * dy);
 
     return this;
 
@@ -81,8 +82,8 @@ export default class Vector {
 
   copy(otherVector) {
 
-    this._x = otherVector.x;
-    this._y = otherVector.y;
+    this.x = otherVector.x;
+    this.y = otherVector.y;
     return this;
 
   }
@@ -91,36 +92,36 @@ export default class Vector {
 
     let mag = this.length();
     if (mag > 0) {
-      this._x = this._x / mag;
-      this._y = this._y / mag;
+      this.x = this.x / mag;
+      this.y = this.y / mag;
     }
     return this;
 
   }
 
   reverse() {
-    this._x = -this._x;
-    this._y = -this._y;
+    this.x = -this.x;
+    this.y = -this.y;
     return this;
   }
 
   add(other) {
-    this._x += other.x;
-    this._y += other.y;
+    this.x += other.x;
+    this.y += other.y;
     return this;
   }
 
   sub(other) {
-    this._x -= other.x;
-    this._y -= other.y;
+    this.x -= other.x;
+    this.y -= other.y;
     return this;
   }
 
   perp() {
 
-    let x = this._x;
-    this._x = this._y;
-    this._y = -x;
+    let x = this.x;
+    this.x = this.y;
+    this.y = -x;
     return this;
   }
 
@@ -133,7 +134,7 @@ export default class Vector {
   }
 
   clone() {
-    return new Vector(this._x,this._y);
+    return new Vector(this.x,this.y);
   }
 
   length() {
@@ -142,6 +143,10 @@ export default class Vector {
 
   squaredLenght() {
     return Vector.dot(this,this);
+  }
+
+  static abs(vector) {
+    return new Vector(Math.abs(vector.x), Math.abs(vector.y));
   }
 
   static scalar(a, b) {
@@ -203,10 +208,10 @@ export default class Vector {
     return vec;
   }
 
-  get magnitude() {return Math.sqrt((this._x * this._x) + (this._y * this._y));}
+  get magnitude() {return Math.sqrt((this.x * this.x) + (this.y * this.y));}
   get normal() {
     let mag = this.magnitude;
-    let vec = new tobiJS.Vector(this._x / mag,this._y / mag);
+    let vec = new tobiJS.Vector(this.x / mag,this.y / mag);
     return vec;
   }
 

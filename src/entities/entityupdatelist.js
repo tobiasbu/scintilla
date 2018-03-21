@@ -49,8 +49,12 @@ export default class EntityUpdateList {
 
                 UpdateModules(element.modules, this.game);
 
+                if (element.transform._isDirty)
+                    element.transform._isDirty = false;
+
                 if (element.update !== undefined)
                     element.update();
+
             }
 
             
@@ -85,16 +89,6 @@ export default class EntityUpdateList {
         this._destroyInstances.childs.length = 0;
 
     }
-
-    /*initializeModules(instace)
-    {
-        let modules = instace.modules.attached;
-
-        modules.each(element => {
-            if (element.initialize !== undefined)
-                element.initialize(instace, this.game);
-        });
-    }*/
 
 }
 

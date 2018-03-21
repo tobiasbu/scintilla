@@ -1,14 +1,20 @@
 
 import Rect from '../math/rect'
 import Vector from '../math/vector'
+import BoundingBox from '../math/boundingbox';
+import Transform from '../modules/core/transform';
+import Color from '../utils/color'
 
 export default class Camera {
   
-  constructor(game,x,y,width,height) {
+  constructor(game) {
 
     this.game = game;
-    this.view = new Rect(x,y,width,height);
-    this.root = null; // who is the node (world)
+    this.view = new Rect();
+    this._bounds = new BoundingBox();
+    this._transform = new Transform();
+    this._backgroundColor = Color.rgbToHex(0,0,0);
+    this.roundPixels = false;
     this.instancesInView = 0;
 
     this.target = null;

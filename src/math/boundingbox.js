@@ -6,15 +6,13 @@ export default class BoundingBox {
   
   constructor(x, y, width, height) {
 
-    let xx = x || 0;
-    let yy = y || 0;
-    let w = width || 0;
-    let h = height || 0;
-    //this.center = new scintilla.Vector(x+width/2,y+height/2);
-    //this.size = new scintilla.Vector(width,height);
-    this.min = new Vector(xx,yy);
-    this.max = new Vector(xx+w,yy+h);
-    this.box = new Rect(xx,yy,w,h);
+    x = x || Infinity;
+    y = y || Infinity;
+    width = width || -Infinity;
+    height = height || -Infinity;
+    this.min = new Vector(x,y);
+    this.max = new Vector(x+width,y+height);
+    //this.box = new Rect(xx,yy,w,h);
 
   }
 
@@ -33,183 +31,148 @@ export default class BoundingBox {
     );
   }
 
-  intersects(value) {
-    if (BoundingBox.prototype.isPrototypeOf(value))
-    {
-      // TODO
-    }
-  }
-
-  contains(value) {
-    // TODO
-  }
-
+  
   set(minX, minY, maxX, maxY) {
 
     this.min.set(minX,minY);
     this.max.set(maxX,maxY);
     this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
-
-  }
-
-
-  // position (vector)
-  // scale (vector)
-  // rotation (vector x = cos, y = sin)
-  setup(pos, scale, rotation, anchor, width, height) {
-
-    var coords = [];
-    var negx = 1;
-    var negy = 1;
-
-    if (scale.x < 0)
-          negx = -1;
-    if (scale.y < 0)
-          negy = -1;
-
-
-
-    this.size.x = width*scale.x*negx;
-    this.size.y = height*scale.y*negy;
-    anchor.x *= scale.x*negx;
-    anchor.y *= scale.y*negy;
-    pos.x -= anchor.x;
-    pos.y -= anchor.y;
-    anchor.x += pos.x;
-    anchor.y += pos.y;
-
-    var callback = null;
-
-    if (rotation instanceof  scintilla.Vector)
-        callback = this['calcCoordsCosSin'];
-      else
-        callback = this['calcCoords'];
-
-    coords[0] = callback( pos.x, pos.y, anchor, rotation);
-    coords[1] = callback( pos.x + this.size.x,  pos.y, anchor,rotation);
-
-    coords[2] = callback( pos.x , pos.y + this.size.y, anchor,rotation);
-    coords[3] = callback( pos.x + this.size.x , pos.y + this.size.y,anchor, rotation);
-
-
-
-    this.min.x = Math.min(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
-    this.min.y = Math.min(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
-
-    this.max.x = Math.max(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
-    this.max.y = Math.max(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
-    this.center.x = pos.x+(this.max.x-this.min.x)/2;
-    this.center.y = pos.y+(this.max.y-this.min.y)/2;
-    this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
-
-  }
-
-  /*setBySprite : function(sprite, position, scale, rotation) {
-
-      //this.set(position,scale,rotation,);
-
-  }*/
-
-  setByGameObject(gameObject, local) {
-
-    //if (gameObject.render != null) {
-
-      if (local) {
-        this.setup(gameObject.position,
-                gameObject.scale,
-                gameObject._cosSin,
-                gameObject.render.origin,
-                gameObject.render.width,
-                gameObject.render.height
-              );
-      } else {
-
-        var frame = gameObject.component['render'].frame;
-
-        var pos = {x:gameObject.worldPosition.x, y:gameObject.worldPosition.y};
-        var org = {
-          x:gameObject.origin.x * frame.width,
-          y:gameObject.origin.y * frame.height};
-
-        pos.x += gameObject.game.camera.view.x;
-        pos.y += gameObject.game.camera.view.y;
-
-        this.setup(pos,
-                gameObject.worldScale,
-                gameObject.worldRotation,
-                org,
-                frame.width,
-                frame.height
-              );
-      }
-
-
     return this;
 
-
   }
 
-  setByPosition(position) {
+  intersects(bounds) {
+    return (
+      (this.max.x > bounds.min.x && 
+      this.max.y > bounds.min.y &&
+      this.min.x < bounds.max.x && 
+      this.min.y < bounds.max.y) ||
 
-    this.min.set(position.x,position.y);
-    this.max.set(position.x+1,position.y+1)
-    this.box.set(position.x,position.y,1,1);
-
+      (this.min.x > bounds.max.x &&
+      this.min.y > bounds.max.y &&
+      this.max.x < bounds.min.x &&
+      this.max.y < bounds.min.y));
   }
 
-  setByShape(shape,position) {
+  contains(x, y) {
+    return (
+      x > this.min.x &&
+      y > this.min.y &&
+      x < this.max.x &&
+      y < this.max.y);
+  }
 
+  expand(xRadius, yRadius) {
 
-    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    var type = shape.getType();
+    yRadius = yRadius || xRadius;
 
-    if (type == "Polygon") {
+    if (this.max.x > this.min.x)
+		{
+			this.min.x -= xRadius;
+			this.max.x += xRadius;
+		}
+		else
+		{
+			this.min.x += xRadius;
+			this.max.x -= xRadius;
+		}
 
-      var points = shape.getPoints();
+		if (this.max.y > this.min.y)
+		{
+			this.min.y -= yRadius;
+			this.max.y += yRadius;
+		}
+		else
+		{
+			this.min.y += yRadius;
+			this.max.y -= yRadius;
+		}
+  }
 
-      points.forEach(function (point) {
-          minX = Math.min(minX, point.x);
-          minY = Math.min(minY, point.y);
-          maxX = Math.max(maxX, point.x);
-          maxY = Math.max(maxY, point.y);
+  merge(value) {
 
-      });
+    // merge with another bounds
+    if (value instanceof BoundingBox) {
+      this.min.x = Math.min(this.min.x, value.min.x);
+      this.min.y = Math.min(this.min.y, value.min.y);
+      this.max.x = Math.max(this.max.x, value.max.x);
+      this.max.y = Math.max(this.max.y, value.max.y);
+      return this;
+    } 
+    else if (value instanceof Vector) {
+      return this.mergeWithPoint(value.x, value.y);
+    } else {
+      this.min.x = Math.min(this.min.x, value);
+      this.min.y = Math.min(this.min.y, value);
+      this.max.x = Math.max(this.max.x, value);
+      this.max.y = Math.max(this.max.y, value);
+      return this;
     }
-
-    if (position !== undefined) {
-      minX += position.x;
-      minY += position.y;
-      maxX += position.x;
-      maxY += position.y;
-    }
-
-
-    this.min.set(minX,minY);
-    this.max.set(maxX,maxY)
-    this.box.set(minX,minY,maxX-minX,maxY-minY);
-
   }
 
-  calcCoordsCosSin(x, y, anchor, cos_and_sin) {
-
-    var coord = {x:0,y:0};
-
-    coord.x = anchor.x + ((x-anchor.x) * cos_and_sin.x) - ((y-anchor.y) * cos_and_sin.y);
-    coord.y = anchor.y - ((x-anchor.x) * cos_and_sin.y) - ((y-anchor.y) * cos_and_sin.x);
-
-      return coord;
-
+  mergeWithPoint(x, y) {
+    this.min.x = Math.min(this.min.x, x);
+    this.min.y = Math.min(this.min.y, y);
+    this.max.x = Math.max(this.max.x, x);
+    this.max.y = Math.max(this.max.y, y);
+    return this;
   }
 
-  calcCoords(x,y,anchor,rotation) {
+  extend(bounds) {
+    // min merge
+    if (bounds.min.x < this.min.x)
+      this.min.x = bounds.min.x;
 
-    var coord = {x:0,y:0};
+    if (bounds.min.y < this.min.y)
+      this.min.y = bounds.min.y;
+      
+    // max merge
+    if (bounds.max.x > this.max.x)
+      this.max.x = bounds.max.x;
 
-    coord.x = anchor.x + ((x-anchor.x) * Math.cos(rotation)) - ((y-anchor.y) * Math.sin(rotation));
-    coord.y = anchor.y - ((x-anchor.x) * Math.sin(rotation)) - ((y-anchor.y) * Math.cos(rotation));
+    if (bounds.max.y > this.max.y)
+      this.max.y = bounds.max.y;
 
-      return coord;
-
+    return this;
   }
+
+  extendByPoint(x, y) {
+    if (x < this.min.x) this.min.x = x;
+		if (y < this.min.y) this.min.y = y;
+		if (x > this.max.x) this.max.x = x;
+		if (y > this.max.y) this.max.y = y;
+
+		return this;
+  }
+
+  limit(xmin, ymin, xmax, ymax) {
+		if (this.min.x < xmin)
+      this.min.x = xmin;
+
+		if (this.min.y < ymin)
+      this.min.y = ymin;
+
+		if (this.max.x > xmax)
+      this.max.x = xmax;
+
+		if (this.max.y > ymax)
+      this.max.y = ymax;
+  }
+
+  offset(x, y) {
+    let o = {x:x, y:y};
+     o.x -= this.min.x;
+     o.y -= this.min.y;
+
+		if (this.max.x > this.min.x)
+			o.x /= this.max.x - this.min.x;
+
+		if (this.max.y > this.min.y)
+      o.y /= this.max.y - this.min.y;
+      
+    return o;
+  }
+
+  
 
 }
