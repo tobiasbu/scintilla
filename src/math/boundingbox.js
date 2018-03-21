@@ -33,16 +33,14 @@ export default class BoundingBox {
     );
   }
 
-  intersects(value)
-  {
+  intersects(value) {
     if (BoundingBox.prototype.isPrototypeOf(value))
     {
       // TODO
     }
   }
 
-  contains(value)
-  {
+  contains(value) {
     // TODO
   }
 
