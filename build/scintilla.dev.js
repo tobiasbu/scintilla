@@ -4551,6 +4551,7 @@ exports.default = Transform;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = UpdateModules;
 
 var _renderable = __webpack_require__(/*! ../renderables/renderable */ "./modules/renderables/renderable.js");
 
@@ -4579,8 +4580,6 @@ function UpdateModules(modulesManager, game) {
     }
 }
 
-exports.default = UpdateModules;
-
 /***/ }),
 
 /***/ "./modules/core/updateTransform.js":
@@ -4596,6 +4595,7 @@ exports.default = UpdateModules;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = UpdateTransform;
 
 var _mathutils = __webpack_require__(/*! ../../math/mathutils */ "./math/mathutils.js");
 
@@ -4677,8 +4677,6 @@ function UpdateTransform(transform, parentMatrix) {
     //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
     //transform.worldRotation = Math.atan2(-wt.c, wt.d);
 }
-
-exports.default = UpdateTransform;
 
 /***/ }),
 

@@ -14,7 +14,7 @@ import Matrix from '../../math/matrix'
 
 */
 
-function UpdateTransform(transform, parentMatrix) {
+export default function UpdateTransform(transform, parentMatrix) {
 
     if (parentMatrix === undefined) parentMatrix = null;
 
@@ -81,5 +81,3 @@ function UpdateTransform(transform, parentMatrix) {
       //transform.worldRotation = Math.atan2(-wt.c, wt.d);
     
 }
-
-export default UpdateTransform;

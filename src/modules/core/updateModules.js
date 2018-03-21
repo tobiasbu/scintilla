@@ -1,7 +1,7 @@
 import Renderable from "../renderables/renderable";
 
 
-function UpdateModules(modulesManager, game)
+export default function UpdateModules(modulesManager, game)
 {
     let size = modulesManager._pendingModules.size;
 
@@ -25,4 +25,3 @@ function UpdateModules(modulesManager, game)
     }
 }
 
-export default UpdateModules;
