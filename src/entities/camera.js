@@ -10,19 +10,13 @@ export default class Camera {
   constructor(game) {
 
     this.game = game;
-    this.view = new Rect();
+    this._view = new Rect();
     this._bounds = new BoundingBox();
     this._transform = new Transform();
     this._backgroundColor = Color.rgbToHex(0,0,0);
     this.roundPixels = false;
     this.instancesInView = 0;
 
-    this.target = null;
-    this.scale = new Vector(1,1);
-    this.angle = 0;
-
-    this._width = width;
-    this._height = height;
 
   }
 
