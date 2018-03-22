@@ -17,6 +17,7 @@ export default class UpdateStep {
         this.previousTime = 0; // last hi-time
         this.elapsed = 0; // elapsed time
         this.hiDeltaTime = 0; // raw delta time
+        this.deltaTime = 0; // delta time in miliseconds
 
         // FPS
         this.requireFpsUpdate = true;
@@ -104,7 +105,7 @@ export default class UpdateStep {
 
             let deltaUpdate = (this.interpolation) ? deltaTime : this.timeStep;
             let accumulatorUpdateDelta = (this.interpolation) ? deltaUpdate : Math.max(deltaUpdate, this.updateAverageDelta);
-            
+            this.deltaTime = deltaUpdate / 1000;
 
             while (this.accumalator >= accumulatorUpdateDelta || this.interpolation) {
 

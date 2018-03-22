@@ -49,7 +49,7 @@ scene.start = function() {
     t.position.y = 100;
     t.origin.set(0.5,0.5);
     t.update = function(dt){
-        this.angle += dt * 20;
+        this.angle += game.time.delta * 20;
         this.position.x += 10 * dt;
     }
 }

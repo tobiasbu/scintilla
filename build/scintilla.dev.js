@@ -539,6 +539,10 @@ var _gameSystemManager = __webpack_require__(/*! ./gameSystemManager */ "./core/
 
 var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
 
+var _gameTime = __webpack_require__(/*! ../time/gameTime */ "./time/gameTime.js");
+
+var _gameTime2 = _interopRequireDefault(_gameTime);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -580,6 +584,7 @@ var Game = function () {
         this.pool = null;
         this.systems = null;
         this.context = null;
+        this.time = null;
 
         this.parseConfiguration(this.config);
 
@@ -625,11 +630,12 @@ var Game = function () {
             this.input = new _input2.default(this);
             this.scene = new _scenemanager2.default(this);
             this.system = new _gameSystemManager2.default(this);
+            this.time = new _gameTime2.default(this);
 
             this.system.init();
-
             this.scene.init();
             this.input.init();
+            this.time.init(this.system.loop);
 
             if (this.debugMode) this.debug = new _debug2.default(this);
 
@@ -7834,6 +7840,72 @@ function MergeSort(array, predicate) {
 
 /***/ }),
 
+/***/ "./time/gameTime.js":
+/*!**************************!*\
+  !*** ./time/gameTime.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// Wrapper class for game time
+
+var GameTime = function () {
+    function GameTime(game) {
+        _classCallCheck(this, GameTime);
+
+        this.game = game;
+    }
+
+    _createClass(GameTime, [{
+        key: "init",
+        value: function init(gameLoop) {
+            this._updateStep = gameLoop.updateStep;
+        }
+    }, {
+        key: "now",
+        get: function get() {
+            return this._updateStep.time;
+        }
+    }, {
+        key: "fps",
+        get: function get() {
+            return this._updateStep.fps;
+        }
+    }, {
+        key: "delta",
+        get: function get() {
+            return this._updateStep.deltaTime;
+        }
+    }, {
+        key: "elapsed",
+        get: function get() {
+            return this._updateStep.elapsed;
+        }
+    }, {
+        key: "rawDelta",
+        get: function get() {
+            return this._updateStep.hiDeltaTime;
+        }
+    }]);
+
+    return GameTime;
+}();
+
+exports.default = GameTime;
+
+/***/ }),
+
 /***/ "./time/updateStep.js":
 /*!****************************!*\
   !*** ./time/updateStep.js ***!
@@ -7875,6 +7947,7 @@ var UpdateStep = function () {
                 this.previousTime = 0; // last hi-time
                 this.elapsed = 0; // elapsed time
                 this.hiDeltaTime = 0; // raw delta time
+                this.deltaTime = 0; // delta time in miliseconds
 
                 // FPS
                 this.requireFpsUpdate = true;
@@ -7961,6 +8034,7 @@ var UpdateStep = function () {
 
                                 var deltaUpdate = this.interpolation ? deltaTime : this.timeStep;
                                 var accumulatorUpdateDelta = this.interpolation ? deltaUpdate : Math.max(deltaUpdate, this.updateAverageDelta);
+                                this.deltaTime = deltaUpdate / 1000;
 
                                 while (this.accumalator >= accumulatorUpdateDelta || this.interpolation) {
 

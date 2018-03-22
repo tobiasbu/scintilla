@@ -5,6 +5,7 @@ import SceneManager from '../scene/scenemanager'
 import Physics from '../physics/physics'
 import Debug from '../others/debug'
 import GameSystemManager from './gameSystemManager';
+import GameTime from '../time/gameTime';
 
 /**
 * Main class of engine. Holds all main data.
@@ -43,6 +44,7 @@ export default class Game {
   this.pool = null;
   this.systems =  null;
   this.context = null;
+  this.time = null;
 
   this.parseConfiguration(this.config);
 
@@ -90,17 +92,15 @@ export default class Game {
     this.input = new Input(this);
     this.scene = new SceneManager(this);
     this.system = new GameSystemManager(this);
-    
+    this.time = new GameTime(this);
+
     this.system.init();
-
-    
-
     this.scene.init();
     this.input.init();
+    this.time.init(this.system.loop);
 
     if (this.debugMode)
       this.debug = new Debug(this);
-      
 
     this.systemInited = true;
     this.isRunning = true;
