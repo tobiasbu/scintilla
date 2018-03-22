@@ -26,8 +26,8 @@ export default function UpdateModules(modulesManager, game)
     let entity = modulesManager.entity;
 
 
-    let render = modulesManager.attached.render;
-    if (render !== undefined || render !== null)
+    var render = modulesManager.attached.render;
+    if (render !== undefined || render != null)
         render.moduleUpdate();
     
 }

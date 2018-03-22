@@ -25,6 +25,10 @@ export default class Config {
             async : callback_2(config, 'loader.async', true),
         }
 
+        this.time = {
+            timeoutMode : callback_2(config, 'time.timeOutMode', false)
+        }
+
         this.pixelated = callback(config, 'pixelated', false);
         /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
             this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);

@@ -36,7 +36,7 @@ export default class EntityUpdateList {
 
     }
 
-    update() {
+    update(dt) {
 
         let parent = Matrix.identity();
 
@@ -53,7 +53,7 @@ export default class EntityUpdateList {
                     element.transform._isDirty = false;
 
                 if (element.update !== undefined)
-                    element.update();
+                    element.update(dt);
 
             }
 

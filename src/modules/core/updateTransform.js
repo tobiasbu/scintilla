@@ -16,7 +16,7 @@ import Matrix from '../../math/matrix'
 
 export default function UpdateTransform(transform, parentMatrix) {
 
-    if (parentMatrix === undefined) parentMatrix = null;
+    //if (parentMatrix === undefined) parentMatrix = null;
 
     if (!transform._isDirty)
         return;
@@ -24,7 +24,7 @@ export default function UpdateTransform(transform, parentMatrix) {
 
     let a, b, c, d, x, y;
     let wt = transform.matrix;
-    let pt = parentMatrix || Matrix.identity();
+    let pt = Matrix.identity();
 
     transform.rotation = transform.angle * MathUtils.degToRad;
 
@@ -40,12 +40,15 @@ export default function UpdateTransform(transform, parentMatrix) {
 
 
         console.clear();
+
         wt.setModelMatrix(
           transform.position, 
           transform.scale, 
           transform._cosSin, 
           transform.origin)
-        .multiply(pt);
+        ;//.multiply(pt);
+
+        console.log(transform.matrix.toString());
 
         //console.log(wt.toString());
         // concat the parent matrix with the objects transform.

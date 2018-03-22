@@ -21,6 +21,8 @@
 var scintilla = scintilla || {
   VERSION: '0.0.1',
 
+  Core : require('./core'),
+
   // DATA STRUCTURES
   Struct : require('./structures'),
   // RENDER

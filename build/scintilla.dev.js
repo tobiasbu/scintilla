@@ -145,6 +145,8 @@ module.exports = g;
 var scintilla = scintilla || {
   VERSION: '0.0.1',
 
+  Core: __webpack_require__(/*! ./core */ "./core/index.js"),
+
   // DATA STRUCTURES
   Struct: __webpack_require__(/*! ./structures */ "./structures/index.js"),
   // RENDER
@@ -479,6 +481,10 @@ var Config = function Config(config) {
         async: callback_2(config, 'loader.async', true)
     };
 
+    this.time = {
+        timeoutMode: callback_2(config, 'time.timeOutMode', false)
+    };
+
     this.pixelated = callback(config, 'pixelated', false);
     /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
         this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
@@ -512,14 +518,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _config = __webpack_require__(/*! ./config */ "./core/config.js");
 
 var _config2 = _interopRequireDefault(_config);
-
-var _time = __webpack_require__(/*! ../time/time */ "./time/time.js");
-
-var _time2 = _interopRequireDefault(_time);
-
-var _updatetime = __webpack_require__(/*! ../time/updatetime */ "./time/updatetime.js");
-
-var _updatetime2 = _interopRequireDefault(_updatetime);
 
 var _input = __webpack_require__(/*! ../input/input */ "./input/input.js");
 
@@ -574,20 +572,13 @@ var Game = function () {
         // float
         this.timeMode = false;
 
-        // time
-        this._spiraling = 0;
-        this._lastFrameCount = 0;
-
         //objects
         this.debug = null;
         this.scene = null;
         this.sound = null;
         this.input = null;
-        this.time = null;
-        this.updateGameMethod = null;
         this.pool = null;
         this.systems = null;
-
         this.context = null;
 
         this.parseConfiguration(this.config);
@@ -630,7 +621,6 @@ var Game = function () {
 
             if (this.systemInited) return;
 
-            this.time = new _time2.default(this);
             this.physics = new _physics2.default(this);
             this.input = new _input2.default(this);
             this.scene = new _scenemanager2.default(this);
@@ -639,121 +629,20 @@ var Game = function () {
             this.system.init();
 
             this.scene.init();
-            this.time.start();
             this.input.init();
 
             if (this.debugMode) this.debug = new _debug2.default(this);
-
-            this.updateGameMethod = new _updatetime2.default(this, this.timeMode);
-            this.updateGameMethod.start();
 
             this.systemInited = true;
             this.isRunning = true;
 
             console.log("scintilla started!");
         }
-
-        /**
-          * core game loop
-          *
-          * @method tobiJS.Game#update()
-          * @protected
-          */
-
-    }, {
-        key: 'update',
-        value: function update(time) {
-
-            if (this.systemInited) {
-
-                this.time.update(time);
-
-                if (this._spiraling > 1) {
-
-                    this.time.deltaTime = 0;
-                    this._spiraling = 0;
-                    this.time.accumalator = 0;
-
-                    this.display(this.time.accumulatorDelta);
-                } else {
-
-                    var countFrames = 0;
-
-                    while (this.time.accumalator >= this.time.accumulatorDelta) {
-
-                        //  this.time.updateStart = window.performance.now();
-
-                        this.time.deltaTime = Math.min(this.time.accumalator, this.time.accumulatorDelta) / 1000;
-
-                        this.logic(this.time.deltaTime);
-
-                        //this.time.updateLast =  window.performance.now();
-                        //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
-
-                        this.time.accumalator -= this.time.accumulatorDelta;
-
-                        countFrames++;
-
-                        this.time.refresh();
-
-                        if (countFrames >= 240) {
-                            // SPIRAL
-                            //panic();
-                            this.time.accumalator = 0;
-
-                            break;
-                        }
-                    }
-
-                    if (countFrames > this._lastFrameCount) this._spiraling++;else if (countFrames < this._lastFrameCount) this._spiraling = 0;
-
-                    this._lastFrameCount = countFrames;
-
-                    this.display(this.time.accumalator / this.time.accumulatorDelta);
-                    //this.render.render(this.time.accumalator/this.time.accumulatorDelta);
-                }
-            }
-        }
-    }, {
-        key: 'display',
-        value: function display(timeStep) {
-            this.system.render.renderBegin();
-            this.system.render.render(timeStep);
-            this.system.render.renderEnd();
-        }
-    }, {
-        key: 'logic',
-        value: function logic(timeStep) {
-
-            // Core Managers
-
-            this.input.update();
-            //this.sound.update();
-
-            // Scene Update
-            this.physics.update();
-            this.scene.preUpdate();
-            this.scene.update(timeStep);
-
-            //this.universe.preUpdate(timeStep);
-
-
-            //this.world.camera.update();
-
-            //this.universe.update(timeStep);
-
-            //
-
-            //this.universe._updateTransform();
-
-        }
     }, {
         key: 'destroy',
         value: function destroy() {
 
-            this.updateGameMethod.destroy();
             this.physics.destroy();
-            this.universe.destroy();
             this.sound.destroy();
             this.input.destroy();
 
@@ -784,6 +673,95 @@ var Game = function () {
 
 exports.default = Game;
 module.exports = Game;
+
+/***/ }),
+
+/***/ "./core/gameLoop.js":
+/*!**************************!*\
+  !*** ./core/gameLoop.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _requestAnimationFrame = __webpack_require__(/*! ../dom/requestAnimationFrame */ "./dom/requestAnimationFrame.js");
+
+var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
+
+var _gameSystemManager = __webpack_require__(/*! ./gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
+var _updateStep = __webpack_require__(/*! ../time/updateStep */ "./time/updateStep.js");
+
+var _updateStep2 = _interopRequireDefault(_updateStep);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+*
+* core game loop system
+*
+* @class GameLoop
+* @protected
+*/
+var GameLoop = function () {
+    function GameLoop(game, system) {
+        _classCallCheck(this, GameLoop);
+
+        this.game = game;
+        this.system = system;
+        this.updateStep = new _updateStep2.default(this.game, this.game.config);
+    }
+
+    _createClass(GameLoop, [{
+        key: "init",
+        value: function init() {
+            this.updateStep.init(this);
+        }
+    }, {
+        key: "loop",
+        value: function loop(deltaTime) {
+
+            // Core Managers
+
+            console.log("asdasd");
+
+            this.game.input.update();
+            //this.sound.update();
+
+            // Scene Update
+            //this.game.update();
+            this.game.scene.preUpdate();
+            this.game.scene.update(deltaTime);
+        }
+    }, {
+        key: "render",
+        value: function render(deltaTime) {
+
+            this.system.render.renderBegin();
+            this.system.render.render(deltaTime);
+            this.system.render.renderEnd();
+        }
+    }]);
+
+    return GameLoop;
+}();
+
+exports.default = GameLoop;
+
+
+_gameSystemManager2.default.register('GameLoop', GameLoop, 'loop');
 
 /***/ }),
 
@@ -822,13 +800,13 @@ var GameSystemManager = function () {
     }
 
     _createClass(GameSystemManager, [{
-        key: "init",
+        key: 'init',
         value: function init() {
             // register all game systems
             for (var property in gameSystems) {
 
                 var sys = gameSystems[property];
-                this[sys.name] = new sys.system(this.game);
+                this[sys.name] = new sys.system(this.game, this);
             }
 
             // initialize systems
@@ -841,12 +819,12 @@ var GameSystemManager = function () {
             }
         }
     }, {
-        key: "get",
+        key: 'get',
         value: function get(system) {
             return this[system];
         }
     }, {
-        key: "inject",
+        key: 'inject',
         value: function inject(scene) {
 
             scene.game = this._game;
@@ -857,13 +835,18 @@ var GameSystemManager = function () {
                 scene[_sys.name] = this[_sys.name];
             }
 
+            // Special injections, input and sound:
+
+            scene['key'] = this.game.input.keyboard;
+            scene['mouse'] = this.game.input.mouse;
+
             /*for (let property in gameSystems) {
                   let sys = gameSystems[property];
                 scene[sys.name] = property[sys.system];
             }*/
         }
     }, {
-        key: "unject",
+        key: 'unject',
         value: function unject(scene) {
 
             for (var property in gameSystems) {
@@ -871,10 +854,10 @@ var GameSystemManager = function () {
             }
         }
     }, {
-        key: "update",
+        key: 'update',
         value: function update(time, deltaTime) {}
     }], [{
-        key: "register",
+        key: 'register',
         value: function register(key, system, systemName) {
             gameSystems[key] = { name: systemName, system: system };
         }
@@ -884,6 +867,25 @@ var GameSystemManager = function () {
 }();
 
 exports.default = GameSystemManager;
+
+/***/ }),
+
+/***/ "./core/index.js":
+/*!***********************!*\
+  !*** ./core/index.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Config: __webpack_require__(/*! ./config */ "./core/config.js"),
+    GameSystemManager: __webpack_require__(/*! ./gameSystemManager */ "./core/gameSystemManager.js"),
+    SceneSystem: __webpack_require__(/*! ./scenesystem */ "./core/scenesystem.js"),
+    GameLoop: __webpack_require__(/*! ./gameLoop */ "./core/gameLoop.js")
+};
 
 /***/ }),
 
@@ -902,9 +904,130 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 
-var SceneSystem = ['Cache', 'Draw', 'Loader', 'EntityFactory'];
+var SceneSystem = ['Cache', 'Draw', 'Loader', 'EntityFactory', 'Camera'];
 
 exports.default = SceneSystem;
+
+/***/ }),
+
+/***/ "./dom/requestAnimationFrame.js":
+/*!**************************************!*\
+  !*** ./dom/requestAnimationFrame.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var RequestAnimationFrame = function () {
+        function RequestAnimationFrame(timeoutMode) {
+                _classCallCheck(this, RequestAnimationFrame);
+
+                if (timeoutMode === undefined) {
+                        timeoutMode = false;
+                }
+
+                this.isRunning = false;
+                this._isTimeOutMode = timeoutMode;
+
+                this.thick = 0;
+                this.lastTime = 0;
+
+                //callbacks
+
+                // game loop
+                this.loopCallback = null;
+
+                // timeout/animation callback 
+                this.timeOutIdentifier = null;
+
+                /*let vendors = [
+                    'ms',
+                    'moz',
+                    'webkit',
+                    'o'
+                ];
+                  for (let x = 0; x < vendors.length && !window.requestAnimationFrame; x++)
+                {
+                    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+                    window.cancelAnimationFrame  = window[vendors[x] + 'CancelAnimationFrame'];
+                }*/
+
+                var self = this;
+
+                this.updateRequestAnimationFrame = function (timeStamp) {
+
+                        self.lastTime = self.thick;
+                        self.thick = timeStamp;
+                        //this.game.update(time);
+                        self.loopCallback(timeStamp);
+
+                        self.timeOutIdentifier = window.requestAnimationFrame(self.updateRequestAnimationFrame);
+                };
+
+                this.updateTimeout = function () {
+
+                        var dateTime = Date.now();
+                        var delay = Math.max(16 + self.lastTime - dateTime, 0);
+                        self.lastTime = self.thick;
+                        self.thick = delay;
+                        self.loopCallback(delay);
+                        //this.game.update(Date.now());
+                        self.timeOutIdentifier = window.setTimeout(self.updateTimeout, delay);
+                };
+        }
+
+        _createClass(RequestAnimationFrame, [{
+                key: "start",
+                value: function start(loopCallback) {
+
+                        if (this.isRunning) return;
+
+                        this.isRunning = true;
+
+                        this.loopCallback = loopCallback;
+
+                        if (!window.requestAnimationFrame || this._isTimeOutMode) {
+                                this._isTimeOutMode = true;
+                                this.timeOutIdentifier = window.setTimeout(this.updateTimeout, 0);
+                        } else {
+                                this._isTimeOutMode = false;
+                                this.timeOutIdentifier = window.requestAnimationFrame(this.updateRequestAnimationFrame);
+                        }
+                }
+        }, {
+                key: "stop",
+                value: function stop() {
+
+                        if (this._isTimeOutMode) {
+                                clearTimeout(this.timeOutIdentifier);
+                        } else {
+                                window.cancelAnimationFrame(this.timeOutIdentifier);
+                        }
+
+                        this.isRunning = false;
+                }
+        }, {
+                key: "destroy",
+                value: function destroy() {
+                        this.stop();
+                        this.loopingCallback = null;
+                }
+        }]);
+
+        return RequestAnimationFrame;
+}();
+
+exports.default = RequestAnimationFrame;
 
 /***/ }),
 
@@ -932,74 +1055,213 @@ var _vector = __webpack_require__(/*! ../math/vector */ "./math/vector.js");
 
 var _vector2 = _interopRequireDefault(_vector);
 
+var _matrix = __webpack_require__(/*! ../math/matrix */ "./math/matrix.js");
+
+var _matrix2 = _interopRequireDefault(_matrix);
+
+var _boundingbox = __webpack_require__(/*! ../math/boundingbox */ "./math/boundingbox.js");
+
+var _boundingbox2 = _interopRequireDefault(_boundingbox);
+
+var _color = __webpack_require__(/*! ../utils/color */ "./utils/color.js");
+
+var _color2 = _interopRequireDefault(_color);
+
+var _updateBounds = __webpack_require__(/*! ../modules/core/updateBounds */ "./modules/core/updateBounds.js");
+
+var _updateBounds2 = _interopRequireDefault(_updateBounds);
+
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Camera = function () {
-  function Camera(game, x, y, width, height) {
+  function Camera(game, width, height) {
     _classCallCheck(this, Camera);
 
     this.game = game;
-    this.view = new _rect2.default(x, y, width, height);
-    this.root = null; // who is the node (world)
-    this.instancesInView = 0;
+    this._view = new _rect2.default(0, 0, width, height);
+    this._bounds = new _boundingbox2.default();
+    this._matrix = new _matrix2.default(1);
+    this._rotation = 0;
+    this._oldRotation = 0;
+    this._isDirty = true;
+    this._angle = 0;
+    this._cosSin = { x: 0, y: 0 };
+    this._scale = 1;
+    this._resolution = 1;
 
-    this.target = null;
-    this.scale = new _vector2.default(1, 1);
-    this.angle = 0;
-
-    this._width = width;
-    this._height = height;
+    this._backgroundColor = _color2.default.rgbToHex(0, 0, 0);
+    this._roundPixels = false;
   }
 
   _createClass(Camera, [{
+    key: 'centerView',
+    value: function centerView() {
+      this._x = this.width * 0.5;
+      this._y = this.height * 0.5;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'centerToEntity',
+    value: function centerToEntity(entity) {
+      this._x = entity.position.x;
+      this._y = entity.position.y;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'setBackgroundColor',
+    value: function setBackgroundColor(r, g, b, a) {
+      if (r === undefined) {
+        g = 0;
+      }
+      if (g === undefined) {
+        g = 0;
+      }
+      if (b === undefined) {
+        b = 0;
+      }
+      if (a === undefined) {
+        a = 1;
+      }
+      this._backgroundColor = _color2.default.rgba(r, g, b, a);
+      return this;
+    }
+  }, {
+    key: 'setSize',
+    value: function setSize(width, height) {
+      this._view.width = width;
+      this._view.height = height;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'setView',
+    value: function setView(x, y, width, height) {
+      this._view.x = x;
+      this._view.y = y;
+      this._view.width = width;
+      this._view.height = height;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
     key: 'update',
     value: function update() {
-      this.instancesInView = 0;
-      this.root.position.x = -this.view.x;
-      this.root.position.y = -this.view.y;
-      this.root.scale = this.scale;
-      this.root.angle = this.angle;
-    }
-  }, {
-    key: 'setScale',
-    value: function setScale(x, y) {
-      this.scale.set(x, y);
-    }
-  }, {
-    key: 'setPosition',
-    value: function setPosition(x, y) {
-      this.view.x = x;
-      this.view.y = y;
-    }
-  }, {
-    key: 'setFocus',
-    value: function setFocus(vector) {
 
-      this.setPosition(Math.round(vector.x - this.view.width / 2), Math.round(vector.y - this.view.height / 2));
-    }
-  }, {
-    key: 'setFocusXY',
-    value: function setFocusXY(x, y) {
+      if (!this._isDirty) return;
 
-      this.setPosition(Math.round(x - this.view.width / 2), Math.round(y - this.view.height / 2));
-    }
-  }, {
-    key: 'setTarget',
-    value: function setTarget(target) {
+      if (this.roundPixels) {
+        this._view.x = Math.round(this._view.x);
+        this._view.y = Math.round(this._view.y);
+      }
 
-      this.target = target;
+      if (this._rotation !== this._oldRotation) {
+        this._oldRotation = this.rotation;
+        this._cosSin.y = Math.sin(this.rotation);
+        this._cosSin.x = Math.cos(this.rotation);
+      }
+
+      (0, _updateBounds2.default)(this._bounds, this._view, this.rotation);
+
+      // todo resolution
+      this._matrix.setIdentity().scale(this._zoom, this._zoom).translate(this._x, this._y).radianRotate(this._cosSin.x, this._cosSin.y);
+
+      this._isDirty = false;
     }
   }, {
     key: 'reset',
     value: function reset() {
-
-      this.target = null;
-      this.view.x = 0;
-      this.view.y = 0;
-      this.angle = 0;
-      this.scale.set(1, 1);
+      this._view.x = 0;
+      this._view.y = 0;
+      this._angle = 0;
+      this._scale = 1;
+      this._cosSin.x = 0;
+      this._cosSin.y = 0;
+      this._scale = 1;
+      this._resolution = 1;
+      this._isDirty = true;
+    }
+  }, {
+    key: 'position',
+    get: function get() {
+      return { x: this._x, y: this._y };
+    },
+    set: function set(value) {
+      this._view.x = value.x;
+      this._view.y = value.y;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'x',
+    set: function set(value) {
+      this._view.x = value;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'y',
+    set: function set(value) {
+      this._view.y = value;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'scale',
+    get: function get() {
+      return this._zoom;
+    },
+    set: function set(value) {
+      this._zoom = value;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'angle',
+    get: function get() {
+      return this._angle;
+    },
+    set: function set(value) {
+      this._angle = value;
+      this._rotation = value * MathUtils.degToRad;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'rotation',
+    get: function get() {
+      return this._rotation;
+    }
+  }, {
+    key: 'backgroundColor',
+    set: function set(color) {
+      if (color === undefined) {
+        color = 'rgba(0,0,0,0)';
+      }
+      this._backgroundColor = color;
+      return this;
+    },
+    get: function get() {
+      return this._backgroundColor = color;
+    }
+  }, {
+    key: 'roundPixels',
+    set: function set(flag) {
+      this._roundPixels = flag;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'size',
+    get: function get() {
+      return { x: this._view.width, y: this._view.height };
     }
   }]);
 
@@ -1007,6 +1269,9 @@ var Camera = function () {
 }();
 
 exports.default = Camera;
+
+
+_gameSystemManager2.default.register('Camera', Camera, 'camera');
 
 /***/ }),
 
@@ -1347,7 +1612,7 @@ var EntityUpdateList = function () {
         value: function remove(instance) {}
     }, {
         key: "update",
-        value: function update() {
+        value: function update(dt) {
             var _this = this;
 
             var parent = _matrix2.default.identity();
@@ -1360,7 +1625,9 @@ var EntityUpdateList = function () {
 
                     (0, _updateModules2.default)(element.modules, _this.game);
 
-                    if (element.update !== undefined) element.update();
+                    if (element.transform._isDirty) element.transform._isDirty = false;
+
+                    if (element.update !== undefined) element.update(dt);
                 }
             });
         }
@@ -1385,16 +1652,6 @@ var EntityUpdateList = function () {
             this._pendingInstances.childs.length = 0;
             this._destroyInstances.childs.length = 0;
         }
-
-        /*initializeModules(instace)
-        {
-            let modules = instace.modules.attached;
-              modules.each(element => {
-                if (element.initialize !== undefined)
-                    element.initialize(instace, this.game);
-            });
-        }*/
-
     }, {
         key: "length",
         get: function get() {
@@ -1426,7 +1683,8 @@ module.exports = {
     Entity: __webpack_require__(/*! ./entity */ "./entities/entity.js"),
     SceneEntity: __webpack_require__(/*! ./sceneentity */ "./entities/sceneentity.js"),
     EntityUpdateList: __webpack_require__(/*! ./entityupdatelist */ "./entities/entityupdatelist.js"),
-    EntityFactory: __webpack_require__(/*! ./entityFactory */ "./entities/entityFactory.js")
+    EntityFactory: __webpack_require__(/*! ./entityFactory */ "./entities/entityFactory.js"),
+    Camera: __webpack_require__(/*! ./camera */ "./entities/camera.js")
 };
 
 /***/ }),
@@ -3506,173 +3764,134 @@ var BoundingBox = function () {
   function BoundingBox(x, y, width, height) {
     _classCallCheck(this, BoundingBox);
 
-    var xx = x || 0;
-    var yy = y || 0;
-    var w = width || 0;
-    var h = height || 0;
-    //this.center = new scintilla.Vector(x+width/2,y+height/2);
-    //this.size = new scintilla.Vector(width,height);
-    this.min = new _vector2.default(xx, yy);
-    this.max = new _vector2.default(xx + w, yy + h);
-    this.box = new _rect2.default(xx, yy, w, h);
+    x = x || Infinity;
+    y = y || Infinity;
+    width = width || -Infinity;
+    height = height || -Infinity;
+    this.min = new _vector2.default(x, y);
+    this.max = new _vector2.default(x + width, y + height);
+    //this.box = new Rect(xx,yy,w,h);
   }
 
   _createClass(BoundingBox, [{
-    key: 'intersects',
-    value: function intersects(value) {
-      if (BoundingBox.prototype.isPrototypeOf(value)) {
-        // TODO
-      }
-    }
-  }, {
-    key: 'contains',
-    value: function contains(value) {
-      // TODO
-    }
-  }, {
     key: 'set',
     value: function set(minX, minY, maxX, maxY) {
 
       this.min.set(minX, minY);
       this.max.set(maxX, maxY);
       this.box.set(this.min.x, this.min.y, this.max.x - this.min.x, this.max.y - this.min.y);
+      return this;
     }
-
-    // position (vector)
-    // scale (vector)
-    // rotation (vector x = cos, y = sin)
-
   }, {
-    key: 'setup',
-    value: function setup(pos, scale, rotation, anchor, width, height) {
-
-      var coords = [];
-      var negx = 1;
-      var negy = 1;
-
-      if (scale.x < 0) negx = -1;
-      if (scale.y < 0) negy = -1;
-
-      this.size.x = width * scale.x * negx;
-      this.size.y = height * scale.y * negy;
-      anchor.x *= scale.x * negx;
-      anchor.y *= scale.y * negy;
-      pos.x -= anchor.x;
-      pos.y -= anchor.y;
-      anchor.x += pos.x;
-      anchor.y += pos.y;
-
-      var callback = null;
-
-      if (rotation instanceof scintilla.Vector) callback = this['calcCoordsCosSin'];else callback = this['calcCoords'];
-
-      coords[0] = callback(pos.x, pos.y, anchor, rotation);
-      coords[1] = callback(pos.x + this.size.x, pos.y, anchor, rotation);
-
-      coords[2] = callback(pos.x, pos.y + this.size.y, anchor, rotation);
-      coords[3] = callback(pos.x + this.size.x, pos.y + this.size.y, anchor, rotation);
-
-      this.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
-      this.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
-
-      this.max.x = Math.max(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
-      this.max.y = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
-      this.center.x = pos.x + (this.max.x - this.min.x) / 2;
-      this.center.y = pos.y + (this.max.y - this.min.y) / 2;
-      this.box.set(this.min.x, this.min.y, this.max.x - this.min.x, this.max.y - this.min.y);
+    key: 'intersects',
+    value: function intersects(bounds) {
+      return this.max.x > bounds.min.x && this.max.y > bounds.min.y && this.min.x < bounds.max.x && this.min.y < bounds.max.y || this.min.x > bounds.max.x && this.min.y > bounds.max.y && this.max.x < bounds.min.x && this.max.y < bounds.min.y;
     }
-
-    /*setBySprite : function(sprite, position, scale, rotation) {
-          //this.set(position,scale,rotation,);
-      }*/
-
   }, {
-    key: 'setByGameObject',
-    value: function setByGameObject(gameObject, local) {
+    key: 'contains',
+    value: function contains(x, y) {
+      return x > this.min.x && y > this.min.y && x < this.max.x && y < this.max.y;
+    }
+  }, {
+    key: 'expand',
+    value: function expand(xRadius, yRadius) {
 
-      //if (gameObject.render != null) {
+      yRadius = yRadius || xRadius;
 
-      if (local) {
-        this.setup(gameObject.position, gameObject.scale, gameObject._cosSin, gameObject.render.origin, gameObject.render.width, gameObject.render.height);
+      if (this.max.x > this.min.x) {
+        this.min.x -= xRadius;
+        this.max.x += xRadius;
       } else {
-
-        var frame = gameObject.component['render'].frame;
-
-        var pos = { x: gameObject.worldPosition.x, y: gameObject.worldPosition.y };
-        var org = {
-          x: gameObject.origin.x * frame.width,
-          y: gameObject.origin.y * frame.height };
-
-        pos.x += gameObject.game.camera.view.x;
-        pos.y += gameObject.game.camera.view.y;
-
-        this.setup(pos, gameObject.worldScale, gameObject.worldRotation, org, frame.width, frame.height);
+        this.min.x += xRadius;
+        this.max.x -= xRadius;
       }
+
+      if (this.max.y > this.min.y) {
+        this.min.y -= yRadius;
+        this.max.y += yRadius;
+      } else {
+        this.min.y += yRadius;
+        this.max.y -= yRadius;
+      }
+    }
+  }, {
+    key: 'merge',
+    value: function merge(value) {
+
+      // merge with another bounds
+      if (value instanceof BoundingBox) {
+        this.min.x = Math.min(this.min.x, value.min.x);
+        this.min.y = Math.min(this.min.y, value.min.y);
+        this.max.x = Math.max(this.max.x, value.max.x);
+        this.max.y = Math.max(this.max.y, value.max.y);
+        return this;
+      } else if (value instanceof _vector2.default) {
+        return this.mergeWithPoint(value.x, value.y);
+      } else {
+        this.min.x = Math.min(this.min.x, value);
+        this.min.y = Math.min(this.min.y, value);
+        this.max.x = Math.max(this.max.x, value);
+        this.max.y = Math.max(this.max.y, value);
+        return this;
+      }
+    }
+  }, {
+    key: 'mergeWithPoint',
+    value: function mergeWithPoint(x, y) {
+      this.min.x = Math.min(this.min.x, x);
+      this.min.y = Math.min(this.min.y, y);
+      this.max.x = Math.max(this.max.x, x);
+      this.max.y = Math.max(this.max.y, y);
+      return this;
+    }
+  }, {
+    key: 'extend',
+    value: function extend(bounds) {
+      // min merge
+      if (bounds.min.x < this.min.x) this.min.x = bounds.min.x;
+
+      if (bounds.min.y < this.min.y) this.min.y = bounds.min.y;
+
+      // max merge
+      if (bounds.max.x > this.max.x) this.max.x = bounds.max.x;
+
+      if (bounds.max.y > this.max.y) this.max.y = bounds.max.y;
 
       return this;
     }
   }, {
-    key: 'setByPosition',
-    value: function setByPosition(position) {
+    key: 'extendByPoint',
+    value: function extendByPoint(x, y) {
+      if (x < this.min.x) this.min.x = x;
+      if (y < this.min.y) this.min.y = y;
+      if (x > this.max.x) this.max.x = x;
+      if (y > this.max.y) this.max.y = y;
 
-      this.min.set(position.x, position.y);
-      this.max.set(position.x + 1, position.y + 1);
-      this.box.set(position.x, position.y, 1, 1);
+      return this;
     }
   }, {
-    key: 'setByShape',
-    value: function setByShape(shape, position) {
+    key: 'limit',
+    value: function limit(xmin, ymin, xmax, ymax) {
+      if (this.min.x < xmin) this.min.x = xmin;
 
-      var minX = Infinity,
-          minY = Infinity,
-          maxX = -Infinity,
-          maxY = -Infinity;
-      var type = shape.getType();
+      if (this.min.y < ymin) this.min.y = ymin;
 
-      if (type == "Polygon") {
+      if (this.max.x > xmax) this.max.x = xmax;
 
-        var points = shape.getPoints();
-
-        points.forEach(function (point) {
-          minX = Math.min(minX, point.x);
-          minY = Math.min(minY, point.y);
-          maxX = Math.max(maxX, point.x);
-          maxY = Math.max(maxY, point.y);
-        });
-      }
-
-      if (position !== undefined) {
-        minX += position.x;
-        minY += position.y;
-        maxX += position.x;
-        maxY += position.y;
-      }
-
-      this.min.set(minX, minY);
-      this.max.set(maxX, maxY);
-      this.box.set(minX, minY, maxX - minX, maxY - minY);
+      if (this.max.y > ymax) this.max.y = ymax;
     }
   }, {
-    key: 'calcCoordsCosSin',
-    value: function calcCoordsCosSin(x, y, anchor, cos_and_sin) {
+    key: 'offset',
+    value: function offset(x, y) {
+      var o = { x: x, y: y };
+      o.x -= this.min.x;
+      o.y -= this.min.y;
 
-      var coord = { x: 0, y: 0 };
+      if (this.max.x > this.min.x) o.x /= this.max.x - this.min.x;
 
-      coord.x = anchor.x + (x - anchor.x) * cos_and_sin.x - (y - anchor.y) * cos_and_sin.y;
-      coord.y = anchor.y - (x - anchor.x) * cos_and_sin.y - (y - anchor.y) * cos_and_sin.x;
+      if (this.max.y > this.min.y) o.y /= this.max.y - this.min.y;
 
-      return coord;
-    }
-  }, {
-    key: 'calcCoords',
-    value: function calcCoords(x, y, anchor, rotation) {
-
-      var coord = { x: 0, y: 0 };
-
-      coord.x = anchor.x + (x - anchor.x) * Math.cos(rotation) - (y - anchor.y) * Math.sin(rotation);
-      coord.y = anchor.y - (x - anchor.x) * Math.sin(rotation) - (y - anchor.y) * Math.cos(rotation);
-
-      return coord;
+      return o;
     }
   }, {
     key: 'center',
@@ -4215,59 +4434,71 @@ var Vector = function () {
   function Vector(x, y) {
     _classCallCheck(this, Vector);
 
-    this._x = x || 0;
-    this._y = y || 0;
+    this.x = x || 0;
+    this.y = y || 0;
   }
+
+  /*
+  set x(value) {
+    this.x = value;
+    return this.x;
+  }
+  get x() {return this.x;}
+  set y(value) {
+    this.y = value;
+    return this.y;
+  }
+  get y() {return this.y;}*/
 
   _createClass(Vector, [{
     key: 'set',
     value: function set(x, y) {
 
-      this._x = x;
-      this._y = y || x;
+      this.x = x;
+      this.y = y || x;
     }
   }, {
     key: 'move',
     value: function move(x, y) {
 
-      this._x += x;
-      this._y += y;
+      this.x += x;
+      this.y += y;
     }
   }, {
     key: 'scale',
     value: function scale(x, y) {
 
-      this._x *= x;
-      this._y *= y || x;
+      this.x *= x;
+      this.y *= y || x;
       return this;
     }
   }, {
     key: 'rotate',
     value: function rotate(radians) {
 
-      var x = this._x;
-      var y = this._y;
-      this._x = x * Math.cos(radians) - y * Math.sin(radians);
-      this._y = x * Math.sin(radians) + y * Math.cos(radians);
+      var x = this.x;
+      var y = this.y;
+      this.x = x * Math.cos(radians) - y * Math.sin(radians);
+      this.y = x * Math.sin(radians) + y * Math.cos(radians);
       return this;
     }
   }, {
     key: 'rotateAround',
     value: function rotateAround(radians, other) {
 
-      /*var x = this._x;
-      var y = this._y;*/
-      var dx = this._x - other.x;
-      var dy = this._y - other.y;
+      /*var x = this.x;
+      var y = this.y;*/
+      var dx = this.x - other.x;
+      var dy = this.y - other.y;
 
       var c = Math.cos(radians);
       var s = Math.sin(radians);
 
-      /*this._x = c * (x-other.x) - s * (y-other.y) + other.x;
-      this._y = s * (x-other.x) + c * (y-other.y) + other.y;*/
+      /*this.x = c * (x-other.x) - s * (y-other.y) + other.x;
+      this.y = s * (x-other.x) + c * (y-other.y) + other.y;*/
 
-      this._x = other.x + (c * dx - s * dy);
-      this._y = other.y + (s * dx + c * dy);
+      this.x = other.x + (c * dx - s * dy);
+      this.y = other.y + (s * dx + c * dy);
 
       return this;
     }
@@ -4275,8 +4506,8 @@ var Vector = function () {
     key: 'copy',
     value: function copy(otherVector) {
 
-      this._x = otherVector.x;
-      this._y = otherVector.y;
+      this.x = otherVector.x;
+      this.y = otherVector.y;
       return this;
     }
   }, {
@@ -4285,39 +4516,39 @@ var Vector = function () {
 
       var mag = this.length();
       if (mag > 0) {
-        this._x = this._x / mag;
-        this._y = this._y / mag;
+        this.x = this.x / mag;
+        this.y = this.y / mag;
       }
       return this;
     }
   }, {
     key: 'reverse',
     value: function reverse() {
-      this._x = -this._x;
-      this._y = -this._y;
+      this.x = -this.x;
+      this.y = -this.y;
       return this;
     }
   }, {
     key: 'add',
     value: function add(other) {
-      this._x += other.x;
-      this._y += other.y;
+      this.x += other.x;
+      this.y += other.y;
       return this;
     }
   }, {
     key: 'sub',
     value: function sub(other) {
-      this._x -= other.x;
-      this._y -= other.y;
+      this.x -= other.x;
+      this.y -= other.y;
       return this;
     }
   }, {
     key: 'perp',
     value: function perp() {
 
-      var x = this._x;
-      this._x = this._y;
-      this._y = -x;
+      var x = this.x;
+      this.x = this.y;
+      this.y = -x;
       return this;
     }
   }, {
@@ -4333,7 +4564,7 @@ var Vector = function () {
   }, {
     key: 'clone',
     value: function clone() {
-      return new Vector(this._x, this._y);
+      return new Vector(this.x, this.y);
     }
   }, {
     key: 'length',
@@ -4346,36 +4577,23 @@ var Vector = function () {
       return Vector.dot(this, this);
     }
   }, {
-    key: 'x',
-    set: function set(value) {
-      this._x = value;
-      return this._x;
-    },
-    get: function get() {
-      return this._x;
-    }
-  }, {
-    key: 'y',
-    set: function set(value) {
-      this._y = value;
-      return this._y;
-    },
-    get: function get() {
-      return this._y;
-    }
-  }, {
     key: 'magnitude',
     get: function get() {
-      return Math.sqrt(this._x * this._x + this._y * this._y);
+      return Math.sqrt(this.x * this.x + this.y * this.y);
     }
   }, {
     key: 'normal',
     get: function get() {
       var mag = this.magnitude;
-      var vec = new tobiJS.Vector(this._x / mag, this._y / mag);
+      var vec = new tobiJS.Vector(this.x / mag, this.y / mag);
       return vec;
     }
   }], [{
+    key: 'abs',
+    value: function abs(vector) {
+      return new Vector(Math.abs(vector.x), Math.abs(vector.y));
+    }
+  }, {
     key: 'scalar',
     value: function scalar(a, b) {
       return a.x * b.y - a.y * b.x;
@@ -4448,6 +4666,37 @@ module.exports = Vector;
 
 /***/ }),
 
+/***/ "./modules/core/computeDelimiterPoint.js":
+/*!***********************************************!*\
+  !*** ./modules/core/computeDelimiterPoint.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ComputeDelimiterPoint;
+function ComputeDelimiterPoint(x, y, rotation, anchor) {
+
+    var coord = { x: 0, y: 0 };
+
+    if (anchor === undefined) {
+        coord.x = x * rotation.x - y * rotation.x;
+        coord.y = x * rotation.y - y * rotation.y;
+    } else {
+        coord.x = anchor.x + (x - anchor.x) * rotation.x - (y - anchor.y) * rotation.x;
+        coord.y = anchor.y - (x - anchor.x) * rotation.y - (y - anchor.y) * rotation.y;
+    }
+
+    return coord;
+}
+
+/***/ }),
+
 /***/ "./modules/core/transform.js":
 /*!***********************************!*\
   !*** ./modules/core/transform.js ***!
@@ -4459,7 +4708,7 @@ module.exports = Vector;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4480,61 +4729,81 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-//Vector = Math.Vector;
-//Matrix = Math.Matrix;
-//BoundingBox = Math.BoundingBox;
-
 var Transform = function () {
+  function Transform() {
+    _classCallCheck(this, Transform);
 
-    // private:
-    //var _cosSin = new scintilla.Vector(0,0);
-    //var _oldRotation = -2;
+    this.position = new _vector2.default(0, 0);
+    this.scale = new _vector2.default(1, 1);
+    this.angle = 0;
+    this.rotation = 0;
+    this.matrix = new _matrix2.default(1);
+    this._isDirty = true;
+    this.origin = new _vector2.default(0, 0);
+    this._cosSin = { x: 0, y: 0 };
+    //this.worldPosition = new Vector(0,0);
+    //this.worldScale =  new Vector(1,1);
+    //this.worldRotation = 0;
+    //this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
+    //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
+  }
 
-    // public:
-    function Transform() {
-        _classCallCheck(this, Transform);
+  _createClass(Transform, [{
+    key: 'destroy',
+    value: function destroy() {
 
-        //this.parent = null;
-
-        this.rotation = 0;
-
-        this.position = new _vector2.default(0, 0);
-        this.scale = new _vector2.default(1, 1);
-        this.angle = 0;
-
-        this.matrix = new _matrix2.default(1);
-        this.worldPosition = new _vector2.default(0, 0);
-        this.worldScale = new _vector2.default(1, 1);
-        this.worldRotation = 0;
-
-        this.origin = new _vector2.default(0, 0);
-        this.bounds = new _boundingbox2.default(0, 0, 1, 1); // the full bounds of the node - defined by render
-        this.globalBounds = new _boundingbox2.default(0, 0, 1, 1); // defined by render
-
-        this._isDirty = true;
-        this._cosSin = { x: 0, y: 0 };
+      delete this.position;
+      delete this.scale;
+      delete this.matrix;
+      delete this.worldPosition;
+      delete this.worldScale;
+      delete this.origin;
+      delete this.bounds;
+      delete this.globalBounds;
+      delete this._cosSin;
     }
+  }]);
 
-    _createClass(Transform, [{
-        key: 'destroy',
-        value: function destroy() {
-
-            delete this.position;
-            delete this.scale;
-            delete this.matrix;
-            delete this.worldPosition;
-            delete this.worldScale;
-            delete this.origin;
-            delete this.bounds;
-            delete this.globalBounds;
-            delete this._cosSin;
-        }
-    }]);
-
-    return Transform;
+  return Transform;
 }();
 
 exports.default = Transform;
+
+/***/ }),
+
+/***/ "./modules/core/updateBounds.js":
+/*!**************************************!*\
+  !*** ./modules/core/updateBounds.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateBounds;
+
+var _computeDelimiterPoint = __webpack_require__(/*! ./computeDelimiterPoint */ "./modules/core/computeDelimiterPoint.js");
+
+var _computeDelimiterPoint2 = _interopRequireDefault(_computeDelimiterPoint);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function UpdateBounds(bounds, rect, rotation) {
+
+    coords[0] = (0, _computeDelimiterPoint2.default)(rect.x, rect.y, rotation);
+    coords[1] = (0, _computeDelimiterPoint2.default)(rect.x + rect.width, rect.y, rotation);
+    coords[2] = (0, _computeDelimiterPoint2.default)(rect.x, rect.y + rect.height, rotation);
+    coords[3] = (0, _computeDelimiterPoint2.default)(rect.x + rect.width, rect.y + rect.height, rotation);
+
+    bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+    bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+    bounds.max.x = Math.max(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+    bounds.max.y = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+}
 
 /***/ }),
 
@@ -4578,6 +4847,11 @@ function UpdateModules(modulesManager, game) {
 
         modulesManager._pendingModules.clear();
     }
+
+    var entity = modulesManager.entity;
+
+    var render = modulesManager.attached.render;
+    if (render !== undefined || render != null) render.moduleUpdate();
 }
 
 /***/ }),
@@ -4593,7 +4867,7 @@ function UpdateModules(modulesManager, game) {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 exports.default = UpdateTransform;
 
@@ -4621,34 +4895,37 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function UpdateTransform(transform, parentMatrix) {
 
-    if (parentMatrix === undefined) parentMatrix = null;
+        //if (parentMatrix === undefined) parentMatrix = null;
 
-    if (!transform._isDirty) return;
+        if (!transform._isDirty) return;
 
-    var a = void 0,
-        b = void 0,
-        c = void 0,
-        d = void 0,
-        x = void 0,
-        y = void 0;
-    var wt = transform.matrix;
-    var pt = parentMatrix || _matrix2.default.identity();
+        var a = void 0,
+            b = void 0,
+            c = void 0,
+            d = void 0,
+            x = void 0,
+            y = void 0;
+        var wt = transform.matrix;
+        var pt = _matrix2.default.identity();
 
-    transform.rotation = transform.angle * _mathutils2.default.degToRad;
+        transform.rotation = transform.angle * _mathutils2.default.degToRad;
 
-    //if (transform.rotation % MathUtils.TAU)
-    {
+        //if (transform.rotation % MathUtils.TAU) {
+
 
         if (transform.rotation !== transform._oldRotation) {
-            transform._oldRotation = transform.rotation;
-            transform._cosSin.y = Math.sin(transform.rotation);
-            transform._cosSin.x = Math.cos(transform.rotation);
+                transform._oldRotation = transform.rotation;
+                transform._cosSin.y = Math.sin(transform.rotation);
+                transform._cosSin.x = Math.cos(transform.rotation);
         }
 
         console.clear();
-        wt.setModelMatrix(transform.position, transform.scale, transform._cosSin, transform.origin).multiply(pt);
 
-        console.log(wt.toString());
+        wt.setModelMatrix(transform.position, transform.scale, transform._cosSin, transform.origin); //.multiply(pt);
+
+        console.log(transform.matrix.toString());
+
+        //console.log(wt.toString());
         // concat the parent matrix with the objects transform.
         /*wt.a[0]  = a  * pt.a[0] + b  * pt.a[1]; // a = a * a + b * c
         wt.a[3]  = a  * pt.a[3] + b  * pt.a[4]; // b = a * b + b * d
@@ -4671,12 +4948,181 @@ function UpdateTransform(transform, parentMatrix) {
         wt.d  = d  * pt.d;
         wt.x = x * pt.a + y * pt.c + pt.x;
         wt.y = x * pt.b + y * pt.d + pt.y;*/
+
+        // }
+
+        //transform.worldPosition.set(wt.x ,wt.y);
+        //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
+        //transform.worldRotation = Math.atan2(-wt.c, wt.d);
+}
+
+/***/ }),
+
+/***/ "./modules/core/updateTransformBounds.js":
+/*!***********************************************!*\
+  !*** ./modules/core/updateTransformBounds.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateTransformBounds;
+
+var _mathutils = __webpack_require__(/*! ../../math/mathutils */ "./math/mathutils.js");
+
+var _mathutils2 = _interopRequireDefault(_mathutils);
+
+var _vector = __webpack_require__(/*! ../../math/vector */ "./math/vector.js");
+
+var _vector2 = _interopRequireDefault(_vector);
+
+var _computeDelimiterPoint = __webpack_require__(/*! ./computeDelimiterPoint */ "./modules/core/computeDelimiterPoint.js");
+
+var _computeDelimiterPoint2 = _interopRequireDefault(_computeDelimiterPoint);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function UpdateTransformBounds(bounds, frame, transform) {
+
+    var coords = [];
+    var scale = _vector2.default.abs(transform.scale);
+    var pos = transform.position;
+    var anchor = transform.origin;
+    var size = {
+        x: frame.width * scale.x,
+        y: frame.height * scale.y
+    };
+
+    anchor.x *= scale.x;
+    anchor.y *= scale.y;
+    pos.x -= anchor.x;
+    pos.y -= anchor.y;
+    anchor.x += pos.x;
+    anchor.y += pos.y;
+
+    coords[0] = (0, _computeDelimiterPoint2.default)(pos.x, pos.y, rotation, anchor);
+    coords[1] = (0, _computeDelimiterPoint2.default)(pos.x + size.x, pos.y, rotation, anchor);
+    coords[2] = (0, _computeDelimiterPoint2.default)(pos.x, pos.y + size.y, rotation, anchor);
+    coords[3] = (0, _computeDelimiterPoint2.default)(pos.x + size.x, pos.y + size.y, rotation, anchor);
+
+    bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+    bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+    bounds.max.x = Math.max(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+    bounds.max.y = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+}
+
+// position (vector)
+// scale (vector)
+// rotation (vector x = cos, y = sin)
+/*
+setup(pos, scale, rotation, anchor, width, height) {
+    var coords = [];
+  var negx = 1;
+  var negy = 1;
+    if (scale.x < 0)
+        negx = -1;
+  if (scale.y < 0)
+        negy = -1;
+
+    this.size.x = width*scale.x*negx;
+  this.size.y = height*scale.y*negy;
+  anchor.x *= scale.x*negx;
+  anchor.y *= scale.y*negy;
+  pos.x -= anchor.x;
+  pos.y -= anchor.y;
+  anchor.x += pos.x;
+  anchor.y += pos.y;
+    var callback = null;
+    if (rotation instanceof  scintilla.Vector)
+      callback = this['calcCoordsCosSin'];
+    else
+      callback = this['calcCoords'];
+    coords[0] = callback( pos.x, pos.y, anchor, rotation);
+  coords[1] = callback( pos.x + this.size.x,  pos.y, anchor,rotation);
+    coords[2] = callback( pos.x , pos.y + this.size.y, anchor,rotation);
+  coords[3] = callback( pos.x + this.size.x , pos.y + this.size.y,anchor, rotation);
+
+    this.min.x = Math.min(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
+  this.min.y = Math.min(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+    this.max.x = Math.max(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
+  this.max.y = Math.max(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+  this.center.x = pos.x+(this.max.x-this.min.x)/2;
+  this.center.y = pos.y+(this.max.y-this.min.y)/2;
+  this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
+  }
+
+setByGameObject(gameObject, local) {
+    //if (gameObject.render != null) {
+      if (local) {
+      this.setup(gameObject.position,
+              gameObject.scale,
+              gameObject._cosSin,
+              gameObject.render.origin,
+              gameObject.render.width,
+              gameObject.render.height
+            );
+    } else {
+        var frame = gameObject.component['render'].frame;
+        var pos = {x:gameObject.worldPosition.x, y:gameObject.worldPosition.y};
+      var org = {
+        x:gameObject.origin.x * frame.width,
+        y:gameObject.origin.y * frame.height};
+        pos.x += gameObject.game.camera.view.x;
+      pos.y += gameObject.game.camera.view.y;
+        this.setup(pos,
+              gameObject.worldScale,
+              gameObject.worldRotation,
+              org,
+              frame.width,
+              frame.height
+            );
     }
 
-    //transform.worldPosition.set(wt.x ,wt.y);
-    //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
-    //transform.worldRotation = Math.atan2(-wt.c, wt.d);
+  return this;
+
 }
+
+setByShape(shape,position) {
+
+  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  var type = shape.getType();
+    if (type == "Polygon") {
+      var points = shape.getPoints();
+      points.forEach(function (point) {
+        minX = Math.min(minX, point.x);
+        minY = Math.min(minY, point.y);
+        maxX = Math.max(maxX, point.x);
+        maxY = Math.max(maxY, point.y);
+      });
+  }
+    if (position !== undefined) {
+    minX += position.x;
+    minY += position.y;
+    maxX += position.x;
+    maxY += position.y;
+  }
+
+  this.min.set(minX,minY);
+  this.max.set(maxX,maxY)
+  this.box.set(minX,minY,maxX-minX,maxY-minY);
+  }
+  calcCoordsCosSin(x, y, anchor, cos_and_sin) {
+    var coord = {x:0,y:0};
+    coord.x = anchor.x + ((x-anchor.x) * cos_and_sin.x) - ((y-anchor.y) * cos_and_sin.y);
+  coord.y = anchor.y - ((x-anchor.x) * cos_and_sin.y) - ((y-anchor.y) * cos_and_sin.x);
+      return coord;
+  }
+  calcCoords(x,y,anchor,rotation) {
+    var coord = {x:0,y:0};
+    coord.x = anchor.x + ((x-anchor.x) * Math.cos(rotation)) - ((y-anchor.y) * Math.sin(rotation));
+  coord.y = anchor.y - ((x-anchor.x) * Math.sin(rotation)) - ((y-anchor.y) * Math.cos(rotation));
+      return coord;
+  }*/
 
 /***/ }),
 
@@ -5152,6 +5598,10 @@ var _moduleProvider = __webpack_require__(/*! ../moduleProvider */ "./modules/mo
 
 var _moduleProvider2 = _interopRequireDefault(_moduleProvider);
 
+var _updateTransformBounds = __webpack_require__(/*! ../core/updateTransformBounds */ "./modules/core/updateTransformBounds.js");
+
+var _updateTransformBounds2 = _interopRequireDefault(_updateTransformBounds);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5206,6 +5656,14 @@ var Sprite = function (_Renderable) {
             if (this.source != image) this.source = image;
 
             if (changeFrame) this.setFrame(0, 0, this.source.width, this.source.height);
+        }
+    }, {
+        key: "moduleUpdate",
+        value: function moduleUpdate() {
+
+            if (!this.entity.transform._isDirty) return;
+
+            (0, _updateTransformBounds2.default)(this.bounds, this.frame, this.entity.transform);
         }
     }, {
         key: "render",
@@ -5280,10 +5738,10 @@ var Debug = function () {
       this.draw.alpha(0.5);
       this.draw.rectangle(0, 0, this.game.width, 14 * 4 + 16, this.bgcolor);
       this.draw.alpha(1);
-      this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
+      //this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
       //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
-      this.drawLine("Instances " + this.game.system.entityList.length);
-      this.drawLine("Draw Calls " + this.game.system.render.drawCalls); /*this.game.physics.length);*/
+      //this.drawLine("Instances " + this.game.system.entityList.length);
+      this.drawLine("Draw Calls: " + this.game.system.render.drawCalls); /*this.game.physics.length);*/
       this.x += this.game.width / 2;
       this.y = 12 + 8;
       //this.drawLine("Sounds count " + this.game.sound.length);
@@ -6590,7 +7048,8 @@ var SceneManager = function () {
 
       this.current_scene_name = sceneName;
 
-      this.game.time.refresh();
+      //this.game.time.refresh();
+
 
       //this.current_scene.camera = this.game.world.camera;
 
@@ -6669,14 +7128,14 @@ var SceneManager = function () {
     }
   }, {
     key: 'update',
-    value: function update() {
+    value: function update(dt) {
 
       if (this._setup) {
 
         if (this.current_scene != null) {
-          this.entityUpdateList.update();
+          this.entityUpdateList.update(dt);
 
-          this.entityUpdateList.lateUpdate();
+          this.entityUpdateList.lateUpdate(dt);
         }
         /*if (this.onUpdateCallback)
         {
@@ -7294,9 +7753,14 @@ module.exports = {
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = MergeSort;
+
 // http://www.stoimen.com/blog/2010/07/02/friday-algorithms-javascript-merge-sort/
 // https://codereview.stackexchange.com/questions/87000/fast-merge-sort-in-javascript
-var MergeSort = function MergeSort(array, predicate) {
+function MergeSort(array, predicate) {
     var size = array.length;
 
     if (size < 2) return array;
@@ -7366,248 +7830,13 @@ var MergeSort = function MergeSort(array, predicate) {
 
     return msort(0, size); //mid,size);
 
-};
-
-module.exports = MergeSort;
+}
 
 /***/ }),
 
-/***/ "./time/time.js":
-/*!**********************!*\
-  !*** ./time/time.js ***!
-  \**********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Time = function () {
-  function Time(game) {
-    _classCallCheck(this, Time);
-
-    this.game = game;
-
-    // START TIME
-    this.startTime = 0;
-
-    // date now
-    this.time = 0;
-
-    this.currentTime = 0;
-    this.previousTime = 0;
-
-    this.elapsed = 0;
-    this.elapsed_mili = 0;
-
-    // FOR TIME OUT MODE
-    this.timeOut_toCall = 0;
-    this.timeOut_expected = 0;
-
-    // FPS
-    this.fps = 60;
-    this.fpsDesired = 60;
-    this.timeStep_mili = 1 / this.fpsDesired;
-    this.timeStep = 1000 / this.fpsDesired;
-
-    // lag
-    this.accumalator = 0;
-    this.accumulatorMax = this.timeStep * 10;
-    this.accumulatorDelta = this.timeStep;
-
-    this.updateStart = 0;
-    this.updateLast = 0;
-    this.updateAverage = 0;
-    this.updateDelta = 0;
-
-    this.deltaTime = 0;
-
-    this._lastFpsUpdate = 0;
-    this._framesThisSecond = 0;
-  }
-
-  _createClass(Time, [{
-    key: "start",
-    value: function start() {
-
-      this.startTime = Date.now();
-      this.time = Date.now();
-    }
-  }, {
-    key: "refresh",
-    value: function refresh() {
-
-      var previousDateNow = this.time;
-
-      this.time = Date.now();
-
-      this.elapsed_mili = this.time - previousDateNow;
-
-      //this.currentTime =  this.previousTime = window.performance.now();
-      //this.deltaTime = 0;
-      //this.elapsed = 0;
-      //this._framesThisSecond = 0;
-    }
-  }, {
-    key: "update",
-    value: function update(timestamp) {
-
-      // DATE NOW ----------------------------------
-      var previousDateNow = this.time;
-
-      this.time = Date.now(); // current time
-
-      this.elapsed_mili = this.time - previousDateNow;
-
-      // timestamp --------------------
-
-      // Throttle the frame rate.
-      if (timestamp < this.previousTime + this.timeStep) {
-        //requestAnimationFrame(mainLoop);
-        return false;
-      }
-
-      // set prev
-      this.previousTime = this.currentTime;
-
-      // set current
-      this.currentTime = timestamp;
-
-      // delta time (MILISECONDS)
-      this.elapsed = this.currentTime - this.previousTime;
-
-      // delta time in  seconds
-      this.deltaTime = 0; //this.elapsed / 1000.0;
-
-
-      if (this.game.updateGameMethod._isTimeOutMode) {
-
-        this.timeOut_toCall = Math.floor(Math.max(0, 1000.0 / this.fpsDesired - (this.timeOut_expected - time)));
-
-        // time when the next call is expected if using timers
-        this.timeOut_expected = time + this.timeOut_toCall;
-      }
-
-      // Track acumulate time
-
-
-      //this.accumalator += this.elapsed; //Math.max(Math.min(this.timeStep * 3, this.elapsed), 0); //timestamp - this._lastTimeStamp;
-      this.accumalator += Math.max(Math.min(this.timeStep * 3, this.elapsed), 0);
-
-      this.accumulatorDelta = this.timeStep; //, this.updateAverage);
-
-      //console.log(this.accumalator + " " + this.updateAverage);
-      //this._lag = Math.min(this._lag, this.accumulatorMax);
-
-      //  this.updateDelta = this.timeStep // interpolation = this.elapsed (deltatime); // or step
-      //this.accumulatorUpdateDelta = this.updateDelta; // interpolation = Math.max(this.updateDelta, this.updateAverage);
-
-      // FPS Update
-      if (this.game.debugMode) this.fpsUpdate(timestamp);
-
-      return true;
-
-      //this.last_time = now;
-
-      /*var elapsed = (this.current_time - this.last_time)/1000.0;
-      this.last_time = this.current_time;
-      this.delta_time = Math.min(elapsed, 1/60.0);*/
-
-      //console.log(this.delta_time);
-
-      //  Adjust accordingly.
-      /*this.time_elapsed_mili = this.current_time - previousDateNow;
-        // 'now' is currently still holding the time of the last call, move it into prevTime
-      this.prev_time  = this.now_time;
-        // update 'now' to hold the current time
-      // this.now may hold the RAF high resolution time value if RAF is available (otherwise it also holds Date.now)
-      this.now_time = time;
-       // elapsed time between previous call and now - this could be a high resolution value
-      this.time_elapsed = this.now_time - this.prev_time;*/
-
-      //if (this.game.updateGameMethod._usingTimeout)
-      //{
-      // console.log('Time isSet', this._desiredFps, 'te', this.timeExpected, 'time', time);
-
-      // time to call this function again in ms in case we're using timers instead of RequestAnimationFrame to update the game
-      //this.timeToCall = Math.floor(Math.max(0, (1000.0 / this._desiredFps) - (this.timeExpected - time)));
-
-      // time when the next call is expected if using timers
-      //  this.timeExpected = time + this.timeToCall;
-
-      // console.log('Time expect', this.timeExpected);
-      //  }
-
-      //  Paused but still running?
-      /*  if (!this.game.paused)
-        {
-            //  Our internal Phaser.Timer
-            this.events.update(this.time);
-              if (this._timers.length)
-            {
-                this.updateTimers();
-            }
-        }*/
-    }
-  }, {
-    key: "fpsUpdate",
-    value: function fpsUpdate(timestamp) {
-
-      // METHOD 2
-
-      // count the number of time.update calls
-      /*this._frameCount++;
-      this._elapsedAccumulator += this.elapsed;
-        // occasionally recalculate the suggestedFps based on the accumulated elapsed time
-      if (this._frameCount >= this._desiredFps * 2)
-      {
-          // this formula calculates suggestedFps in multiples of 5 fps
-          this.suggestedFps = Math.floor(200 / (this._elapsedAccumulator / this._frameCount)) * 5;
-          this._frameCount = 0;
-          this._elapsedAccumulator = 0;
-      }
-        this.msMin = Math.min(this.msMin, this.elapsed);
-      this.msMax = Math.max(this.msMax, this.elapsed);
-        this.frames++;
-        if (this.now > this._timeLastSecond + 1000)
-      {
-          this.fps = Math.round((this.frames * 1000) / (this.now - this._timeLastSecond));
-          this.fpsMin = Math.min(this.fpsMin, this.fps);
-          this.fpsMax = Math.max(this.fpsMax, this.fps);
-          this._timeLastSecond = this.now;
-          this.frames = 0;
-      }*/
-
-      // METHOD 1
-      if (timestamp > this._lastFpsUpdate + 1000) {
-        this.fps = 0.25 * this._framesThisSecond + 0.75 * this.fps;
-
-        this._lastFpsUpdate = timestamp;
-        this._framesThisSecond = 0;
-      }
-
-      this._framesThisSecond++;
-    }
-  }]);
-
-  return Time;
-}();
-
-exports.default = Time;
-
-/***/ }),
-
-/***/ "./time/updatetime.js":
+/***/ "./time/updateStep.js":
 /*!****************************!*\
-  !*** ./time/updatetime.js ***!
+  !*** ./time/updateStep.js ***!
   \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7616,97 +7845,226 @@ exports.default = Time;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _requestAnimationFrame = __webpack_require__(/*! ../dom/requestAnimationFrame */ "./dom/requestAnimationFrame.js");
+
+var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var UpdateTime = function () {
-    function UpdateTime(game, timeout) {
-        _classCallCheck(this, UpdateTime);
+var UpdateStep = function () {
+        function UpdateStep(game, config) {
+                _classCallCheck(this, UpdateStep);
 
-        if (timeout === undefined) {
-            timeout = false;
+                // CORE
+                this.game = game;
+                this.requestAnimationFrame = new _requestAnimationFrame2.default(config.time.timeoutMode);
+                this.isRunning = false;
+                this.loop = null;
+                this.render = null;
+
+                // TIMER
+                this.startTime = 0; // start time
+                this.time = 0; // current hi-time
+                this.previousTime = 0; // last hi-time
+                this.elapsed = 0; // elapsed time
+                this.hiDeltaTime = 0; // raw delta time
+
+                // FPS
+                this.requireFpsUpdate = true;
+                this.fps = 60;
+                this.fpsDesired = 60;
+                this._nextFpsUpdate = 0;
+                this._framesThisSecond = 0;
+
+                // ACCUMALATOR METHOD
+                this.interpolation = false;
+                this.timeStep = 1000 / this.fpsDesired;
+                this.minTimeStep = this.timeStep * 1.25;
+                this.accumalator = 0;
+                this.accumulatorMax = this.timeStep * 10;
+                this.updateLast = 0;
+                this.updateAverageDelta = 0;
+                this.frameCounter = 0;
         }
 
-        this.game = game;
-        this.isRunning = false;
-        this.setTimeOutMode = timeout;
-        this._isTimeOutMode = false;
+        _createClass(UpdateStep, [{
+                key: "init",
+                value: function init(gameLoop) {
 
-        var vendors = ['ms', 'moz', 'webkit', 'o'];
+                        if (this.isRunning) return;
 
-        for (var x = 0; x < vendors.length && !window.requestAnimationFrame; x++) {
-            window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
-            window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'];
-        }
+                        this.reset();
 
-        //callbacks
-        this._onLoopingCallback = null;
-        this._timeOutCallback = null;
-    }
+                        this.loop = gameLoop.loop.bind(gameLoop);
+                        this.render = gameLoop.render.bind(gameLoop);
 
-    _createClass(UpdateTime, [{
-        key: 'start',
-        value: function start() {
+                        this.startTime = window.performance.now();
 
-            this.isRunning = true;
+                        this.requestAnimationFrame.start(this.update.bind(this));
 
-            var self = this;
+                        this.isRunning = true;
+                }
+        }, {
+                key: "update",
+                value: function update(timeStamp) {
 
-            if (!window.requestAnimationFrame || this.setTimeOutMode) {
-                this._isTimeOutMode = true;
+                        this.hiDeltaTime = timeStamp - this.previousTime;
 
-                this._onLoopingCallback = function () {
-                    return self.updateTimeout();
-                };
+                        // current
+                        this.time = timeStamp;
 
-                this._timeOutCallback = window.setTimeout(this._onLoopingCallback, 0);
-            } else {
+                        // game elapsed time
+                        this.elapsed += this.hiDeltaTime;
 
-                this._isTimeOutMode = false;
+                        // FPS Update
+                        if (this.requireFpsUpdate) this.fpsUpdate(timeStamp);
 
-                this._onLoopingCallback = function (time) {
-                    return self.updateRequestAnimationFrame(time);
-                };
+                        // set previous time
+                        this.previousTime = timeStamp;
 
-                this._timeOutCallback = window.requestAnimationFrame(this._onLoopingCallback, this.game.canvas);
-            }
-        }
-    }, {
-        key: 'updateRequestAnimationFrame',
-        value: function updateRequestAnimationFrame(time) {
+                        // game loop
+                        this.accumalatorMethod(this.hiDeltaTime);
 
-            this.game.update(time);
-            this._timeOutCallback = window.requestAnimationFrame(this._onLoopingCallback, this.game.canvas);
-        }
-    }, {
-        key: 'updateTimeout',
-        value: function updateTimeout() {
+                        // game render
+                        this.render(this.hiDeltaTime);
+                }
+        }, {
+                key: "fpsUpdate",
+                value: function fpsUpdate(timeStamp) {
 
-            this.game.update(Date.now());
-            this._timeOutCallback = window.setTimeout(this._onLoopingCallback, this.game.time.timeOut_toCall);
-        }
-    }, {
-        key: 'stop',
-        value: function stop() {
+                        if (timeStamp > this._nextFpsUpdate) {
+                                this.fps = 0.25 * this._framesThisSecond + 0.75 * this.fps;
 
-            if (this._isTimeOutMode) {
-                clearTimeout(this._timeOutCallback);
-            } else {
-                window.cancelAnimationFrame(this._timeOutCallback);
-            }
+                                this._nextFpsUpdate = timeStamp + 1000;
+                                this._framesThisSecond = 0;
+                        }
 
-            this.isRunning = false;
-        }
-    }]);
+                        this._framesThisSecond++;
+                }
+        }, {
+                key: "accumalatorMethod",
+                value: function accumalatorMethod(deltaTime) {
 
-    return UpdateTime;
+                        if (++this.frameCounter % this.frameRate === 0) {
+
+                                this.frameCounter = 0;
+
+                                this.accumalator += deltaTime; //Math.max(Math.min(this.timeStep * 3, this.elapsed),0);
+                                this.accumulator = Math.min(this.accumalator, this.accumalatorMax); //, this.updateAverage);
+
+                                var deltaUpdate = this.interpolation ? deltaTime : this.timeStep;
+                                var accumulatorUpdateDelta = this.interpolation ? deltaUpdate : Math.max(deltaUpdate, this.updateAverageDelta);
+
+                                while (this.accumalator >= accumulatorUpdateDelta || this.interpolation) {
+
+                                        var updateStart = window.performance.now();
+
+                                        // UPDATE GAME
+                                        this.loop(deltaUpdate / 1000);
+
+                                        var updateLast = window.performance.now();
+                                        this.updateAverageDelta = updateLast - updateStart;
+
+                                        this.accumalator -= accumulatorUpdateDelta;
+                                        if (this.interpolation) {
+                                                this.accumalator = 0;
+                                                break;
+                                        }
+                                }
+                        }
+                }
+        }, {
+                key: "accumalatorReset",
+                value: function accumalatorReset() {
+                        this.frameCounter = 0;
+                        this.frameRate = ~~(0.5 + 60 / this.fpsDesired);
+                        this.accumalator = 0;
+                        this.timeStep = 1000 / this.fpsDesired;
+                        this.accumulatorMax = this.stepSize * 10;
+                }
+        }, {
+                key: "reset",
+                value: function reset() {
+                        var now = window.performance.now();
+
+                        this.time = now;
+                        this.previousTimeTime = now;
+                        this._nextFpsUpdate = now + 1000;
+                        this._framesThisSecond = 0;
+
+                        this.accumalatorReset();
+                }
+        }]);
+
+        return UpdateStep;
 }();
 
-exports.default = UpdateTime;
+/*
+if (this.game.systemInited) {
+
+    this.time.update(time);
+
+    if (this._spiraling > 1) {
+
+        this.time.deltaTime = 0;
+        this._spiraling = 0;
+        this.time.accumalator = 0;
+
+        this.render(this.time.accumulatorDelta);
+
+    } else {
+
+    var countFrames = 0;
+
+    while (this.time.accumalator >= this.time.accumulatorDelta) {
+
+      //  this.time.updateStart = window.performance.now();
+
+        this.time.deltaTime = Math.min(this.time.accumalator,this.time.accumulatorDelta) / 1000;
+
+        this.logic(this.time.deltaTime);
+
+        //this.time.updateLast =  window.performance.now();
+      //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
+
+        this.time.accumalator -= this.time.accumulatorDelta;
+
+        countFrames++;
+
+        this.time.refresh();
+
+        if (countFrames >= 240) { // SPIRAL
+            //panic();
+            this.time.accumalator = 0;
+
+            break;
+        }
+    }
+
+      if (countFrames > this._lastFrameCount)
+         this._spiraling++;
+     else if (countFrames < this._lastFrameCount)
+        this._spiraling = 0;
+
+        this._lastFrameCount = countFrames;
+
+        this.render(this.time.accumalator/this.time.accumulatorDelta);
+
+    }
+
+
+
+}*/
+
+
+exports.default = UpdateStep;
 
 /***/ }),
 
@@ -7725,7 +8083,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var Color = exports.Color = {
 
-  webRGB: function webRGB(r, g, b, a) {
+  rgba: function rgba(r, g, b, a) {
 
     return 'rgba(' + r.toString() + ',' + g.toString() + ',' + b.toString() + ',' + (a / 255).toString() + ')';
   },
@@ -7757,7 +8115,7 @@ var Color = exports.Color = {
     result.g = Math.floor(result.g * 255);
     result.b = Math.floor(result.b * 255);
 
-    return this.webRGB(result.r, result.g, result.b, alp);
+    return this.rgba(result.r, result.g, result.b, alp);
   },
 
   /*
@@ -7781,7 +8139,7 @@ var Color = exports.Color = {
   /*
   Source code: http://jsfiddle.net/mushigh/myoskaos/
   */
-  RGBtoHex: function RGBtoHex(r, g, b) {
+  rgbToHex: function rgbToHex(r, g, b) {
 
     return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
   },

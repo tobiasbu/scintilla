@@ -123,7 +123,7 @@ setupScene(sceneName) {
 
   this.current_scene_name = sceneName;
 
-  this.game.time.refresh();
+  //this.game.time.refresh();
 
 
   //this.current_scene.camera = this.game.world.camera;
@@ -219,15 +219,15 @@ preUpdate() {
       }
   }
 
-    update() {
+    update(dt) {
 
       if (this._setup) {
 
         if (this.current_scene != null)
         {
-            this.entityUpdateList.update();
+            this.entityUpdateList.update(dt);
 
-            this.entityUpdateList.lateUpdate();
+            this.entityUpdateList.lateUpdate(dt);
         }
         /*if (this.onUpdateCallback)
         {

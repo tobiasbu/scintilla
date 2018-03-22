@@ -1,93 +1,52 @@
+import RequestAnimationFrame from "../dom/requestAnimationFrame";
+import GameSystemManager from "./gameSystemManager";
+import UpdateStep from "../time/updateStep";
 
 
+/*
+*
+* core game loop system
+*
+* @class GameLoop
+* @protected
+*/
 export default class GameLoop {
 
-    constructor(game) {
+    constructor(game, system) {
         this.game = game;
-        this.system = game.system;
-        this.requestAnimationFrame = null;
-
-        // time
-        this._spiraling = 0;
-        this._lastFrameCount = 0;
+        this.system = system;
+        this.updateStep = new UpdateStep(this.game, this.game.config);
+        
     }
 
-    update(time) {
-
-        if (this.game.systemInited) {
-
-          this.time.update(time);
-    
-          if (this._spiraling > 1) {
-    
-              this.time.deltaTime = 0;
-              this._spiraling = 0;
-              this.time.accumalator = 0;
-    
-              this.render(this.time.accumulatorDelta);
-    
-          } else {
-    
-          var countFrames = 0;
-    
-          while (this.time.accumalator >= this.time.accumulatorDelta) {
-    
-            //  this.time.updateStart = window.performance.now();
-    
-              this.time.deltaTime = Math.min(this.time.accumalator,this.time.accumulatorDelta) / 1000;
-    
-              this.logic(this.time.deltaTime);
-    
-              //this.time.updateLast =  window.performance.now();
-            //  this.time.updateAverage = this.time.updateLast - this.time.updateStart;
-    
-              this.time.accumalator -= this.time.accumulatorDelta;
-    
-              countFrames++;
-    
-              this.time.refresh();
-    
-              if (countFrames >= 240) { // SPIRAL
-                  //panic();
-                  this.time.accumalator = 0;
-    
-                  break;
-              }
-          }
-    
-            if (countFrames > this._lastFrameCount)
-               this._spiraling++;
-           else if (countFrames < this._lastFrameCount)
-              this._spiraling = 0;
-    
-              this._lastFrameCount = countFrames;
-    
-              this.render(this.time.accumalator/this.time.accumulatorDelta);
-                //this.render.render(this.time.accumalator/this.time.accumulatorDelta);
-    
-          }
-    
-    
-    
-        }
+    init() {
+       this.updateStep.init(this);
     }
 
-    logic() {
+    loop(deltaTime) {
 
          // Core Managers
 
-         this.system.input.update();
+        console.log("asdasd");
+
+         this.game.input.update();
         //this.sound.update();
 
         // Scene Update
-        this.physics.update();
-        this.scene.preUpdate();
-        this.scene.update(timeStep);
+        //this.game.update();
+        this.game.scene.preUpdate();
+        this.game.scene.update(deltaTime);
 
     }
 
-    render() {
+    render(deltaTime) {
 
+        this.system.render.renderBegin();
+        this.system.render.render(deltaTime);
+        this.system.render.renderEnd();
+          
     }
 
 }
+
+GameSystemManager.register('GameLoop', GameLoop, 'loop');

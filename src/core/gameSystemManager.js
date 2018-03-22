@@ -17,7 +17,7 @@ export default class GameSystemManager
         for (let property in gameSystems) {
 
             var sys = gameSystems[property];
-            this[sys.name] = new sys.system(this.game);
+            this[sys.name] = new sys.system(this.game, this);
         }
 
         // initialize systems

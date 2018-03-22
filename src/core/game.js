@@ -1,7 +1,5 @@
 
 import Config from './config';
-import Time from '../time/time'
-import UpdateTime from '../time/updatetime'
 import Input from '../input/input'
 import SceneManager from '../scene/scenemanager'
 import Physics from '../physics/physics'
@@ -36,19 +34,14 @@ export default class Game {
   // float
   this.timeMode = false;
 
-  
-
 
   //objects
   this.debug = null;
   this.scene = null;
   this.sound = null;
   this.input = null;
-  this.time = null;
-  this.updateGameMethod = null;
   this.pool = null;
   this.systems =  null;
-
   this.context = null;
 
   this.parseConfiguration(this.config);
@@ -93,28 +86,21 @@ export default class Game {
     if (this.systemInited)
         return;
 
-    this.time = new Time(this);
     this.physics = new Physics(this);
     this.input = new Input(this);
     this.scene = new SceneManager(this);
     this.system = new GameSystemManager(this);
-    
     
     this.system.init();
 
     
 
     this.scene.init();
-    this.time.start();
     this.input.init();
 
     if (this.debugMode)
       this.debug = new Debug(this);
       
-    this.updateGameMethod = new UpdateTime(this,this.timeMode);
-    this.updateGameMethod.start();
-
-
 
     this.systemInited = true;
     this.isRunning = true;
@@ -123,45 +109,10 @@ export default class Game {
     console.log("scintilla started!");
 
   }
-  
-  /**
-    * core game loop
-    *
-    * @method tobiJS.Game#update()
-    * @protected
-    */
-  
-
-  display(timeStep) {
-    this.system.render.renderBegin();
-    this.system.render.render(timeStep);
-    this.system.render.renderEnd();
-  }
-
-  logic(timeStep) {
-
-   
-    
-    
-    //this.universe.preUpdate(timeStep);
-
-
-    //this.world.camera.update();
-
-    //this.universe.update(timeStep);
-    
-    //
-
-    //this.universe._updateTransform();
-
-
-  }
 
   destroy() {
 
-    this.updateGameMethod.destroy();
     this.physics.destroy();
-    this.universe.destroy();
     this.sound.destroy();
     this.input.destroy();
 
