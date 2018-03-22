@@ -1,6 +1,4 @@
 import Renderable from "../renderables/renderable";
-import UpdateBounds from "./updateBounds";
-
 
 export default function UpdateModules(modulesManager, game)
 {

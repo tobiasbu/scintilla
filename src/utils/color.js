@@ -1,5 +1,5 @@
 
-export default Color = {
+export const Color = {
 
 rgba : function(r,g,b,a) {
 

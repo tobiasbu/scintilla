@@ -1,10 +1,11 @@
 
 
-var SceneSystem = [
+const SceneSystem = [
     'Cache',
     'Draw',
     'Loader',
-    'EntityFactory'
+    'EntityFactory',
+    'Camera'
 ]
 
 export default SceneSystem;

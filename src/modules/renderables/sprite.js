@@ -2,7 +2,7 @@ import Renderable from "./renderable";
 import Rect from "../../math/rect";
 import DrawImage from "./drawImage";
 import ModuleProvider from "../moduleProvider";
-
+import UpdateTransformBounds from '../core/updateTransformBounds'
 
 
 export default class Sprite extends Renderable {
@@ -57,7 +57,7 @@ export default class Sprite extends Renderable {
         if (!this.entity.transform._isDirty)
             return;
 
-        UpdateBounds(this.bounds, this.frame, this.entity.transform);
+        UpdateTransformBounds(this.bounds, this.frame, this.entity.transform);
     }
 
     render(context)

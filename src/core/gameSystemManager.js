@@ -46,6 +46,11 @@ export default class GameSystemManager
             scene[sys.name] = this[sys.name];
         }
 
+        // Special injections, input and sound:
+
+        scene['key'] = this.game.input.keyboard;
+        scene['mouse'] = this.game.input.mouse;
+
         /*for (let property in gameSystems) {
 
             let sys = gameSystems[property];

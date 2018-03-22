@@ -1,7 +1,7 @@
 
 // http://www.stoimen.com/blog/2010/07/02/friday-algorithms-javascript-merge-sort/
 // https://codereview.stackexchange.com/questions/87000/fast-merge-sort-in-javascript
-var MergeSort = function(array, predicate)
+export default function MergeSort(array, predicate)
 {
     var size = array.length;
 
@@ -83,7 +83,3 @@ var MergeSort = function(array, predicate)
 
     
 }
-
-
-
-module.exports = MergeSort;
