@@ -95,7 +95,6 @@ export default class Game {
     this.time = new GameTime(this);
 
     this.system.init();
-    this.scene.init();
     this.input.init();
     this.time.init(this.system.loop);
 

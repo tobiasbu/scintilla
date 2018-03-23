@@ -10,31 +10,26 @@ export default class SceneManager {
     this.entityUpdateList = null;
     this._scenes = new Map();
 
-    this.current_scene_name = '';
-    this.change_scene = null;
+    this.currentScene = null;
+    this._currentSceneName = '';
+    this._changeScene = null;
 
     this._setup = false;
     this._clearCache = false;
 
     // callbacks
-    this.current_scene = null;
+    
     this.onStartCallback = null;
     this.onLoadingCallback = null;
     this.onLoadingRenderCallback = null;
     this.onPreloadCallback = null;
-    this.onUpdateCallback = null;
+    //this.onUpdateCallback = null;
     this.onRenderCallback = null;
     this.onDestroyCallback = null;
 
   }
 
-  init()
-  {
-    this.entityUpdateList = this.game.system.entityList;
-  }
-
-
-add(sceneName,scene) {
+  add(sceneName,scene) {
 
   var newScene;
 
@@ -48,49 +43,54 @@ add(sceneName,scene) {
   if (newScene != null)
     this._scenes.set(sceneName,newScene);
 
-}
+  }
 
-new(sceneName)
-{
+  new(sceneName)
+  {
 
   if (this._scenes.has(sceneName))
   {
     throw "Could not create new Scene. The scene name \"" + name + "\" already exists."; 
     return null;
   }
-  
+
   var newScene = new Scene(this.game, sceneName);
   this._scenes.set(sceneName,newScene);
 
   return newScene;
 
-}
+  }
 
-set(sceneName, clearCache) {
+  set(sceneName, clearCache) {
+
+    if (!this._scenes.has(sceneName))
+      throw new Error('SceneManager.set: Scene' + sceneName + ' does not exist.')
 
   if (clearCache === undefined) { clearCache = false; }
 
-  this.change_scene = sceneName;
+  
+
+  this._changeScene = sceneName;
   this._clearCache = clearCache;
 
 
 
-}
+  }
 
-restart(clearCache) {
+  restart(clearCache) {
 
   if (clearCache === undefined) { clearCache = false; }
 
-  this.change_scene = this.current_scene_name;
+  this._changeScene = this._currentSceneName;
   this._clearCache = clearCache;
 
-}
+  }
 
-remove(sceneName) {
+  remove(sceneName) {
 
-  if (this.current_scene_name === sceneName) {
+  if (this._currentSceneName === sceneName) {
 
-    this.current_scene = null;
+    this.currentScene = null;
 
     this.onStartCallback = null;
     this.onLoadingCallback = null;
@@ -105,45 +105,44 @@ remove(sceneName) {
 
   delete this.scenes[sceneName];
 
-}
+  }
 
-setupScene(sceneName) {
+  setupScene(sceneName) {
 
 
-  this.current_scene = this._scenes.get(sceneName);
-  this.onStartCallback = this.current_scene['start'] || null;
-  this.onLoadingCallback = this.current_scene['loading'] || null;
-  this.onLoadingRenderCallback = this.current_scene['loadingRender'] || null;
-  this.onPreloadCallback = this.current_scene['preload'] || null;
-  this.onUpdateCallback = this.current_scene['update'] || null;
-  this.onRenderCallback = this.current_scene['render'] || null;
-  this.onDestroyCallback = this.current_scene['destroy'] || null;
+  this.currentScene = this._scenes.get(sceneName);
+  this.onStartCallback = this.currentScene['start'] || null;
+  this.onLoadingCallback = this.currentScene['loading'] || null;
+  this.onLoadingRenderCallback = this.currentScene['loadingRender'] || null;
+  this.onPreloadCallback = this.currentScene['preload'] || null;
+  this.onRenderCallback = this.currentScene['render'] || null;
+  this.onDestroyCallback = this.currentScene['destroy'] || null;
 
-  this.game.system.inject(this.current_scene);
+  this.game.system.inject(this.currentScene);
 
-  this.current_scene_name = sceneName;
+  this._currentSceneName = sceneName;
 
   //this.game.time.refresh();
 
 
-  //this.current_scene.camera = this.game.world.camera;
+  //this.currentScene.camera = this.game.world.camera;
 
-  //this.game.instance.scene = this.current_scene;
+  //this.game.instance.scene = this.currentScene;
 
   this._setup = false;
 
-}
+  }
 
-clearCurrentScene() {
+  clearCurrentScene() {
 
-  if (this.current_scene_name)
+  if (this._currentSceneName)
   {
 
-    this.game.system.unject(this.current_scene);
+    this.game.system.unject(this.currentScene);
 
     if (this.onDestroyCallback)
     {
-        this.onDestroyCallback.call(this.current_scene, this.game);
+        this.onDestroyCallback.call(this.currentScene, this.game);
     }
 
     if (this._clearCache)
@@ -155,62 +154,63 @@ clearCurrentScene() {
 
   }
 
-}
+  }
 
-preUpdate() {
+  preUpdate() {
 
-  if (this.game.systemInited && this.change_scene != null)
-  {
+    if (!this.game.systemInited || this._changeScene == null)
+      return;
 
-    this.clearCurrentScene();
 
-    this.setupScene(this.change_scene);
+      this.clearCurrentScene();
 
-    if (this.current_scene_name !== this.change_scene)
-    {
-        return;
-    }
-    else
-    {
-        this.change_scene = null;
-    }
+      this.setupScene(this._changeScene);
 
-    if (this.onPreloadCallback) {
-
-      this.game.system.load.reset();
-      this.onPreloadCallback.call(this.current_scene, this.game);
-
-      if (this.game.system.load.totalQueuedFiles === 0)
+      if (this._currentSceneName !== this._changeScene)
       {
-        this.preloadComplete();
+          return;
+      }
+      else
+      {
+          this._changeScene = null;
+      }
+
+      if (this.onPreloadCallback) {
+
+        this.game.system.load.reset();
+        this.onPreloadCallback.call(this.currentScene, this.game);
+
+        if (this.game.system.load.totalQueuedFiles === 0)
+        {
+          this.preloadComplete();
+
+        } else {
+
+          this.game.system.load.start();
+        }
 
       } else {
 
-        this.game.system.load.start();
+        this.preloadComplete();
       }
 
-    } else {
-
-      this.preloadComplete();
-    }
-
-  }
+    
 
   }
 
   preloadComplete() {
 
-    //this.current_scene.quadtree = new tobiJS.Quadtree({x: 0, y: 0, width: 640,height: 480});
+    //this.currentScene.quadtree = new tobiJS.Quadtree({x: 0, y: 0, width: 640,height: 480});
 
       if (this._setup === false && this.onLoadingCallback)
       {
-          this.onLoadingCallback.call(this.current_scene, this.game);
+          this.onLoadingCallback.call(this.currentScene, this.game);
       }
 
       if (this._setup === false && this.onStartCallback)
       {
           this._setup  = true;
-          this.onStartCallback.call(this.current_scene, this.game);
+          this.onStartCallback.call(this.currentScene, this.game);
       }
       else
       {
@@ -219,36 +219,6 @@ preUpdate() {
       }
   }
 
-    update(dt) {
-
-      if (this._setup) {
-
-        if (this.current_scene != null)
-        {
-            this.entityUpdateList.update(dt);
-
-            this.entityUpdateList.lateUpdate(dt);
-        }
-        /*if (this.onUpdateCallback)
-        {
-            this.onUpdateCallback.call(this.current_scene, this.game);
-        }*/
-
-
-
-        //this.current_scene._update();
-
-      } else {
-
-        if (this.onLoadingCallback)
-        {
-            this.onLoadingCallback.call(this.current_scene, this.game);
-        }
-
-      }
-
-    }
-
     render() {
 
       if (this._setup) {
@@ -256,14 +226,14 @@ preUpdate() {
 
           if (this.onRenderCallback)
           {
-              this.onRenderCallback.call(this.current_scene, this.game);
+              this.onRenderCallback.call(this.currentScene, this.game);
           }
 
       } else {
 
         if (this.onLoadingRenderCallback)
         {
-            this.onLoadingRenderCallback.call(this.current_scene, this.game);
+            this.onLoadingRenderCallback.call(this.currentScene, this.game);
         }
 
 

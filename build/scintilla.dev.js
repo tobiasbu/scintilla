@@ -448,7 +448,7 @@ exports.default = Resource;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 
 var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
@@ -460,39 +460,42 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Config = function Config(config) {
-    _classCallCheck(this, Config);
+        _classCallCheck(this, Config);
 
-    if (config === undefined) config = {};
+        if (config === undefined) config = {};
 
-    var callback = _objectutils2.default.getValue;
-    var callback_2 = _objectutils2.default.getPropertyValue;
+        var callback = _objectutils2.default.getValue;
+        var callback_2 = _objectutils2.default.getPropertyValue;
 
-    // view and canvas
-    this.width = callback(config, 'width', 640);
-    this.height = callback(config, 'height', 480);
-    this.parent = callback(config, 'parent', null);
-    this.debug = callback(config, 'debug', false);
+        // view and canvas
+        this.width = callback(config, 'width', 640);
+        this.height = callback(config, 'height', 480);
+        this.parent = callback(config, 'parent', null);
+        this.debug = callback(config, 'debug', false);
 
-    // loader
-    this.loader = {
-        baseURL: callback_2(config, 'loader.baseURL', ''),
-        path: callback_2(config, 'loader.path', ''),
-        responseType: callback_2(config, 'loader.responseType', ''),
-        async: callback_2(config, 'loader.async', true)
-    };
+        // loader
+        this.loader = {
+                baseURL: callback_2(config, 'loader.baseURL', ''),
+                path: callback_2(config, 'loader.path', ''),
+                responseType: callback_2(config, 'loader.responseType', ''),
+                async: callback_2(config, 'loader.async', true)
+        };
 
-    this.time = {
-        timeoutMode: callback_2(config, 'time.timeOutMode', false)
-    };
+        this.fps = callback(config, 'fps', 60);
 
-    this.pixelated = callback(config, 'pixelated', false);
-    /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
-        this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
-        this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
-        
-        this.loaderUser = GetValue(config, 'loader.user', '');
-        this.loaderPassword = GetValue(config, 'loader.password', '');
-    this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
+        this.time = {
+                timeoutMode: callback_2(config, 'time.timeOutMode', false)
+
+        };
+
+        this.pixelated = callback(config, 'pixelated', false);
+        /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
+            this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
+            this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
+            
+            this.loaderUser = GetValue(config, 'loader.user', '');
+            this.loaderPassword = GetValue(config, 'loader.password', '');
+        this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
 };
 
 exports.default = Config;
@@ -633,7 +636,6 @@ var Game = function () {
             this.time = new _gameTime2.default(this);
 
             this.system.init();
-            this.scene.init();
             this.input.init();
             this.time.init(this.system.loop);
 
@@ -728,12 +730,15 @@ var GameLoop = function () {
         this.game = game;
         this.system = system;
         this.updateStep = new _updateStep2.default(this.game, this.game.config);
+        this.entityUpdateList = null;
+        this.currentScene = null;
     }
 
     _createClass(GameLoop, [{
         key: "init",
         value: function init() {
             this.updateStep.init(this);
+            this.entityUpdateList = this.game.system.entityList;
         }
     }, {
         key: "loop",
@@ -741,19 +746,36 @@ var GameLoop = function () {
 
             // Core Managers
 
-            console.log("asdasd");
-
             this.game.input.update();
-            //this.sound.update();
 
-            // Scene Update
-            //this.game.update();
+            // Entities and Scene Update
+
+            this.currentScene = this.game.scene.currentScene;
+
+            var shouldUpdate = this.currentScene != null && this.currentScene !== undefined;
+            //let changeScene = (this.game.scene._changeScene != null || this.game.scene._changeScene !== undefined)
+
+            //if (changeScene)
             this.game.scene.preUpdate();
-            this.game.scene.update(deltaTime);
+
+            if (shouldUpdate) {
+                if (this.game.scene._setup) {
+                    // global scene update
+                    if (this.currentScene.update !== undefined) this.currentScene.update(deltaTime);
+                } else {
+                    if (this.currentScene.loading !== undefined) this.currentScene.loading(deltaTime);
+                }
+
+                this.entityUpdateList.update(deltaTime);
+
+                this.entityUpdateList.lateUpdate(deltaTime);
+            }
         }
     }, {
         key: "render",
         value: function render(deltaTime) {
+
+            if (this.currentScene == null || this.currentScene === undefined) return;
 
             this.system.render.renderBegin();
             this.system.render.render(deltaTime);
@@ -3931,7 +3953,13 @@ exports.default = BoundingBox;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var MathUtils = exports.MathUtils = {
+
+
+var MathUtils = {
+
+  clamp: function clamp(value, min, max) {
+    return value > min ? value < max ? value : max : min;
+  },
 
   randomRange: function randomRange(min, max) {
 
@@ -4009,7 +4037,7 @@ var MathUtils = exports.MathUtils = {
 
 };
 
-module.exports = MathUtils;
+exports.default = MathUtils;
 
 /***/ }),
 
@@ -5738,15 +5766,15 @@ var Debug = function () {
     key: 'test',
     value: function test() {
 
-      this.context.setTransform(1, 0, 0, 1, 0, 0);
+      //this.context.setTransform(1, 0, 0, 1, 0, 0);
       this.context.strokeStyle = this.bgcolor;
       this.context.font = this.font;
       this.draw.alpha(0.5);
       this.draw.rectangle(0, 0, this.game.width, 14 * 4 + 16, this.bgcolor);
       this.draw.alpha(1);
-      //this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / 60");
+      this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / " + this.game.time.desiredFps);
       //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
-      //this.drawLine("Instances " + this.game.system.entityList.length);
+      this.drawLine("Instances: " + this.game.system.entityList.length);
       this.drawLine("Draw Calls: " + this.game.system.render.drawCalls); /*this.game.physics.length);*/
       this.x += this.game.width / 2;
       this.y = 12 + 8;
@@ -6511,7 +6539,7 @@ var Render = function () {
         }
     }, {
         key: 'render',
-        value: function render(scene) {
+        value: function render(camera, delta) {
             if (!this._enable) return;
 
             this.context.setTransform(1, 0, 0, 1, 0, 0);
@@ -6541,7 +6569,6 @@ var Render = function () {
 
                 this.context.setTransform(1, 0, 0, 1, 0, 0);
                 this.game.debug.test();
-                //console.log("asdasd");
             }
         }
     }, {
@@ -6947,29 +6974,25 @@ var SceneManager = function () {
     this.entityUpdateList = null;
     this._scenes = new _map2.default();
 
-    this.current_scene_name = '';
-    this.change_scene = null;
+    this.currentScene = null;
+    this._currentSceneName = '';
+    this._changeScene = null;
 
     this._setup = false;
     this._clearCache = false;
 
     // callbacks
-    this.current_scene = null;
+
     this.onStartCallback = null;
     this.onLoadingCallback = null;
     this.onLoadingRenderCallback = null;
     this.onPreloadCallback = null;
-    this.onUpdateCallback = null;
+    //this.onUpdateCallback = null;
     this.onRenderCallback = null;
     this.onDestroyCallback = null;
   }
 
   _createClass(SceneManager, [{
-    key: 'init',
-    value: function init() {
-      this.entityUpdateList = this.game.system.entityList;
-    }
-  }, {
     key: 'add',
     value: function add(sceneName, scene) {
 
@@ -7000,11 +7023,13 @@ var SceneManager = function () {
     key: 'set',
     value: function set(sceneName, clearCache) {
 
+      if (!this._scenes.has(sceneName)) throw new Error('SceneManager.set: Scene' + sceneName + ' does not exist.');
+
       if (clearCache === undefined) {
         clearCache = false;
       }
 
-      this.change_scene = sceneName;
+      this._changeScene = sceneName;
       this._clearCache = clearCache;
     }
   }, {
@@ -7015,16 +7040,16 @@ var SceneManager = function () {
         clearCache = false;
       }
 
-      this.change_scene = this.current_scene_name;
+      this._changeScene = this._currentSceneName;
       this._clearCache = clearCache;
     }
   }, {
     key: 'remove',
     value: function remove(sceneName) {
 
-      if (this.current_scene_name === sceneName) {
+      if (this._currentSceneName === sceneName) {
 
-        this.current_scene = null;
+        this.currentScene = null;
 
         this.onStartCallback = null;
         this.onLoadingCallback = null;
@@ -7041,25 +7066,24 @@ var SceneManager = function () {
     key: 'setupScene',
     value: function setupScene(sceneName) {
 
-      this.current_scene = this._scenes.get(sceneName);
-      this.onStartCallback = this.current_scene['start'] || null;
-      this.onLoadingCallback = this.current_scene['loading'] || null;
-      this.onLoadingRenderCallback = this.current_scene['loadingRender'] || null;
-      this.onPreloadCallback = this.current_scene['preload'] || null;
-      this.onUpdateCallback = this.current_scene['update'] || null;
-      this.onRenderCallback = this.current_scene['render'] || null;
-      this.onDestroyCallback = this.current_scene['destroy'] || null;
+      this.currentScene = this._scenes.get(sceneName);
+      this.onStartCallback = this.currentScene['start'] || null;
+      this.onLoadingCallback = this.currentScene['loading'] || null;
+      this.onLoadingRenderCallback = this.currentScene['loadingRender'] || null;
+      this.onPreloadCallback = this.currentScene['preload'] || null;
+      this.onRenderCallback = this.currentScene['render'] || null;
+      this.onDestroyCallback = this.currentScene['destroy'] || null;
 
-      this.game.system.inject(this.current_scene);
+      this.game.system.inject(this.currentScene);
 
-      this.current_scene_name = sceneName;
+      this._currentSceneName = sceneName;
 
       //this.game.time.refresh();
 
 
-      //this.current_scene.camera = this.game.world.camera;
+      //this.currentScene.camera = this.game.world.camera;
 
-      //this.game.instance.scene = this.current_scene;
+      //this.game.instance.scene = this.currentScene;
 
       this._setup = false;
     }
@@ -7067,12 +7091,12 @@ var SceneManager = function () {
     key: 'clearCurrentScene',
     value: function clearCurrentScene() {
 
-      if (this.current_scene_name) {
+      if (this._currentSceneName) {
 
-        this.game.system.unject(this.current_scene);
+        this.game.system.unject(this.currentScene);
 
         if (this.onDestroyCallback) {
-          this.onDestroyCallback.call(this.current_scene, this.game);
+          this.onDestroyCallback.call(this.currentScene, this.game);
         }
 
         if (this._clearCache) {
@@ -7086,74 +7110,49 @@ var SceneManager = function () {
     key: 'preUpdate',
     value: function preUpdate() {
 
-      if (this.game.systemInited && this.change_scene != null) {
+      if (!this.game.systemInited || this._changeScene == null) return;
 
-        this.clearCurrentScene();
+      this.clearCurrentScene();
 
-        this.setupScene(this.change_scene);
+      this.setupScene(this._changeScene);
 
-        if (this.current_scene_name !== this.change_scene) {
-          return;
-        } else {
-          this.change_scene = null;
-        }
+      if (this._currentSceneName !== this._changeScene) {
+        return;
+      } else {
+        this._changeScene = null;
+      }
 
-        if (this.onPreloadCallback) {
+      if (this.onPreloadCallback) {
 
-          this.game.system.load.reset();
-          this.onPreloadCallback.call(this.current_scene, this.game);
+        this.game.system.load.reset();
+        this.onPreloadCallback.call(this.currentScene, this.game);
 
-          if (this.game.system.load.totalQueuedFiles === 0) {
-            this.preloadComplete();
-          } else {
-
-            this.game.system.load.start();
-          }
-        } else {
-
+        if (this.game.system.load.totalQueuedFiles === 0) {
           this.preloadComplete();
+        } else {
+
+          this.game.system.load.start();
         }
+      } else {
+
+        this.preloadComplete();
       }
     }
   }, {
     key: 'preloadComplete',
     value: function preloadComplete() {
 
-      //this.current_scene.quadtree = new tobiJS.Quadtree({x: 0, y: 0, width: 640,height: 480});
+      //this.currentScene.quadtree = new tobiJS.Quadtree({x: 0, y: 0, width: 640,height: 480});
 
       if (this._setup === false && this.onLoadingCallback) {
-        this.onLoadingCallback.call(this.current_scene, this.game);
+        this.onLoadingCallback.call(this.currentScene, this.game);
       }
 
       if (this._setup === false && this.onStartCallback) {
         this._setup = true;
-        this.onStartCallback.call(this.current_scene, this.game);
+        this.onStartCallback.call(this.currentScene, this.game);
       } else {
         this._setup = true;
-      }
-    }
-  }, {
-    key: 'update',
-    value: function update(dt) {
-
-      if (this._setup) {
-
-        if (this.current_scene != null) {
-          this.entityUpdateList.update(dt);
-
-          this.entityUpdateList.lateUpdate(dt);
-        }
-        /*if (this.onUpdateCallback)
-        {
-            this.onUpdateCallback.call(this.current_scene, this.game);
-        }*/
-
-        //this.current_scene._update();
-      } else {
-
-        if (this.onLoadingCallback) {
-          this.onLoadingCallback.call(this.current_scene, this.game);
-        }
       }
     }
   }, {
@@ -7163,12 +7162,12 @@ var SceneManager = function () {
       if (this._setup) {
 
         if (this.onRenderCallback) {
-          this.onRenderCallback.call(this.current_scene, this.game);
+          this.onRenderCallback.call(this.currentScene, this.game);
         }
       } else {
 
         if (this.onLoadingRenderCallback) {
-          this.onLoadingRenderCallback.call(this.current_scene, this.game);
+          this.onLoadingRenderCallback.call(this.currentScene, this.game);
         }
       }
     }
@@ -7883,6 +7882,11 @@ var GameTime = function () {
             return this._updateStep.fps;
         }
     }, {
+        key: "desiredFps",
+        get: function get() {
+            return this._updateStep.fpsDesired;
+        }
+    }, {
         key: "delta",
         get: function get() {
             return this._updateStep.deltaTime;
@@ -7926,6 +7930,14 @@ var _requestAnimationFrame = __webpack_require__(/*! ../dom/requestAnimationFram
 
 var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
 
+var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
+
+var _objectutils2 = _interopRequireDefault(_objectutils);
+
+var _mathutils = __webpack_require__(/*! ../math/mathutils */ "./math/mathutils.js");
+
+var _mathutils2 = _interopRequireDefault(_mathutils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7948,17 +7960,17 @@ var UpdateStep = function () {
                 this.elapsed = 0; // elapsed time
                 this.hiDeltaTime = 0; // raw delta time
                 this.deltaTime = 0; // delta time in miliseconds
-
                 // FPS
                 this.requireFpsUpdate = true;
-                this.fps = 60;
-                this.fpsDesired = 60;
+                this.fpsDesired = _objectutils2.default.getValue(config, 'fps', config.fps);
+                this.fps = this.fpsDesired;
+                this.currentFps = 0;
                 this._nextFpsUpdate = 0;
                 this._framesThisSecond = 0;
 
                 // ACCUMALATOR METHOD
                 this.interpolation = false;
-                this.timeStep = 1000 / this.fpsDesired;
+                this.timeStep = Math.ceil(1000 / this.fpsDesired);
                 this.minTimeStep = this.timeStep * 1.25;
                 this.accumalator = 0;
                 this.accumulatorMax = this.timeStep * 10;
@@ -8013,7 +8025,8 @@ var UpdateStep = function () {
                 value: function fpsUpdate(timeStamp) {
 
                         if (timeStamp > this._nextFpsUpdate) {
-                                this.fps = 0.25 * this._framesThisSecond + 0.75 * this.fps;
+                                this.currentFps = 0.25 * this._framesThisSecond + 0.75 * this.fps;
+                                this.fps = _mathutils2.default.clamp(~~this.currentFps, 0, this.fpsDesired);
 
                                 this._nextFpsUpdate = timeStamp + 1000;
                                 this._framesThisSecond = 0;
@@ -8068,6 +8081,8 @@ var UpdateStep = function () {
                 value: function reset() {
                         var now = window.performance.now();
 
+                        this.deltaTime = 0;
+                        this.hiDeltaTime = 0;
                         this.time = now;
                         this.previousTimeTime = now;
                         this._nextFpsUpdate = now + 1000;

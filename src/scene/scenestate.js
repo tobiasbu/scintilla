@@ -1,4 +1,5 @@
 
+// FUTURE
 export default SceneState = {
     NONE : 0,
     START : 1,

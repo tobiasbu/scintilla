@@ -2,7 +2,11 @@
 
 
 
-export const MathUtils = {
+const MathUtils = {
+
+clamp : function(value, min, max) {
+  return (value > min) ? (value < max) ? value : max : min;
+},
 
 randomRange : function(min, max) {
 
@@ -96,6 +100,6 @@ toRadian : function(degrees) {
 
 }
 
-module.exports = MathUtils;
+export default MathUtils;
 
 

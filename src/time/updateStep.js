@@ -1,5 +1,6 @@
 import RequestAnimationFrame from "../dom/requestAnimationFrame";
-
+import ObjectUtils from "../utils/objectutils";
+import MathUtils from '../math/mathutils'
 
 export default class UpdateStep {
 
@@ -18,17 +19,17 @@ export default class UpdateStep {
         this.elapsed = 0; // elapsed time
         this.hiDeltaTime = 0; // raw delta time
         this.deltaTime = 0; // delta time in miliseconds
-
         // FPS
         this.requireFpsUpdate = true;
-        this.fps = 60;
-        this.fpsDesired = 60;
+        this.fpsDesired = ObjectUtils.getValue(config, 'fps', config.fps);
+        this.fps = this.fpsDesired;
+        this.currentFps = 0;
         this._nextFpsUpdate = 0;
         this._framesThisSecond = 0;
 
         // ACCUMALATOR METHOD
         this.interpolation = false;
-        this.timeStep = 1000 / this.fpsDesired;
+        this.timeStep = Math.ceil(1000 / this.fpsDesired);
         this.minTimeStep = this.timeStep * 1.25;
         this.accumalator = 0;
         this.accumulatorMax = this.timeStep * 10;
@@ -82,14 +83,17 @@ export default class UpdateStep {
 
     fpsUpdate(timeStamp) {
 
+        
+
         if (timeStamp > this._nextFpsUpdate) {
-            this.fps = 0.25 * this._framesThisSecond + 0.75 * this.fps;
+            this.currentFps = 0.25 * this._framesThisSecond + 0.75 * this.fps;
+            this.fps = MathUtils.clamp(~~this.currentFps, 0, this.fpsDesired);
      
             this._nextFpsUpdate = timeStamp + 1000;
             this._framesThisSecond = 0;
         }
      
-          this._framesThisSecond++;
+        this._framesThisSecond++;
     }
 
 
@@ -141,6 +145,8 @@ export default class UpdateStep {
     reset() {
         let now = window.performance.now();
 
+        this.deltaTime = 0;
+        this.hiDeltaTime = 0;
         this.time = now;
         this.previousTimeTime = now;
         this._nextFpsUpdate = now + 1000;

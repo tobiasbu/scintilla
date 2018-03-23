@@ -25,8 +25,11 @@ export default class Config {
             async : callback_2(config, 'loader.async', true),
         }
 
+        this.fps = callback(config, 'fps', 60);
+
         this.time = {
-            timeoutMode : callback_2(config, 'time.timeOutMode', false)
+            timeoutMode : callback_2(config, 'time.timeOutMode', false),
+           
         }
 
         this.pixelated = callback(config, 'pixelated', false);

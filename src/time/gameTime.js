@@ -20,6 +20,10 @@ export default class GameTime {
         return this._updateStep.fps;
     }
 
+    get desiredFps() {
+        return this._updateStep.fpsDesired;
+    }
+
     get delta() {
         return this._updateStep.deltaTime;
     }

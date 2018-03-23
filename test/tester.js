@@ -14,7 +14,8 @@ var config = {
     width: VIEW.w,
     height: VIEW.h,
     parent: "canvas-container",
-    debug: true
+    debug: true,
+    fps: 60
 };
   
   var game = new scintilla.Game(config);

@@ -45,7 +45,7 @@ export default class Render {
         this.context.globalCompositeOperation = 'source-over';
     }
 
-    render(scene)
+    render(camera, delta)
     {
         if (!this._enable)
             return;
@@ -71,7 +71,7 @@ export default class Render {
             if (!layer.enable)
                 continue;
 
-                layer.render(this.context);
+            layer.render(this.context);
             
             this.drawCalls += layer.drawCalls;
         }
@@ -83,9 +83,8 @@ export default class Render {
 
             this.context.setTransform(1, 0, 0, 1, 0, 0);
             this.game.debug.test();
-            //console.log("asdasd");
       
-      }
+        }
 
     }
 
