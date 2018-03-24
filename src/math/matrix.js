@@ -104,9 +104,9 @@ class Matrix {
   * | 2 | 5 | 8 |
   */
     // 4 = 0 * x * 2 * y + 4
-    // 6 = 0 * x * 3 * y + 6
+    // 5 = 1 * x * 3 * y + 5
 
-    // 5 = 1 * x + 3 * y + 5
+    // 6 = 1 * x + 3 * y + 5
     // 7 = 1 * x + 4 * y + 7
     this.a[6] = this.a[0] * x + this.a[3] * y + this.a[6];
     this.a[7] = this.a[1] * x + this.a[4] * y + this.a[7];
@@ -145,8 +145,8 @@ class Matrix {
   let a10 = this.a[3]; // c
   let a11 = this.a[4]; // d
 
-  let a20 = this.a[5]; // x
-  let a21 = this.a[6]; // y
+  let a20 = this.a[6]; // x
+  let a21 = this.a[7]; // y
 
   this.a[0] = a * a00 + b * a10; // a * a0 + b * c0;
   this.a[1] = a * a01 + b * a11; // a * b0 + b * d0;
@@ -169,8 +169,8 @@ class Matrix {
     this.a[7] = position.y; // y
 
     if (origin !== undefined) {
-      this.a[6] -= origin.x * this.a[0] + origin.y * this.a[3];
-      this.a[7] -= origin.y * this.a[1] + origin.y * this.a[4];
+      //this.a[6] -= origin.x * this.a[0] + origin.y * this.a[3];
+      //this.a[7] -= origin.y * this.a[1] + origin.y * this.a[4];
     }
 
     return this;
@@ -212,6 +212,27 @@ class Matrix {
     return this;
  }
 
+ concat(other) {
+
+  let a = this.a[0]; // a - 0
+  let b = this.a[1]; // b - 1
+  let c = this.a[3]; // c - 3
+  let d = this.a[4]; // d - 4
+  let x = this.a[6]; // x - 6
+  let y = this.a[7]; // y - 7
+
+  this.a[0] = a * other.a[0] + b * other.a[3]; // a * pt.a + b * pt.c;
+  this.a[1] = a * other.a[1] + b * other.a[4]; // a * pt.b + b * pt.d;
+
+  this.a[3] = c * other.a[0] + d * other.a[3]; // c * pt.a + d * pt.c;
+  this.a[4] = c * other.a[1] + d * other.a[4]; // c * pt.b + d * pt.d;
+
+  this.a[6] = x * other.a[0] + y * other.a[3] + other.a[6]; // x * pt.a + y * pt.c + pt.x;
+  this.a[7] = x * other.a[1] + y * other.a[4] + other.a[7]; // x * pt.b + y * pt.d + pt.y;
+
+  return this;
+ }
+
  transpose() {
   return this.setAll(
     mat.a[0], mat.a[3], mat.a[6],
@@ -251,7 +272,7 @@ class Matrix {
 
  }
 
- static multiply(a, b) {
+ static multiplySlow(a, b) {
     var mat = Matrix.zero(); // zeroes
     let val;
 

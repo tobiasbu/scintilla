@@ -8,14 +8,15 @@ export default class Transform {
 
   constructor() {
 
+    this.matrix = new Matrix(1);
     this.position = new Vector(0,0);
     this.scale = new Vector(1,1);
+    this.origin = new Vector(0,0);
     this.angle = 0;
     this.rotation = 0;
-    this.matrix = new Matrix(1);
+    this._cosSin = {x:1,y:0};
+    this._oldRotation = -1;
     this._isDirty = true;
-    this.origin = new Vector(0,0);
-    this._cosSin = {x:0,y:0};
     //this.worldPosition = new Vector(0,0);
     //this.worldScale =  new Vector(1,1);
     //this.worldRotation = 0;
@@ -34,6 +35,20 @@ export default class Transform {
       delete this.bounds;
       delete this.globalBounds;
       delete this._cosSin;
+
+    }
+
+    reset() {
+      this.matrix.setIdentity();
+      this._isDirty = true;
+      this._cosSin.x = 1;
+      this._cosSin.y = 0;
+      this.position.set(0,0);
+      this.angle = 0;
+      this.rotation = 0;
+      this._oldRotation = 0;
+      this.origin.set(0,0);
+      this.scale.set(0,0);
 
     }
   }

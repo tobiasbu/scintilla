@@ -159,6 +159,7 @@ var scintilla = scintilla || {
   MathUtils: __webpack_require__(/*! ./math/mathutils */ "./math/mathutils.js"),
   Matrix: __webpack_require__(/*! ./math/matrix */ "./math/matrix.js"),
   // ENTITIES
+  Camera: __webpack_require__(/*! ./camera/camera */ "./camera/camera.js"),
   Module: __webpack_require__(/*! ./modules */ "./modules/index.js"),
   Entity: __webpack_require__(/*! ./entities */ "./entities/index.js"),
   // CORE
@@ -437,6 +438,280 @@ exports.default = Resource;
 
 /***/ }),
 
+/***/ "./camera/camera.js":
+/*!**************************!*\
+  !*** ./camera/camera.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _boundingbox = __webpack_require__(/*! ../math/boundingbox */ "./math/boundingbox.js");
+
+var _boundingbox2 = _interopRequireDefault(_boundingbox);
+
+var _transform = __webpack_require__(/*! ../modules/core/transform */ "./modules/core/transform.js");
+
+var _transform2 = _interopRequireDefault(_transform);
+
+var _color = __webpack_require__(/*! ../utils/color */ "./utils/color.js");
+
+var _color2 = _interopRequireDefault(_color);
+
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
+var _mathutils = __webpack_require__(/*! ../math/mathutils */ "./math/mathutils.js");
+
+var _mathutils2 = _interopRequireDefault(_mathutils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Camera = function () {
+  function Camera(game) {
+    _classCallCheck(this, Camera);
+
+    this.game = game;
+    //this._view = new Rect(0, 0, game.config.width, game.config.height);
+    this._bounds = new _boundingbox2.default();
+    this.transform = new _transform2.default();
+    this.width = game.config.width;
+    this.height = game.config.height;
+    this.transform.origin.set(0.5, 0.5);
+    this._resolution = 1;
+
+    this._backgroundColor = _color2.default.rgbToHex(0, 0, 0);
+    this._roundPixels = false;
+  }
+
+  _createClass(Camera, [{
+    key: 'centerView',
+    value: function centerView() {
+      this.x = this.width * 0.5;
+      this.y = this.height * 0.5;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'centerToEntity',
+    value: function centerToEntity(entity) {
+      this.x = entity.position.x;
+      this.y = entity.position.y;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'setBackgroundColor',
+    value: function setBackgroundColor(r, g, b, a) {
+      if (r === undefined) {
+        g = 0;
+      }
+      if (g === undefined) {
+        g = 0;
+      }
+      if (b === undefined) {
+        b = 0;
+      }
+      if (a === undefined) {
+        a = 1;
+      }
+      this._backgroundColor = _color2.default.rgba(r, g, b, a);
+      return this;
+    }
+  }, {
+    key: 'setSize',
+    value: function setSize(width, height) {
+      this.width = width;
+      this.height = height;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'setView',
+    value: function setView(x, y, width, height) {
+      this.transform.position.x = x;
+      this.transform.position.y = y;
+      this.width = width;
+      this.height = height;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'reset',
+    value: function reset() {
+      this.transform.reset();
+    }
+  }, {
+    key: 'position',
+    get: function get() {
+      return {
+        x: this.transform.position.x,
+        y: this.transform.position.y
+      };
+    },
+    set: function set(value) {
+      this.transform.position.x = value.x;
+      this.transform.position.y = value.y;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'x',
+    get: function get() {
+      return this.transform.position.x;
+    },
+    set: function set(value) {
+      this.transform.position.x = value;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'y',
+    get: function get() {
+      return this.transform.position.y;
+    },
+    set: function set(value) {
+      this.transform.position.y = value;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'scale',
+    get: function get() {
+      return this.transform.scale.x;
+    },
+    set: function set(value) {
+      this.transform.scale.x = value;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'angle',
+    get: function get() {
+      return this.transform.angle;
+    },
+    set: function set(value) {
+      this.transform.angle = value;
+      this.transform.rotation = value * _mathutils2.default.degToRad;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'origin',
+    get: function get() {
+      return this.transform.origin;
+    },
+    set: function set(value) {
+      this.transform.origin.x = value.x;
+      this.transform.origin.y = value.y;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'rotation',
+    get: function get() {
+      return this.transform.rotation;
+    }
+  }, {
+    key: 'backgroundColor',
+    set: function set(color) {
+      if (color === undefined) {
+        color = 'rgba(0,0,0,0)';
+      }
+      this._backgroundColor = color;
+      return this;
+    },
+    get: function get() {
+      return this._backgroundColor = color;
+    }
+  }, {
+    key: 'roundPixels',
+    set: function set(flag) {
+      this._roundPixels = flag;
+      this._isDirty = true;
+      return this;
+    }
+  }, {
+    key: 'size',
+    get: function get() {
+      return { x: this._view.width, y: this._view.height };
+    }
+  }]);
+
+  return Camera;
+}();
+
+exports.default = Camera;
+
+
+_gameSystemManager2.default.register('Camera', Camera, 'camera');
+
+/***/ }),
+
+/***/ "./camera/updateCamera.js":
+/*!********************************!*\
+  !*** ./camera/updateCamera.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = UpdateCamera;
+
+var _updateBounds = __webpack_require__(/*! ../modules/core/updateBounds */ "./modules/core/updateBounds.js");
+
+var _updateBounds2 = _interopRequireDefault(_updateBounds);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function UpdateCamera(camera) {
+
+  if (!camera._isDirty) return;
+
+  var t = camera.transform;
+
+  if (camera.roundPixels) {
+    t.position.x = Math.round(t.position.x);
+    t.position.y = Math.round(t.position.y);
+  }
+
+  //camera._rotation = camera._angle * MathUtils.degToRad;
+
+  if (t.rotation != t._oldRotation) {
+    t._oldRotation = t.rotation;
+    t._cosSin.y = Math.sin(t.rotation);
+    t._cosSin.x = Math.cos(t.rotation);
+  }
+
+  var origin = {
+    x: camera.width * t.origin.x,
+    y: camera.height * t.origin.y
+  };
+
+  (0, _updateBounds2.default)(camera._bounds, t.position.x, t.position.y, camera.width, camera.height, t._cosSin);
+
+  // todo resolution
+  t.matrix.setIdentity().translate(t.position.x + origin.x, t.position.y + origin.y).radianRotate(t._cosSin.x, t._cosSin.y).scale(t.scale.x, t.scale.x).translate(-origin.x, -origin.y);
+}
+
+/***/ }),
+
 /***/ "./core/config.js":
 /*!************************!*\
   !*** ./core/config.js ***!
@@ -712,6 +987,10 @@ var _updateStep = __webpack_require__(/*! ../time/updateStep */ "./time/updateSt
 
 var _updateStep2 = _interopRequireDefault(_updateStep);
 
+var _updateCamera = __webpack_require__(/*! ../camera/updateCamera */ "./camera/updateCamera.js");
+
+var _updateCamera2 = _interopRequireDefault(_updateCamera);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -732,6 +1011,7 @@ var GameLoop = function () {
         this.updateStep = new _updateStep2.default(this.game, this.game.config);
         this.entityUpdateList = null;
         this.currentScene = null;
+        this.camera = null;
     }
 
     _createClass(GameLoop, [{
@@ -739,6 +1019,7 @@ var GameLoop = function () {
         value: function init() {
             this.updateStep.init(this);
             this.entityUpdateList = this.game.system.entityList;
+            this.camera = this.system.camera;
         }
     }, {
         key: "loop",
@@ -759,6 +1040,7 @@ var GameLoop = function () {
             this.game.scene.preUpdate();
 
             if (shouldUpdate) {
+
                 if (this.game.scene._setup) {
                     // global scene update
                     if (this.currentScene.update !== undefined) this.currentScene.update(deltaTime);
@@ -766,9 +1048,17 @@ var GameLoop = function () {
                     if (this.currentScene.loading !== undefined) this.currentScene.loading(deltaTime);
                 }
 
+                console.clear();
+
+                (0, _updateCamera2.default)(this.camera);
+
+                console.log(this.camera.transform.matrix.toString());
+
                 this.entityUpdateList.update(deltaTime);
 
                 this.entityUpdateList.lateUpdate(deltaTime);
+
+                if (this.camera._isDirty) this.camera._isDirty = false;
             }
         }
     }, {
@@ -1056,250 +1346,6 @@ var RequestAnimationFrame = function () {
 }();
 
 exports.default = RequestAnimationFrame;
-
-/***/ }),
-
-/***/ "./entities/camera.js":
-/*!****************************!*\
-  !*** ./entities/camera.js ***!
-  \****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _rect = __webpack_require__(/*! ../math/rect */ "./math/rect.js");
-
-var _rect2 = _interopRequireDefault(_rect);
-
-var _vector = __webpack_require__(/*! ../math/vector */ "./math/vector.js");
-
-var _vector2 = _interopRequireDefault(_vector);
-
-var _matrix = __webpack_require__(/*! ../math/matrix */ "./math/matrix.js");
-
-var _matrix2 = _interopRequireDefault(_matrix);
-
-var _boundingbox = __webpack_require__(/*! ../math/boundingbox */ "./math/boundingbox.js");
-
-var _boundingbox2 = _interopRequireDefault(_boundingbox);
-
-var _color = __webpack_require__(/*! ../utils/color */ "./utils/color.js");
-
-var _color2 = _interopRequireDefault(_color);
-
-var _updateBounds = __webpack_require__(/*! ../modules/core/updateBounds */ "./modules/core/updateBounds.js");
-
-var _updateBounds2 = _interopRequireDefault(_updateBounds);
-
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
-
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Camera = function () {
-  function Camera(game, width, height) {
-    _classCallCheck(this, Camera);
-
-    this.game = game;
-    this._view = new _rect2.default(0, 0, width, height);
-    this._bounds = new _boundingbox2.default();
-    this._matrix = new _matrix2.default(1);
-    this._rotation = 0;
-    this._oldRotation = 0;
-    this._isDirty = true;
-    this._angle = 0;
-    this._cosSin = { x: 0, y: 0 };
-    this._scale = 1;
-    this._resolution = 1;
-
-    this._backgroundColor = _color2.default.rgbToHex(0, 0, 0);
-    this._roundPixels = false;
-  }
-
-  _createClass(Camera, [{
-    key: 'centerView',
-    value: function centerView() {
-      this._x = this.width * 0.5;
-      this._y = this.height * 0.5;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'centerToEntity',
-    value: function centerToEntity(entity) {
-      this._x = entity.position.x;
-      this._y = entity.position.y;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'setBackgroundColor',
-    value: function setBackgroundColor(r, g, b, a) {
-      if (r === undefined) {
-        g = 0;
-      }
-      if (g === undefined) {
-        g = 0;
-      }
-      if (b === undefined) {
-        b = 0;
-      }
-      if (a === undefined) {
-        a = 1;
-      }
-      this._backgroundColor = _color2.default.rgba(r, g, b, a);
-      return this;
-    }
-  }, {
-    key: 'setSize',
-    value: function setSize(width, height) {
-      this._view.width = width;
-      this._view.height = height;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'setView',
-    value: function setView(x, y, width, height) {
-      this._view.x = x;
-      this._view.y = y;
-      this._view.width = width;
-      this._view.height = height;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-
-      if (!this._isDirty) return;
-
-      if (this.roundPixels) {
-        this._view.x = Math.round(this._view.x);
-        this._view.y = Math.round(this._view.y);
-      }
-
-      if (this._rotation !== this._oldRotation) {
-        this._oldRotation = this.rotation;
-        this._cosSin.y = Math.sin(this.rotation);
-        this._cosSin.x = Math.cos(this.rotation);
-      }
-
-      (0, _updateBounds2.default)(this._bounds, this._view, this.rotation);
-
-      // todo resolution
-      this._matrix.setIdentity().scale(this._zoom, this._zoom).translate(this._x, this._y).radianRotate(this._cosSin.x, this._cosSin.y);
-
-      this._isDirty = false;
-    }
-  }, {
-    key: 'reset',
-    value: function reset() {
-      this._view.x = 0;
-      this._view.y = 0;
-      this._angle = 0;
-      this._scale = 1;
-      this._cosSin.x = 0;
-      this._cosSin.y = 0;
-      this._scale = 1;
-      this._resolution = 1;
-      this._isDirty = true;
-    }
-  }, {
-    key: 'position',
-    get: function get() {
-      return { x: this._x, y: this._y };
-    },
-    set: function set(value) {
-      this._view.x = value.x;
-      this._view.y = value.y;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'x',
-    set: function set(value) {
-      this._view.x = value;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'y',
-    set: function set(value) {
-      this._view.y = value;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'scale',
-    get: function get() {
-      return this._zoom;
-    },
-    set: function set(value) {
-      this._zoom = value;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'angle',
-    get: function get() {
-      return this._angle;
-    },
-    set: function set(value) {
-      this._angle = value;
-      this._rotation = value * MathUtils.degToRad;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'rotation',
-    get: function get() {
-      return this._rotation;
-    }
-  }, {
-    key: 'backgroundColor',
-    set: function set(color) {
-      if (color === undefined) {
-        color = 'rgba(0,0,0,0)';
-      }
-      this._backgroundColor = color;
-      return this;
-    },
-    get: function get() {
-      return this._backgroundColor = color;
-    }
-  }, {
-    key: 'roundPixels',
-    set: function set(flag) {
-      this._roundPixels = flag;
-      this._isDirty = true;
-      return this;
-    }
-  }, {
-    key: 'size',
-    get: function get() {
-      return { x: this._view.width, y: this._view.height };
-    }
-  }]);
-
-  return Camera;
-}();
-
-exports.default = Camera;
-
-
-_gameSystemManager2.default.register('Camera', Camera, 'camera');
 
 /***/ }),
 
@@ -1617,6 +1663,7 @@ var EntityUpdateList = function () {
         this._instances = null;
         this._destroyInstances = null;
         this._pendingInstances = null;
+        this._camera = null;
     }
 
     _createClass(EntityUpdateList, [{
@@ -1625,6 +1672,7 @@ var EntityUpdateList = function () {
             this._instances = new _list2.default();
             this._destroyInstances = new _list2.default();
             this._pendingInstances = new _list2.default();
+            this._camera = this.game.system.camera;
         }
     }, {
         key: "add",
@@ -1643,13 +1691,11 @@ var EntityUpdateList = function () {
         value: function update(dt) {
             var _this = this;
 
-            var parent = _matrix2.default.identity();
-
             this._instances.each(function (element) {
 
                 if (element.active) {
 
-                    (0, _updateTransform2.default)(element.transform, parent);
+                    (0, _updateTransform2.default)(element.transform, _this._camera.transform);
 
                     (0, _updateModules2.default)(element.modules, _this.game);
 
@@ -1711,8 +1757,7 @@ module.exports = {
     Entity: __webpack_require__(/*! ./entity */ "./entities/entity.js"),
     SceneEntity: __webpack_require__(/*! ./sceneentity */ "./entities/sceneentity.js"),
     EntityUpdateList: __webpack_require__(/*! ./entityupdatelist */ "./entities/entityupdatelist.js"),
-    EntityFactory: __webpack_require__(/*! ./entityFactory */ "./entities/entityFactory.js"),
-    Camera: __webpack_require__(/*! ./camera */ "./entities/camera.js")
+    EntityFactory: __webpack_require__(/*! ./entityFactory */ "./entities/entityFactory.js")
 };
 
 /***/ }),
@@ -4158,9 +4203,9 @@ var Matrix = function () {
       * | 2 | 5 | 8 |
       */
       // 4 = 0 * x * 2 * y + 4
-      // 6 = 0 * x * 3 * y + 6
+      // 5 = 1 * x * 3 * y + 5
 
-      // 5 = 1 * x + 3 * y + 5
+      // 6 = 1 * x + 3 * y + 5
       // 7 = 1 * x + 4 * y + 7
       this.a[6] = this.a[0] * x + this.a[3] * y + this.a[6];
       this.a[7] = this.a[1] * x + this.a[4] * y + this.a[7];
@@ -4202,8 +4247,8 @@ var Matrix = function () {
       var a10 = this.a[3]; // c
       var a11 = this.a[4]; // d
 
-      var a20 = this.a[5]; // x
-      var a21 = this.a[6]; // y
+      var a20 = this.a[6]; // x
+      var a21 = this.a[7]; // y
 
       this.a[0] = a * a00 + b * a10; // a * a0 + b * c0;
       this.a[1] = a * a01 + b * a11; // a * b0 + b * d0;
@@ -4227,8 +4272,8 @@ var Matrix = function () {
       this.a[7] = position.y; // y
 
       if (origin !== undefined) {
-        this.a[6] -= origin.x * this.a[0] + origin.y * this.a[3];
-        this.a[7] -= origin.y * this.a[1] + origin.y * this.a[4];
+        //this.a[6] -= origin.x * this.a[0] + origin.y * this.a[3];
+        //this.a[7] -= origin.y * this.a[1] + origin.y * this.a[4];
       }
 
       return this;
@@ -4263,6 +4308,28 @@ var Matrix = function () {
 
       this.a[6] = other.a[6] * a00 + other.a[7] * a10 + a20; // x1 * a0 + y1 * c0 + x0;
       this.a[7] = other.a[6] * a01 + other.a[7] * a11 + a21; // x1 * b0 + y1 * d0 + y0;
+
+      return this;
+    }
+  }, {
+    key: "concat",
+    value: function concat(other) {
+
+      var a = this.a[0]; // a - 0
+      var b = this.a[1]; // b - 1
+      var c = this.a[3]; // c - 3
+      var d = this.a[4]; // d - 4
+      var x = this.a[6]; // x - 6
+      var y = this.a[7]; // y - 7
+
+      this.a[0] = a * other.a[0] + b * other.a[3]; // a * pt.a + b * pt.c;
+      this.a[1] = a * other.a[1] + b * other.a[4]; // a * pt.b + b * pt.d;
+
+      this.a[3] = c * other.a[0] + d * other.a[3]; // c * pt.a + d * pt.c;
+      this.a[4] = c * other.a[1] + d * other.a[4]; // c * pt.b + d * pt.d;
+
+      this.a[6] = x * other.a[0] + y * other.a[3] + other.a[6]; // x * pt.a + y * pt.c + pt.x;
+      this.a[7] = x * other.a[1] + y * other.a[4] + other.a[7]; // x * pt.b + y * pt.d + pt.y;
 
       return this;
     }
@@ -4304,8 +4371,8 @@ var Matrix = function () {
       return copy.setAll(mat.a[0], mat.a[3], mat.a[6], mat.a[1], mat.a[4], mat.a[7], mat.a[2], mat.a[5], mat.a[8]);
     }
   }, {
-    key: "multiply",
-    value: function multiply(a, b) {
+    key: "multiplySlow",
+    value: function multiplySlow(a, b) {
       var mat = Matrix.zero(); // zeroes
       var val = void 0;
 
@@ -4353,19 +4420,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * @class Rect
 * @constructor
 */
+
 var Rect = function () {
   function Rect(x, y, width, height) {
     _classCallCheck(this, Rect);
 
-    x = x || 0;
-    y = y || 0;
-    width = width || 0;
-    height = height || 0;
-
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+    this.x = x || 0;
+    this.y = y || 0;
+    this.width = width || 0;
+    this.height = height || 0;
   }
 
   _createClass(Rect, [{
@@ -4387,12 +4450,12 @@ var Rect = function () {
       this.height = height;
     }
   }, {
-    key: "centerPoint",
+    key: "center",
     get: function get() {
-      var vec2 = {};
+      var vec = {};
       vec.x = this.x + this.width / 2;
       vec.y = this.y + this.height / 2;
-      return vec2;
+      return vec;
     }
   }], [{
     key: "intersects",
@@ -4742,7 +4805,7 @@ function ComputeDelimiterPoint(x, y, rotation, anchor) {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4764,41 +4827,56 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Transform = function () {
-  function Transform() {
-    _classCallCheck(this, Transform);
+    function Transform() {
+        _classCallCheck(this, Transform);
 
-    this.position = new _vector2.default(0, 0);
-    this.scale = new _vector2.default(1, 1);
-    this.angle = 0;
-    this.rotation = 0;
-    this.matrix = new _matrix2.default(1);
-    this._isDirty = true;
-    this.origin = new _vector2.default(0, 0);
-    this._cosSin = { x: 0, y: 0 };
-    //this.worldPosition = new Vector(0,0);
-    //this.worldScale =  new Vector(1,1);
-    //this.worldRotation = 0;
-    //this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
-    //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
-  }
-
-  _createClass(Transform, [{
-    key: 'destroy',
-    value: function destroy() {
-
-      delete this.position;
-      delete this.scale;
-      delete this.matrix;
-      delete this.worldPosition;
-      delete this.worldScale;
-      delete this.origin;
-      delete this.bounds;
-      delete this.globalBounds;
-      delete this._cosSin;
+        this.matrix = new _matrix2.default(1);
+        this.position = new _vector2.default(0, 0);
+        this.scale = new _vector2.default(1, 1);
+        this.origin = new _vector2.default(0, 0);
+        this.angle = 0;
+        this.rotation = 0;
+        this._cosSin = { x: 1, y: 0 };
+        this._oldRotation = -1;
+        this._isDirty = true;
+        //this.worldPosition = new Vector(0,0);
+        //this.worldScale =  new Vector(1,1);
+        //this.worldRotation = 0;
+        //this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
+        //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
     }
-  }]);
 
-  return Transform;
+    _createClass(Transform, [{
+        key: 'destroy',
+        value: function destroy() {
+
+            delete this.position;
+            delete this.scale;
+            delete this.matrix;
+            delete this.worldPosition;
+            delete this.worldScale;
+            delete this.origin;
+            delete this.bounds;
+            delete this.globalBounds;
+            delete this._cosSin;
+        }
+    }, {
+        key: 'reset',
+        value: function reset() {
+            this.matrix.setIdentity();
+            this._isDirty = true;
+            this._cosSin.x = 1;
+            this._cosSin.y = 0;
+            this.position.set(0, 0);
+            this.angle = 0;
+            this.rotation = 0;
+            this._oldRotation = 0;
+            this.origin.set(0, 0);
+            this.scale.set(0, 0);
+        }
+    }]);
+
+    return Transform;
 }();
 
 exports.default = Transform;
@@ -4826,12 +4904,14 @@ var _computeDelimiterPoint2 = _interopRequireDefault(_computeDelimiterPoint);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function UpdateBounds(bounds, rect, rotation) {
+function UpdateBounds(bounds, x, y, width, height, cosSin) {
 
-    coords[0] = (0, _computeDelimiterPoint2.default)(rect.x, rect.y, rotation);
-    coords[1] = (0, _computeDelimiterPoint2.default)(rect.x + rect.width, rect.y, rotation);
-    coords[2] = (0, _computeDelimiterPoint2.default)(rect.x, rect.y + rect.height, rotation);
-    coords[3] = (0, _computeDelimiterPoint2.default)(rect.x + rect.width, rect.y + rect.height, rotation);
+    var coords = [];
+
+    coords[0] = (0, _computeDelimiterPoint2.default)(x, y, cosSin);
+    coords[1] = (0, _computeDelimiterPoint2.default)(x + width, y, cosSin);
+    coords[2] = (0, _computeDelimiterPoint2.default)(x, y + height, cosSin);
+    coords[3] = (0, _computeDelimiterPoint2.default)(x + width, y + height, cosSin);
 
     bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
     bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
@@ -4901,7 +4981,7 @@ function UpdateModules(modulesManager, game) {
 
 
 Object.defineProperty(exports, "__esModule", {
-        value: true
+    value: true
 });
 exports.default = UpdateTransform;
 
@@ -4927,67 +5007,53 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 */
 
-function UpdateTransform(transform, parentMatrix) {
+function UpdateTransform(transform, parentTransform) {
 
-        //if (parentMatrix === undefined) parentMatrix = null;
+    //if (parentMatrix === undefined) parentMatrix = null;
 
-        if (!transform._isDirty) return;
+    if (!transform._isDirty && !parentTransform._isDirty) return;
 
-        var a = void 0,
-            b = void 0,
-            c = void 0,
-            d = void 0,
-            x = void 0,
-            y = void 0;
-        var wt = transform.matrix;
-        var pt = _matrix2.default.identity();
+    var a = void 0,
+        b = void 0,
+        c = void 0,
+        d = void 0,
+        x = void 0,
+        y = void 0;
+    var wt = transform.matrix;
 
-        transform.rotation = transform.angle * _mathutils2.default.degToRad;
+    transform.rotation = transform.angle * _mathutils2.default.degToRad;
 
-        //if (transform.rotation % MathUtils.TAU) {
+    // if (transform.rotation % MathUtils.TAU) {
 
 
-        if (transform.rotation !== transform._oldRotation) {
-                transform._oldRotation = transform.rotation;
-                transform._cosSin.y = Math.sin(transform.rotation);
-                transform._cosSin.x = Math.cos(transform.rotation);
-        }
+    if (transform.rotation !== transform._oldRotation) {
+        transform._oldRotation = transform.rotation;
+        transform._cosSin.y = Math.sin(transform.rotation);
+        transform._cosSin.x = Math.cos(transform.rotation);
+    }
 
-        console.clear();
+    transform.matrix.setModelMatrix(transform.position, transform.scale, transform._cosSin, transform.origin).concat(parentTransform.matrix);
 
-        wt.setModelMatrix(transform.position, transform.scale, transform._cosSin, transform.origin); //.multiply(pt);
+    // } else {
 
-        console.log(transform.matrix.toString());
+    /*a  = transform.scale.x;
+    d  = transform.scale.y;
+    x =  transform.position.x;
+    y =  transform.position.y;
+    x -= transform.origin.x * a;
+    y -= transform.origin.y * d;
+      wt.a  = a  * pt.a;
+    wt.b  = a  * pt.b;
+    wt.c  = d  * pt.c;
+    wt.d  = d  * pt.d;
+    wt.x = x * pt.a + y * pt.c + pt.x;
+    wt.y = x * pt.b + y * pt.d + pt.y;*/
 
-        //console.log(wt.toString());
-        // concat the parent matrix with the objects transform.
-        /*wt.a[0]  = a  * pt.a[0] + b  * pt.a[1]; // a = a * a + b * c
-        wt.a[3]  = a  * pt.a[3] + b  * pt.a[4]; // b = a * b + b * d
-        wt.a[1]  = c  * pt.a[0] + d  * pt.a[1]; // c = c * a + d * c
-        wt.a[4]  = c  * pt.b + d  * pt.d; // d
-        wt.a[6] = x * pt.a + y * pt.c + pt.x; // x
-        wt.a[7] = x * pt.b + y * pt.d + pt.y; // y*/
+    //  }
 
-        //} else {
-
-        /*a  = transform.scale.x;
-        d  = transform.scale.y;
-        x =  transform.position.x;
-        y =  transform.position.y;
-        x -= transform.origin.x * a;
-        y -= transform.origin.y * d;
-          wt.a  = a  * pt.a;
-        wt.b  = a  * pt.b;
-        wt.c  = d  * pt.c;
-        wt.d  = d  * pt.d;
-        wt.x = x * pt.a + y * pt.c + pt.x;
-        wt.y = x * pt.b + y * pt.d + pt.y;*/
-
-        // }
-
-        //transform.worldPosition.set(wt.x ,wt.y);
-        //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
-        //transform.worldRotation = Math.atan2(-wt.c, wt.d);
+    //transform.worldPosition.set(wt.x ,wt.y);
+    //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
+    //transform.worldRotation = Math.atan2(-wt.c, wt.d);
 }
 
 /***/ }),
@@ -6856,16 +6922,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _entityhierarchy = __webpack_require__(/*! ../entities/entityhierarchy */ "./entities/entityhierarchy.js");
-
-var _entityhierarchy2 = _interopRequireDefault(_entityhierarchy);
-
-var _camera = __webpack_require__(/*! ../entities/camera */ "./entities/camera.js");
-
-var _camera2 = _interopRequireDefault(_camera);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Scene = function () {
@@ -6888,7 +6944,7 @@ var Scene = function () {
   }
 
   _createClass(Scene, [{
-    key: "instanceDestroy",
+    key: 'instanceDestroy',
     value: function instanceDestroy(gameObject) {
 
       if (gameObject['destroy']) gameObject.destroy();
@@ -6900,7 +6956,7 @@ var Scene = function () {
       this.instances.splice(index, 1);
     }
   }, {
-    key: "addGameObject",
+    key: 'addGameObject',
     value: function addGameObject(gameObject, clone) {
 
       var obj = void 0;
@@ -6921,7 +6977,7 @@ var Scene = function () {
       return obj;
     }
   }, {
-    key: "setBounds",
+    key: 'setBounds',
     value: function setBounds(x, y, width, height) {
 
       this.x = x;

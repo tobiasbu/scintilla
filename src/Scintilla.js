@@ -35,6 +35,7 @@ var scintilla = scintilla || {
   MathUtils : require('./math/mathutils'),
   Matrix : require('./math/matrix'),
   // ENTITIES
+  Camera : require('./camera/camera'),
   Module : require('./modules'),
   Entity : require('./entities'),
   // CORE

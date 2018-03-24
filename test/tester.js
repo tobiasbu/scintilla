@@ -50,8 +50,8 @@ scene.start = function() {
     t.position.y = 100;
     t.origin.set(0.5,0.5);
     t.update = function(dt){
-        this.angle += game.time.delta * 20;
-        this.position.x += 10 * dt;
+        //this.angle += game.time.delta * 20;
+        //this.position.x += 10 * dt;
     }
 }
 
@@ -61,10 +61,14 @@ scene.render = function() {
     
 }
 
-  scene.update = function() {
+  scene.update = function(dt) {
 
     
     //x += game.time.deltaTime * 20;
+
+    //this.camera.x += dt * 20;
+    this.camera.angle += dt * 100;
+    //console.log(this.camera.x);
 
     if (game.input.keyboard.pressed(scintilla.KeyCode.Space)) 
     {

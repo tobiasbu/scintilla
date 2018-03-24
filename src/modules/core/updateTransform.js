@@ -14,21 +14,20 @@ import Matrix from '../../math/matrix'
 
 */
 
-export default function UpdateTransform(transform, parentMatrix) {
+export default function UpdateTransform(transform, parentTransform) {
 
     //if (parentMatrix === undefined) parentMatrix = null;
 
-    if (!transform._isDirty)
+    if (!transform._isDirty && !parentTransform._isDirty)
         return;
 
 
     let a, b, c, d, x, y;
     let wt = transform.matrix;
-    let pt = Matrix.identity();
 
     transform.rotation = transform.angle * MathUtils.degToRad;
 
-      //if (transform.rotation % MathUtils.TAU) {
+     // if (transform.rotation % MathUtils.TAU) {
       
 
         if (transform.rotation !== transform._oldRotation)
@@ -39,28 +38,18 @@ export default function UpdateTransform(transform, parentMatrix) {
         }
 
 
-        console.clear();
+       
 
-        wt.setModelMatrix(
+        transform.matrix.setModelMatrix(
           transform.position, 
           transform.scale, 
           transform._cosSin, 
           transform.origin)
-        ;//.multiply(pt);
-
-        console.log(transform.matrix.toString());
-
-        //console.log(wt.toString());
-        // concat the parent matrix with the objects transform.
-        /*wt.a[0]  = a  * pt.a[0] + b  * pt.a[1]; // a = a * a + b * c
-        wt.a[3]  = a  * pt.a[3] + b  * pt.a[4]; // b = a * b + b * d
-        wt.a[1]  = c  * pt.a[0] + d  * pt.a[1]; // c = c * a + d * c
-        wt.a[4]  = c  * pt.b + d  * pt.d; // d
-        wt.a[6] = x * pt.a + y * pt.c + pt.x; // x
-        wt.a[7] = x * pt.b + y * pt.d + pt.y; // y*/
+        .concat(parentTransform.matrix);
 
 
-      //} else {
+
+     // } else {
 
         /*a  = transform.scale.x;
         d  = transform.scale.y;
@@ -77,7 +66,7 @@ export default function UpdateTransform(transform, parentMatrix) {
         wt.y = x * pt.b + y * pt.d + pt.y;*/
 
 
-      // }
+    //  }
 
       //transform.worldPosition.set(wt.x ,wt.y);
       //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));

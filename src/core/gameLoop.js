@@ -1,6 +1,7 @@
 import RequestAnimationFrame from "../dom/requestAnimationFrame";
 import GameSystemManager from "./gameSystemManager";
 import UpdateStep from "../time/updateStep";
+import UpdateCamera from "../camera/updateCamera";
 
 
 /*
@@ -18,11 +19,13 @@ export default class GameLoop {
         this.updateStep = new UpdateStep(this.game, this.game.config);
         this.entityUpdateList = null;
         this.currentScene = null;
+        this.camera = null;
     }
 
     init() {
        this.updateStep.init(this);
        this.entityUpdateList = this.game.system.entityList;
+       this.camera = this.system.camera;
     }
 
     loop(deltaTime) {
@@ -45,6 +48,7 @@ export default class GameLoop {
 
         if (shouldUpdate)
         {
+            
             if (this.game.scene._setup)
             {
                 // global scene update
@@ -55,9 +59,19 @@ export default class GameLoop {
                     this.currentScene.loading(deltaTime);
             }
 
+            console.clear();
+
+            UpdateCamera(this.camera);
+            
+            console.log(this.camera.transform.matrix.toString())
+            
+
             this.entityUpdateList.update(deltaTime);
 
             this.entityUpdateList.lateUpdate(deltaTime);
+
+            if (this.camera._isDirty)
+                this.camera._isDirty = false;
 
         }
 

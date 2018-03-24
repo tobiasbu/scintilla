@@ -12,6 +12,7 @@ export default class EntityUpdateList {
         this._instances = null;
         this._destroyInstances = null;
         this._pendingInstances = null;
+        this._camera = null;
     }
 
     get length() {return this._instances.size;}
@@ -21,6 +22,7 @@ export default class EntityUpdateList {
         this._instances = new List();
         this._destroyInstances = new List();
         this._pendingInstances = new List();
+        this._camera = this.game.system.camera;
     }
 
     add(instance) {
@@ -38,14 +40,14 @@ export default class EntityUpdateList {
 
     update(dt) {
 
-        let parent = Matrix.identity();
+        
 
         this._instances.each(element => {
             
             if (element.active)
             {
                 
-                UpdateTransform(element.transform, parent);
+                UpdateTransform(element.transform, this._camera.transform);
 
                 UpdateModules(element.modules, this.game);
 

@@ -4,5 +4,4 @@ module.exports = {
     SceneEntity : require('./sceneentity'),
     EntityUpdateList : require('./entityupdatelist'),
     EntityFactory : require('./entityFactory'),
-    Camera : require('./camera')
 }

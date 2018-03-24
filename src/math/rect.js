@@ -4,18 +4,21 @@
 * @class Rect
 * @constructor
 */
+
 export default class Rect {
   
-  constructor(x,y,width,height) {
-    x = x || 0;
-    y = y || 0;
-    width = width || 0;
-    height = height || 0;
+  constructor(x, y, width, height) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.width = width || 0;
+    this.height = height || 0;
+  }
 
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
+  get center() {
+    var vec = {};
+    vec.x = this.x + this.width / 2;
+    vec.y = this.y + this.height / 2;
+    return vec;
   }
 
   intersects(rect) {
@@ -73,12 +76,7 @@ export default class Rect {
   
   }
   
-  get centerPoint() {
-    var vec2 = {};
-    vec.x = this.x + this.width / 2;
-    vec.y = this.y + this.height / 2;
-    return vec2;
-  }
+
 }
 
 

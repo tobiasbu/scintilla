@@ -1,6 +1,3 @@
-import EntityHierarchy from "../entities/entityhierarchy";
-import Camera from "../entities/camera";
-
 
 export default class Scene {
   
