@@ -30,6 +30,7 @@ export default (
   canvas.setAttribute("height", CO.height);
   canvas.setAttribute("style", CO.style);
   //canvas.style.position = 'absolute';
+  
 
 
   Canvas.appendDOM(canvas,parent);

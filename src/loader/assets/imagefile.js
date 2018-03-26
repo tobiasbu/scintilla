@@ -57,6 +57,8 @@ export default class ImageFile extends File {
 
             URLObject.revoke(self.data);
 
+            console.warn("Loader.ImageFile: Error on load file: " + self.url + ".")
+
             self.state = LOADER_STATE.ERROR;
 
             processingCallback(self);
@@ -69,11 +71,10 @@ export default class ImageFile extends File {
 
 }
 
-AssetTypeHandler.register('image', function (tag, url, path, xhrSettings)
+AssetTypeHandler.register('image', function (tag, url, path, xhrSettings, force)
 {
 
-
-    this.addAsset(new ImageFile(tag, url, this.path, xhrSettings));
+    this.addAsset(new ImageFile(tag, url, this.path, xhrSettings), force);
 
     return this;
 

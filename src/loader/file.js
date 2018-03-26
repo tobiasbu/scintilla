@@ -22,7 +22,7 @@ export default class File {
             this.url = ObjectUtils.getValue(config, 'path', '') + this.tag + '.' + ObjectUtils.getValue(config, 'ext', '');
         else
         {
-            if (!this.useExternal)
+            if (!this.useExternal || this.useExternal !== undefined)
                 this.url = ObjectUtils.getValue(config, 'path', '').concat(this.url);
 
         }
@@ -88,17 +88,25 @@ export default class File {
        
         this.XHRreset();
 
+        
+
         if (event.target && event.target.status !== 200)
+        {
             this.loader.next(this, true);
-        else
+        } else {
+            
+            if (this.onPostLoad !== undefined)
+                this.onPostLoad(this.loader, this.xhrRequest);
+
             this.loader.next(this, false);
+        }
         
                 
     }
 
-    onError()
+    onError(event)
     {
-        console.error("Loader.File: Error to load file.")
+        console.error("Loader.File: Error on load file: " + this.url + ".")
 
         this.XHRreset();
 
@@ -139,7 +147,7 @@ export default class File {
             this.xhrRequest.onload = undefined;
             this.xhrRequest.onerror = undefined;
             this.xhrRequest.onprogress = undefined;
-            this.xhrRequest.onreadystatechange = undefined;
+            //this.xhrRequest.onreadystatechange = undefined;
         }
     }
 

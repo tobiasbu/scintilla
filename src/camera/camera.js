@@ -13,10 +13,13 @@ export default class Camera {
     //this._view = new Rect(0, 0, game.config.width, game.config.height);
     this._bounds = new BoundingBox();
     this.transform = new Transform();
-    this.width = game.config.width;
-    this.height = game.config.height;
-    this.transform.origin.set(0.5,0.5)
+    this.width = game.config.camera.width;
+    this.height = game.config.camera.height;
+    this._onResize(this.width, this.height);
+    //this.transform.origin.set(0.5,0.5)
+    //this.centerView();
     this._resolution = 1;
+    this.aspectRatio = 1;
 
     this._backgroundColor = Color.rgbToHex(0,0,0);
     this._roundPixels = false;
@@ -116,8 +119,7 @@ export default class Camera {
   }
 
   setSize(width, height) {
-    this.width = width;
-    this.height = height;
+    this._onResize(width, height);
     this._isDirty = true;
     return this;
   }
@@ -125,14 +127,22 @@ export default class Camera {
   setView(x, y, width, height) {
     this.transform.position.x = x;
     this.transform.position.y = y;
-    this.width = width;
-    this.height = height;
+    this._onResize(width, height);
     this._isDirty = true;
     return this;
   }
 
   reset() {
     this.transform.reset();
+  }
+
+  _onResize(width, height) {
+
+    this.width = width;
+    this.height = height;
+    this.aspectRatio = this.width / this.height;
+    //this._areaRatio = (this.width - (_aspectPreviewRatioBox.x * 2)) / height;
+    //this._pixelUnit =  (height / (settings.OrthographicSize * 2)) * _areaRatio;
   }
 
 }

@@ -1,3 +1,4 @@
+import MergeSort from "./useful/mergesort";
 
 
 export default class SetData {
@@ -70,6 +71,11 @@ export default class SetData {
         }
 
       return this;
+    }
+
+    sort(predicate) {
+        if (predicate === undefined) return;
+        return MergeSort(this._content, predicate);
     }
 
     get size () { return this._content.length; }

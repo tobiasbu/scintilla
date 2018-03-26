@@ -11,8 +11,8 @@ export default class ImageResource extends Resource {
 
       super(source, name);
       
-      this.width = 100;
-      this.height = 100;
+      this.width = 0;
+      this.height = 0;
       this.isLoaded = false;
       this.source = source;
       this.imageUrl = null;

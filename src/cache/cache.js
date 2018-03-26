@@ -1,5 +1,6 @@
 import ImageResource from "./resources/imageResource";
 import GameSystemManager from "../core/gameSystemManager";
+import TilemapResource from "./resources/tilemapResource";
 
 /**
 * Cache manager - holds file data
@@ -12,9 +13,19 @@ constructor(game) {
   this.game = game;
   this._cache = {
       images : {},
-      sounds : {}
+      sounds : {},
+      json : {},
+      tilemap : {}
   }
 }
+
+  addTilemap(tag, dataFormat) {
+    this._cache.tilemap[tag] = new TilemapResource(dataFormat, tag);
+  }
+
+  addJSON(tag, dataFormat) {
+    this._cache.json[tag] = dataFormat;
+  }
 
   addImage(tag, url, data) {
 

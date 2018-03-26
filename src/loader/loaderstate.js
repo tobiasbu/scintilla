@@ -13,6 +13,3 @@ export const LOADER_STATE = {
     FINISHED : 6,
     DONE : 7, 
 }
-
-//export var AssetTypeHandler;
-//export var LOADER_STATE;

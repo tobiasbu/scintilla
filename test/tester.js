@@ -13,9 +13,14 @@ var VIEW = {
 var config = {
     width: VIEW.w,
     height: VIEW.h,
+    camera: {
+        width: 320,
+        height: 240
+    },
     parent: "canvas-container",
     debug: true,
-    fps: 60
+    fps: 60,
+    pixelated: true
 };
   
   var game = new scintilla.Game(config);
@@ -39,16 +44,18 @@ var config = {
 scene.preload = function() {
     this.load.setPath('assets/')
     this.load.image('test','img/block.png');
+    this.load.image('title','img/neof.png');
+    this.load.tilemapJSON('tilemap','map/n_tilemap.json');
     //game.load.text('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
 }
 
 var t = null;
 
 scene.start = function() {
-    t = this.create.sprite('test');
-    t.position.x = 100;
-    t.position.y = 100;
-    t.origin.set(0.5,0.5);
+    t = this.create.sprite('title');
+    t.position.x = 0;
+    t.position.y = 0;
+    t.origin.set(0,0);
     t.update = function(dt){
         //this.angle += game.time.delta * 20;
         //this.position.x += 10 * dt;
@@ -67,7 +74,7 @@ scene.render = function() {
     //x += game.time.deltaTime * 20;
 
     //this.camera.x += dt * 20;
-    this.camera.angle += dt * 100;
+    //this.camera.angle += dt * 100;
     //console.log(this.camera.x);
 
     if (game.input.keyboard.pressed(scintilla.KeyCode.Space)) 

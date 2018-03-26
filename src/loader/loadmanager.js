@@ -85,8 +85,11 @@ export default class LoadManager {
     return this;
   }
 
-  addAsset(asset) {
-    if (!this.isOK())
+  addAsset(asset, check) {
+
+    if (check === undefined) check = true;
+
+    if (!this.isOK() && check)
         return -1;
 
     asset.path = this.path;
@@ -187,8 +190,7 @@ export default class LoadManager {
 
   }
 
-  loadAsset(file)
-  {
+  loadAsset(file) {
     file.load(this);
   }
 
@@ -229,10 +231,14 @@ export default class LoadManager {
 
     if (this._successFiles.size === 0)
     {
-     
         this.processingDone();
     } else {
      
+      /*this._successFiles.sort((a, b) => {
+        a.
+
+      });*/
+
       this._successFiles.each(function(file) {
         file.onProcessing(this.processingUpdate.bind(this));
       },this);
@@ -299,6 +305,15 @@ export default class LoadManager {
                 this.game.sound.decode(file.tag);
             }
 
+            break;
+          }
+          case 'json': {
+            cache.addJSON(file.tag, file.data);
+            break;
+          }
+
+          case 'tilemapJSON': {
+            cache.addJSON(file.tag, {data: file.data, format:0});
             break;
           }
         }

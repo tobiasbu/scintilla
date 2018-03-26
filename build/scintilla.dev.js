@@ -223,11 +223,23 @@ var Cache = function () {
     this.game = game;
     this._cache = {
       images: {},
-      sounds: {}
+      sounds: {},
+      json: {},
+      tilemap: {}
     };
   }
 
   _createClass(Cache, [{
+    key: "addTilemap",
+    value: function addTilemap(tag, dataFormat) {
+      this._cache.tilemap[tag] = dataFormat;
+    }
+  }, {
+    key: "addJSON",
+    value: function addJSON(tag, dataFormat) {
+      this._cache.json[tag] = dataFormat;
+    }
+  }, {
     key: "addImage",
     value: function addImage(tag, url, data) {
 
@@ -381,8 +393,8 @@ var ImageResource = function (_Resource) {
 
             var _this = _possibleConstructorReturn(this, (ImageResource.__proto__ || Object.getPrototypeOf(ImageResource)).call(this, source, name));
 
-            _this.width = 100;
-            _this.height = 100;
+            _this.width = 0;
+            _this.height = 0;
             _this.isLoaded = false;
             _this.source = source;
             _this.imageUrl = null;
@@ -423,7 +435,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var ResourceType = exports.ResourceType = {
     None: -1,
-    Image: 0
+    Image: 0,
+    Tilemap: 1
 };
 
 var Resource = function Resource(data, name) {
@@ -486,10 +499,13 @@ var Camera = function () {
     //this._view = new Rect(0, 0, game.config.width, game.config.height);
     this._bounds = new _boundingbox2.default();
     this.transform = new _transform2.default();
-    this.width = game.config.width;
-    this.height = game.config.height;
-    this.transform.origin.set(0.5, 0.5);
+    this.width = game.config.camera.width;
+    this.height = game.config.camera.height;
+    this._onResize(this.width, this.height);
+    //this.transform.origin.set(0.5,0.5)
+    //this.centerView();
     this._resolution = 1;
+    this.aspectRatio = 1;
 
     this._backgroundColor = _color2.default.rgbToHex(0, 0, 0);
     this._roundPixels = false;
@@ -532,8 +548,7 @@ var Camera = function () {
   }, {
     key: 'setSize',
     value: function setSize(width, height) {
-      this.width = width;
-      this.height = height;
+      this._onResize(width, height);
       this._isDirty = true;
       return this;
     }
@@ -542,8 +557,7 @@ var Camera = function () {
     value: function setView(x, y, width, height) {
       this.transform.position.x = x;
       this.transform.position.y = y;
-      this.width = width;
-      this.height = height;
+      this._onResize(width, height);
       this._isDirty = true;
       return this;
     }
@@ -551,6 +565,16 @@ var Camera = function () {
     key: 'reset',
     value: function reset() {
       this.transform.reset();
+    }
+  }, {
+    key: '_onResize',
+    value: function _onResize(width, height) {
+
+      this.width = width;
+      this.height = height;
+      this.aspectRatio = this.width / this.height;
+      //this._areaRatio = (this.width - (_aspectPreviewRatioBox.x * 2)) / height;
+      //this._pixelUnit =  (height / (settings.OrthographicSize * 2)) * _areaRatio;
     }
   }, {
     key: 'position',
@@ -680,11 +704,16 @@ var _updateBounds2 = _interopRequireDefault(_updateBounds);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function UpdateCamera(camera) {
+function UpdateCamera(camera, canvas) {
 
-  if (!camera._isDirty) return;
+  if (!camera.transform._isDirty) return;
 
   var t = camera.transform;
+
+  var pixelUnit = { x: 0, y: 0 };
+
+  pixelUnit.x = canvas.width / camera.width;
+  pixelUnit.y = canvas.height / camera.height;
 
   if (camera.roundPixels) {
     t.position.x = Math.round(t.position.x);
@@ -707,7 +736,7 @@ function UpdateCamera(camera) {
   (0, _updateBounds2.default)(camera._bounds, t.position.x, t.position.y, camera.width, camera.height, t._cosSin);
 
   // todo resolution
-  t.matrix.setIdentity().translate(t.position.x + origin.x, t.position.y + origin.y).radianRotate(t._cosSin.x, t._cosSin.y).scale(t.scale.x, t.scale.x).translate(-origin.x, -origin.y);
+  t.matrix.setIdentity().scale(pixelUnit.x, pixelUnit.y).translate(t.position.x + origin.x, t.position.y + origin.y).radianRotate(t._cosSin.x, t._cosSin.y).scale(t.scale.x, t.scale.x).translate(-origin.x, -origin.y);
 }
 
 /***/ }),
@@ -723,7 +752,7 @@ function UpdateCamera(camera) {
 
 
 Object.defineProperty(exports, "__esModule", {
-        value: true
+    value: true
 });
 
 var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
@@ -735,42 +764,47 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Config = function Config(config) {
-        _classCallCheck(this, Config);
+    _classCallCheck(this, Config);
 
-        if (config === undefined) config = {};
+    if (config === undefined) config = {};
 
-        var callback = _objectutils2.default.getValue;
-        var callback_2 = _objectutils2.default.getPropertyValue;
+    var callback = _objectutils2.default.getValue;
+    var callback_2 = _objectutils2.default.getPropertyValue;
 
-        // view and canvas
-        this.width = callback(config, 'width', 640);
-        this.height = callback(config, 'height', 480);
-        this.parent = callback(config, 'parent', null);
-        this.debug = callback(config, 'debug', false);
+    // view and canvas
+    this.width = callback(config, 'width', 640);
+    this.height = callback(config, 'height', 480);
+    this.parent = callback(config, 'parent', null);
+    this.debug = callback(config, 'debug', false);
 
-        // loader
-        this.loader = {
-                baseURL: callback_2(config, 'loader.baseURL', ''),
-                path: callback_2(config, 'loader.path', ''),
-                responseType: callback_2(config, 'loader.responseType', ''),
-                async: callback_2(config, 'loader.async', true)
-        };
+    // loader
+    this.loader = {
+        baseURL: callback_2(config, 'loader.baseURL', ''),
+        path: callback_2(config, 'loader.path', ''),
+        responseType: callback_2(config, 'loader.responseType', ''),
+        async: callback_2(config, 'loader.async', true)
+    };
 
-        this.fps = callback(config, 'fps', 60);
+    this.fps = callback(config, 'fps', 60);
 
-        this.time = {
-                timeoutMode: callback_2(config, 'time.timeOutMode', false)
+    this.time = {
+        timeoutMode: callback_2(config, 'time.timeOutMode', false)
 
-        };
+    };
 
-        this.pixelated = callback(config, 'pixelated', false);
-        /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
-            this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
-            this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
-            
-            this.loaderUser = GetValue(config, 'loader.user', '');
-            this.loaderPassword = GetValue(config, 'loader.password', '');
-        this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
+    this.camera = {
+        width: callback_2(config, 'camera.width', this.width),
+        height: callback_2(config, 'camera.height', this.height)
+    };
+
+    this.pixelated = callback(config, 'pixelated', false);
+    /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
+        this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
+        this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
+        
+        this.loaderUser = GetValue(config, 'loader.user', '');
+        this.loaderPassword = GetValue(config, 'loader.password', '');
+    this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
 };
 
 exports.default = Config;
@@ -1012,6 +1046,7 @@ var GameLoop = function () {
         this.entityUpdateList = null;
         this.currentScene = null;
         this.camera = null;
+        this.canvas = null;
     }
 
     _createClass(GameLoop, [{
@@ -1020,6 +1055,7 @@ var GameLoop = function () {
             this.updateStep.init(this);
             this.entityUpdateList = this.game.system.entityList;
             this.camera = this.system.camera;
+            this.canvas = this.system.render.canvas;
         }
     }, {
         key: "loop",
@@ -1048,11 +1084,12 @@ var GameLoop = function () {
                     if (this.currentScene.loading !== undefined) this.currentScene.loading(deltaTime);
                 }
 
-                console.clear();
+                //console.clear();
 
-                (0, _updateCamera2.default)(this.camera);
+                (0, _updateCamera2.default)(this.camera, this.canvas);
 
-                console.log(this.camera.transform.matrix.toString());
+                //console.log(this.camera.transform.matrix.toString())
+
 
                 this.entityUpdateList.update(deltaTime);
 
@@ -2997,6 +3034,8 @@ var ImageFile = function (_File) {
 
                 _URLobject2.default.revoke(self.data);
 
+                console.warn("Loader.ImageFile: Error on load file: " + self.url + ".");
+
                 self.state = _loaderstate.LOADER_STATE.ERROR;
 
                 processingCallback(self);
@@ -3012,9 +3051,9 @@ var ImageFile = function (_File) {
 exports.default = ImageFile;
 
 
-_loaderstate.AssetTypeHandler.register('image', function (tag, url, path, xhrSettings) {
+_loaderstate.AssetTypeHandler.register('image', function (tag, url, path, xhrSettings, force) {
 
-    this.addAsset(new ImageFile(tag, url, this.path, xhrSettings));
+    this.addAsset(new ImageFile(tag, url, this.path, xhrSettings), force);
 
     return this;
 });
@@ -3035,8 +3074,95 @@ module.exports = ImageFile;
 
 module.exports = {
     ImageFile: __webpack_require__(/*! ./imagefile */ "./loader/assets/imagefile.js"),
-    TextFile: __webpack_require__(/*! ./textfile */ "./loader/assets/textfile.js")
+    TextFile: __webpack_require__(/*! ./textfile */ "./loader/assets/textfile.js"),
+    JSONFile: __webpack_require__(/*! ./jsonfile */ "./loader/assets/jsonfile.js"),
+    TilemapJSON: __webpack_require__(/*! ./tilemapJSON */ "./loader/assets/tilemapJSON.js")
 };
+
+/***/ }),
+
+/***/ "./loader/assets/jsonfile.js":
+/*!***********************************!*\
+  !*** ./loader/assets/jsonfile.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+
+var _file2 = _interopRequireDefault(_file);
+
+var _objectutils = __webpack_require__(/*! ../../utils/objectutils */ "./utils/objectutils.js");
+
+var _objectutils2 = _interopRequireDefault(_objectutils);
+
+var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var JSONFile = function (_File) {
+    _inherits(JSONFile, _File);
+
+    function JSONFile(tag, url, path, xhrSettings, config) {
+        _classCallCheck(this, JSONFile);
+
+        var config = {
+            type: 'json',
+            ext: _objectutils2.default.getValue(tag, 'ext', 'json'),
+            responseType: 'text',
+            tag: tag,
+            url: _objectutils2.default.getValue(tag, 'file', url),
+            path: path,
+            xhrSettings: _objectutils2.default.getValue(tag, 'xhr', xhrSettings)
+        };
+
+        var _this = _possibleConstructorReturn(this, (JSONFile.__proto__ || Object.getPrototypeOf(JSONFile)).call(this, config));
+
+        if (_typeof(config.url) === 'object') {
+            _this.data = config.url;
+            _this.state = _loaderstate.LOADER_STATE.DONE;
+        }
+
+        return _this;
+    }
+
+    _createClass(JSONFile, [{
+        key: "onProcess",
+        value: function onProcess(processingCallback) {
+            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            this.data = JSON.parse(this.xhrLoader.responseText);
+            this.onDone();
+            callback(this);
+        }
+    }]);
+
+    return JSONFile;
+}(_file2.default);
+
+exports.default = JSONFile;
+
+
+_loaderstate.AssetTypeHandler.register('json', function (tag, url, path, xhrSettings) {
+    this.addAsset(new JSONFile(tag, url, this.path, xhrSettings));
+    return this;
+});
 
 /***/ }),
 
@@ -3176,6 +3302,108 @@ module.exports = TextFile;
 
 /***/ }),
 
+/***/ "./loader/assets/tilemapJSON.js":
+/*!**************************************!*\
+  !*** ./loader/assets/tilemapJSON.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+
+var _file2 = _interopRequireDefault(_file);
+
+var _jsonfile = __webpack_require__(/*! ./jsonfile */ "./loader/assets/jsonfile.js");
+
+var _jsonfile2 = _interopRequireDefault(_jsonfile);
+
+var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+
+var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathutils.js");
+
+var _pathutils2 = _interopRequireDefault(_pathutils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function CheckImagesSources(loader, source, fullPath) {
+
+    if (source === undefined) return;
+
+    var size = source.length;
+
+    if (size <= 0) return;
+
+    for (var i = 0; i < size; i++) {
+
+        var tileset = source[i];
+
+        if (tileset.image) {
+            var name = tileset.name || _pathutils2.default.getFilenameWithoutExtension(tileset.image);
+            var path = _pathutils2.default.getPathWithoutRoot(fullPath).concat(_pathutils2.default.getFilename(tileset.image));
+            loader.image(name, path, undefined, undefined, false);
+        }
+    }
+}
+
+var TilemapFileJSON = function (_JSONFile) {
+    _inherits(TilemapFileJSON, _JSONFile);
+
+    function TilemapFileJSON(tag, url, path, xhrSettings) {
+        _classCallCheck(this, TilemapFileJSON);
+
+        var _this = _possibleConstructorReturn(this, (TilemapFileJSON.__proto__ || Object.getPrototypeOf(TilemapFileJSON)).call(this, tag, url, path, xhrSettings));
+
+        _this.type = 'tilemapJSON';
+
+        return _this;
+    }
+
+    _createClass(TilemapFileJSON, [{
+        key: 'onPostLoad',
+        value: function onPostLoad(loader, xhrLoader) {
+
+            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            this.data = JSON.parse(xhrLoader.responseText);
+
+            // check tileset images and pipe to the loader
+            CheckImagesSources(loader, this.data.tilesets, this.url);
+        }
+    }, {
+        key: 'onProcess',
+        value: function onProcess(processingCallback) {
+            this.onDone();
+            callback(this);
+        }
+    }]);
+
+    return TilemapFileJSON;
+}(_jsonfile2.default);
+
+exports.default = TilemapFileJSON;
+
+
+_loaderstate.AssetTypeHandler.register('tilemapJSON', function (tag, url, path, xhrSettings) {
+    this.addAsset(new TilemapFileJSON(tag, url, this.path, xhrSettings));
+    return this;
+});
+
+/***/ }),
+
 /***/ "./loader/file.js":
 /*!************************!*\
   !*** ./loader/file.js ***!
@@ -3221,7 +3449,7 @@ var File = function () {
         this.url = _objectutils2.default.getValue(config, 'url', undefined);
 
         if (this.url === undefined) this.url = _objectutils2.default.getValue(config, 'path', '') + this.tag + '.' + _objectutils2.default.getValue(config, 'ext', '');else {
-            if (!this.useExternal) this.url = _objectutils2.default.getValue(config, 'path', '').concat(this.url);
+            if (!this.useExternal || this.useExternal !== undefined) this.url = _objectutils2.default.getValue(config, 'path', '').concat(this.url);
         }
 
         this.xhrSettings = _XHR2.default.createSettings(_objectutils2.default.getValue(config, 'responseType', undefined));
@@ -3273,12 +3501,19 @@ var File = function () {
 
             this.XHRreset();
 
-            if (event.target && event.target.status !== 200) this.loader.next(this, true);else this.loader.next(this, false);
+            if (event.target && event.target.status !== 200) {
+                this.loader.next(this, true);
+            } else {
+
+                if (this.onPostLoad !== undefined) this.onPostLoad(this.loader, this.xhrRequest);
+
+                this.loader.next(this, false);
+            }
         }
     }, {
         key: 'onError',
-        value: function onError() {
-            console.error("Loader.File: Error to load file.");
+        value: function onError(event) {
+            console.error("Loader.File: Error on load file: " + this.url + ".");
 
             this.XHRreset();
 
@@ -3315,7 +3550,7 @@ var File = function () {
                 this.xhrRequest.onload = undefined;
                 this.xhrRequest.onerror = undefined;
                 this.xhrRequest.onprogress = undefined;
-                this.xhrRequest.onreadystatechange = undefined;
+                //this.xhrRequest.onreadystatechange = undefined;
             }
         }
     }]);
@@ -3434,10 +3669,6 @@ var LOADER_STATE = exports.LOADER_STATE = {
     ERROR: 5,
     FINISHED: 6,
     DONE: 7
-
-    //export var AssetTypeHandler;
-    //export var LOADER_STATE;
-
 };
 
 /***/ }),
@@ -3556,8 +3787,11 @@ var LoadManager = function () {
     }
   }, {
     key: 'addAsset',
-    value: function addAsset(asset) {
-      if (!this.isOK()) return -1;
+    value: function addAsset(asset, check) {
+
+      if (check === undefined) check = true;
+
+      if (!this.isOK() && check) return -1;
 
       asset.path = this.path;
       this._filesQueue.set(asset);
@@ -3682,7 +3916,6 @@ var LoadManager = function () {
       this._processedFiles.clear();
 
       if (this._successFiles.size === 0) {
-
         this.processingDone();
       } else {
 
@@ -3748,6 +3981,17 @@ var LoadManager = function () {
                   this.game.sound.decode(file.tag);
                 }
 
+                break;
+              }
+            case 'json':
+              {
+                cache.addJSON(file.tag, file.data);
+                break;
+              }
+
+            case 'tilemapJSON':
+              {
+                cache.addJSON(file.tag, { data: file.data, format: 0 });
                 break;
               }
           }
@@ -6353,6 +6597,77 @@ exports.default = function () {
 
 /***/ }),
 
+/***/ "./render/canvas/smoothing.js":
+/*!************************************!*\
+  !*** ./render/canvas/smoothing.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _define = __webpack_require__(/*! ../define */ "./render/define.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CanvasSmoothing = function () {
+    function CanvasSmoothing(context) {
+        _classCallCheck(this, CanvasSmoothing);
+
+        this.context = context;
+        this.prefix = this.getPrefix(context);
+    }
+
+    _createClass(CanvasSmoothing, [{
+        key: 'getPrefix',
+        value: function getPrefix(context) {
+
+            var vendors = ['i', 'webkitI', 'msI', 'mozI', 'oI'];
+            for (var i = 0; i < vendors.length; i++) {
+                var s = vendors[i] + 'mageSmoothingEnabled';
+
+                if (s in context) return s;
+            }
+
+            return null;
+        }
+    }, {
+        key: 'setEnable',
+        value: function setEnable(flag) {
+
+            if (flag === 'undefined') flag = true;
+
+            if (this.prefix === '' || this.prefix === undefined) this.prefix = this.getPrefix(this.context);
+
+            //
+
+            console.log(flag);
+
+            if (this.prefix) this.context[this.prefix] = flag;
+
+            return this.context;
+        }
+    }, {
+        key: 'set',
+        value: function set(renderType) {
+            if (renderType == _define.RENDERING_TYPE.NEAREST) this.setEnable(false);else this.setEnable(true);
+        }
+    }]);
+
+    return CanvasSmoothing;
+}();
+
+exports.default = CanvasSmoothing;
+
+/***/ }),
+
 /***/ "./render/define.js":
 /*!**************************!*\
   !*** ./render/define.js ***!
@@ -6563,6 +6878,10 @@ var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ ".
 
 var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
 
+var _smoothing = __webpack_require__(/*! ./canvas/smoothing */ "./render/canvas/smoothing.js");
+
+var _smoothing2 = _interopRequireDefault(_smoothing);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6575,7 +6894,9 @@ var Render = function () {
         this.layer = new _renderlayersmanagement2.default(this.game);
         this.canvas = _canvas2.default.create(this.game.parent, this.game.width, this.game.height);
         this.context = this.canvas.getContext("2d", { alpha: false });
-        this.imageRendering = game.config.pixelelated ? _define.RENDERING_TYPE.NEAREST : _define.RENDERING_TYPE.LINEAR;
+        this.imageRendering = game.config.pixelated ? _define.RENDERING_TYPE.NEAREST : _define.RENDERING_TYPE.LINEAR;
+        this.smooth = new _smoothing2.default(this.context);
+        this.smooth.set(this.imageRendering);
 
         this._backgroundColor = '#000';
         this._alpha = 1;
@@ -6606,9 +6927,10 @@ var Render = function () {
     }, {
         key: 'render',
         value: function render(camera, delta) {
+
             if (!this._enable) return;
 
-            this.context.setTransform(1, 0, 0, 1, 0, 0);
+            var clip = camera.x !== 0 || camera.y !== 0 || camera.width !== this.context.canvas.width || camera.height !== this.context.canvas.height;
 
             // alpha
             if (this._alpha !== 1) {
@@ -6618,6 +6940,19 @@ var Render = function () {
 
             // blend
             this.context.globalCompositeOperation = 'source-over';
+
+            /*if (clip)
+            {
+                let resolution = 1;
+                this.context.save();
+                this.context.beginPath();
+                this.context.rect(
+                    0,
+                    0,
+                    320 * resolution,
+                    240 * resolution);
+                this.context.clip();
+            }*/
 
             for (var i = 0; i < this.layer.renderLayers.length; i++) {
                 var layer = this.layer.renderLayers.at(i);
@@ -6629,11 +6964,15 @@ var Render = function () {
                 this.drawCalls += layer.drawCalls;
             }
 
+            this.context.setTransform(1, 0, 0, 1, 0, 0);
+
             this.game.scene.render();
+
+            /* if (clip)
+                 this.context.restore();*/
 
             if (this.game.debug != null) {
 
-                this.context.setTransform(1, 0, 0, 1, 0, 0);
                 this.game.debug.test();
             }
         }
@@ -8398,26 +8737,38 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var PathUtils = function () {
-  function PathUtils() {
-    _classCallCheck(this, PathUtils);
+var PathUtils = {
+  getExtension: function getExtension(filename) {
+    return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || "";
+  },
+  getFilename: function getFilename(path) {
+    return path.split('\\').pop().split('/').pop() || path;
+  },
+  getFilenameWithoutExtension: function getFilenameWithoutExtension(path) {
+    return this.removeExtension(this.getFilename(path));
+  },
+  removeExtension: function removeExtension(path) {
+    return path.substr(0, path.lastIndexOf('.')) || path;
+  },
+  getPath: function getPath(path) {
+    return path.substr(0, path.lastIndexOf("/") + 1) || "";
+  },
+  getRootPath: function getRootPath(path) {
+    return path.substr(0, path.indexOf("/") + 1) || path;
+  },
+  getPathWithoutRoot: function getPathWithoutRoot(path) {
+    var s = path.indexOf("/") + 1 || 0;
+    var l = path.lastIndexOf("/") - s + 1 || path.length;
+    return path.substr(s, l) || path;
+  },
+  getDirectoryName: function getDirectoryName(path) {
+    var dir = path.split('/');
+    var len = dir.length;
+    if (len <= 1) return dir[dir.length - 1];else return dir[dir.length - 2];
   }
+};
 
-  _createClass(PathUtils, [{
-    key: "getExtension",
-    value: function getExtension(filename) {
-      return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || "";
-    }
-  }]);
-
-  return PathUtils;
-}();
-
-exports.default = new PathUtils();
+exports.default = PathUtils;
 
 /***/ })
 

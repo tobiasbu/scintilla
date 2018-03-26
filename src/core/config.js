@@ -32,6 +32,11 @@ export default class Config {
            
         }
 
+        this.camera = {
+            width : callback_2(config, 'camera.width', this.width),
+            height : callback_2(config, 'camera.height', this.height)
+        }
+
         this.pixelated = callback(config, 'pixelated', false);
         /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
             this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);

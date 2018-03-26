@@ -20,12 +20,14 @@ export default class GameLoop {
         this.entityUpdateList = null;
         this.currentScene = null;
         this.camera = null;
+        this.canvas = null;
     }
 
     init() {
        this.updateStep.init(this);
        this.entityUpdateList = this.game.system.entityList;
        this.camera = this.system.camera;
+       this.canvas = this.system.render.canvas;
     }
 
     loop(deltaTime) {
@@ -59,11 +61,11 @@ export default class GameLoop {
                     this.currentScene.loading(deltaTime);
             }
 
-            console.clear();
+            //console.clear();
 
-            UpdateCamera(this.camera);
+            UpdateCamera(this.camera, this.canvas);
             
-            console.log(this.camera.transform.matrix.toString())
+            //console.log(this.camera.transform.matrix.toString())
             
 
             this.entityUpdateList.update(deltaTime);
