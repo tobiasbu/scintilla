@@ -4,6 +4,7 @@ import File from '../file'
 import URLObject from '../URLobject'
 import ObjectUtils from '../../utils/objectutils'
 import PathUtils from '../../utils/pathutils'
+import AssetsType from '../assetsType';
 
 export default class ImageFile extends File {
     
@@ -22,7 +23,7 @@ export default class ImageFile extends File {
         }
 
         var fileConfig = {
-            type: 'image',
+            type: AssetsType.image,
             tag: assetTag,
             ext: ObjectUtils.getValue(tag, 'ext', PathUtils.getExtension(url)),
             url: ObjectUtils.getValue(tag, 'file', url),

@@ -1,9 +1,10 @@
 
 import { LOADER_STATE, AssetTypeHandler} from './loaderstate'
-import SetData from '../structures/set'
+import DataSet from '../structures/set'
 import XHR from './XHR'
 import ObjectUtils from '../utils/objectutils';
 import GameSystemManager from '../core/gameSystemManager';
+import AssetsType from './assetsType';
 
 // Class LoaderManager
 export default class LoadManager {
@@ -49,11 +50,11 @@ export default class LoadManager {
   {
     this.cache = this.game.system.cache;
 
-    this._filesQueue = new SetData();
-    this._filesLoading = new SetData();
-    this._successFiles = new SetData();
-    this._failedFiles = new SetData();
-    this._processedFiles = new SetData();
+    this._filesQueue = new DataSet();
+    this._filesLoading = new DataSet();
+    this._successFiles = new DataSet();
+    this._failedFiles = new DataSet();
+    this._processedFiles = new DataSet();
 
     this._filesQueueCount = 0;
     this._loadedFilesCount = 0;
@@ -234,10 +235,10 @@ export default class LoadManager {
         this.processingDone();
     } else {
      
-      /*this._successFiles.sort((a, b) => {
-        a.
-
-      });*/
+      // sort the assets by type priority 
+      this._successFiles.sort((a, b) => {
+        return a.type < b.type;
+      });
 
       this._successFiles.each(function(file) {
         file.onProcessing(this.processingUpdate.bind(this));
@@ -290,11 +291,11 @@ export default class LoadManager {
           default:
             break;
 
-          case 'image': {
+          case AssetsType.image: {
             cache.addImage(file.tag,file.url,file.data);
             break;
           }
-          case 'audio': {
+          case AssetsType.audio: {
 
             file.data = requestXHR.response;
 
@@ -307,13 +308,13 @@ export default class LoadManager {
 
             break;
           }
-          case 'json': {
+          case AssetsType.json: {
             cache.addJSON(file.tag, file.data);
             break;
           }
 
-          case 'tilemapJSON': {
-            cache.addJSON(file.tag, {data: file.data, format:0});
+          case AssetsType.tilemapJSON: {
+            cache.addTilemap(file.tag, file.data);
             break;
           }
         }

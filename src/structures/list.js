@@ -1,7 +1,7 @@
 
 import MergeSort from './useful/mergesort'
 
-export default class List
+export default class DataList
 {
     constructor(elements, unique)
     {
@@ -197,7 +197,7 @@ export default class List
         let idx1 = this.indexOf(childB);
 
         if (idx0 < 0 || idx1 < 0) {
-            throw new Error('List.swap: Could not swap childrens. The objects are not in the list.');
+            throw new Error('DataList.swap: Could not swap childrens. The objects are not in the list.');
         }
 
         this.list[idx0] = childA;
@@ -215,7 +215,7 @@ export default class List
         var cB = this.at(indexB);
 
         if (cA === undefined || cB === undefined) {
-            throw new Error('List.swapByIndex: Could not swap childrens by index. The objects are not in the list.');
+            throw new Error('DataList.swapByIndex: Could not swap childrens by index. The objects are not in the list.');
         }
 
         this.list[indexA] = cA;

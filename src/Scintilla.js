@@ -39,7 +39,7 @@ var scintilla = scintilla || {
   Module : require('./modules'),
   Entity : require('./entities'),
   // CORE
-  Cache : require('./cache/cache'),
+  Cache : require('./cache/CacheManager'),
   Loader : require('./loader'),
   Game : require('./core/game'),
   // UTILITIES

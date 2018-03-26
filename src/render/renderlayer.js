@@ -1,4 +1,4 @@
-import List from "../structures/list";
+import DataList from "../structures/list";
 
 
 export default class RenderLayer { 
@@ -7,7 +7,7 @@ export default class RenderLayer {
 
         this._name = layerName;
         this.game = game;       
-        this.renderList = new List(true);
+        this.renderList = new DataList(true);
         this.__drawCalls = 0;
         this.__enable = true;
         this.__isDirty = false;

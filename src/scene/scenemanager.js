@@ -1,5 +1,5 @@
 
-import Map from '../structures/map'
+import DataMap from '../structures/map'
 import Scene from './scene'
 
 export default class SceneManager {
@@ -8,7 +8,7 @@ export default class SceneManager {
 
     this.game = game;
     this.entityUpdateList = null;
-    this._scenes = new Map();
+    this._scenes = new DataMap();
 
     this.currentScene = null;
     this._currentSceneName = '';

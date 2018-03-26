@@ -1,7 +1,7 @@
 import MergeSort from "./useful/mergesort";
 
 
-export default class SetData {
+export default class DataSet {
 
     constructor(elements) {
         this._content = [];

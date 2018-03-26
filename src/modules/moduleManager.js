@@ -1,6 +1,6 @@
 
-import Map from '../structures/map'
-import List from '../structures/list'
+import DataMap from '../structures/map'
+import DataList from '../structures/list'
 import ModuleAttacher from './moduleAttacher'
 
 
@@ -9,8 +9,8 @@ export default class ModuleManager
     constructor(entity)
     {
         this.entity = entity || null;
-        this.attached = new Map();
-        this._pendingModules = new List();
+        this.attached = new DataMap();
+        this._pendingModules = new DataList();
         this.attach = new ModuleAttacher(this);
     }
 

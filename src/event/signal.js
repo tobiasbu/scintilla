@@ -5,7 +5,7 @@
  * Version: ::VERSION_NUMBER:: - Build: ::BUILD_NUMBER:: (::BUILD_DATE::)
 */
 
-import List from '../structures/list'
+import DataList from '../structures/list'
 import SignalBinding from './signalbinding'
 
 function ValidateListener(listener, func) {
@@ -18,7 +18,7 @@ function ValidateListener(listener, func) {
 export default class Signal {
 
     constructor() {
-        this._bindings = new List(undefined, true);
+        this._bindings = new DataList(undefined, true);
         this.active = true;
         this._shouldPropagate = true;
     }

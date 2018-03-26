@@ -163,7 +163,7 @@ var scintilla = scintilla || {
   Module: __webpack_require__(/*! ./modules */ "./modules/index.js"),
   Entity: __webpack_require__(/*! ./entities */ "./entities/index.js"),
   // CORE
-  Cache: __webpack_require__(/*! ./cache/cache */ "./cache/cache.js"),
+  Cache: __webpack_require__(/*! ./cache/CacheManager */ "./cache/CacheManager.js"),
   Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
   Game: __webpack_require__(/*! ./core/game */ "./core/game.js"),
   // UTILITIES
@@ -183,10 +183,10 @@ global.scintilla = scintilla;
 
 /***/ }),
 
-/***/ "./cache/cache.js":
-/*!************************!*\
-  !*** ./cache/cache.js ***!
-  \************************/
+/***/ "./cache/CacheManager.js":
+/*!*******************************!*\
+  !*** ./cache/CacheManager.js ***!
+  \*******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -207,6 +207,10 @@ var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ ".
 
 var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
 
+var _tilemapResource = __webpack_require__(/*! ./resources/tilemapResource */ "./cache/resources/tilemapResource.js");
+
+var _tilemapResource2 = _interopRequireDefault(_tilemapResource);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -216,9 +220,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * @class Cache
 * @constructor
 */
-var Cache = function () {
-  function Cache(game) {
-    _classCallCheck(this, Cache);
+var CacheManager = function () {
+  function CacheManager(game) {
+    _classCallCheck(this, CacheManager);
 
     this.game = game;
     this._cache = {
@@ -229,10 +233,10 @@ var Cache = function () {
     };
   }
 
-  _createClass(Cache, [{
+  _createClass(CacheManager, [{
     key: "addTilemap",
     value: function addTilemap(tag, dataFormat) {
-      this._cache.tilemap[tag] = dataFormat;
+      this._cache.tilemap[tag] = new _tilemapResource2.default(dataFormat, tag, this);
     }
   }, {
     key: "addJSON",
@@ -283,6 +287,8 @@ var Cache = function () {
   }, {
     key: "tagExists",
     value: function tagExists(cacheType, tag) {
+
+      if (this._cache[cacheType] === undefined) return false;
 
       if (this._cache[cacheType][tag]) return true;
 
@@ -342,13 +348,13 @@ var Cache = function () {
 
   }]);
 
-  return Cache;
+  return CacheManager;
 }();
 
-exports.default = Cache;
+exports.default = CacheManager;
 
 
-_gameSystemManager2.default.register('Cache', Cache, 'cache');
+_gameSystemManager2.default.register('Cache', CacheManager, 'cache');
 
 /***/ }),
 
@@ -395,7 +401,6 @@ var ImageResource = function (_Resource) {
 
             _this.width = 0;
             _this.height = 0;
-            _this.isLoaded = false;
             _this.source = source;
             _this.imageUrl = null;
             _this.type = _resource.ResourceType.Image;
@@ -448,6 +453,341 @@ var Resource = function Resource(data, name) {
 };
 
 exports.default = Resource;
+
+/***/ }),
+
+/***/ "./cache/resources/tilemap/parseLayers.js":
+/*!************************************************!*\
+  !*** ./cache/resources/tilemap/parseLayers.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ParseLayers;
+
+var _objectutils = __webpack_require__(/*! ../../../utils/objectutils */ "./utils/objectutils.js");
+
+var _objectutils2 = _interopRequireDefault(_objectutils);
+
+var _Base64Utils = __webpack_require__(/*! ../../../utils/Base64Utils */ "./utils/Base64Utils.js");
+
+var _Base64Utils2 = _interopRequireDefault(_Base64Utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ParseLayers(json, mapdata) {
+
+    var size = json.layers.lenght;
+
+    if (size <= 0) return;
+
+    for (var i = 0; i < size; i++) {
+
+        var layer = json.layers[i];
+
+        if (layer.enconding) {
+            if (layer.enconding === 'base64') {
+                layer.data = _Base64Utils2.default.decodeToUint32(layer.data);
+            }
+        }
+
+        var newLayer = new LayerData({
+            name: layer.name,
+            x: _objectutils2.default.getValue(layer, 'offsetx', 0) + layer.x,
+            y: _objectutils2.default.getValue(layer, 'offsety', 0) + layer.y,
+            width: layer.width,
+            height: layer.height,
+            tileWidth: layer.tilewidth,
+            tileHeight: layer.tileheight,
+            alpha: layer.opacity,
+            visible: layer.visible
+            //properties: GetFastValue(layer, 'properties', {})
+        });
+    }
+}
+
+/***/ }),
+
+/***/ "./cache/resources/tilemap/parseTileset.js":
+/*!*************************************************!*\
+  !*** ./cache/resources/tilemap/parseTileset.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ParseTilesets;
+
+var _tileset = __webpack_require__(/*! ./tileset */ "./cache/resources/tilemap/tileset.js");
+
+var _tileset2 = _interopRequireDefault(_tileset);
+
+var _list = __webpack_require__(/*! ../../../structures/list */ "./structures/list.js");
+
+var _list2 = _interopRequireDefault(_list);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ParseTilesets(json, cache) {
+
+    var size = json.tilesets.length || -1;
+
+    if (size <= 0) return null;
+
+    var tilesets = new _list2.default();
+
+    for (var i = 0; i < size; i++) {
+
+        var tileset = json.tilesets[i];
+
+        if (tileset.image) {
+
+            var newTileSet = new _tileset2.default(tileset.name, tileset.firstgid, tileset.tilewidth, tileset.tileheight, tileset.margin, tileset.spacing);
+
+            newTileSet.image = cache.getAsset('image', tileset.name);
+
+            newTileSet.updateData(tileset.imagewidth, tileset.imageheight);
+
+            tilesets.push(newTileSet);
+        }
+    }
+
+    return tilesets;
+}
+
+/***/ }),
+
+/***/ "./cache/resources/tilemap/tilemapData.js":
+/*!************************************************!*\
+  !*** ./cache/resources/tilemap/tilemapData.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _objectutils = __webpack_require__(/*! ../../../utils/objectutils */ "./utils/objectutils.js");
+
+var _objectutils2 = _interopRequireDefault(_objectutils);
+
+var _list = __webpack_require__(/*! ../../../structures/list */ "./structures/list.js");
+
+var _list2 = _interopRequireDefault(_list);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TilemapData = function TilemapData(config) {
+    _classCallCheck(this, TilemapData);
+
+    // this.name = ObjectUtils.getValue(config,'name','tilemap');
+    this.width = _objectutils2.default.getValue(config, 'width', 0);
+    this.height = _objectutils2.default.getValue(config, 'height', 0);
+    this.tileWidth = _objectutils2.default.getValue(config, 'tileWidth', 0);
+    this.tileHeight = _objectutils2.default.getValue(config, 'tileHeight', 0);
+    this.widthPixels = _objectutils2.default.getValue(config, 'pixelsWidth', this.width * this.tileWidth);
+    this.heightPixels = _objectutils2.default.getValue(config, 'heightPixels', this.height * this.tileHeight);
+    this.orientation = _objectutils2.default.getValue(config, 'orientation', 'orthogonal');
+    this.layers = null; //ObjectUtils.getValue(config, 'layers', new DataList());
+    this.tilesets = null; //GetFastValue(config, 'tilesets', []);
+};
+
+exports.default = TilemapData;
+
+/***/ }),
+
+/***/ "./cache/resources/tilemap/tileset.js":
+/*!********************************************!*\
+  !*** ./cache/resources/tilemap/tileset.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _list = __webpack_require__(/*! ../../../structures/list */ "./structures/list.js");
+
+var _list2 = _interopRequireDefault(_list);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TileGID = function TileGID(gid, x, y, xmax, ymax) {
+    _classCallCheck(this, TileGID);
+
+    this.gid = gid;
+    this.x = x;
+    this.y = y;
+    this.xmax = xmax;
+    this.ymax = ymax;
+    this.isAnimated = false;
+};
+
+var Tileset = function () {
+    function Tileset(name, firstgid, tileWidth, tileHeight, margin, spacing) {
+        _classCallCheck(this, Tileset);
+
+        this.name = name;
+        this.firstgid = firstgid;
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
+        this.margin = margin;
+        this.spacing = spacing;
+        this.image = null;
+        this.tilesGID = new _list2.default();
+        this.rows = 0;
+        this.collumns = 0;
+        this.count = 0;
+    }
+
+    _createClass(Tileset, [{
+        key: "getTile",
+        value: function getTile(gid) {
+
+            if (gid < this.firstgid && tileIndex >= this.firstgid + this.count) return null;
+
+            return this.tilesGID.at(gid);
+        }
+    }, {
+        key: "hasGID",
+        value: function hasGID(gid) {
+            return gid >= this.firstgid && gid < this.firstgid + this.count;
+        }
+    }, {
+        key: "updateData",
+        value: function updateData(imageWidth, imageHeight) {
+
+            if (this.image != null) {
+                imageWidth = this.image.width;
+                imageHeight = this.image.height;
+            }
+
+            var rowCount = (imageHeight - this.margin * 2 + this.spacing) / (this.tileHeight + this.spacing);
+            var colCount = (imageWidth - this.margin * 2 + this.spacing) / (this.tileWidth + this.spacing);
+
+            rowCount = Math.floor(rowCount);
+            colCount = Math.floor(colCount);
+
+            this.count = rowCount * colCount;
+
+            var u = this.margin;
+            var v = this.margin;
+
+            this.tilesGID.clear();
+            var gid = 0;
+
+            for (var y = 0; y < this.rows; y++) {
+
+                for (var x = 0; x < this.columns; x++) {
+                    this.tilesGID.push(new TileGID(this.firstgid + gid, u, v, u + this.tileWidth, v + this.tileHeight));
+                    u += this.tileWidth + this.spacing;
+                    gid++;
+                }
+
+                u = this.tileMargin;
+                v += this.tileHeight + this.spacing;
+            }
+        }
+    }]);
+
+    return Tileset;
+}();
+
+exports.default = Tileset;
+
+/***/ }),
+
+/***/ "./cache/resources/tilemapResource.js":
+/*!********************************************!*\
+  !*** ./cache/resources/tilemapResource.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _resource = __webpack_require__(/*! ./resource */ "./cache/resources/resource.js");
+
+var _resource2 = _interopRequireDefault(_resource);
+
+var _tilemapData = __webpack_require__(/*! ./tilemap/tilemapData */ "./cache/resources/tilemap/tilemapData.js");
+
+var _tilemapData2 = _interopRequireDefault(_tilemapData);
+
+var _parseTileset = __webpack_require__(/*! ./tilemap/parseTileset */ "./cache/resources/tilemap/parseTileset.js");
+
+var _parseTileset2 = _interopRequireDefault(_parseTileset);
+
+var _parseLayers = __webpack_require__(/*! ./tilemap/parseLayers */ "./cache/resources/tilemap/parseLayers.js");
+
+var _parseLayers2 = _interopRequireDefault(_parseLayers);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TilemapResource = function (_Resource) {
+    _inherits(TilemapResource, _Resource);
+
+    function TilemapResource(source, name, cache) {
+        _classCallCheck(this, TilemapResource);
+
+        var _this = _possibleConstructorReturn(this, (TilemapResource.__proto__ || Object.getPrototypeOf(TilemapResource)).call(this, null, name));
+
+        _this.data = new _tilemapData2.default({
+            width: source.width,
+            height: source.height,
+            tileWidth: source.tileWidth,
+            tileHeight: source.tileHeight,
+            orietation: source.orietation
+        });
+
+        _this.name = name;
+        _this.data.tilesets = (0, _parseTileset2.default)(source, cache);
+        _this.data.layers = (0, _parseLayers2.default)(source);
+        _this.type = _resource.ResourceType.Tilemap;
+
+        return _this;
+    }
+
+    return TilemapResource;
+}(_resource2.default);
+
+exports.default = TilemapResource;
 
 /***/ }),
 
@@ -2976,6 +3316,10 @@ var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathu
 
 var _pathutils2 = _interopRequireDefault(_pathutils);
 
+var _assetsType = __webpack_require__(/*! ../assetsType */ "./loader/assetsType.js");
+
+var _assetsType2 = _interopRequireDefault(_assetsType);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2999,7 +3343,7 @@ var ImageFile = function (_File) {
         }
 
         var fileConfig = {
-            type: 'image',
+            type: _assetsType2.default.image,
             tag: assetTag,
             ext: _objectutils2.default.getValue(tag, 'ext', _pathutils2.default.getExtension(url)),
             url: _objectutils2.default.getValue(tag, 'file', url),
@@ -3109,6 +3453,10 @@ var _objectutils2 = _interopRequireDefault(_objectutils);
 
 var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
 
+var _assetsType = __webpack_require__(/*! ../assetsType */ "./loader/assetsType.js");
+
+var _assetsType2 = _interopRequireDefault(_assetsType);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3124,7 +3472,7 @@ var JSONFile = function (_File) {
         _classCallCheck(this, JSONFile);
 
         var config = {
-            type: 'json',
+            type: _assetsType2.default.json,
             ext: _objectutils2.default.getValue(tag, 'ext', 'json'),
             responseType: 'text',
             tag: tag,
@@ -3196,6 +3544,10 @@ var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathu
 
 var _pathutils2 = _interopRequireDefault(_pathutils);
 
+var _assetsType = __webpack_require__(/*! ../assetsType */ "./loader/assetsType.js");
+
+var _assetsType2 = _interopRequireDefault(_assetsType);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3225,7 +3577,7 @@ var TextFile = function (_File) {
         }
 
         var fileConfig = {
-            type: 'text',
+            type: _assetsType2.default.text,
             tag: assetTag,
             ext: _objectutils2.default.getValue(tag, 'ext', _pathutils2.default.getExtension(url)),
             url: _objectutils2.default.getValue(tag, 'file', url),
@@ -3332,6 +3684,10 @@ var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathu
 
 var _pathutils2 = _interopRequireDefault(_pathutils);
 
+var _assetsType = __webpack_require__(/*! ../assetsType */ "./loader/assetsType.js");
+
+var _assetsType2 = _interopRequireDefault(_assetsType);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3368,7 +3724,7 @@ var TilemapFileJSON = function (_JSONFile) {
 
         var _this = _possibleConstructorReturn(this, (TilemapFileJSON.__proto__ || Object.getPrototypeOf(TilemapFileJSON)).call(this, tag, url, path, xhrSettings));
 
-        _this.type = 'tilemapJSON';
+        _this.type = _assetsType2.default.tilemapJSON;
 
         return _this;
     }
@@ -3401,6 +3757,33 @@ _loaderstate.AssetTypeHandler.register('tilemapJSON', function (tag, url, path, 
     this.addAsset(new TilemapFileJSON(tag, url, this.path, xhrSettings));
     return this;
 });
+
+/***/ }),
+
+/***/ "./loader/assetsType.js":
+/*!******************************!*\
+  !*** ./loader/assetsType.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var AssetsType = {
+    'none': 0,
+    'image': 1,
+    'audio': 2,
+    'text': 3,
+    'json': 4,
+    'tilemapJSON': 5
+};
+
+exports.default = AssetsType;
 
 /***/ }),
 
@@ -3577,7 +3960,8 @@ module.exports = {
     File: __webpack_require__(/*! ./file */ "./loader/file.js"),
     XHR: __webpack_require__(/*! ./XHR */ "./loader/XHR.js"),
     URLObject: __webpack_require__(/*! ./URLobject */ "./loader/URLobject.js"),
-    AssetsTypes: __webpack_require__(/*! ./assets */ "./loader/assets/index.js"),
+    AssetsType: __webpack_require__(/*! ./assetsType */ "./loader/assetsType.js"),
+    Assets: __webpack_require__(/*! ./assets */ "./loader/assets/index.js"),
     LoaderState: __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js"),
     LoaderManager: __webpack_require__(/*! ./loadmanager */ "./loader/loadmanager.js")
 
@@ -3706,6 +4090,10 @@ var _objectutils2 = _interopRequireDefault(_objectutils);
 var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
 
 var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
+var _assetsType = __webpack_require__(/*! ./assetsType */ "./loader/assetsType.js");
+
+var _assetsType2 = _interopRequireDefault(_assetsType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3919,6 +4307,11 @@ var LoadManager = function () {
         this.processingDone();
       } else {
 
+        // sort the assets by type priority 
+        this._successFiles.sort(function (a, b) {
+          return a.type < b.type;
+        });
+
         this._successFiles.each(function (file) {
           file.onProcessing(this.processingUpdate.bind(this));
         }, this);
@@ -3965,12 +4358,12 @@ var LoadManager = function () {
             default:
               break;
 
-            case 'image':
+            case _assetsType2.default.image:
               {
                 cache.addImage(file.tag, file.url, file.data);
                 break;
               }
-            case 'audio':
+            case _assetsType2.default.audio:
               {
 
                 file.data = requestXHR.response;
@@ -3983,15 +4376,15 @@ var LoadManager = function () {
 
                 break;
               }
-            case 'json':
+            case _assetsType2.default.json:
               {
                 cache.addJSON(file.tag, file.data);
                 break;
               }
 
-            case 'tilemapJSON':
+            case _assetsType2.default.tilemapJSON:
               {
-                cache.addJSON(file.tag, { data: file.data, format: 0 });
+                cache.addTilemap(file.tag, file.data);
                 break;
               }
           }
@@ -7194,7 +7587,7 @@ var RenderLayersManagement = function () {
 
         this.game = game;
         this.renderLayers = new _list2.default();
-        //this.__renderLayersMap = new Map();
+        //this.__renderLayersMap = new DataMap();
         this.add('default');
     }
 
@@ -7587,7 +7980,7 @@ exports.default = SceneManager;
 
 module.exports = {
     Utils: __webpack_require__(/*! ./useful */ "./structures/useful/index.js"),
-    SetData: __webpack_require__(/*! ./set */ "./structures/set.js"),
+    Set: __webpack_require__(/*! ./set */ "./structures/set.js"),
     Map: __webpack_require__(/*! ./map */ "./structures/map.js"),
     List: __webpack_require__(/*! ./list */ "./structures/list.js")
 };
@@ -7618,9 +8011,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var List = function () {
-    function List(elements, unique) {
-        _classCallCheck(this, List);
+var DataList = function () {
+    function DataList(elements, unique) {
+        _classCallCheck(this, DataList);
 
         this.unique = unique || true;
         this.childs = [];
@@ -7632,7 +8025,7 @@ var List = function () {
         }
     }
 
-    _createClass(List, [{
+    _createClass(DataList, [{
         key: 'push',
         value: function push(child) {
 
@@ -7793,7 +8186,7 @@ var List = function () {
             var idx1 = this.indexOf(childB);
 
             if (idx0 < 0 || idx1 < 0) {
-                throw new Error('List.swap: Could not swap childrens. The objects are not in the list.');
+                throw new Error('DataList.swap: Could not swap childrens. The objects are not in the list.');
             }
 
             this.list[idx0] = childA;
@@ -7810,7 +8203,7 @@ var List = function () {
             var cB = this.at(indexB);
 
             if (cA === undefined || cB === undefined) {
-                throw new Error('List.swapByIndex: Could not swap childrens by index. The objects are not in the list.');
+                throw new Error('DataList.swapByIndex: Could not swap childrens by index. The objects are not in the list.');
             }
 
             this.list[indexA] = cA;
@@ -7849,10 +8242,10 @@ var List = function () {
         }
     }]);
 
-    return List;
+    return DataList;
 }();
 
-exports.default = List;
+exports.default = DataList;
 
 /***/ }),
 
@@ -7874,10 +8267,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// Map simple class
-var Map = function () {
-  function Map() {
-    _classCallCheck(this, Map);
+// DataMap simple class
+var DataMap = function () {
+  function DataMap() {
+    _classCallCheck(this, DataMap);
 
     this._content = {};
     this._size = 0;
@@ -7890,7 +8283,7 @@ var Map = function () {
   */
 
 
-  _createClass(Map, [{
+  _createClass(DataMap, [{
     key: "set",
     value: function set(key, value) {
 
@@ -8013,10 +8406,10 @@ var Map = function () {
     }
   }]);
 
-  return Map;
+  return DataMap;
 }();
 
-exports.default = Map;
+exports.default = DataMap;
 
 /***/ }),
 
@@ -8036,11 +8429,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _mergesort = __webpack_require__(/*! ./useful/mergesort */ "./structures/useful/mergesort.js");
+
+var _mergesort2 = _interopRequireDefault(_mergesort);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var SetData = function () {
-    function SetData(elements) {
-        _classCallCheck(this, SetData);
+var DataSet = function () {
+    function DataSet(elements) {
+        _classCallCheck(this, DataSet);
 
         this._content = [];
         this._size = 0;
@@ -8052,7 +8451,7 @@ var SetData = function () {
         }
     }
 
-    _createClass(SetData, [{
+    _createClass(DataSet, [{
         key: "set",
         value: function set(value) {
             if (this._content.indexOf(value) === -1) this._content.push(value);
@@ -8109,6 +8508,12 @@ var SetData = function () {
             return this;
         }
     }, {
+        key: "sort",
+        value: function sort(predicate) {
+            if (predicate === undefined) return;
+            return (0, _mergesort2.default)(this._content, predicate);
+        }
+    }, {
         key: "size",
         get: function get() {
             return this._content.length;
@@ -8120,10 +8525,10 @@ var SetData = function () {
         }
     }]);
 
-    return SetData;
+    return DataSet;
 }();
 
-exports.default = SetData;
+exports.default = DataSet;
 
 /***/ }),
 
@@ -8549,6 +8954,46 @@ if (this.game.systemInited) {
 
 
 exports.default = UpdateStep;
+
+/***/ }),
+
+/***/ "./utils/Base64Utils.js":
+/*!******************************!*\
+  !*** ./utils/Base64Utils.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var Base64Utils = {
+    decode: function decode(str) {
+        return window.atob(str);
+        // Base64.decode(encodedString);
+    },
+    decodeToUint32: function decodeToUint32(str) {
+        var bin = window.atob(str);
+        var len = bin.length;
+        var bytes = new Array(len);
+
+        for (var i = 0; i < len; i += 4) {
+            bytes[i / 4] = (bin.charCodeAt(i) | bin.charCodeAt(i + 1) << 8 | bin.charCodeAt(i + 2) << 16 | bin.charCodeAt(i + 3) << 24) >>> 0;
+        }
+
+        return bytes;
+    },
+    encode: function encode(str) {
+        return window.btoa(str);
+        // Base64.encode(string);
+    }
+};
+
+exports.default = Base64Utils;
 
 /***/ }),
 

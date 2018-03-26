@@ -1,13 +1,14 @@
 import File from "../file";
 import ObjectUtils from "../../utils/objectutils";
 import { LOADER_STATE, AssetTypeHandler } from "../loaderstate";
+import AssetsType from "../assetsType";
 
 export default class JSONFile extends File {
 
     constructor(tag, url, path, xhrSettings, config) {
 
         var config = {
-            type: 'json',
+            type: AssetsType.json,
             ext: ObjectUtils.getValue(tag, 'ext', 'json'),
             responseType: 'text',
             tag: tag,

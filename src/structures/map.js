@@ -1,8 +1,8 @@
 
 
 
-// Map simple class
-export default class Map {
+// DataMap simple class
+export default class DataMap {
   
   constructor() {
     this._content = {};

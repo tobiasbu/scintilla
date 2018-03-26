@@ -1,14 +1,14 @@
 
-import Map from '../structures/map'
+import DataMap from '../structures/map'
 import RenderLayer from './renderlayer'
-import List from '../structures/list';
+import DataList from '../structures/list';
 
 export default class RenderLayersManagement {
 
     constructor(game) {
         this.game = game;
-        this.renderLayers = new List();
-        //this.__renderLayersMap = new Map();
+        this.renderLayers = new DataList();
+        //this.__renderLayersMap = new DataMap();
         this.add('default');
     }
 

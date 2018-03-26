@@ -1,7 +1,7 @@
 
 
 import Key from './key'
-import Map from '../structures/map'
+import DataMap from '../structures/map'
 import KeyCode from './keycode'
 
 export default class Keyboard {
@@ -12,8 +12,8 @@ export default class Keyboard {
   this.context = game.context;
   this.active = true;
   //this._keys = [];
-  this._keyMapping = new Map();
-  this._keyWatch = new Map();
+  this._keyMapping = new DataMap();
+  this._keyWatch = new DataMap();
   this._keyGarbage = [];
   //this._keyLock = [];
   //this._keyLockPressed = [];

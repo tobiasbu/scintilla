@@ -1,13 +1,13 @@
 
 
-import Map from '../structures/map'
+import DataMap from '../structures/map'
 
 
 class ModuleProviderManager
 {
     constructor()
     {
-        this.proxyModules = new Map();
+        this.proxyModules = new DataMap();
     }
 
     attach(manager, moduleName, args)

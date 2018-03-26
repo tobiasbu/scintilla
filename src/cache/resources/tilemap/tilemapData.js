@@ -1,5 +1,5 @@
-import objectutils from "../../../utils/objectutils";
-import List from "../../../structures/list";
+import ObjectUtils from "../../../utils/objectutils";
+import DataList from "../../../structures/list";
 
 export default class TilemapData {
 
@@ -13,7 +13,7 @@ export default class TilemapData {
         this.widthPixels = ObjectUtils.getValue(config,'pixelsWidth',this.width * this.tileWidth);
         this.heightPixels = ObjectUtils.getValue(config,'heightPixels',this.height * this.tileHeight);
         this.orientation = ObjectUtils.getValue(config, 'orientation', 'orthogonal');
-        this.layers = null; //ObjectUtils.getValue(config, 'layers', new List());
+        this.layers = null; //ObjectUtils.getValue(config, 'layers', new DataList());
         this.tilesets = null; //GetFastValue(config, 'tilesets', []);
     }
 

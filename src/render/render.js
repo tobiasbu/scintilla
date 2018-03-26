@@ -1,5 +1,5 @@
 
-import Map from '../structures/map'
+import DataMap from '../structures/map'
 import RenderLayer from './renderlayer'
 import RenderLayerManagment from './renderlayersmanagement'
 import Canvas from './canvas/canvas'

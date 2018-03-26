@@ -3,6 +3,7 @@ import { LOADER_STATE, AssetTypeHandler} from '../loaderstate'
 import File from '../file'
 import ObjectUtils from '../../utils/objectutils'
 import PathUtils from '../../utils/pathutils'
+import AssetsType from '../assetsType';
 
 export default class TextFile extends File {
 
@@ -30,7 +31,7 @@ export default class TextFile extends File {
         }
 
         var fileConfig = {
-            type: 'text',
+            type: AssetsType.text,
             tag: assetTag,
             ext: ObjectUtils.getValue(tag, 'ext', PathUtils.getExtension(url)),
             url: ObjectUtils.getValue(tag, 'file', url),

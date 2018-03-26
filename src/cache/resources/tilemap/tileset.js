@@ -1,8 +1,5 @@
-import List from "../../../structures/list";
+import DataList from "../../../structures/list";
 
-export function CheckImageSources() {
-
-}
 
 class TileGID {
     constructor(gid, x, y, xmax, ymax) {
@@ -26,7 +23,7 @@ export default class Tileset {
         this.margin = margin;
         this.spacing = spacing;
         this.image = null;
-        this.tilesGID = new List();
+        this.tilesGID = new DataList();
         this.rows = 0;
         this.collumns = 0;
         this.count = 0;

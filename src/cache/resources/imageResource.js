@@ -13,7 +13,6 @@ export default class ImageResource extends Resource {
       
       this.width = 0;
       this.height = 0;
-      this.isLoaded = false;
       this.source = source;
       this.imageUrl = null;
       this.type = ResourceType.Image;

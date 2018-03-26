@@ -1,4 +1,4 @@
-import Resource from "../resource";
+import Resource from "./resource";
 import TilemapData from "./tilemap/tilemapData";
 import { ResourceType } from "./resource";
 import ParseTilesets from "./tilemap/parseTileset";
@@ -7,6 +7,8 @@ import ParseLayers from "./tilemap/parseLayers";
 export default class TilemapResource extends Resource {
 
     constructor(source, name, cache) {
+
+        super(null, name);
 
         this.data = new TilemapData({
             width: source.width,

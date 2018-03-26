@@ -1,14 +1,12 @@
-module.exports = {
 
-   
+module.exports = {
 
     File: require('./file'),
     XHR: require('./XHR'),
     URLObject : require('./URLobject'),
-    AssetsTypes: require('./assets'),
+    AssetsType : require('./assetsType'),
+    Assets: require('./assets'),
     LoaderState: require('./loaderstate'),    
     LoaderManager: require('./loadmanager'),
-    
-
 
 };

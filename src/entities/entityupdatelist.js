@@ -1,4 +1,4 @@
-import List from "../structures/list";
+import DataList from "../structures/list";
 import GameSystemManager from "../core/gameSystemManager";
 import UpdateTransform from '../modules/core/updateTransform'
 import UpdateModules from '../modules/core/updateModules'
@@ -19,9 +19,9 @@ export default class EntityUpdateList {
 
     init()
     {
-        this._instances = new List();
-        this._destroyInstances = new List();
-        this._pendingInstances = new List();
+        this._instances = new DataList();
+        this._destroyInstances = new DataList();
+        this._pendingInstances = new DataList();
         this._camera = this.game.system.camera;
     }
 

@@ -1,12 +1,12 @@
 
-import Map from '../structures/map'
+import DataMap from '../structures/map'
 import Signal from './signal'
 
 export default class EventManager {
 
     constructor(game) {
         this.game;
-        this._signalsMap = new Map();
+        this._signalsMap = new DataMap();
     }
 
     create(eventName) {}

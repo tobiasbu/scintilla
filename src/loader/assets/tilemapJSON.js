@@ -2,6 +2,7 @@ import File from '../file'
 import JSONFile from './jsonfile';
 import { AssetTypeHandler, LOADER_STATE } from '../loaderstate';
 import PathUtils from '../../utils/pathutils';
+import AssetsType from '../assetsType';
 
 
 function CheckImagesSources(loader, source, fullPath) {
@@ -36,7 +37,7 @@ export default class TilemapFileJSON extends JSONFile {
     constructor(tag, url, path, xhrSettings) {
 
         super(tag, url, path, xhrSettings);
-        this.type = 'tilemapJSON';
+        this.type = AssetsType.tilemapJSON;
 
     }
 

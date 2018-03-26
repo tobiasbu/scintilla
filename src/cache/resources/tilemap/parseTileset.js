@@ -1,14 +1,14 @@
 import Tileset from "./tileset";
-import List from "../../../structures/list";
+import DataList from "../../../structures/list";
 
 export default function ParseTilesets(json, cache) {
 
-    let size = json.tilesets.length;
+    let size = json.tilesets.length || -1;
 
     if (size <= 0)
         return null;
 
-    let tilesets = new List();
+    let tilesets = new DataList();
 
     for (let i = 0; i < size; i++) {
 
@@ -24,9 +24,9 @@ export default function ParseTilesets(json, cache) {
                 tileset.margin, 
                 tileset.spacing);
 
-            tileset.image = cache.getAsset('image',tileset.name);
+            newTileSet.image = cache.getAsset('image', tileset.name);
 
-            tileset.updateData(tileset.imagewidth, tileset.imageheight);
+            newTileSet.updateData(tileset.imagewidth, tileset.imageheight);
 
             tilesets.push(newTileSet);
         }
