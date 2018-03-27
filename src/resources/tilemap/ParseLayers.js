@@ -8,7 +8,7 @@ export default function ParseLayers(json, map) {
 
     let size = json.layers.lenght;
 
-    let tileLayers = new List();
+    let tileLayers = new DataList();
 
     if (size <= 0)
         return tileLayers;

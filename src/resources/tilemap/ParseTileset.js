@@ -1,5 +1,6 @@
 import Tileset from "./Tileset";
 import DataList from "../../structures/List";
+import Path from '../../utils/Path'
 
 
 export default function ParseTilesets(json, cache) {

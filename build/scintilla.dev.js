@@ -288,9 +288,9 @@ var _ImageResource = __webpack_require__(/*! ../resources/ImageResource */ "./re
 
 var _ImageResource2 = _interopRequireDefault(_ImageResource);
 
-var _tilemapResource = __webpack_require__(/*! ../resources/tilemapResource */ "./resources/tilemapResource.js");
+var _TilemapResource = __webpack_require__(/*! ../resources/TilemapResource */ "./resources/TilemapResource.js");
 
-var _tilemapResource2 = _interopRequireDefault(_tilemapResource);
+var _TilemapResource2 = _interopRequireDefault(_TilemapResource);
 
 var _Cache = __webpack_require__(/*! ./Cache */ "./cache/Cache.js");
 
@@ -321,7 +321,7 @@ var CacheManager = function () {
     });
 
     this.tilemap = new _Cache2.default(function (tag, data) {
-      return new _tilemapResource2.default(tag, data, self);
+      return new _TilemapResource2.default(tag, data, self);
     });
 
     this.json = new _Cache2.default();
@@ -7412,6 +7412,10 @@ var _ParseLayers = __webpack_require__(/*! ./tilemap/ParseLayers */ "./resources
 
 var _ParseLayers2 = _interopRequireDefault(_ParseLayers);
 
+var _ResourceType = __webpack_require__(/*! ./ResourceType */ "./resources/ResourceType.js");
+
+var _ResourceType2 = _interopRequireDefault(_ResourceType);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7439,8 +7443,8 @@ var TilemapResource = function (_Resource) {
                 _this.name = name;
                 _this.data.tilesets = (0, _ParseTileset2.default)(source, cache);
                 _this.data.layers = (0, _ParseLayers2.default)(source);
-                _this.data.tiles = ParseTiles(_this.data);
-                _this.type = ResourceType.Tilemap;
+                //this.data.tiles = ParseTiles(this.data);
+                _this.type = _ResourceType2.default.Tilemap;
 
                 return _this;
         }
@@ -7567,7 +7571,7 @@ function ParseLayers(json, map) {
 
     var size = json.layers.lenght;
 
-    var tileLayers = new List();
+    var tileLayers = new _List2.default();
 
     if (size <= 0) return tileLayers;
 
@@ -7654,6 +7658,10 @@ var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.
 
 var _List2 = _interopRequireDefault(_List);
 
+var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
+
+var _Path2 = _interopRequireDefault(_Path);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ParseTilesets(json, cache) {
@@ -7670,7 +7678,7 @@ function ParseTilesets(json, cache) {
 
             var newTileSet = new _Tileset2.default(jsonTileset.name, jsonTileset.firstgid, jsonTileset.tilewidth, jsonTileset.tileheight, jsonTileset.margin, jsonTileset.spacing);
 
-            newTileSet.image = cache.getAsset('image', Path.getFilenameWithoutExtension(jsonTileset.image) || jsonTileset.name);
+            newTileSet.image = cache.getAsset('image', _Path2.default.getFilenameWithoutExtension(jsonTileset.image) || jsonTileset.name);
 
             newTileSet.updateData(jsonTileset.imagewidth, jsonTileset.imageheight);
 
@@ -7877,76 +7885,6 @@ var Tileset = function () {
 }();
 
 exports.default = Tileset;
-
-/***/ }),
-
-/***/ "./resources/tilemapResource.js":
-/*!**************************************!*\
-  !*** ./resources/tilemapResource.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-        value: true
-});
-
-var _TilemapData = __webpack_require__(/*! ./tilemap/TilemapData */ "./resources/tilemap/TilemapData.js");
-
-var _TilemapData2 = _interopRequireDefault(_TilemapData);
-
-var _Resource2 = __webpack_require__(/*! ./Resource */ "./resources/Resource.js");
-
-var _Resource3 = _interopRequireDefault(_Resource2);
-
-var _ParseTileset = __webpack_require__(/*! ./tilemap/ParseTileset */ "./resources/tilemap/ParseTileset.js");
-
-var _ParseTileset2 = _interopRequireDefault(_ParseTileset);
-
-var _ParseLayers = __webpack_require__(/*! ./tilemap/ParseLayers */ "./resources/tilemap/ParseLayers.js");
-
-var _ParseLayers2 = _interopRequireDefault(_ParseLayers);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var TilemapResource = function (_Resource) {
-        _inherits(TilemapResource, _Resource);
-
-        function TilemapResource(name, source, cache) {
-                _classCallCheck(this, TilemapResource);
-
-                var _this = _possibleConstructorReturn(this, (TilemapResource.__proto__ || Object.getPrototypeOf(TilemapResource)).call(this, name));
-
-                _this.data = new _TilemapData2.default({
-                        width: source.width,
-                        height: source.height,
-                        tileWidth: source.tileWidth,
-                        tileHeight: source.tileHeight,
-                        orietation: source.orietation
-                });
-
-                _this.name = name;
-                _this.data.tilesets = (0, _ParseTileset2.default)(source, cache);
-                _this.data.layers = (0, _ParseLayers2.default)(source);
-                _this.data.tiles = ParseTiles(_this.data);
-                _this.type = ResourceType.Tilemap;
-
-                return _this;
-        }
-
-        return TilemapResource;
-}(_Resource3.default);
-
-exports.default = TilemapResource;
 
 /***/ }),
 

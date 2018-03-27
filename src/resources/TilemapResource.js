@@ -2,6 +2,7 @@ import TilemapData from "./tilemap/TilemapData";
 import Resource from "./Resource";
 import ParseTilesets from "./tilemap/ParseTileset";
 import ParseLayers from "./tilemap/ParseLayers";
+import ResourceType from './ResourceType'
 
 export default class TilemapResource extends Resource {
 
@@ -20,7 +21,7 @@ export default class TilemapResource extends Resource {
         this.name = name;
         this.data.tilesets = ParseTilesets(source, cache);
         this.data.layers = ParseLayers(source);
-        this.data.tiles = ParseTiles(this.data);
+        //this.data.tiles = ParseTiles(this.data);
         this.type = ResourceType.Tilemap;
         
 
