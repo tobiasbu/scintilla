@@ -24,7 +24,7 @@ function CheckImagesSources(loader, source, fullPath) {
         let tileset = source[i];
 
         if (tileset.image) {
-            let name = tileset.name || Path.getFilenameWithoutExtension(tileset.image);
+            let name = Path.getFilenameWithoutExtension(tileset.image) || tileset.name;
             let path = Path.getPathWithoutRoot(fullPath).concat(Path.getFilename(tileset.image));
             loader.image(name, path, undefined, undefined, false);
         }

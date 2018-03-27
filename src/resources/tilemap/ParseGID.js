@@ -28,10 +28,11 @@ export default function ParseGID(global_tile_id) {
     let flipped_vertically = Boolean(global_tile_id & FLIPPED_VERTICALLY_FLAG);
     let flipped_diagonally = Boolean(global_tile_id & FLIPPED_DIAGONALLY_FLAG);
 
-     // Clear the flags
-     global_tile_id &= ~(FLIPPED_HORIZONTALLY_FLAG |
+    // Clear the flags
+     global_tile_id = global_tile_id & ~(FLIPPED_HORIZONTALLY_FLAG |
         FLIPPED_VERTICALLY_FLAG |
         FLIPPED_DIAGONALLY_FLAG);
+
 
     let flags = ParseGIDFlags(flipped_horizontally, flipped_vertically, flipped_diagonally);
 

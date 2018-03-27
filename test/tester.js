@@ -18,7 +18,7 @@ var config = {
         height: 240
     },
     parent: "canvas-container",
-    debug: true,
+    debug: false,
     fps: 60,
     pixelated: true
 };
@@ -52,7 +52,7 @@ scene.preload = function() {
 var t = null;
 
 scene.start = function() {
-    t = this.create.sprite('title');
+    t = this.create.tilemap('tilemap');
     t.position.x = 0;
     t.position.y = 0;
     t.origin.set(0,0);

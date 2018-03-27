@@ -1,12 +1,16 @@
 
 export default class Tile {
 
-    constructor(layer, tileGID, x, y, id) {
+    constructor(layer, tileData, tileX, tileY, id) {
         this.layer = layer;
-        this.gid = tileGID;
-        this.x = x;
-        this.y = y;
+        this.data = tileData;
+        this.tileX = tileX;
+        this.tileY = tileY;
         this.id = id;
+        this.frame = tileData.st;
+        // pixels positions
+        this.x = tileX * tileData.st.width;
+        this.y = tileY * tileData.st.height;
     }
 
 }

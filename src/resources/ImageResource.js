@@ -10,8 +10,9 @@ export default class ImageResource extends Resource {
 
     constructor(name, data) {
 
-      super(name, data);
+      super(name);
       
+      this.data = data;
       this.width = 0;
       this.height = 0;
       this.imageUrl = null;

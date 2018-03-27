@@ -16,7 +16,7 @@ export default class Renderable extends Module
         this._alpha = 1;
         this._depthDirty = true; 
         this.bounds = new BoundingBox();
-        this.source = null;
+        
 
         
         //this.type = EntityType.Renderable;

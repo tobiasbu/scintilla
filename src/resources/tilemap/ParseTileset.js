@@ -5,7 +5,7 @@ import Path from '../../utils/Path'
 
 export default function ParseTilesets(json, cache) {
 
-    let size = json.tilesets.length || -1;
+    let size = json.tilesets.length || 0;
 
     let tileSets = new DataList();    
 
@@ -23,9 +23,11 @@ export default function ParseTilesets(json, cache) {
                 jsonTileset.margin, 
                 jsonTileset.spacing);
 
-            newTileSet.image = cache.getAsset('image', Path.getFilenameWithoutExtension(jsonTileset.image) || jsonTileset.name);
+            newTileSet.image = cache.image.get(Path.getFilenameWithoutExtension(jsonTileset.image) || jsonTileset.name);
 
             newTileSet.updateData(jsonTileset.imagewidth, jsonTileset.imageheight);
+
+            // check tile properties
 
             tileSets.push(newTileSet);
         }

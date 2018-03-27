@@ -1,7 +1,7 @@
 
 import ObjectUtils from '../../utils/ObjectUtils'
 
-export default class TilemapLayer {
+export default class TilemapLayerData {
     constructor(config) {
         this.width = ObjectUtils.getValue(config,'width', 0);
         this.height = ObjectUtils.getValue(config,'height',0);

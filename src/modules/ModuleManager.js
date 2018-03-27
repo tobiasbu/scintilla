@@ -19,6 +19,8 @@ export default class ModuleManager
         
     }
 
-
+    has(moduleName) {
+        return this.attached.has(moduleName);
+    }
 
 } 

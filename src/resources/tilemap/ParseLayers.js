@@ -3,39 +3,39 @@ import ObjectUtils from '../../utils/ObjectUtils'
 import Base64Utils from '../../utils/Base64Utils';
 import DataList from '../../structures/List';
 import ParseGID from './ParseGID'
+import TilemapLayerData from './TilemapLayerData';
+import Tile from './Tile';
 
 export default function ParseLayers(json, map) {
 
-    let size = json.layers.lenght;
-
+    let size = json.layers.length;
     let tileLayers = new DataList();
 
     if (size <= 0)
         return tileLayers;
 
-    
-
     for (let i = 0; i < size; i++) {
 
-        let layer = json.layers[i];
+        let jsonLayer = json.layers[i];
 
-        if (layer.enconding) {
-            if (layer.enconding === 'base64') {
-                layer.data = Base64Utils.decodeToUint32(layer.data);
-                delete layer.enconding;
+        if (jsonLayer.enconding) {
+            if (jsonLayer.enconding === 'base64') {
+                //  should be interpreted as an array of unsigned 32-bit integers using little-endian byte ordering.
+                jsonLayer.data = Base64Utils.decodeToUint32(jsonLayer.data);
+                delete jsonLayer.enconding;
             }
         }
 
-        let newLayer = new LayerData({
-            name: layer.name,
-            x: ObjectUtils.getValue(layer, 'offsetx', 0) + layer.x,
-            y: ObjectUtils.getValue(layer, 'offsety', 0) + layer.y,
-            width: layer.width,
-            height: layer.height,
-            tileWidth: layer.tilewidth,
-            tileHeight: layer.tileheight,
-            alpha: layer.opacity,
-            visible: layer.visible,
+        let newLayer = new TilemapLayerData({
+            name: jsonLayer.name,
+            x: ObjectUtils.getValue(jsonLayer, 'offsetx', 0) + jsonLayer.x,
+            y: ObjectUtils.getValue(jsonLayer, 'offsety', 0) + jsonLayer.y,
+            width: jsonLayer.width,
+            height: jsonLayer.height,
+            tileWidth: jsonLayer.tilewidth,
+            tileHeight: jsonLayer.tileheight,
+            alpha: jsonLayer.opacity,
+            visible: jsonLayer.visible,
             //properties: GetFastValue(layer, 'properties', {})
         });
 
@@ -43,9 +43,9 @@ export default function ParseLayers(json, map) {
         let x = 0;
         let y = 0;
 
-        for (let j = 0; j < layer.data.lenght; j++) {
+        for (let j = 0; j < jsonLayer.data.length; j++) {
 
-            let gidProp = ParseGID(layer.data[j]);
+            let gidProp = ParseGID(jsonLayer.data[j]);
             let id = x + y * newLayer.width;
             let tile = null;
 
@@ -71,6 +71,7 @@ export default function ParseLayers(json, map) {
 
     }
 
+   
     return tileLayers;
 
 }

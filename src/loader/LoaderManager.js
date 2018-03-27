@@ -235,11 +235,6 @@ export default class LoadManager {
         this.processingDone();
     } else {
      
-      // sort the assets by type priority 
-      this._successFiles.sort((a, b) => {
-        return a.type < b.type;
-      });
-
       this._successFiles.each(function(file) {
         file.onProcessing(this.processingUpdate.bind(this));
       },this);
@@ -282,8 +277,18 @@ export default class LoadManager {
 
     var cache = this.cache;
 
+          
+
     if (this._processedFiles.size > 0)
     {
+
+      // sort the assets by type priority 
+      this._processedFiles.sort((a, b) => {
+        return (a.type > b.type);
+      });
+
+      console.log(this._processedFiles);
+
       this._processedFiles.each(function(file) {
 
         switch (file.type)

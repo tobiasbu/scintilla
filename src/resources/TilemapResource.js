@@ -1,4 +1,4 @@
-import TilemapData from "./tilemap/TilemapData";
+import TilemapMetadata from "./tilemap/TilemapMetadata";
 import Resource from "./Resource";
 import ParseTilesets from "./tilemap/ParseTileset";
 import ParseLayers from "./tilemap/ParseLayers";
@@ -10,7 +10,8 @@ export default class TilemapResource extends Resource {
 
         super(name);
 
-        this.data = new TilemapData({
+        this.metaData = new TilemapMetadata ({
+            name: source.name,
             width: source.width,
             height: source.height,
             tileWidth: source.tileWidth,
@@ -19,11 +20,21 @@ export default class TilemapResource extends Resource {
         });
 
         this.name = name;
-        this.data.tilesets = ParseTilesets(source, cache);
-        this.data.layers = ParseLayers(source);
+        this.tilesets = ParseTilesets(source, cache);
+        this.layers = ParseLayers(source, this);
         //this.data.tiles = ParseTiles(this.data);
         this.type = ResourceType.Tilemap;
         
+
+    }
+
+    getTilesetByGID(gid) {
+
+        return this.tilesets.each((set)=>{
+            if (set.hasGID(gid)) {
+                return set;
+            }
+        }) || null;
 
     }
 

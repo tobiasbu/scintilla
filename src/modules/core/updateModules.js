@@ -1,4 +1,6 @@
 import Renderable from "../renderables/Renderable";
+import Tilemap from "../renderables/Tilemap";
+import Sprite from "../renderables/Sprite";
 
 export default function UpdateModules(modulesManager, game)
 {
@@ -14,9 +16,14 @@ export default function UpdateModules(modulesManager, game)
             modulesManager.attached.set(mod.type, mod);
 
             // RENDERABLES
-            if (mod instanceof Renderable)
-            {
+            if (mod instanceof Sprite) {
                 game.system.render.layer.renderLayers.at(0).add(mod);
+            } else if (mod instanceof Tilemap) {
+                for (let i = 0; i < mod.layers.length; i++) {
+                    game.system.render.layer.renderLayers.at(0).add(mod.layers[i]);
+                }
+
+               
             }
         });
 

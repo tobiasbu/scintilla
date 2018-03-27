@@ -1,5 +1,5 @@
 import DataList from "../../structures/List";
-import TileGID from './TileGID'
+import TileData from './TileData'
 
 
 
@@ -8,71 +8,86 @@ export default class Tileset {
     constructor(name, firstgid, tileWidth, tileHeight, margin, spacing) {
 
         this.name = name;
-        this.firstgid = firstgid;
-        this.tileWidth = tileWidth;
-        this.tileHeight = tileHeight;
-        this.margin = margin;
-        this.spacing = spacing;
+        this.firstgid = firstgid || 1;
+        this.tileWidth = tileWidth || 16;
+        this.tileHeight = tileHeight || 16;
+        this.margin = margin || 0;
+        this.spacing = spacing || 0;
         this.image = null;
-        this.tilesGID = new DataList();
+        this.data = new DataList();
         this.rows = 0;
         this.collumns = 0;
-        this.count = 0;
+        this.gidCount = 0;
     }
 
     getTile(gid) {
 
-        if (gid < this.firstgid && tileIndex >= this.firstgid + this.count)
+        if (gid < this.firstgid && gid >= this.firstgid + this.gidCount)
             return null;
 
-        return this.tilesGID.at(gid);
+        return this.data.at(gid - this.firstgid);
     } 
 
     hasGID(gid) {
         return (
             gid >= this.firstgid &&
-            gid < this.firstgid + this.count
+            gid < this.firstgid + this.gidCount
         );
     }
 
     updateData(imageWidth, imageHeight) {
 
-        if (this.image != null)
+        if (this.image !== undefined || this.image != null)
         {
             imageWidth = this.image.width;
             imageHeight = this.image.height;
         }
 
-        let rowCount = (imageHeight - this.margin * 2 + this.spacing) / (this.tileHeight + this.spacing);
-        let colCount = (imageWidth - this.margin * 2 + this.spacing) / (this.tileWidth + this.spacing);
+        //slice into tiles
+        let columns = (imageHeight - this.margin * 2 + this.spacing) / (this.tileHeight + this.spacing);
+        let rows = (imageWidth - this.margin * 2 + this.spacing) / (this.tileWidth + this.spacing);
 
-        rowCount = Math.floor(rowCount);
-        colCount = Math.floor(colCount);
+        //rows = Math.floor(rows);
+        //columns = Math.floor(columns);
 
-        this.count = rowCount * colCount;
+
+        this.rows = rows;
+        this.collumns = columns;
+        this.gidCount = rows * columns;
 
         let u = this.margin;
         let v = this.margin;
+        let x = 0;
 
-        this.tilesGID.clear();
+        this.data.clear();
         //let gid = 0;
 
-        for (let y = 0; y < this.rows; y++) {
-            for (let x = 0; x < this.columns; x++) {
-
-                let gid = x + y * this.rows;
-                this.tilesGID.push(new TileGID(
-                    this.firstgid + gid,
-                    this.tileset, 
+        for (let i = 0; i < this.gidCount; i++) {
+            //for (let x = 0; x < colCount; x++) {
+            
+               // let gid = x + y * this.rows;
+                this.data.push(new TileData(
+                    this, 
+                    this.firstgid + i,
                     u, v,
-                    u + this.tileWidth, v + this.tileHeight));
-                u += this.tileWidth + this.spacing;
-              
+                    this.tileWidth, this.tileHeight));
+
+            u += this.tileWidth + this.spacing;             
+            x++;
+
+            if (x >= rows)
+            {
+                x = 0;
+                u = this.margin;
+                v += this.tileHeight + this.spacing;
             }
 
-            u = this.tileMargin;
-            v += this.tileHeight + this.spacing;
+            
         }
+
+       
     }
+
+    
 
 }
