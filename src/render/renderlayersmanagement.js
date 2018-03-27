@@ -1,6 +1,6 @@
 
 import DataMap from '../structures/Map'
-import RenderLayer from './renderlayer'
+import RenderLayer from './RenderLayer'
 import DataList from '../structures/List';
 
 export default class RenderLayersManagement {

@@ -6934,186 +6934,9 @@ exports.default = SATResponse;
 
 /***/ }),
 
-/***/ "./render/canvas/canvas.js":
-/*!*********************************!*\
-  !*** ./render/canvas/canvas.js ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Create a Canvas object.
- * @class Canvas
- */
-exports.default = function () {
-  function Canvas() {
-    _classCallCheck(this, Canvas);
-  }
-
-  _createClass(Canvas, null, [{
-    key: "create",
-    value: function create(parent, width, height) {
-
-      // default definition
-      var defaultDef = {
-        width: width,
-        height: height,
-        id: Math.random().toString(36).substr(2, 9),
-        class: "",
-        container: "body",
-        style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
-      };
-
-      //var CO = Object.assign(defaultDef, options);
-      var CO = defaultDef;
-      var canvas = void 0;
-
-      canvas = document.createElement('canvas');
-      //canvas.parent = parent;
-      canvas.setAttribute("id", CO.id);
-      canvas.setAttribute("width", CO.width);
-      canvas.setAttribute("height", CO.height);
-      canvas.setAttribute("style", CO.style);
-      //canvas.style.position = 'absolute';
-
-
-      Canvas.appendDOM(canvas, parent);
-      //document.body.appendChild(canvas);
-      //var context = canvas.getContext("2d");
-
-
-      //tobiJS.Canvas.list.parent = document.body;
-
-      //console.log("Canvas Created!");
-
-      return canvas;
-    }
-  }, {
-    key: "appendDOM",
-    value: function appendDOM(canvas, parent) {
-
-      var appendTo = void 0;
-      var overflowHidden = true;
-      var target = null;
-
-      //if (overflowHidden === undefined) { overflowHidden = true; }
-
-      if (parent) {
-        if (typeof parent === 'string') {
-          // hopefully an element ID
-          target = document.getElementById(parent);
-        } else if ((typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' && parent.nodeType === 1) {
-          // quick test for a HTMLelement
-          target = parent;
-        }
-      }
-
-      // Fallback, covers an invalid ID and a non HTMLelement object
-      if (!target) {
-        target = document.body;
-      }
-
-      /*if (overflowHidden && target.style)
-      {
-          target.style.overflow = 'hidden';
-      }*/
-
-      target.appendChild(canvas);
-    }
-  }]);
-
-  return Canvas;
-}();
-
-/***/ }),
-
-/***/ "./render/canvas/smoothing.js":
-/*!************************************!*\
-  !*** ./render/canvas/smoothing.js ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _define = __webpack_require__(/*! ../define */ "./render/define.js");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var CanvasSmoothing = function () {
-    function CanvasSmoothing(context) {
-        _classCallCheck(this, CanvasSmoothing);
-
-        this.context = context;
-        this.prefix = this.getPrefix(context);
-    }
-
-    _createClass(CanvasSmoothing, [{
-        key: 'getPrefix',
-        value: function getPrefix(context) {
-
-            var vendors = ['i', 'webkitI', 'msI', 'mozI', 'oI'];
-            for (var i = 0; i < vendors.length; i++) {
-                var s = vendors[i] + 'mageSmoothingEnabled';
-
-                if (s in context) return s;
-            }
-
-            return null;
-        }
-    }, {
-        key: 'setEnable',
-        value: function setEnable(flag) {
-
-            if (flag === 'undefined') flag = true;
-
-            if (this.prefix === '' || this.prefix === undefined) this.prefix = this.getPrefix(this.context);
-
-            //
-
-            console.log(flag);
-
-            if (this.prefix) this.context[this.prefix] = flag;
-
-            return this.context;
-        }
-    }, {
-        key: 'set',
-        value: function set(renderType) {
-            if (renderType == _define.RENDERING_TYPE.NEAREST) this.setEnable(false);else this.setEnable(true);
-        }
-    }]);
-
-    return CanvasSmoothing;
-}();
-
-exports.default = CanvasSmoothing;
-
-/***/ }),
-
-/***/ "./render/define.js":
+/***/ "./render/Define.js":
 /*!**************************!*\
-  !*** ./render/define.js ***!
+  !*** ./render/Define.js ***!
   \**************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7131,9 +6954,9 @@ var RENDERING_TYPE = exports.RENDERING_TYPE = {
 
 /***/ }),
 
-/***/ "./render/draw.js":
+/***/ "./render/Draw.js":
 /*!************************!*\
-  !*** ./render/draw.js ***!
+  !*** ./render/Draw.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7264,28 +7087,9 @@ _GameSystemManager2.default.register('Draw', Draw, 'draw');
 
 /***/ }),
 
-/***/ "./render/index.js":
-/*!*************************!*\
-  !*** ./render/index.js ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    RenderLayer: __webpack_require__(/*! ./renderlayer */ "./render/renderlayer.js"),
-    RenderLayerManagement: __webpack_require__(/*! ./renderlayersmanagement */ "./render/renderlayersmanagement.js"),
-    Render: __webpack_require__(/*! ./render */ "./render/render.js"),
-    Draw: __webpack_require__(/*! ./draw */ "./render/draw.js")
-};
-
-/***/ }),
-
-/***/ "./render/render.js":
+/***/ "./render/Render.js":
 /*!**************************!*\
-  !*** ./render/render.js ***!
+  !*** ./render/Render.js ***!
   \**************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7303,27 +7107,27 @@ var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
 var _Map2 = _interopRequireDefault(_Map);
 
-var _renderlayer = __webpack_require__(/*! ./renderlayer */ "./render/renderlayer.js");
+var _RenderLayer = __webpack_require__(/*! ./RenderLayer */ "./render/RenderLayer.js");
 
-var _renderlayer2 = _interopRequireDefault(_renderlayer);
+var _RenderLayer2 = _interopRequireDefault(_RenderLayer);
 
-var _renderlayersmanagement = __webpack_require__(/*! ./renderlayersmanagement */ "./render/renderlayersmanagement.js");
+var _RenderLayersManagement = __webpack_require__(/*! ./RenderLayersManagement */ "./render/RenderLayersManagement.js");
 
-var _renderlayersmanagement2 = _interopRequireDefault(_renderlayersmanagement);
+var _RenderLayersManagement2 = _interopRequireDefault(_RenderLayersManagement);
 
-var _canvas = __webpack_require__(/*! ./canvas/canvas */ "./render/canvas/canvas.js");
+var _Canvas = __webpack_require__(/*! ./canvas/Canvas */ "./render/canvas/Canvas.js");
 
-var _canvas2 = _interopRequireDefault(_canvas);
+var _Canvas2 = _interopRequireDefault(_Canvas);
 
-var _define = __webpack_require__(/*! ./define */ "./render/define.js");
+var _Define = __webpack_require__(/*! ./Define */ "./render/Define.js");
 
 var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
 
 var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _smoothing = __webpack_require__(/*! ./canvas/smoothing */ "./render/canvas/smoothing.js");
+var _Smoothing = __webpack_require__(/*! ./canvas/Smoothing */ "./render/canvas/Smoothing.js");
 
-var _smoothing2 = _interopRequireDefault(_smoothing);
+var _Smoothing2 = _interopRequireDefault(_Smoothing);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7334,11 +7138,11 @@ var Render = function () {
         _classCallCheck(this, Render);
 
         this.game = game;
-        this.layer = new _renderlayersmanagement2.default(this.game);
-        this.canvas = _canvas2.default.create(this.game.parent, this.game.width, this.game.height);
+        this.layer = new _RenderLayersManagement2.default(this.game);
+        this.canvas = _Canvas2.default.create(this.game.parent, this.game.width, this.game.height);
         this.context = this.canvas.getContext("2d", { alpha: false });
-        this.imageRendering = game.config.pixelated ? _define.RENDERING_TYPE.NEAREST : _define.RENDERING_TYPE.LINEAR;
-        this.smooth = new _smoothing2.default(this.context);
+        this.imageRendering = game.config.pixelated ? _Define.RENDERING_TYPE.NEAREST : _Define.RENDERING_TYPE.LINEAR;
+        this.smooth = new _Smoothing2.default(this.context);
         this.smooth.set(this.imageRendering);
 
         this._backgroundColor = '#000';
@@ -7453,9 +7257,9 @@ _GameSystemManager2.default.register('Render', Render, 'render');
 
 /***/ }),
 
-/***/ "./render/renderlayer.js":
+/***/ "./render/RenderLayer.js":
 /*!*******************************!*\
-  !*** ./render/renderlayer.js ***!
+  !*** ./render/RenderLayer.js ***!
   \*******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7599,9 +7403,9 @@ exports.default = RenderLayer;
 
 /***/ }),
 
-/***/ "./render/renderlayersmanagement.js":
+/***/ "./render/RenderLayersManagement.js":
 /*!******************************************!*\
-  !*** ./render/renderlayersmanagement.js ***!
+  !*** ./render/RenderLayersManagement.js ***!
   \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7619,9 +7423,9 @@ var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
 var _Map2 = _interopRequireDefault(_Map);
 
-var _renderlayer = __webpack_require__(/*! ./renderlayer */ "./render/renderlayer.js");
+var _RenderLayer = __webpack_require__(/*! ./RenderLayer */ "./render/RenderLayer.js");
 
-var _renderlayer2 = _interopRequireDefault(_renderlayer);
+var _RenderLayer2 = _interopRequireDefault(_RenderLayer);
 
 var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
 
@@ -7650,7 +7454,7 @@ var RenderLayersManagement = function () {
             }
 
             //this.__renderLayersMap.set(name, this.__renderLayers.length);
-            this.renderLayers.push(new _renderlayer2.default(this.game, name));
+            this.renderLayers.push(new _RenderLayer2.default(this.game, name));
         }
     }, {
         key: 'remove',
@@ -7685,6 +7489,202 @@ var RenderLayersManagement = function () {
 }();
 
 exports.default = RenderLayersManagement;
+
+/***/ }),
+
+/***/ "./render/canvas/Canvas.js":
+/*!*********************************!*\
+  !*** ./render/canvas/Canvas.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Create a Canvas object.
+ * @class Canvas
+ */
+exports.default = function () {
+  function Canvas() {
+    _classCallCheck(this, Canvas);
+  }
+
+  _createClass(Canvas, null, [{
+    key: "create",
+    value: function create(parent, width, height) {
+
+      // default definition
+      var defaultDef = {
+        width: width,
+        height: height,
+        id: Math.random().toString(36).substr(2, 9),
+        class: "",
+        container: "body",
+        style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
+      };
+
+      //var CO = Object.assign(defaultDef, options);
+      var CO = defaultDef;
+      var canvas = void 0;
+
+      canvas = document.createElement('canvas');
+      //canvas.parent = parent;
+      canvas.setAttribute("id", CO.id);
+      canvas.setAttribute("width", CO.width);
+      canvas.setAttribute("height", CO.height);
+      canvas.setAttribute("style", CO.style);
+      //canvas.style.position = 'absolute';
+
+
+      Canvas.appendDOM(canvas, parent);
+      //document.body.appendChild(canvas);
+      //var context = canvas.getContext("2d");
+
+
+      //tobiJS.Canvas.list.parent = document.body;
+
+      //console.log("Canvas Created!");
+
+      return canvas;
+    }
+  }, {
+    key: "appendDOM",
+    value: function appendDOM(canvas, parent) {
+
+      var appendTo = void 0;
+      var overflowHidden = true;
+      var target = null;
+
+      //if (overflowHidden === undefined) { overflowHidden = true; }
+
+      if (parent) {
+        if (typeof parent === 'string') {
+          // hopefully an element ID
+          target = document.getElementById(parent);
+        } else if ((typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' && parent.nodeType === 1) {
+          // quick test for a HTMLelement
+          target = parent;
+        }
+      }
+
+      // Fallback, covers an invalid ID and a non HTMLelement object
+      if (!target) {
+        target = document.body;
+      }
+
+      /*if (overflowHidden && target.style)
+      {
+          target.style.overflow = 'hidden';
+      }*/
+
+      target.appendChild(canvas);
+    }
+  }]);
+
+  return Canvas;
+}();
+
+/***/ }),
+
+/***/ "./render/canvas/Smoothing.js":
+/*!************************************!*\
+  !*** ./render/canvas/Smoothing.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Define = __webpack_require__(/*! ../Define */ "./render/Define.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CanvasSmoothing = function () {
+    function CanvasSmoothing(context) {
+        _classCallCheck(this, CanvasSmoothing);
+
+        this.context = context;
+        this.prefix = this.getPrefix(context);
+    }
+
+    _createClass(CanvasSmoothing, [{
+        key: 'getPrefix',
+        value: function getPrefix(context) {
+
+            var vendors = ['i', 'webkitI', 'msI', 'mozI', 'oI'];
+            for (var i = 0; i < vendors.length; i++) {
+                var s = vendors[i] + 'mageSmoothingEnabled';
+
+                if (s in context) return s;
+            }
+
+            return null;
+        }
+    }, {
+        key: 'setEnable',
+        value: function setEnable(flag) {
+
+            if (flag === 'undefined') flag = true;
+
+            if (this.prefix === '' || this.prefix === undefined) this.prefix = this.getPrefix(this.context);
+
+            //
+
+            console.log(flag);
+
+            if (this.prefix) this.context[this.prefix] = flag;
+
+            return this.context;
+        }
+    }, {
+        key: 'set',
+        value: function set(renderType) {
+            if (renderType == _Define.RENDERING_TYPE.NEAREST) this.setEnable(false);else this.setEnable(true);
+        }
+    }]);
+
+    return CanvasSmoothing;
+}();
+
+exports.default = CanvasSmoothing;
+
+/***/ }),
+
+/***/ "./render/index.js":
+/*!*************************!*\
+  !*** ./render/index.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    RenderLayer: __webpack_require__(/*! ./RenderLayer */ "./render/RenderLayer.js"),
+    RenderLayerManagement: __webpack_require__(/*! ./RenderLayersManagement */ "./render/RenderLayersManagement.js"),
+    Render: __webpack_require__(/*! ./Render */ "./render/Render.js"),
+    Draw: __webpack_require__(/*! ./Draw */ "./render/Draw.js")
+};
 
 /***/ }),
 

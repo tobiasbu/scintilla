@@ -1,4 +1,4 @@
-import { RENDERING_TYPE } from "../define";
+import { RENDERING_TYPE } from "../Define";
 
 
 export default class CanvasSmoothing {

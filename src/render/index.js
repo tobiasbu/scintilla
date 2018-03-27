@@ -1,7 +1,7 @@
 
 module.exports = {
-    RenderLayer : require('./renderlayer'),
-    RenderLayerManagement : require('./renderlayersmanagement'),
-    Render : require('./render'),
-    Draw : require('./draw')
+    RenderLayer : require('./RenderLayer'),
+    RenderLayerManagement : require('./RenderLayersManagement'),
+    Render : require('./Render'),
+    Draw : require('./Draw')
 }
