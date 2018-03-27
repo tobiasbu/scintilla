@@ -1,6 +1,15 @@
 import ImageResource from "./resources/imageResource";
 import GameSystemManager from "../core/gameSystemManager";
 import TilemapResource from "./resources/tilemapResource";
+import Cache from "./Cache";
+
+const CacheTypes = [
+  'image',
+  'json',
+  'audio',
+  'text',
+  'tilemap',
+];
 
 /**
 * Cache manager - holds file data
@@ -11,15 +20,25 @@ export default class CacheManager {
 
 constructor(game) {
   this.game = game;
-  this._cache = {
-      images : {},
-      sounds : {},
-      json : {},
-      tilemap : {}
-  }
+
+
+  let self = this;
+
+  this.image = new Cache((tag, data) => {
+    return new ImageResource(tag, data)
+  });
+  
+  this.tilemap = new Cache((tag, data) => {
+    return new TilemapResource(tag, data, self);
+  });
+
+  this.json = new Cache();
+  this.text = new Cache();
+
+
 }
 
-  addTilemap(tag, dataFormat) {
+  /*addTilemap(tag, dataFormat) {
     this._cache.tilemap[tag] = new TilemapResource(dataFormat, tag, this);
   }
 
@@ -69,70 +88,37 @@ constructor(game) {
     sound.decoded = true;
     sound.isDecoding = false;
 
-  }
+  }*/
 
-  tagExists(cacheType, tag) {
-
-    if (this._cache[cacheType] === undefined)
-      return false;
-
-    if (this._cache[cacheType][tag])
-      return true;
-
-    return false;
-
-  }
-
-  removeTagAt(cacheType, tag) {
-
-    delete this._cache[cacheType][tag];
-
+  hasCache(cacheType) {
+    return (typeof CacheTypes[cacheType] !== undefined);
   }
 
   getAsset(cacheType, tag) { // return the cache container
 
-    if (this.tagExists(cacheType,tag)) {
-
-      var asset = this._cache[cacheType][tag];
-
-        return asset;
-
-
-    } else {
+    if (!this.hasCache(cacheType))
       return null;
-    }
 
-  }
-
-  getAssetInfo(cacheType, tag) { // return the raw data
-
-    if (this.tagExists(cacheType,tag)) {
-
-      var asset = this._cache[cacheType][tag];
-
-      //if (cacheType == 'images')
-        return asset;
-
-
-    } else {
-      return null;
-    }
+    return this[cacheType].get(tag);
 
   }
 
   clear() {
 
-    //console.log(this._cache[property][tag]);
-
-    for (var property in this._cache) {
-
-         for (var tag in this._cache[property]) {
-
-            delete this._cache[property][tag];
-
-         }
+    for (let i = 0; i < CacheTypes.length; i++) {
+      this[props[i]].clear();
     }
 
+  }
+
+  destroy() {
+
+    for (let i = 0; i < CacheTypes.length; i++) {
+      this[props[i]].destroy();
+      this[props[i]] = null;
+    }
+
+    this.game = null;
   }
 
   // SOUND STUFF

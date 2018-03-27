@@ -292,7 +292,7 @@ export default class LoadManager {
             break;
 
           case AssetsType.image: {
-            cache.addImage(file.tag,file.url,file.data);
+            cache.image.add(file.tag,file.data);
             break;
           }
           case AssetsType.audio: {
@@ -309,12 +309,12 @@ export default class LoadManager {
             break;
           }
           case AssetsType.json: {
-            cache.addJSON(file.tag, file.data);
+            cache.json.add(file.tag, file.data);
             break;
           }
 
           case AssetsType.tilemapJSON: {
-            cache.addTilemap(file.tag, file.data);
+            cache.tilemap.add(file.tag, file.data);
             break;
           }
         }

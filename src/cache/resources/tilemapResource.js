@@ -6,7 +6,7 @@ import ParseLayers from "./tilemap/parseLayers";
 
 export default class TilemapResource extends Resource {
 
-    constructor(source, name, cache) {
+    constructor(name, source, cache) {
 
         super(null, name);
 

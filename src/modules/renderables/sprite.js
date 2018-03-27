@@ -28,8 +28,10 @@ export default class Sprite extends Renderable {
     setSprite(tag) {
 
         if (this.entity != null || this.entity !== undefined) {
-            var sprite = this.entity.game.system.cache.getAsset('images',tag);
+            var sprite = this.entity.game.system.cache.image.get(tag);
            
+            console.log(sprite);
+
             if (sprite != null) {
                 this.setSource(sprite.data, true);
             }

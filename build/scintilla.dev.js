@@ -183,6 +183,84 @@ global.scintilla = scintilla;
 
 /***/ }),
 
+/***/ "./cache/Cache.js":
+/*!************************!*\
+  !*** ./cache/Cache.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+
+var _map2 = _interopRequireDefault(_map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cache = function () {
+    function Cache(wrapperFunction) {
+        _classCallCheck(this, Cache);
+
+        this.resources = new _map2.default();
+        this.adderWrapper = wrapperFunction || undefined;
+    }
+
+    _createClass(Cache, [{
+        key: "add",
+        value: function add(tag, asset) {
+
+            var resource = asset;
+
+            if (this.adderWrapper !== undefined) resource = this.adderWrapper(tag, asset);
+
+            this.resources.set(tag, resource);
+        }
+    }, {
+        key: "has",
+        value: function has(tag) {
+            return this.resources.has(tag);
+        }
+    }, {
+        key: "get",
+        value: function get(tag) {
+            return this.resources.get(tag);
+        }
+    }, {
+        key: "erase",
+        value: function erase(tag) {
+            this.resources.delete(tag);
+            return this;
+        }
+    }, {
+        key: "clear",
+        value: function clear() {
+            this.resources.clear();
+        }
+    }, {
+        key: "destroy",
+        value: function destroy() {
+            this.resources.clear();
+            this.resources = null;
+        }
+    }]);
+
+    return Cache;
+}();
+
+exports.default = Cache;
+
+/***/ }),
+
 /***/ "./cache/CacheManager.js":
 /*!*******************************!*\
   !*** ./cache/CacheManager.js ***!
@@ -196,6 +274,8 @@ global.scintilla = scintilla;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -211,137 +291,110 @@ var _tilemapResource = __webpack_require__(/*! ./resources/tilemapResource */ ".
 
 var _tilemapResource2 = _interopRequireDefault(_tilemapResource);
 
+var _Cache = __webpack_require__(/*! ./Cache */ "./cache/Cache.js");
+
+var _Cache2 = _interopRequireDefault(_Cache);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CacheTypes = ['image', 'json', 'audio', 'text', 'tilemap'];
 
 /**
 * Cache manager - holds file data
 * @class Cache
 * @constructor
 */
+
 var CacheManager = function () {
   function CacheManager(game) {
     _classCallCheck(this, CacheManager);
 
     this.game = game;
-    this._cache = {
-      images: {},
-      sounds: {},
-      json: {},
-      tilemap: {}
-    };
+
+    var self = this;
+
+    this.image = new _Cache2.default(function (tag, data) {
+      return new _imageResource2.default(tag, data);
+    });
+
+    this.tilemap = new _Cache2.default(function (tag, data) {
+      return new _tilemapResource2.default(tag, data, self);
+    });
+
+    this.json = new _Cache2.default();
+    this.text = new _Cache2.default();
   }
 
-  _createClass(CacheManager, [{
-    key: "addTilemap",
-    value: function addTilemap(tag, dataFormat) {
-      this._cache.tilemap[tag] = new _tilemapResource2.default(dataFormat, tag, this);
-    }
-  }, {
-    key: "addJSON",
-    value: function addJSON(tag, dataFormat) {
-      this._cache.json[tag] = dataFormat;
-    }
-  }, {
-    key: "addImage",
-    value: function addImage(tag, url, data) {
-
-      if (this.tagExists('images', tag)) this.removeTagAt('images', tag);
-
-      var img = new _imageResource2.default(data, tag);
-
+  /*addTilemap(tag, dataFormat) {
+    this._cache.tilemap[tag] = new TilemapResource(dataFormat, tag, this);
+  }
+    addJSON(tag, dataFormat) {
+    this._cache.json[tag] = dataFormat;
+  }
+    addImage(tag, url, data) {
+      if (this.tagExists('images',tag))
+      this.removeTagAt('images',tag);
+      
+    var img = new ImageResource(data,tag)
       this._cache.images[tag] = img;
     }
-  }, {
-    key: "addSound",
-    value: function addSound(tag, url, data, webAudio) {
-
+    addSound(tag, url,data,webAudio) {
       var decoded = false;
-
-      if (!webAudio) {
+      if (!webAudio)
+    {
         decoded = true;
-      }
-
+    }
       var audio = {
-        tag: tag,
-        url: url,
-        data: data,
-        usingWebAudio: webAudio,
-        decoded: decoded,
-        isDecoding: false
-      };
-
+            tag: tag,
+            url: url,
+            data: data,
+            usingWebAudio: webAudio,
+            decoded: decoded,
+            isDecoding: false
+    };
       this._cache.sounds[tag] = audio;
     }
-  }, {
-    key: "soundDecoded",
-    value: function soundDecoded(tag, data) {
-
-      var sound = this.getAssetInfo("sounds", tag);
-
+    soundDecoded(tag, data) {
+      var sound = this.getAssetInfo("sounds",tag);
       sound.data = data;
-      sound.decoded = true;
-      sound.isDecoding = false;
-    }
-  }, {
-    key: "tagExists",
-    value: function tagExists(cacheType, tag) {
+    sound.decoded = true;
+    sound.isDecoding = false;
+    }*/
 
-      if (this._cache[cacheType] === undefined) return false;
-
-      if (this._cache[cacheType][tag]) return true;
-
-      return false;
-    }
-  }, {
-    key: "removeTagAt",
-    value: function removeTagAt(cacheType, tag) {
-
-      delete this._cache[cacheType][tag];
+  _createClass(CacheManager, [{
+    key: "hasCache",
+    value: function hasCache(cacheType) {
+      return _typeof(CacheTypes[cacheType]) !== undefined;
     }
   }, {
     key: "getAsset",
     value: function getAsset(cacheType, tag) {
       // return the cache container
 
-      if (this.tagExists(cacheType, tag)) {
+      if (!this.hasCache(cacheType)) return null;
 
-        var asset = this._cache[cacheType][tag];
-
-        return asset;
-      } else {
-        return null;
-      }
-    }
-  }, {
-    key: "getAssetInfo",
-    value: function getAssetInfo(cacheType, tag) {
-      // return the raw data
-
-      if (this.tagExists(cacheType, tag)) {
-
-        var asset = this._cache[cacheType][tag];
-
-        //if (cacheType == 'images')
-        return asset;
-      } else {
-        return null;
-      }
+      return this[cacheType].get(tag);
     }
   }, {
     key: "clear",
     value: function clear() {
 
-      //console.log(this._cache[property][tag]);
-
-      for (var property in this._cache) {
-
-        for (var tag in this._cache[property]) {
-
-          delete this._cache[property][tag];
-        }
+      for (var i = 0; i < CacheTypes.length; i++) {
+        this[props[i]].clear();
       }
+    }
+  }, {
+    key: "destroy",
+    value: function destroy() {
+
+      for (var i = 0; i < CacheTypes.length; i++) {
+        this[props[i]].destroy();
+        this[props[i]] = null;
+      }
+
+      this.game = null;
     }
 
     // SOUND STUFF
@@ -392,25 +445,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ImageResource = function (_Resource) {
       _inherits(ImageResource, _Resource);
 
-      function ImageResource(source, name) {
-            var _ret;
-
+      function ImageResource(name, data) {
             _classCallCheck(this, ImageResource);
 
-            var _this = _possibleConstructorReturn(this, (ImageResource.__proto__ || Object.getPrototypeOf(ImageResource)).call(this, source, name));
+            var _this = _possibleConstructorReturn(this, (ImageResource.__proto__ || Object.getPrototypeOf(ImageResource)).call(this, name, data));
 
             _this.width = 0;
             _this.height = 0;
-            _this.source = source;
             _this.imageUrl = null;
             _this.type = _resource.ResourceType.Image;
 
-            if (!source) return _ret = _this, _possibleConstructorReturn(_this, _ret);
+            if ((_this.data.complete || _this.data.getContext) && _this.data.width && _this.data.height) {
 
-            if ((_this.source.complete || _this.source.getContext) && _this.source.width && _this.source.height) {
-
-                  _this.width = _this.source.naturalWidth || _this.source.width;
-                  _this.height = _this.source.naturalHeight || _this.source.height;
+                  _this.width = _this.data.naturalWidth || _this.data.width;
+                  _this.height = _this.data.naturalHeight || _this.data.height;
             }
             return _this;
       }
@@ -444,7 +492,7 @@ var ResourceType = exports.ResourceType = {
     Tilemap: 1
 };
 
-var Resource = function Resource(data, name) {
+var Resource = function Resource(name, data) {
     _classCallCheck(this, Resource);
 
     this.data = data || null;
@@ -763,7 +811,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var TilemapResource = function (_Resource) {
     _inherits(TilemapResource, _Resource);
 
-    function TilemapResource(source, name, cache) {
+    function TilemapResource(name, source, cache) {
         _classCallCheck(this, TilemapResource);
 
         var _this = _possibleConstructorReturn(this, (TilemapResource.__proto__ || Object.getPrototypeOf(TilemapResource)).call(this, null, name));
@@ -3156,6 +3204,391 @@ var MouseButton = exports.MouseButton = {
 
 /***/ }),
 
+/***/ "./loader/LoaderManager.js":
+/*!*********************************!*\
+  !*** ./loader/LoaderManager.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _loaderstate = __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js");
+
+var _set = __webpack_require__(/*! ../structures/set */ "./structures/set.js");
+
+var _set2 = _interopRequireDefault(_set);
+
+var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
+
+var _XHR2 = _interopRequireDefault(_XHR);
+
+var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
+
+var _objectutils2 = _interopRequireDefault(_objectutils);
+
+var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+
+var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+
+var _assetsType = __webpack_require__(/*! ./assetsType */ "./loader/assetsType.js");
+
+var _assetsType2 = _interopRequireDefault(_assetsType);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// Class LoaderManager
+var LoadManager = function () {
+  function LoadManager(game) {
+    _classCallCheck(this, LoadManager);
+
+    this.game = game;
+    this.cache = null;
+
+    this._filesQueue = null;
+    this._filesLoading = null;
+    this._successFiles = null;
+    this._failedFiles = null;
+    this._processedFiles = null;
+
+    this._filesQueueCount = null;
+    this._loadedFilesCount = null;
+
+    this.isDownloading = false;
+    this._totalFiles = 0;
+
+    this.progress = null;
+    this.path = null;
+    this.baseURL = null;
+    this.state = null;
+
+    var gameConfig = game.config.loader;
+
+    this.xhr = _XHR2.default.createSettings(_objectutils2.default.getValue(config, 'responseType', gameConfig.responseType), _objectutils2.default.getValue(config, 'async', gameConfig.async),
+    //scintilla.ObjectUtils.getPropertyValue(config, 'user', gameConfig.loaderUser),
+    //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+    _objectutils2.default.getValue(config, 'timeout', gameConfig.timeout));
+
+    _loaderstate.AssetTypeHandler.inject(this);
+  }
+
+  _createClass(LoadManager, [{
+    key: 'init',
+    value: function init() {
+      this.cache = this.game.system.cache;
+
+      this._filesQueue = new _set2.default();
+      this._filesLoading = new _set2.default();
+      this._successFiles = new _set2.default();
+      this._failedFiles = new _set2.default();
+      this._processedFiles = new _set2.default();
+
+      this._filesQueueCount = 0;
+      this._loadedFilesCount = 0;
+
+      this.progress = 0;
+      this.path = '';
+      this.baseURL = '';
+      this.state = _loaderstate.LOADER_STATE.IDLE;
+    }
+  }, {
+    key: 'setPath',
+    value: function setPath(path) {
+      if (path !== '' && path.substr(-1) !== '/') path = path.concat('/');
+
+      this.path = path;
+
+      return this;
+    }
+  }, {
+    key: 'setBaseURL',
+    value: function setBaseURL(baseUrl) {
+      if (baseUrl !== '' && baseUrl.substr(-1) !== '/') {
+        baseUrl = baseUrl.concat('/');
+      }
+
+      this.baseURL = baseUrl || '';
+
+      return this;
+    }
+  }, {
+    key: 'addAsset',
+    value: function addAsset(asset, check) {
+
+      if (check === undefined) check = true;
+
+      if (!this.isOK() && check) return -1;
+
+      asset.path = this.path;
+      this._filesQueue.set(asset);
+      this._filesQueueCount++;
+      return asset;
+    }
+  }, {
+    key: 'reset',
+    value: function reset() {
+
+      this.isDownloading = false;
+      this._filesQueue.clear();
+      this._successFiles.clear();
+      this._failedFiles.clear();
+      this._processedFiles.clear();
+
+      this._filesQueueCount = 0;
+      this._loadedFilesCount = 0;
+
+      this.progress = 0;
+      this.state = _loaderstate.LOADER_STATE.IDLE;
+    }
+  }, {
+    key: 'start',
+    value: function start() {
+
+      if (!this.isOK()) {
+        return -1;
+      }
+
+      this.progress = 0;
+      this._loadedFilesCount = 0;
+      this.state = _loaderstate.LOADER_STATE.LOADING;
+      this._filesQueueCount = this._filesQueue.size;
+
+      if (this._filesQueue.size === 0) {
+        //console.log(0);
+        this.loadFinished();
+      } else {
+        this.isDownloading = true;
+        this._successFiles.clear();
+        this._failedFiles.clear();
+        this._filesLoading.clear();
+
+        this.processFileQueue();
+      }
+    }
+
+    /*end : function() {
+        if (this.state === LOADER_STATE.PROCESSING)
+          return;
+    
+      this.progress = 1;
+      this.isDownloading = false;
+      this.state = LOADER_STATE.PROCESSING;
+        
+      this._filesQueue.clear();
+      this._failedFiles.length = 0;
+      
+      this.processFiles();
+        this._successFiles.clear();
+        this.state = LOADER_STATE.DONE;
+      //this.game.scene.preloadComplete();
+      },*/
+
+  }, {
+    key: 'processFileQueue',
+    value: function processFileQueue() {
+
+      var self = this;
+
+      this._filesQueue.each(function (file) {
+
+        //var file = this._filesQueue[i];
+
+        if (file.state === _loaderstate.LOADER_STATE.FINISHED || file.state === _loaderstate.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
+          {
+
+            self._filesLoading.set(file);
+
+            self._filesQueue.delete(file);
+
+            self.loadAsset(file);
+          }
+      });
+    }
+  }, {
+    key: 'loadAsset',
+    value: function loadAsset(file) {
+      file.load(this);
+    }
+  }, {
+    key: 'next',
+    value: function next(concludedFile, hasError) {
+
+      if (hasError) this._failedFiles.set(concludedFile);else this._successFiles.set(concludedFile);
+
+      this._filesLoading.delete(concludedFile);
+      //this._filesQueue.delete(concludedFile);
+      this._loadedFilesCount++;
+
+      this.updateProgress();
+
+      if (this._filesQueue.size > 0) //(this._loadedFilesCount < this._filesQueueCount)
+        {
+          this.processFileQueue();
+        } else if (this._filesLoading.size === 0) {
+
+        this.loadFinished();
+      }
+    }
+  }, {
+    key: 'loadFinished',
+    value: function loadFinished() {
+
+      if (this.state === _loaderstate.LOADER_STATE.PROCESSING) return;
+
+      this.progress = 1;
+      this.isDownloading = false;
+      this.state = _loaderstate.LOADER_STATE.PROCESSING;
+
+      this._processedFiles.clear();
+
+      if (this._successFiles.size === 0) {
+        this.processingDone();
+      } else {
+
+        // sort the assets by type priority 
+        this._successFiles.sort(function (a, b) {
+          return a.type < b.type;
+        });
+
+        this._successFiles.each(function (file) {
+          file.onProcessing(this.processingUpdate.bind(this));
+        }, this);
+      }
+    }
+  }, {
+    key: 'processingUpdate',
+    value: function processingUpdate(file) {
+
+      if (file.state === _loaderstate.LOADER_STATE.ERROR) {
+        this._failedFiles.set(file);
+
+        /*if (file.linkFile)
+        {
+            this.queue.delete(file.linkFile);
+        }*/
+        return this.deleteFromSuccessQueue(file);
+      }
+
+      this._processedFiles.set(file);
+
+      return this.deleteFromSuccessQueue(file);
+    }
+  }, {
+    key: 'deleteFromSuccessQueue',
+    value: function deleteFromSuccessQueue(file) {
+
+      this._successFiles.delete(file);
+
+      if (this._successFiles.size === 0 && this.state === _loaderstate.LOADER_STATE.PROCESSING) this.processingDone();
+    }
+  }, {
+    key: 'processingDone',
+    value: function processingDone() {
+      this._successFiles.clear();
+      this._filesQueue.clear();
+
+      var cache = this.cache;
+
+      if (this._processedFiles.size > 0) {
+        this._processedFiles.each(function (file) {
+
+          switch (file.type) {
+            default:
+              break;
+
+            case _assetsType2.default.image:
+              {
+                cache.image.add(file.tag, file.data);
+                break;
+              }
+            case _assetsType2.default.audio:
+              {
+
+                file.data = requestXHR.response;
+
+                cache.addSound(file.tag, file.url, file.data, true);
+
+                if (file.autoDecode) {
+                  this.game.sound.decode(file.tag);
+                }
+
+                break;
+              }
+            case _assetsType2.default.json:
+              {
+                cache.json.add(file.tag, file.data);
+                break;
+              }
+
+            case _assetsType2.default.tilemapJSON:
+              {
+                cache.tilemap.add(file.tag, file.data);
+                break;
+              }
+          }
+        });
+
+        this._processedFiles.clear();
+      }
+
+      this.state = _loaderstate.LOADER_STATE.DONE;
+
+      this.game.scene.preloadComplete();
+    }
+  }, {
+    key: 'isLoading',
+    value: function isLoading() {
+      return this.state === _loaderstate.LOADER_STATE.LOADING || this.state === _loaderstate.LOADER_STATE.PROCESSING;
+    }
+  }, {
+    key: 'isOK',
+    value: function isOK() {
+      return this.state === _loaderstate.LOADER_STATE.IDLE || this.state === _loaderstate.LOADER_STATE.DONE || this.state === _loaderstate.LOADER_STATE.ERROR;
+    }
+  }, {
+    key: 'downloadIsDone',
+    value: function downloadIsDone() {
+      return this._filesQueue.length == this._successCount + this._fileErrorCount;
+    }
+  }, {
+    key: 'updateProgress',
+    value: function updateProgress() {
+
+      var progress = 0;
+
+      if (this._filesQueueCount != 0) {
+        this.progress = 1 - this._loadedFilesCount / this._filesQueueCount;
+      }
+      //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
+
+      this.progress = progress;
+    }
+  }, {
+    key: 'totalQueuedFiles',
+    get: function get() {
+      return this._filesQueueCount - this._loadedFilesCount;
+    }
+  }]);
+
+  return LoadManager;
+}();
+
+exports.default = LoadManager;
+;
+
+_gameSystemManager2.default.register('Loader', LoadManager, 'load');
+
+/***/ }),
+
 /***/ "./loader/URLobject.js":
 /*!*****************************!*\
   !*** ./loader/URLobject.js ***!
@@ -3963,7 +4396,7 @@ module.exports = {
     AssetsType: __webpack_require__(/*! ./assetsType */ "./loader/assetsType.js"),
     Assets: __webpack_require__(/*! ./assets */ "./loader/assets/index.js"),
     LoaderState: __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js"),
-    LoaderManager: __webpack_require__(/*! ./loadmanager */ "./loader/loadmanager.js")
+    LoaderManager: __webpack_require__(/*! ./LoaderManager */ "./loader/LoaderManager.js")
 
 };
 
@@ -4054,391 +4487,6 @@ var LOADER_STATE = exports.LOADER_STATE = {
     FINISHED: 6,
     DONE: 7
 };
-
-/***/ }),
-
-/***/ "./loader/loadmanager.js":
-/*!*******************************!*\
-  !*** ./loader/loadmanager.js ***!
-  \*******************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _loaderstate = __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js");
-
-var _set = __webpack_require__(/*! ../structures/set */ "./structures/set.js");
-
-var _set2 = _interopRequireDefault(_set);
-
-var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
-
-var _XHR2 = _interopRequireDefault(_XHR);
-
-var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
-
-var _objectutils2 = _interopRequireDefault(_objectutils);
-
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
-
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
-
-var _assetsType = __webpack_require__(/*! ./assetsType */ "./loader/assetsType.js");
-
-var _assetsType2 = _interopRequireDefault(_assetsType);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// Class LoaderManager
-var LoadManager = function () {
-  function LoadManager(game) {
-    _classCallCheck(this, LoadManager);
-
-    this.game = game;
-    this.cache = null;
-
-    this._filesQueue = null;
-    this._filesLoading = null;
-    this._successFiles = null;
-    this._failedFiles = null;
-    this._processedFiles = null;
-
-    this._filesQueueCount = null;
-    this._loadedFilesCount = null;
-
-    this.isDownloading = false;
-    this._totalFiles = 0;
-
-    this.progress = null;
-    this.path = null;
-    this.baseURL = null;
-    this.state = null;
-
-    var gameConfig = game.config.loader;
-
-    this.xhr = _XHR2.default.createSettings(_objectutils2.default.getValue(config, 'responseType', gameConfig.responseType), _objectutils2.default.getValue(config, 'async', gameConfig.async),
-    //scintilla.ObjectUtils.getPropertyValue(config, 'user', gameConfig.loaderUser),
-    //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
-    _objectutils2.default.getValue(config, 'timeout', gameConfig.timeout));
-
-    _loaderstate.AssetTypeHandler.inject(this);
-  }
-
-  _createClass(LoadManager, [{
-    key: 'init',
-    value: function init() {
-      this.cache = this.game.system.cache;
-
-      this._filesQueue = new _set2.default();
-      this._filesLoading = new _set2.default();
-      this._successFiles = new _set2.default();
-      this._failedFiles = new _set2.default();
-      this._processedFiles = new _set2.default();
-
-      this._filesQueueCount = 0;
-      this._loadedFilesCount = 0;
-
-      this.progress = 0;
-      this.path = '';
-      this.baseURL = '';
-      this.state = _loaderstate.LOADER_STATE.IDLE;
-    }
-  }, {
-    key: 'setPath',
-    value: function setPath(path) {
-      if (path !== '' && path.substr(-1) !== '/') path = path.concat('/');
-
-      this.path = path;
-
-      return this;
-    }
-  }, {
-    key: 'setBaseURL',
-    value: function setBaseURL(baseUrl) {
-      if (baseUrl !== '' && baseUrl.substr(-1) !== '/') {
-        baseUrl = baseUrl.concat('/');
-      }
-
-      this.baseURL = baseUrl || '';
-
-      return this;
-    }
-  }, {
-    key: 'addAsset',
-    value: function addAsset(asset, check) {
-
-      if (check === undefined) check = true;
-
-      if (!this.isOK() && check) return -1;
-
-      asset.path = this.path;
-      this._filesQueue.set(asset);
-      this._filesQueueCount++;
-      return asset;
-    }
-  }, {
-    key: 'reset',
-    value: function reset() {
-
-      this.isDownloading = false;
-      this._filesQueue.clear();
-      this._successFiles.clear();
-      this._failedFiles.clear();
-      this._processedFiles.clear();
-
-      this._filesQueueCount = 0;
-      this._loadedFilesCount = 0;
-
-      this.progress = 0;
-      this.state = _loaderstate.LOADER_STATE.IDLE;
-    }
-  }, {
-    key: 'start',
-    value: function start() {
-
-      if (!this.isOK()) {
-        return -1;
-      }
-
-      this.progress = 0;
-      this._loadedFilesCount = 0;
-      this.state = _loaderstate.LOADER_STATE.LOADING;
-      this._filesQueueCount = this._filesQueue.size;
-
-      if (this._filesQueue.size === 0) {
-        //console.log(0);
-        this.loadFinished();
-      } else {
-        this.isDownloading = true;
-        this._successFiles.clear();
-        this._failedFiles.clear();
-        this._filesLoading.clear();
-
-        this.processFileQueue();
-      }
-    }
-
-    /*end : function() {
-        if (this.state === LOADER_STATE.PROCESSING)
-          return;
-    
-      this.progress = 1;
-      this.isDownloading = false;
-      this.state = LOADER_STATE.PROCESSING;
-        
-      this._filesQueue.clear();
-      this._failedFiles.length = 0;
-      
-      this.processFiles();
-        this._successFiles.clear();
-        this.state = LOADER_STATE.DONE;
-      //this.game.scene.preloadComplete();
-      },*/
-
-  }, {
-    key: 'processFileQueue',
-    value: function processFileQueue() {
-
-      var self = this;
-
-      this._filesQueue.each(function (file) {
-
-        //var file = this._filesQueue[i];
-
-        if (file.state === _loaderstate.LOADER_STATE.FINISHED || file.state === _loaderstate.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
-          {
-
-            self._filesLoading.set(file);
-
-            self._filesQueue.delete(file);
-
-            self.loadAsset(file);
-          }
-      });
-    }
-  }, {
-    key: 'loadAsset',
-    value: function loadAsset(file) {
-      file.load(this);
-    }
-  }, {
-    key: 'next',
-    value: function next(concludedFile, hasError) {
-
-      if (hasError) this._failedFiles.set(concludedFile);else this._successFiles.set(concludedFile);
-
-      this._filesLoading.delete(concludedFile);
-      //this._filesQueue.delete(concludedFile);
-      this._loadedFilesCount++;
-
-      this.updateProgress();
-
-      if (this._filesQueue.size > 0) //(this._loadedFilesCount < this._filesQueueCount)
-        {
-          this.processFileQueue();
-        } else if (this._filesLoading.size === 0) {
-
-        this.loadFinished();
-      }
-    }
-  }, {
-    key: 'loadFinished',
-    value: function loadFinished() {
-
-      if (this.state === _loaderstate.LOADER_STATE.PROCESSING) return;
-
-      this.progress = 1;
-      this.isDownloading = false;
-      this.state = _loaderstate.LOADER_STATE.PROCESSING;
-
-      this._processedFiles.clear();
-
-      if (this._successFiles.size === 0) {
-        this.processingDone();
-      } else {
-
-        // sort the assets by type priority 
-        this._successFiles.sort(function (a, b) {
-          return a.type < b.type;
-        });
-
-        this._successFiles.each(function (file) {
-          file.onProcessing(this.processingUpdate.bind(this));
-        }, this);
-      }
-    }
-  }, {
-    key: 'processingUpdate',
-    value: function processingUpdate(file) {
-
-      if (file.state === _loaderstate.LOADER_STATE.ERROR) {
-        this._failedFiles.set(file);
-
-        /*if (file.linkFile)
-        {
-            this.queue.delete(file.linkFile);
-        }*/
-        return this.deleteFromSuccessQueue(file);
-      }
-
-      this._processedFiles.set(file);
-
-      return this.deleteFromSuccessQueue(file);
-    }
-  }, {
-    key: 'deleteFromSuccessQueue',
-    value: function deleteFromSuccessQueue(file) {
-
-      this._successFiles.delete(file);
-
-      if (this._successFiles.size === 0 && this.state === _loaderstate.LOADER_STATE.PROCESSING) this.processingDone();
-    }
-  }, {
-    key: 'processingDone',
-    value: function processingDone() {
-      this._successFiles.clear();
-      this._filesQueue.clear();
-
-      var cache = this.cache;
-
-      if (this._processedFiles.size > 0) {
-        this._processedFiles.each(function (file) {
-
-          switch (file.type) {
-            default:
-              break;
-
-            case _assetsType2.default.image:
-              {
-                cache.addImage(file.tag, file.url, file.data);
-                break;
-              }
-            case _assetsType2.default.audio:
-              {
-
-                file.data = requestXHR.response;
-
-                cache.addSound(file.tag, file.url, file.data, true);
-
-                if (file.autoDecode) {
-                  this.game.sound.decode(file.tag);
-                }
-
-                break;
-              }
-            case _assetsType2.default.json:
-              {
-                cache.addJSON(file.tag, file.data);
-                break;
-              }
-
-            case _assetsType2.default.tilemapJSON:
-              {
-                cache.addTilemap(file.tag, file.data);
-                break;
-              }
-          }
-        });
-
-        this._processedFiles.clear();
-      }
-
-      this.state = _loaderstate.LOADER_STATE.DONE;
-
-      this.game.scene.preloadComplete();
-    }
-  }, {
-    key: 'isLoading',
-    value: function isLoading() {
-      return this.state === _loaderstate.LOADER_STATE.LOADING || this.state === _loaderstate.LOADER_STATE.PROCESSING;
-    }
-  }, {
-    key: 'isOK',
-    value: function isOK() {
-      return this.state === _loaderstate.LOADER_STATE.IDLE || this.state === _loaderstate.LOADER_STATE.DONE || this.state === _loaderstate.LOADER_STATE.ERROR;
-    }
-  }, {
-    key: 'downloadIsDone',
-    value: function downloadIsDone() {
-      return this._filesQueue.length == this._successCount + this._fileErrorCount;
-    }
-  }, {
-    key: 'updateProgress',
-    value: function updateProgress() {
-
-      var progress = 0;
-
-      if (this._filesQueueCount != 0) {
-        this.progress = 1 - this._loadedFilesCount / this._filesQueueCount;
-      }
-      //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
-
-      this.progress = progress;
-    }
-  }, {
-    key: 'totalQueuedFiles',
-    get: function get() {
-      return this._filesQueueCount - this._loadedFilesCount;
-    }
-  }]);
-
-  return LoadManager;
-}();
-
-exports.default = LoadManager;
-;
-
-_gameSystemManager2.default.register('Loader', LoadManager, 'load');
 
 /***/ }),
 
@@ -6375,7 +6423,9 @@ var Sprite = function (_Renderable) {
         value: function setSprite(tag) {
 
             if (this.entity != null || this.entity !== undefined) {
-                var sprite = this.entity.game.system.cache.getAsset('images', tag);
+                var sprite = this.entity.game.system.cache.image.get(tag);
+
+                console.log(sprite);
 
                 if (sprite != null) {
                     this.setSource(sprite.data, true);

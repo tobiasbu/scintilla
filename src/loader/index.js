@@ -7,6 +7,6 @@ module.exports = {
     AssetsType : require('./assetsType'),
     Assets: require('./assets'),
     LoaderState: require('./loaderstate'),    
-    LoaderManager: require('./loadmanager'),
+    LoaderManager: require('./LoaderManager'),
 
 };

@@ -8,7 +8,7 @@ export const ResourceType = {
 
 export default class Resource {
 
-    constructor(data, name)
+    constructor(name, data)
     {
         this.data = data || null;
         this.name = name;

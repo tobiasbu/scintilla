@@ -7,24 +7,19 @@ import Resource, { ResourceType } from "./resource";
 */
 export default class ImageResource extends Resource {
 
-    constructor(source, name) {
+    constructor(name, data) {
 
-      super(source, name);
+      super(name, data);
       
       this.width = 0;
       this.height = 0;
-      this.source = source;
       this.imageUrl = null;
       this.type = ResourceType.Image;
 
-      if (!source)
-        return this;
-      
+      if ((this.data.complete || this.data.getContext) && this.data.width && this.data.height) {
 
-      if ((this.source.complete || this.source.getContext) && this.source.width && this.source.height) {
-
-          this.width = this.source.naturalWidth || this.source.width;
-          this.height = this.source.naturalHeight || this.source.height;
+          this.width = this.data.naturalWidth || this.data.width;
+          this.height = this.data.naturalHeight || this.data.height;
 
       }
   }
