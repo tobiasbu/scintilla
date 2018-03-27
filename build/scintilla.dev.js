@@ -152,22 +152,22 @@ var scintilla = scintilla || {
   // RENDER
   Render: __webpack_require__(/*! ./render */ "./render/index.js"),
   // INPUT
-  KeyCode: __webpack_require__(/*! ./input/keycode */ "./input/keycode.js"),
-  MouseButton: __webpack_require__(/*! ./input/mousebutton */ "./input/mousebutton.js"),
+  KeyCode: __webpack_require__(/*! ./input/KeyCode */ "./input/KeyCode.js"),
+  MouseButton: __webpack_require__(/*! ./input/MouseButton */ "./input/MouseButton.js"),
   Input: __webpack_require__(/*! ./input */ "./input/index.js"),
   // MATH
-  MathUtils: __webpack_require__(/*! ./math/mathutils */ "./math/mathutils.js"),
-  Matrix: __webpack_require__(/*! ./math/matrix */ "./math/matrix.js"),
+  MathUtils: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js"),
+  Matrix: __webpack_require__(/*! ./math/Matrix */ "./math/Matrix.js"),
   // ENTITIES
-  Camera: __webpack_require__(/*! ./camera/camera */ "./camera/camera.js"),
+  Camera: __webpack_require__(/*! ./camera/Camera */ "./camera/Camera.js"),
   Module: __webpack_require__(/*! ./modules */ "./modules/index.js"),
   Entity: __webpack_require__(/*! ./entities */ "./entities/index.js"),
   // CORE
   Cache: __webpack_require__(/*! ./cache/CacheManager */ "./cache/CacheManager.js"),
   Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
-  Game: __webpack_require__(/*! ./core/game */ "./core/game.js"),
+  Game: __webpack_require__(/*! ./core/Game */ "./core/Game.js"),
   // UTILITIES
-  Color: __webpack_require__(/*! ./utils/color */ "./utils/color.js")
+  Color: __webpack_require__(/*! ./utils/Color */ "./utils/Color.js")
 };
 
 scintilla.ShapeType = {
@@ -199,9 +199,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
-var _map2 = _interopRequireDefault(_map);
+var _Map2 = _interopRequireDefault(_Map);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -211,7 +211,7 @@ var Cache = function () {
     function Cache(wrapperFunction) {
         _classCallCheck(this, Cache);
 
-        this.resources = new _map2.default();
+        this.resources = new _Map2.default();
         this.adderWrapper = wrapperFunction || undefined;
     }
 
@@ -283,9 +283,9 @@ var _imageResource = __webpack_require__(/*! ./resources/imageResource */ "./cac
 
 var _imageResource2 = _interopRequireDefault(_imageResource);
 
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
 var _tilemapResource = __webpack_require__(/*! ./resources/tilemapResource */ "./cache/resources/tilemapResource.js");
 
@@ -407,72 +407,13 @@ var CacheManager = function () {
 exports.default = CacheManager;
 
 
-_gameSystemManager2.default.register('Cache', CacheManager, 'cache');
+_GameSystemManager2.default.register('Cache', CacheManager, 'cache');
 
 /***/ }),
 
-/***/ "./cache/resources/imageResource.js":
-/*!******************************************!*\
-  !*** ./cache/resources/imageResource.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-      value: true
-});
-
-var _resource = __webpack_require__(/*! ./resource */ "./cache/resources/resource.js");
-
-var _resource2 = _interopRequireDefault(_resource);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/**
-* Image that holds image data.
-* @class Image
-* @constructor
-*/
-var ImageResource = function (_Resource) {
-      _inherits(ImageResource, _Resource);
-
-      function ImageResource(name, data) {
-            _classCallCheck(this, ImageResource);
-
-            var _this = _possibleConstructorReturn(this, (ImageResource.__proto__ || Object.getPrototypeOf(ImageResource)).call(this, name, data));
-
-            _this.width = 0;
-            _this.height = 0;
-            _this.imageUrl = null;
-            _this.type = _resource.ResourceType.Image;
-
-            if ((_this.data.complete || _this.data.getContext) && _this.data.width && _this.data.height) {
-
-                  _this.width = _this.data.naturalWidth || _this.data.width;
-                  _this.height = _this.data.naturalHeight || _this.data.height;
-            }
-            return _this;
-      }
-
-      return ImageResource;
-}(_resource2.default);
-
-exports.default = ImageResource;
-
-/***/ }),
-
-/***/ "./cache/resources/resource.js":
+/***/ "./cache/resources/Resource.js":
 /*!*************************************!*\
-  !*** ./cache/resources/resource.js ***!
+  !*** ./cache/resources/Resource.js ***!
   \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -504,9 +445,68 @@ exports.default = Resource;
 
 /***/ }),
 
-/***/ "./cache/resources/tilemap/parseLayers.js":
+/***/ "./cache/resources/imageResource.js":
+/*!******************************************!*\
+  !*** ./cache/resources/imageResource.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+      value: true
+});
+
+var _Resource2 = __webpack_require__(/*! ./Resource */ "./cache/resources/Resource.js");
+
+var _Resource3 = _interopRequireDefault(_Resource2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+* Image that holds image data.
+* @class Image
+* @constructor
+*/
+var ImageResource = function (_Resource) {
+      _inherits(ImageResource, _Resource);
+
+      function ImageResource(name, data) {
+            _classCallCheck(this, ImageResource);
+
+            var _this = _possibleConstructorReturn(this, (ImageResource.__proto__ || Object.getPrototypeOf(ImageResource)).call(this, name, data));
+
+            _this.width = 0;
+            _this.height = 0;
+            _this.imageUrl = null;
+            _this.type = _Resource2.ResourceType.Image;
+
+            if ((_this.data.complete || _this.data.getContext) && _this.data.width && _this.data.height) {
+
+                  _this.width = _this.data.naturalWidth || _this.data.width;
+                  _this.height = _this.data.naturalHeight || _this.data.height;
+            }
+            return _this;
+      }
+
+      return ImageResource;
+}(_Resource3.default);
+
+exports.default = ImageResource;
+
+/***/ }),
+
+/***/ "./cache/resources/tilemap/ParseLayers.js":
 /*!************************************************!*\
-  !*** ./cache/resources/tilemap/parseLayers.js ***!
+  !*** ./cache/resources/tilemap/ParseLayers.js ***!
   \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -519,9 +519,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = ParseLayers;
 
-var _objectutils = __webpack_require__(/*! ../../../utils/objectutils */ "./utils/objectutils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
-var _objectutils2 = _interopRequireDefault(_objectutils);
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
 var _Base64Utils = __webpack_require__(/*! ../../../utils/Base64Utils */ "./utils/Base64Utils.js");
 
@@ -547,8 +547,8 @@ function ParseLayers(json, mapdata) {
 
         var newLayer = new LayerData({
             name: layer.name,
-            x: _objectutils2.default.getValue(layer, 'offsetx', 0) + layer.x,
-            y: _objectutils2.default.getValue(layer, 'offsety', 0) + layer.y,
+            x: _ObjectUtils2.default.getValue(layer, 'offsetx', 0) + layer.x,
+            y: _ObjectUtils2.default.getValue(layer, 'offsety', 0) + layer.y,
             width: layer.width,
             height: layer.height,
             tileWidth: layer.tilewidth,
@@ -562,9 +562,9 @@ function ParseLayers(json, mapdata) {
 
 /***/ }),
 
-/***/ "./cache/resources/tilemap/parseTileset.js":
+/***/ "./cache/resources/tilemap/ParseTileset.js":
 /*!*************************************************!*\
-  !*** ./cache/resources/tilemap/parseTileset.js ***!
+  !*** ./cache/resources/tilemap/ParseTileset.js ***!
   \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -577,13 +577,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = ParseTilesets;
 
-var _tileset = __webpack_require__(/*! ./tileset */ "./cache/resources/tilemap/tileset.js");
+var _Tileset = __webpack_require__(/*! ./Tileset */ "./cache/resources/tilemap/Tileset.js");
 
-var _tileset2 = _interopRequireDefault(_tileset);
+var _Tileset2 = _interopRequireDefault(_Tileset);
 
-var _list = __webpack_require__(/*! ../../../structures/list */ "./structures/list.js");
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
 
-var _list2 = _interopRequireDefault(_list);
+var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -593,7 +593,7 @@ function ParseTilesets(json, cache) {
 
     if (size <= 0) return null;
 
-    var tilesets = new _list2.default();
+    var tilesets = new _List2.default();
 
     for (var i = 0; i < size; i++) {
 
@@ -601,7 +601,7 @@ function ParseTilesets(json, cache) {
 
         if (tileset.image) {
 
-            var newTileSet = new _tileset2.default(tileset.name, tileset.firstgid, tileset.tilewidth, tileset.tileheight, tileset.margin, tileset.spacing);
+            var newTileSet = new _Tileset2.default(tileset.name, tileset.firstgid, tileset.tilewidth, tileset.tileheight, tileset.margin, tileset.spacing);
 
             newTileSet.image = cache.getAsset('image', tileset.name);
 
@@ -616,9 +616,9 @@ function ParseTilesets(json, cache) {
 
 /***/ }),
 
-/***/ "./cache/resources/tilemap/tilemapData.js":
+/***/ "./cache/resources/tilemap/TilemapData.js":
 /*!************************************************!*\
-  !*** ./cache/resources/tilemap/tilemapData.js ***!
+  !*** ./cache/resources/tilemap/TilemapData.js ***!
   \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -630,13 +630,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _objectutils = __webpack_require__(/*! ../../../utils/objectutils */ "./utils/objectutils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
-var _objectutils2 = _interopRequireDefault(_objectutils);
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
-var _list = __webpack_require__(/*! ../../../structures/list */ "./structures/list.js");
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
 
-var _list2 = _interopRequireDefault(_list);
+var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -646,13 +646,13 @@ var TilemapData = function TilemapData(config) {
     _classCallCheck(this, TilemapData);
 
     // this.name = ObjectUtils.getValue(config,'name','tilemap');
-    this.width = _objectutils2.default.getValue(config, 'width', 0);
-    this.height = _objectutils2.default.getValue(config, 'height', 0);
-    this.tileWidth = _objectutils2.default.getValue(config, 'tileWidth', 0);
-    this.tileHeight = _objectutils2.default.getValue(config, 'tileHeight', 0);
-    this.widthPixels = _objectutils2.default.getValue(config, 'pixelsWidth', this.width * this.tileWidth);
-    this.heightPixels = _objectutils2.default.getValue(config, 'heightPixels', this.height * this.tileHeight);
-    this.orientation = _objectutils2.default.getValue(config, 'orientation', 'orthogonal');
+    this.width = _ObjectUtils2.default.getValue(config, 'width', 0);
+    this.height = _ObjectUtils2.default.getValue(config, 'height', 0);
+    this.tileWidth = _ObjectUtils2.default.getValue(config, 'tileWidth', 0);
+    this.tileHeight = _ObjectUtils2.default.getValue(config, 'tileHeight', 0);
+    this.widthPixels = _ObjectUtils2.default.getValue(config, 'pixelsWidth', this.width * this.tileWidth);
+    this.heightPixels = _ObjectUtils2.default.getValue(config, 'heightPixels', this.height * this.tileHeight);
+    this.orientation = _ObjectUtils2.default.getValue(config, 'orientation', 'orthogonal');
     this.layers = null; //ObjectUtils.getValue(config, 'layers', new DataList());
     this.tilesets = null; //GetFastValue(config, 'tilesets', []);
 };
@@ -661,9 +661,9 @@ exports.default = TilemapData;
 
 /***/ }),
 
-/***/ "./cache/resources/tilemap/tileset.js":
+/***/ "./cache/resources/tilemap/Tileset.js":
 /*!********************************************!*\
-  !*** ./cache/resources/tilemap/tileset.js ***!
+  !*** ./cache/resources/tilemap/Tileset.js ***!
   \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -677,9 +677,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _list = __webpack_require__(/*! ../../../structures/list */ "./structures/list.js");
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
 
-var _list2 = _interopRequireDefault(_list);
+var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -707,7 +707,7 @@ var Tileset = function () {
         this.margin = margin;
         this.spacing = spacing;
         this.image = null;
-        this.tilesGID = new _list2.default();
+        this.tilesGID = new _List2.default();
         this.rows = 0;
         this.collumns = 0;
         this.count = 0;
@@ -784,21 +784,21 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _resource = __webpack_require__(/*! ./resource */ "./cache/resources/resource.js");
+var _Resource2 = __webpack_require__(/*! ./Resource */ "./cache/resources/Resource.js");
 
-var _resource2 = _interopRequireDefault(_resource);
+var _Resource3 = _interopRequireDefault(_Resource2);
 
-var _tilemapData = __webpack_require__(/*! ./tilemap/tilemapData */ "./cache/resources/tilemap/tilemapData.js");
+var _TilemapData = __webpack_require__(/*! ./tilemap/TilemapData */ "./cache/resources/tilemap/TilemapData.js");
 
-var _tilemapData2 = _interopRequireDefault(_tilemapData);
+var _TilemapData2 = _interopRequireDefault(_TilemapData);
 
-var _parseTileset = __webpack_require__(/*! ./tilemap/parseTileset */ "./cache/resources/tilemap/parseTileset.js");
+var _ParseTileset = __webpack_require__(/*! ./tilemap/ParseTileset */ "./cache/resources/tilemap/ParseTileset.js");
 
-var _parseTileset2 = _interopRequireDefault(_parseTileset);
+var _ParseTileset2 = _interopRequireDefault(_ParseTileset);
 
-var _parseLayers = __webpack_require__(/*! ./tilemap/parseLayers */ "./cache/resources/tilemap/parseLayers.js");
+var _ParseLayers = __webpack_require__(/*! ./tilemap/ParseLayers */ "./cache/resources/tilemap/ParseLayers.js");
 
-var _parseLayers2 = _interopRequireDefault(_parseLayers);
+var _ParseLayers2 = _interopRequireDefault(_ParseLayers);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -816,7 +816,7 @@ var TilemapResource = function (_Resource) {
 
         var _this = _possibleConstructorReturn(this, (TilemapResource.__proto__ || Object.getPrototypeOf(TilemapResource)).call(this, null, name));
 
-        _this.data = new _tilemapData2.default({
+        _this.data = new _TilemapData2.default({
             width: source.width,
             height: source.height,
             tileWidth: source.tileWidth,
@@ -825,23 +825,23 @@ var TilemapResource = function (_Resource) {
         });
 
         _this.name = name;
-        _this.data.tilesets = (0, _parseTileset2.default)(source, cache);
-        _this.data.layers = (0, _parseLayers2.default)(source);
-        _this.type = _resource.ResourceType.Tilemap;
+        _this.data.tilesets = (0, _ParseTileset2.default)(source, cache);
+        _this.data.layers = (0, _ParseLayers2.default)(source);
+        _this.type = _Resource2.ResourceType.Tilemap;
 
         return _this;
     }
 
     return TilemapResource;
-}(_resource2.default);
+}(_Resource3.default);
 
 exports.default = TilemapResource;
 
 /***/ }),
 
-/***/ "./camera/camera.js":
+/***/ "./camera/Camera.js":
 /*!**************************!*\
-  !*** ./camera/camera.js ***!
+  !*** ./camera/Camera.js ***!
   \**************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -855,25 +855,25 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _boundingbox = __webpack_require__(/*! ../math/boundingbox */ "./math/boundingbox.js");
+var _BoundingBox = __webpack_require__(/*! ../math/BoundingBox */ "./math/BoundingBox.js");
 
-var _boundingbox2 = _interopRequireDefault(_boundingbox);
+var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
 
-var _transform = __webpack_require__(/*! ../modules/core/transform */ "./modules/core/transform.js");
+var _Transform = __webpack_require__(/*! ../modules/core/Transform */ "./modules/core/Transform.js");
 
-var _transform2 = _interopRequireDefault(_transform);
+var _Transform2 = _interopRequireDefault(_Transform);
 
-var _color = __webpack_require__(/*! ../utils/color */ "./utils/color.js");
+var _Color = __webpack_require__(/*! ../utils/Color */ "./utils/Color.js");
 
-var _color2 = _interopRequireDefault(_color);
+var _Color2 = _interopRequireDefault(_Color);
 
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _mathutils = __webpack_require__(/*! ../math/mathutils */ "./math/mathutils.js");
+var _MathUtils = __webpack_require__(/*! ../math/MathUtils */ "./math/MathUtils.js");
 
-var _mathutils2 = _interopRequireDefault(_mathutils);
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -885,8 +885,8 @@ var Camera = function () {
 
     this.game = game;
     //this._view = new Rect(0, 0, game.config.width, game.config.height);
-    this._bounds = new _boundingbox2.default();
-    this.transform = new _transform2.default();
+    this._bounds = new _BoundingBox2.default();
+    this.transform = new _Transform2.default();
     this.width = game.config.camera.width;
     this.height = game.config.camera.height;
     this._onResize(this.width, this.height);
@@ -895,7 +895,7 @@ var Camera = function () {
     this._resolution = 1;
     this.aspectRatio = 1;
 
-    this._backgroundColor = _color2.default.rgbToHex(0, 0, 0);
+    this._backgroundColor = _Color2.default.rgbToHex(0, 0, 0);
     this._roundPixels = false;
   }
 
@@ -930,7 +930,7 @@ var Camera = function () {
       if (a === undefined) {
         a = 1;
       }
-      this._backgroundColor = _color2.default.rgba(r, g, b, a);
+      this._backgroundColor = _Color2.default.rgba(r, g, b, a);
       return this;
     }
   }, {
@@ -1015,7 +1015,7 @@ var Camera = function () {
     },
     set: function set(value) {
       this.transform.angle = value;
-      this.transform.rotation = value * _mathutils2.default.degToRad;
+      this.transform.rotation = value * _MathUtils2.default.degToRad;
       this._isDirty = true;
       return this;
     }
@@ -1067,13 +1067,13 @@ var Camera = function () {
 exports.default = Camera;
 
 
-_gameSystemManager2.default.register('Camera', Camera, 'camera');
+_GameSystemManager2.default.register('Camera', Camera, 'camera');
 
 /***/ }),
 
-/***/ "./camera/updateCamera.js":
+/***/ "./camera/UpdateCamera.js":
 /*!********************************!*\
-  !*** ./camera/updateCamera.js ***!
+  !*** ./camera/UpdateCamera.js ***!
   \********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1086,9 +1086,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = UpdateCamera;
 
-var _updateBounds = __webpack_require__(/*! ../modules/core/updateBounds */ "./modules/core/updateBounds.js");
+var _UpdateBounds = __webpack_require__(/*! ../modules/core/UpdateBounds */ "./modules/core/UpdateBounds.js");
 
-var _updateBounds2 = _interopRequireDefault(_updateBounds);
+var _UpdateBounds2 = _interopRequireDefault(_UpdateBounds);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1121,7 +1121,7 @@ function UpdateCamera(camera, canvas) {
     y: camera.height * t.origin.y
   };
 
-  (0, _updateBounds2.default)(camera._bounds, t.position.x, t.position.y, camera.width, camera.height, t._cosSin);
+  (0, _UpdateBounds2.default)(camera._bounds, t.position.x, t.position.y, camera.width, camera.height, t._cosSin);
 
   // todo resolution
   t.matrix.setIdentity().scale(pixelUnit.x, pixelUnit.y).translate(t.position.x + origin.x, t.position.y + origin.y).radianRotate(t._cosSin.x, t._cosSin.y).scale(t.scale.x, t.scale.x).translate(-origin.x, -origin.y);
@@ -1129,9 +1129,9 @@ function UpdateCamera(camera, canvas) {
 
 /***/ }),
 
-/***/ "./core/config.js":
+/***/ "./core/Config.js":
 /*!************************!*\
-  !*** ./core/config.js ***!
+  !*** ./core/Config.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1143,9 +1143,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
+var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
-var _objectutils2 = _interopRequireDefault(_objectutils);
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1156,8 +1156,8 @@ var Config = function Config(config) {
 
     if (config === undefined) config = {};
 
-    var callback = _objectutils2.default.getValue;
-    var callback_2 = _objectutils2.default.getPropertyValue;
+    var callback = _ObjectUtils2.default.getValue;
+    var callback_2 = _ObjectUtils2.default.getPropertyValue;
 
     // view and canvas
     this.width = callback(config, 'width', 640);
@@ -1199,9 +1199,9 @@ exports.default = Config;
 
 /***/ }),
 
-/***/ "./core/game.js":
+/***/ "./core/Game.js":
 /*!**********************!*\
-  !*** ./core/game.js ***!
+  !*** ./core/Game.js ***!
   \**********************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1215,17 +1215,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _config = __webpack_require__(/*! ./config */ "./core/config.js");
+var _Config = __webpack_require__(/*! ./Config */ "./core/Config.js");
 
-var _config2 = _interopRequireDefault(_config);
+var _Config2 = _interopRequireDefault(_Config);
 
-var _input = __webpack_require__(/*! ../input/input */ "./input/input.js");
+var _Input = __webpack_require__(/*! ../input/Input */ "./input/Input.js");
 
-var _input2 = _interopRequireDefault(_input);
+var _Input2 = _interopRequireDefault(_Input);
 
-var _scenemanager = __webpack_require__(/*! ../scene/scenemanager */ "./scene/scenemanager.js");
+var _SceneManager = __webpack_require__(/*! ../scene/SceneManager */ "./scene/SceneManager.js");
 
-var _scenemanager2 = _interopRequireDefault(_scenemanager);
+var _SceneManager2 = _interopRequireDefault(_SceneManager);
 
 var _physics = __webpack_require__(/*! ../physics/physics */ "./physics/physics.js");
 
@@ -1235,13 +1235,13 @@ var _debug = __webpack_require__(/*! ../others/debug */ "./others/debug.js");
 
 var _debug2 = _interopRequireDefault(_debug);
 
-var _gameSystemManager = __webpack_require__(/*! ./gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ./GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _gameTime = __webpack_require__(/*! ../time/gameTime */ "./time/gameTime.js");
+var _GameTime = __webpack_require__(/*! ../time/GameTime */ "./time/GameTime.js");
 
-var _gameTime2 = _interopRequireDefault(_gameTime);
+var _GameTime2 = _interopRequireDefault(_GameTime);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1266,7 +1266,7 @@ var Game = function () {
         this.height = 600;
 
         // object
-        this.config = new _config2.default(config);
+        this.config = new _Config2.default(config);
 
         // boolean
         this.systemInited = false;
@@ -1327,10 +1327,10 @@ var Game = function () {
             if (this.systemInited) return;
 
             this.physics = new _physics2.default(this);
-            this.input = new _input2.default(this);
-            this.scene = new _scenemanager2.default(this);
-            this.system = new _gameSystemManager2.default(this);
-            this.time = new _gameTime2.default(this);
+            this.input = new _Input2.default(this);
+            this.scene = new _SceneManager2.default(this);
+            this.system = new _GameSystemManager2.default(this);
+            this.time = new _GameTime2.default(this);
 
             this.system.init();
             this.input.init();
@@ -1381,9 +1381,9 @@ module.exports = Game;
 
 /***/ }),
 
-/***/ "./core/gameLoop.js":
+/***/ "./core/GameLoop.js":
 /*!**************************!*\
-  !*** ./core/gameLoop.js ***!
+  !*** ./core/GameLoop.js ***!
   \**************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1397,21 +1397,21 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _requestAnimationFrame = __webpack_require__(/*! ../dom/requestAnimationFrame */ "./dom/requestAnimationFrame.js");
+var _RequestAnimationFrame = __webpack_require__(/*! ../dom/RequestAnimationFrame */ "./dom/RequestAnimationFrame.js");
 
-var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
+var _RequestAnimationFrame2 = _interopRequireDefault(_RequestAnimationFrame);
 
-var _gameSystemManager = __webpack_require__(/*! ./gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ./GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _updateStep = __webpack_require__(/*! ../time/updateStep */ "./time/updateStep.js");
+var _UpdateStep = __webpack_require__(/*! ../time/UpdateStep */ "./time/UpdateStep.js");
 
-var _updateStep2 = _interopRequireDefault(_updateStep);
+var _UpdateStep2 = _interopRequireDefault(_UpdateStep);
 
-var _updateCamera = __webpack_require__(/*! ../camera/updateCamera */ "./camera/updateCamera.js");
+var _UpdateCamera = __webpack_require__(/*! ../camera/UpdateCamera */ "./camera/UpdateCamera.js");
 
-var _updateCamera2 = _interopRequireDefault(_updateCamera);
+var _UpdateCamera2 = _interopRequireDefault(_UpdateCamera);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1430,7 +1430,7 @@ var GameLoop = function () {
 
         this.game = game;
         this.system = system;
-        this.updateStep = new _updateStep2.default(this.game, this.game.config);
+        this.updateStep = new _UpdateStep2.default(this.game, this.game.config);
         this.entityUpdateList = null;
         this.currentScene = null;
         this.camera = null;
@@ -1474,7 +1474,7 @@ var GameLoop = function () {
 
                 //console.clear();
 
-                (0, _updateCamera2.default)(this.camera, this.canvas);
+                (0, _UpdateCamera2.default)(this.camera, this.canvas);
 
                 //console.log(this.camera.transform.matrix.toString())
 
@@ -1504,13 +1504,13 @@ var GameLoop = function () {
 exports.default = GameLoop;
 
 
-_gameSystemManager2.default.register('GameLoop', GameLoop, 'loop');
+_GameSystemManager2.default.register('GameLoop', GameLoop, 'loop');
 
 /***/ }),
 
-/***/ "./core/gameSystemManager.js":
+/***/ "./core/GameSystemManager.js":
 /*!***********************************!*\
-  !*** ./core/gameSystemManager.js ***!
+  !*** ./core/GameSystemManager.js ***!
   \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1524,9 +1524,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _scenesystem = __webpack_require__(/*! ./scenesystem */ "./core/scenesystem.js");
+var _SceneSystem = __webpack_require__(/*! ./SceneSystem */ "./core/SceneSystem.js");
 
-var _scenesystem2 = _interopRequireDefault(_scenesystem);
+var _SceneSystem2 = _interopRequireDefault(_SceneSystem);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1572,9 +1572,9 @@ var GameSystemManager = function () {
 
             scene.game = this._game;
 
-            for (var property in _scenesystem2.default) {
+            for (var property in _SceneSystem2.default) {
 
-                var _sys = gameSystems[_scenesystem2.default[property]];
+                var _sys = gameSystems[_SceneSystem2.default[property]];
                 scene[_sys.name] = this[_sys.name];
             }
 
@@ -1613,28 +1613,9 @@ exports.default = GameSystemManager;
 
 /***/ }),
 
-/***/ "./core/index.js":
-/*!***********************!*\
-  !*** ./core/index.js ***!
-  \***********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    Config: __webpack_require__(/*! ./config */ "./core/config.js"),
-    GameSystemManager: __webpack_require__(/*! ./gameSystemManager */ "./core/gameSystemManager.js"),
-    SceneSystem: __webpack_require__(/*! ./scenesystem */ "./core/scenesystem.js"),
-    GameLoop: __webpack_require__(/*! ./gameLoop */ "./core/gameLoop.js")
-};
-
-/***/ }),
-
-/***/ "./core/scenesystem.js":
+/***/ "./core/SceneSystem.js":
 /*!*****************************!*\
-  !*** ./core/scenesystem.js ***!
+  !*** ./core/SceneSystem.js ***!
   \*****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1653,9 +1634,28 @@ exports.default = SceneSystem;
 
 /***/ }),
 
-/***/ "./dom/requestAnimationFrame.js":
+/***/ "./core/index.js":
+/*!***********************!*\
+  !*** ./core/index.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Config: __webpack_require__(/*! ./Config */ "./core/Config.js"),
+    GameSystemManager: __webpack_require__(/*! ./GameSystemManager */ "./core/GameSystemManager.js"),
+    SceneSystem: __webpack_require__(/*! ./SceneSystem */ "./core/SceneSystem.js"),
+    GameLoop: __webpack_require__(/*! ./GameLoop */ "./core/GameLoop.js")
+};
+
+/***/ }),
+
+/***/ "./dom/RequestAnimationFrame.js":
 /*!**************************************!*\
-  !*** ./dom/requestAnimationFrame.js ***!
+  !*** ./dom/RequestAnimationFrame.js ***!
   \**************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1774,9 +1774,9 @@ exports.default = RequestAnimationFrame;
 
 /***/ }),
 
-/***/ "./entities/entity.js":
+/***/ "./entities/Entity.js":
 /*!****************************!*\
-  !*** ./entities/entity.js ***!
+  !*** ./entities/Entity.js ***!
   \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1843,9 +1843,9 @@ exports.default = Entity;
 
 /***/ }),
 
-/***/ "./entities/entityFactory.js":
+/***/ "./entities/EntityFactory.js":
 /*!***********************************!*\
-  !*** ./entities/entityFactory.js ***!
+  !*** ./entities/EntityFactory.js ***!
   \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1859,13 +1859,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _sceneentity = __webpack_require__(/*! ./sceneentity */ "./entities/sceneentity.js");
+var _SceneEntity = __webpack_require__(/*! ./SceneEntity */ "./entities/SceneEntity.js");
 
-var _sceneentity2 = _interopRequireDefault(_sceneentity);
+var _SceneEntity2 = _interopRequireDefault(_SceneEntity);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1889,7 +1889,7 @@ var EntityFactory = function () {
     }, {
         key: "sprite",
         value: function sprite(tag, entityName) {
-            var entity = new _sceneentity2.default(entityName, this.game);
+            var entity = new _SceneEntity2.default(entityName, this.game);
             entity.modules.attach.sprite(tag);
 
             if (this.scene.current_scene !== null) {
@@ -1906,13 +1906,13 @@ var EntityFactory = function () {
 exports.default = EntityFactory;
 
 
-_gameSystemManager2.default.register('EntityFactory', EntityFactory, 'create');
+_GameSystemManager2.default.register('EntityFactory', EntityFactory, 'create');
 
 /***/ }),
 
-/***/ "./entities/entityhierarchy.js":
+/***/ "./entities/EntityHierarchy.js":
 /*!*************************************!*\
-  !*** ./entities/entityhierarchy.js ***!
+  !*** ./entities/EntityHierarchy.js ***!
   \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -1926,9 +1926,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _entity = __webpack_require__(/*! ./entity */ "./entities/entity.js");
+var _Entity2 = __webpack_require__(/*! ./Entity */ "./entities/Entity.js");
 
-var _entity2 = _interopRequireDefault(_entity);
+var _Entity3 = _interopRequireDefault(_Entity2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2034,15 +2034,15 @@ var EntityHierarchy = function (_Entity) {
   }]);
 
   return EntityHierarchy;
-}(_entity2.default);
+}(_Entity3.default);
 
 exports.default = EntityHierarchy;
 
 /***/ }),
 
-/***/ "./entities/entityupdatelist.js":
+/***/ "./entities/EntityUpdateList.js":
 /*!**************************************!*\
-  !*** ./entities/entityupdatelist.js ***!
+  !*** ./entities/EntityUpdateList.js ***!
   \**************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -2056,25 +2056,25 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _list = __webpack_require__(/*! ../structures/list */ "./structures/list.js");
+var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
 
-var _list2 = _interopRequireDefault(_list);
+var _List2 = _interopRequireDefault(_List);
 
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _updateTransform = __webpack_require__(/*! ../modules/core/updateTransform */ "./modules/core/updateTransform.js");
+var _UpdateTransform = __webpack_require__(/*! ../modules/core/UpdateTransform */ "./modules/core/UpdateTransform.js");
 
-var _updateTransform2 = _interopRequireDefault(_updateTransform);
+var _UpdateTransform2 = _interopRequireDefault(_UpdateTransform);
 
-var _updateModules = __webpack_require__(/*! ../modules/core/updateModules */ "./modules/core/updateModules.js");
+var _UpdateModules = __webpack_require__(/*! ../modules/core/UpdateModules */ "./modules/core/UpdateModules.js");
 
-var _updateModules2 = _interopRequireDefault(_updateModules);
+var _UpdateModules2 = _interopRequireDefault(_UpdateModules);
 
-var _matrix = __webpack_require__(/*! ../math/matrix */ "./math/matrix.js");
+var _Matrix = __webpack_require__(/*! ../math/Matrix */ "./math/Matrix.js");
 
-var _matrix2 = _interopRequireDefault(_matrix);
+var _Matrix2 = _interopRequireDefault(_Matrix);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2094,9 +2094,9 @@ var EntityUpdateList = function () {
     _createClass(EntityUpdateList, [{
         key: "init",
         value: function init() {
-            this._instances = new _list2.default();
-            this._destroyInstances = new _list2.default();
-            this._pendingInstances = new _list2.default();
+            this._instances = new _List2.default();
+            this._destroyInstances = new _List2.default();
+            this._pendingInstances = new _List2.default();
             this._camera = this.game.system.camera;
         }
     }, {
@@ -2120,9 +2120,9 @@ var EntityUpdateList = function () {
 
                 if (element.active) {
 
-                    (0, _updateTransform2.default)(element.transform, _this._camera.transform);
+                    (0, _UpdateTransform2.default)(element.transform, _this._camera.transform);
 
-                    (0, _updateModules2.default)(element.modules, _this.game);
+                    (0, _UpdateModules2.default)(element.modules, _this.game);
 
                     if (element.transform._isDirty) element.transform._isDirty = false;
 
@@ -2164,32 +2164,13 @@ var EntityUpdateList = function () {
 exports.default = EntityUpdateList;
 
 
-_gameSystemManager2.default.register('EntityUpdateList', EntityUpdateList, 'entityList');
+_GameSystemManager2.default.register('EntityUpdateList', EntityUpdateList, 'entityList');
 
 /***/ }),
 
-/***/ "./entities/index.js":
-/*!***************************!*\
-  !*** ./entities/index.js ***!
-  \***************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    Entity: __webpack_require__(/*! ./entity */ "./entities/entity.js"),
-    SceneEntity: __webpack_require__(/*! ./sceneentity */ "./entities/sceneentity.js"),
-    EntityUpdateList: __webpack_require__(/*! ./entityupdatelist */ "./entities/entityupdatelist.js"),
-    EntityFactory: __webpack_require__(/*! ./entityFactory */ "./entities/entityFactory.js")
-};
-
-/***/ }),
-
-/***/ "./entities/sceneentity.js":
+/***/ "./entities/SceneEntity.js":
 /*!*********************************!*\
-  !*** ./entities/sceneentity.js ***!
+  !*** ./entities/SceneEntity.js ***!
   \*********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -2203,21 +2184,21 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _entityhierarchy = __webpack_require__(/*! ./entityhierarchy */ "./entities/entityhierarchy.js");
+var _EntityHierarchy2 = __webpack_require__(/*! ./EntityHierarchy */ "./entities/EntityHierarchy.js");
 
-var _entityhierarchy2 = _interopRequireDefault(_entityhierarchy);
+var _EntityHierarchy3 = _interopRequireDefault(_EntityHierarchy2);
 
-var _boundingbox = __webpack_require__(/*! ../math/boundingbox */ "./math/boundingbox.js");
+var _BoundingBox = __webpack_require__(/*! ../math/BoundingBox */ "./math/BoundingBox.js");
 
-var _boundingbox2 = _interopRequireDefault(_boundingbox);
+var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
 
-var _transform = __webpack_require__(/*! ../modules/core/transform */ "./modules/core/transform.js");
+var _Transform = __webpack_require__(/*! ../modules/core/Transform */ "./modules/core/Transform.js");
 
-var _transform2 = _interopRequireDefault(_transform);
+var _Transform2 = _interopRequireDefault(_Transform);
 
-var _moduleManager = __webpack_require__(/*! ../modules/moduleManager */ "./modules/moduleManager.js");
+var _ModuleManager = __webpack_require__(/*! ../modules/ModuleManager */ "./modules/ModuleManager.js");
 
-var _moduleManager2 = _interopRequireDefault(_moduleManager);
+var _ModuleManager2 = _interopRequireDefault(_ModuleManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2237,10 +2218,10 @@ var SceneEntity = function (_EntityHierarchy) {
 
         var _this = _possibleConstructorReturn(this, (SceneEntity.__proto__ || Object.getPrototypeOf(SceneEntity)).call(this, name, game || null));
 
-        _this.transform = new _transform2.default();
+        _this.transform = new _Transform2.default();
         _this.type = null;
         _this.pool = null;
-        _this.modules = new _moduleManager2.default(_this);
+        _this.modules = new _ModuleManager2.default(_this);
         //this.bounds = new BoundingBox();
         //this._transformDirty = false;
         //this._currentScene = null;
@@ -2314,16 +2295,16 @@ var SceneEntity = function (_EntityHierarchy) {
     }]);
 
     return SceneEntity;
-}(_entityhierarchy2.default);
+}(_EntityHierarchy3.default);
 
 exports.default = SceneEntity;
 
 /***/ }),
 
-/***/ "./input/index.js":
-/*!************************!*\
-  !*** ./input/index.js ***!
-  \************************/
+/***/ "./entities/index.js":
+/*!***************************!*\
+  !*** ./entities/index.js ***!
+  \***************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2331,19 +2312,17 @@ exports.default = SceneEntity;
 
 
 module.exports = {
-
-    Key: __webpack_require__(/*! ./key */ "./input/key.js"),
-    Keyboard: __webpack_require__(/*! ./keyboard */ "./input/keyboard.js"),
-    Mouse: __webpack_require__(/*! ./keyboard */ "./input/keyboard.js"),
-    Input: __webpack_require__(/*! ./input */ "./input/input.js")
-
+    Entity: __webpack_require__(/*! ./Entity */ "./entities/Entity.js"),
+    SceneEntity: __webpack_require__(/*! ./SceneEntity */ "./entities/SceneEntity.js"),
+    EntityUpdateList: __webpack_require__(/*! ./EntityUpdateList */ "./entities/EntityUpdateList.js"),
+    EntityFactory: __webpack_require__(/*! ./EntityFactory */ "./entities/EntityFactory.js")
 };
 
 /***/ }),
 
-/***/ "./input/input.js":
+/***/ "./input/Input.js":
 /*!************************!*\
-  !*** ./input/input.js ***!
+  !*** ./input/Input.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -2357,13 +2336,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _keyboard = __webpack_require__(/*! ./keyboard */ "./input/keyboard.js");
+var _Keyboard = __webpack_require__(/*! ./Keyboard */ "./input/Keyboard.js");
 
-var _keyboard2 = _interopRequireDefault(_keyboard);
+var _Keyboard2 = _interopRequireDefault(_Keyboard);
 
-var _mouse = __webpack_require__(/*! ./mouse */ "./input/mouse.js");
+var _Mouse = __webpack_require__(/*! ./Mouse */ "./input/Mouse.js");
 
-var _mouse2 = _interopRequireDefault(_mouse);
+var _Mouse2 = _interopRequireDefault(_Mouse);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2383,8 +2362,8 @@ var Input = function () {
     value: function init() {
 
       //this.mouse = new tobiJS.Mouse(this.game);
-      this.keyboard = new _keyboard2.default(this.game);
-      this.mouse = new _mouse2.default(this.game);
+      this.keyboard = new _Keyboard2.default(this.game);
+      this.mouse = new _Mouse2.default(this.game);
       this.keyboard.init();
       this.mouse.init();
     }
@@ -2410,9 +2389,9 @@ exports.default = Input;
 
 /***/ }),
 
-/***/ "./input/key.js":
+/***/ "./input/Key.js":
 /*!**********************!*\
-  !*** ./input/key.js ***!
+  !*** ./input/Key.js ***!
   \**********************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -2574,9 +2553,124 @@ exports.default = Key;
 
 /***/ }),
 
-/***/ "./input/keyboard.js":
+/***/ "./input/KeyCode.js":
+/*!**************************!*\
+  !*** ./input/KeyCode.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var KeyCode = {
+    Backspace: 8,
+    Tab: 9,
+    Enter: 13,
+    Shift: 16,
+    Ctrl: 17,
+    Alt: 18,
+    Pause: 19,
+    CapsLock: 20,
+    Escape: 27,
+    Space: 32,
+    PageUp: 33,
+    PageDown: 34,
+    End: 35,
+    Home: 36,
+    Left: 37,
+    Up: 38,
+    Right: 39,
+    Down: 40,
+    Insert: 45,
+    Delete: 46,
+    Num0: 48,
+    Num1: 49,
+    Num2: 50,
+    Num3: 51,
+    Num4: 52,
+    Num5: 53,
+    Num6: 54,
+    Num7: 55,
+    Num8: 56,
+    Num9: 57,
+    A: 65,
+    B: 66,
+    C: 67,
+    D: 68,
+    E: 69,
+    F: 70,
+    G: 71,
+    H: 72,
+    I: 73,
+    J: 74,
+    K: 75,
+    L: 76,
+    M: 77,
+    N: 78,
+    O: 79,
+    P: 80,
+    Q: 81,
+    R: 82,
+    S: 83,
+    T: 84,
+    U: 85,
+    V: 86,
+    W: 87,
+    X: 88,
+    Y: 89,
+    Z: 90,
+    LSystem: 91,
+    RSystem: 92,
+    SelectK: 93,
+    Numpad0: 96,
+    Numpad1: 97,
+    Numpad2: 98,
+    Numpad3: 99,
+    Numpad4: 100,
+    Numpad5: 101,
+    Numpad6: 102,
+    Numpad7: 103,
+    Numpad8: 104,
+    Numpad9: 105,
+    Multiply: 106,
+    Add: 107,
+    Subtract: 109,
+    DecimalPoint: 110,
+    Divide: 111,
+    F1: 112,
+    F2: 113,
+    F3: 114,
+    F4: 115,
+    F5: 116,
+    F6: 117,
+    F7: 118,
+    F8: 119,
+    F9: 120,
+    F10: 121,
+    F11: 122,
+    F12: 123,
+    NumLock: 144,
+    ScrollLock: 145,
+    SemiColon: 186,
+    Equal: 187,
+    Comma: 188,
+    Dash: 189,
+    Period: 190,
+    Slash: 191,
+    LBraket: 219,
+    BackSlash: 220,
+    RBracket: 221,
+    Quote: 222
+};
+
+module.exports = KeyCode;
+
+/***/ }),
+
+/***/ "./input/Keyboard.js":
 /*!***************************!*\
-  !*** ./input/keyboard.js ***!
+  !*** ./input/Keyboard.js ***!
   \***************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -2590,17 +2684,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _key = __webpack_require__(/*! ./key */ "./input/key.js");
+var _Key = __webpack_require__(/*! ./Key */ "./input/Key.js");
 
-var _key2 = _interopRequireDefault(_key);
+var _Key2 = _interopRequireDefault(_Key);
 
-var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
-var _map2 = _interopRequireDefault(_map);
+var _Map2 = _interopRequireDefault(_Map);
 
-var _keycode = __webpack_require__(/*! ./keycode */ "./input/keycode.js");
+var _KeyCode = __webpack_require__(/*! ./KeyCode */ "./input/KeyCode.js");
 
-var _keycode2 = _interopRequireDefault(_keycode);
+var _KeyCode2 = _interopRequireDefault(_KeyCode);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2614,8 +2708,8 @@ var Keyboard = function () {
     this.context = game.context;
     this.active = true;
     //this._keys = [];
-    this._keyMapping = new _map2.default();
-    this._keyWatch = new _map2.default();
+    this._keyMapping = new _Map2.default();
+    this._keyWatch = new _Map2.default();
     this._keyGarbage = [];
     //this._keyLock = [];
     //this._keyLockPressed = [];
@@ -2636,11 +2730,11 @@ var Keyboard = function () {
       this._keyMapping.clear();
       this._keyWatch.clear();
       this._keyGarbage = [];
-      for (var prop in _keycode2.default) {
+      for (var prop in _KeyCode2.default) {
 
-        if (_keycode2.default.hasOwnProperty(prop)) {
-          var value = _keycode2.default[prop];
-          this._keyMapping.set(value, new _key2.default(value, this.game));
+        if (_KeyCode2.default.hasOwnProperty(prop)) {
+          var value = _KeyCode2.default[prop];
+          this._keyMapping.set(value, new _Key2.default(value, this.game));
         }
         /*if (scintilla.KeyCode.hasOwnProperty(prop)) {
             
@@ -2857,124 +2951,9 @@ exports.default = Keyboard;
 
 /***/ }),
 
-/***/ "./input/keycode.js":
-/*!**************************!*\
-  !*** ./input/keycode.js ***!
-  \**************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var KeyCode = {
-    Backspace: 8,
-    Tab: 9,
-    Enter: 13,
-    Shift: 16,
-    Ctrl: 17,
-    Alt: 18,
-    Pause: 19,
-    CapsLock: 20,
-    Escape: 27,
-    Space: 32,
-    PageUp: 33,
-    PageDown: 34,
-    End: 35,
-    Home: 36,
-    Left: 37,
-    Up: 38,
-    Right: 39,
-    Down: 40,
-    Insert: 45,
-    Delete: 46,
-    Num0: 48,
-    Num1: 49,
-    Num2: 50,
-    Num3: 51,
-    Num4: 52,
-    Num5: 53,
-    Num6: 54,
-    Num7: 55,
-    Num8: 56,
-    Num9: 57,
-    A: 65,
-    B: 66,
-    C: 67,
-    D: 68,
-    E: 69,
-    F: 70,
-    G: 71,
-    H: 72,
-    I: 73,
-    J: 74,
-    K: 75,
-    L: 76,
-    M: 77,
-    N: 78,
-    O: 79,
-    P: 80,
-    Q: 81,
-    R: 82,
-    S: 83,
-    T: 84,
-    U: 85,
-    V: 86,
-    W: 87,
-    X: 88,
-    Y: 89,
-    Z: 90,
-    LSystem: 91,
-    RSystem: 92,
-    SelectK: 93,
-    Numpad0: 96,
-    Numpad1: 97,
-    Numpad2: 98,
-    Numpad3: 99,
-    Numpad4: 100,
-    Numpad5: 101,
-    Numpad6: 102,
-    Numpad7: 103,
-    Numpad8: 104,
-    Numpad9: 105,
-    Multiply: 106,
-    Add: 107,
-    Subtract: 109,
-    DecimalPoint: 110,
-    Divide: 111,
-    F1: 112,
-    F2: 113,
-    F3: 114,
-    F4: 115,
-    F5: 116,
-    F6: 117,
-    F7: 118,
-    F8: 119,
-    F9: 120,
-    F10: 121,
-    F11: 122,
-    F12: 123,
-    NumLock: 144,
-    ScrollLock: 145,
-    SemiColon: 186,
-    Equal: 187,
-    Comma: 188,
-    Dash: 189,
-    Period: 190,
-    Slash: 191,
-    LBraket: 219,
-    BackSlash: 220,
-    RBracket: 221,
-    Quote: 222
-};
-
-module.exports = KeyCode;
-
-/***/ }),
-
-/***/ "./input/mouse.js":
+/***/ "./input/Mouse.js":
 /*!************************!*\
-  !*** ./input/mouse.js ***!
+  !*** ./input/Mouse.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -2989,9 +2968,9 @@ exports.MouseEvent = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _mousebutton = __webpack_require__(/*! ./mousebutton */ "./input/mousebutton.js");
+var _MouseButton = __webpack_require__(/*! ./MouseButton */ "./input/MouseButton.js");
 
-var _mousebutton2 = _interopRequireDefault(_mousebutton);
+var _MouseButton2 = _interopRequireDefault(_MouseButton);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3181,9 +3160,9 @@ exports.default = Mouse;
 
 /***/ }),
 
-/***/ "./input/mousebutton.js":
+/***/ "./input/MouseButton.js":
 /*!******************************!*\
-  !*** ./input/mousebutton.js ***!
+  !*** ./input/MouseButton.js ***!
   \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -3204,6 +3183,264 @@ var MouseButton = exports.MouseButton = {
 
 /***/ }),
 
+/***/ "./input/index.js":
+/*!************************!*\
+  !*** ./input/index.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+
+    Key: __webpack_require__(/*! ./Key */ "./input/Key.js"),
+    Keyboard: __webpack_require__(/*! ./Keyboard */ "./input/Keyboard.js"),
+    Mouse: __webpack_require__(/*! ./Mouse */ "./input/Mouse.js"),
+    Input: __webpack_require__(/*! ./Input */ "./input/Input.js")
+
+};
+
+/***/ }),
+
+/***/ "./loader/AssetsType.js":
+/*!******************************!*\
+  !*** ./loader/AssetsType.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var AssetsType = {
+    'none': 0,
+    'image': 1,
+    'audio': 2,
+    'text': 3,
+    'json': 4,
+    'tilemapJSON': 5
+};
+
+exports.default = AssetsType;
+
+/***/ }),
+
+/***/ "./loader/File.js":
+/*!************************!*\
+  !*** ./loader/File.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+
+var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
+
+var _XHR2 = _interopRequireDefault(_XHR);
+
+var _LoaderState = __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var File = function () {
+    function File(config) {
+        _classCallCheck(this, File);
+
+        this.type = _ObjectUtils2.default.getValue(config, 'type', null);
+        this.tag = _ObjectUtils2.default.getValue(config, 'tag', null);
+        this.useExternal = _ObjectUtils2.default.getValue(config, 'useExternal', false);
+
+        if (this.type == null || this.tag == null) {
+            throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
+        }
+
+        this.url = _ObjectUtils2.default.getValue(config, 'url', undefined);
+
+        if (this.url === undefined) this.url = _ObjectUtils2.default.getValue(config, 'path', '') + this.tag + '.' + _ObjectUtils2.default.getValue(config, 'ext', '');else {
+            if (!this.useExternal || this.useExternal !== undefined) this.url = _ObjectUtils2.default.getValue(config, 'path', '').concat(this.url);
+        }
+
+        this.xhrSettings = _XHR2.default.createSettings(_ObjectUtils2.default.getValue(config, 'responseType', undefined));
+
+        if (_ObjectUtils2.default.getValue(config, 'xhrSettings', false)) this.xhrSettings = _XHR2.default.merge(this.xhrSettings, _ObjectUtils2.default.getValue(config, 'xhrSettings', {}));
+
+        //console.log(this.xhrSettings);
+
+        this.loader = null;
+        this.state = _LoaderState.LOADER_STATE.PENDING;
+        this.totalBytes = 0;
+        this.loadedBytes = 0;
+        this.progress = 0;
+        this.data = undefined;
+        this.source = null;
+        this.xhrRequest = null;
+        this.config = _ObjectUtils2.default.getValue(config, 'config', {});
+        this.crossOrigin = undefined;
+
+        // callbacks
+        //loaded: false,
+        //error: false,
+        //loading:false,
+    }
+
+    _createClass(File, [{
+        key: 'load',
+        value: function load(gameLoader) {
+            this.loader = gameLoader;
+
+            if (this.state === _LoaderState.LOADER_STATE.FINISHED) {
+                this.onDone();
+
+                this.loader.nextFile(this);
+            } else {
+
+                this.source = _ObjectUtils2.default.getURL(this.url, gameLoader.baseURL);
+
+                if (this.source.indexOf('data:') === 0 || this.source == null) {
+                    console.warn("Loader.File.load: unsupported URI.");
+                } else {
+                    this.xhrRequest = _XHR2.default.createFileRequest(this, gameLoader.xhr);
+                }
+            }
+        }
+    }, {
+        key: 'onLoad',
+        value: function onLoad(event) {
+
+            this.XHRreset();
+
+            if (event.target && event.target.status !== 200) {
+                this.loader.next(this, true);
+            } else {
+
+                if (this.onPostLoad !== undefined) this.onPostLoad(this.loader, this.xhrRequest);
+
+                this.loader.next(this, false);
+            }
+        }
+    }, {
+        key: 'onError',
+        value: function onError(event) {
+            console.error("Loader.File: Error on load file: " + this.url + ".");
+
+            this.XHRreset();
+
+            this.loader.next(this, true);
+        }
+    }, {
+        key: 'onProgress',
+        value: function onProgress(event) {
+            if (event.lengthComputable) {
+                this.loadedBytes = event.loaded;
+                this.totalBytes = event.total;
+
+                this.progress = Math.min(this.loadedBytes / this.totalBytes, 1);
+            }
+        }
+    }, {
+        key: 'onDone',
+        value: function onDone() {
+            this.state = _LoaderState.LOADER_STATE.DONE;
+        }
+    }, {
+        key: 'onProcessing',
+        value: function onProcessing(processingCallback) {
+            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+
+            this.onDone();
+
+            processingCallback(this);
+        }
+    }, {
+        key: 'XHRreset',
+        value: function XHRreset() {
+            if (this.xhrRequest) {
+                this.xhrRequest.onload = undefined;
+                this.xhrRequest.onerror = undefined;
+                this.xhrRequest.onprogress = undefined;
+                //this.xhrRequest.onreadystatechange = undefined;
+            }
+        }
+    }]);
+
+    return File;
+}();
+
+exports.default = File;
+
+/***/ }),
+
+/***/ "./loader/ListInjector.js":
+/*!********************************!*\
+  !*** ./loader/ListInjector.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ListInjector = function () {
+    function ListInjector() {
+        _classCallCheck(this, ListInjector);
+
+        this.list = {};
+    }
+
+    _createClass(ListInjector, [{
+        key: "inject",
+        value: function inject(toObj) {
+            for (var key in this.list) {
+                toObj[key] = this.list[key];
+            }
+        }
+    }, {
+        key: "register",
+        value: function register(key, func) {
+            this.list[key] = func;
+        }
+    }, {
+        key: "destroyfunction",
+        value: function destroyfunction() {
+            this.list = {};
+        }
+    }]);
+
+    return ListInjector;
+}();
+
+exports.default = ListInjector;
+;
+
+/***/ }),
+
 /***/ "./loader/LoaderManager.js":
 /*!*********************************!*\
   !*** ./loader/LoaderManager.js ***!
@@ -3220,27 +3457,27 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _loaderstate = __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js");
+var _LoaderState = __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js");
 
-var _set = __webpack_require__(/*! ../structures/set */ "./structures/set.js");
+var _Set = __webpack_require__(/*! ../structures/Set */ "./structures/Set.js");
 
-var _set2 = _interopRequireDefault(_set);
+var _Set2 = _interopRequireDefault(_Set);
 
 var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
 
 var _XHR2 = _interopRequireDefault(_XHR);
 
-var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
+var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
-var _objectutils2 = _interopRequireDefault(_objectutils);
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _assetsType = __webpack_require__(/*! ./assetsType */ "./loader/assetsType.js");
+var _AssetsType = __webpack_require__(/*! ./AssetsType */ "./loader/AssetsType.js");
 
-var _assetsType2 = _interopRequireDefault(_assetsType);
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3273,12 +3510,12 @@ var LoadManager = function () {
 
     var gameConfig = game.config.loader;
 
-    this.xhr = _XHR2.default.createSettings(_objectutils2.default.getValue(config, 'responseType', gameConfig.responseType), _objectutils2.default.getValue(config, 'async', gameConfig.async),
+    this.xhr = _XHR2.default.createSettings(_ObjectUtils2.default.getValue(config, 'responseType', gameConfig.responseType), _ObjectUtils2.default.getValue(config, 'async', gameConfig.async),
     //scintilla.ObjectUtils.getPropertyValue(config, 'user', gameConfig.loaderUser),
     //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
-    _objectutils2.default.getValue(config, 'timeout', gameConfig.timeout));
+    _ObjectUtils2.default.getValue(config, 'timeout', gameConfig.timeout));
 
-    _loaderstate.AssetTypeHandler.inject(this);
+    _LoaderState.AssetTypeHandler.inject(this);
   }
 
   _createClass(LoadManager, [{
@@ -3286,11 +3523,11 @@ var LoadManager = function () {
     value: function init() {
       this.cache = this.game.system.cache;
 
-      this._filesQueue = new _set2.default();
-      this._filesLoading = new _set2.default();
-      this._successFiles = new _set2.default();
-      this._failedFiles = new _set2.default();
-      this._processedFiles = new _set2.default();
+      this._filesQueue = new _Set2.default();
+      this._filesLoading = new _Set2.default();
+      this._successFiles = new _Set2.default();
+      this._failedFiles = new _Set2.default();
+      this._processedFiles = new _Set2.default();
 
       this._filesQueueCount = 0;
       this._loadedFilesCount = 0;
@@ -3298,7 +3535,7 @@ var LoadManager = function () {
       this.progress = 0;
       this.path = '';
       this.baseURL = '';
-      this.state = _loaderstate.LOADER_STATE.IDLE;
+      this.state = _LoaderState.LOADER_STATE.IDLE;
     }
   }, {
     key: 'setPath',
@@ -3347,7 +3584,7 @@ var LoadManager = function () {
       this._loadedFilesCount = 0;
 
       this.progress = 0;
-      this.state = _loaderstate.LOADER_STATE.IDLE;
+      this.state = _LoaderState.LOADER_STATE.IDLE;
     }
   }, {
     key: 'start',
@@ -3359,7 +3596,7 @@ var LoadManager = function () {
 
       this.progress = 0;
       this._loadedFilesCount = 0;
-      this.state = _loaderstate.LOADER_STATE.LOADING;
+      this.state = _LoaderState.LOADER_STATE.LOADING;
       this._filesQueueCount = this._filesQueue.size;
 
       if (this._filesQueue.size === 0) {
@@ -3402,7 +3639,7 @@ var LoadManager = function () {
 
         //var file = this._filesQueue[i];
 
-        if (file.state === _loaderstate.LOADER_STATE.FINISHED || file.state === _loaderstate.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
+        if (file.state === _LoaderState.LOADER_STATE.FINISHED || file.state === _LoaderState.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
           {
 
             self._filesLoading.set(file);
@@ -3442,11 +3679,11 @@ var LoadManager = function () {
     key: 'loadFinished',
     value: function loadFinished() {
 
-      if (this.state === _loaderstate.LOADER_STATE.PROCESSING) return;
+      if (this.state === _LoaderState.LOADER_STATE.PROCESSING) return;
 
       this.progress = 1;
       this.isDownloading = false;
-      this.state = _loaderstate.LOADER_STATE.PROCESSING;
+      this.state = _LoaderState.LOADER_STATE.PROCESSING;
 
       this._processedFiles.clear();
 
@@ -3468,7 +3705,7 @@ var LoadManager = function () {
     key: 'processingUpdate',
     value: function processingUpdate(file) {
 
-      if (file.state === _loaderstate.LOADER_STATE.ERROR) {
+      if (file.state === _LoaderState.LOADER_STATE.ERROR) {
         this._failedFiles.set(file);
 
         /*if (file.linkFile)
@@ -3488,7 +3725,7 @@ var LoadManager = function () {
 
       this._successFiles.delete(file);
 
-      if (this._successFiles.size === 0 && this.state === _loaderstate.LOADER_STATE.PROCESSING) this.processingDone();
+      if (this._successFiles.size === 0 && this.state === _LoaderState.LOADER_STATE.PROCESSING) this.processingDone();
     }
   }, {
     key: 'processingDone',
@@ -3505,12 +3742,12 @@ var LoadManager = function () {
             default:
               break;
 
-            case _assetsType2.default.image:
+            case _AssetsType2.default.image:
               {
                 cache.image.add(file.tag, file.data);
                 break;
               }
-            case _assetsType2.default.audio:
+            case _AssetsType2.default.audio:
               {
 
                 file.data = requestXHR.response;
@@ -3523,13 +3760,13 @@ var LoadManager = function () {
 
                 break;
               }
-            case _assetsType2.default.json:
+            case _AssetsType2.default.json:
               {
                 cache.json.add(file.tag, file.data);
                 break;
               }
 
-            case _assetsType2.default.tilemapJSON:
+            case _AssetsType2.default.tilemapJSON:
               {
                 cache.tilemap.add(file.tag, file.data);
                 break;
@@ -3540,19 +3777,19 @@ var LoadManager = function () {
         this._processedFiles.clear();
       }
 
-      this.state = _loaderstate.LOADER_STATE.DONE;
+      this.state = _LoaderState.LOADER_STATE.DONE;
 
       this.game.scene.preloadComplete();
     }
   }, {
     key: 'isLoading',
     value: function isLoading() {
-      return this.state === _loaderstate.LOADER_STATE.LOADING || this.state === _loaderstate.LOADER_STATE.PROCESSING;
+      return this.state === _LoaderState.LOADER_STATE.LOADING || this.state === _LoaderState.LOADER_STATE.PROCESSING;
     }
   }, {
     key: 'isOK',
     value: function isOK() {
-      return this.state === _loaderstate.LOADER_STATE.IDLE || this.state === _loaderstate.LOADER_STATE.DONE || this.state === _loaderstate.LOADER_STATE.ERROR;
+      return this.state === _LoaderState.LOADER_STATE.IDLE || this.state === _LoaderState.LOADER_STATE.DONE || this.state === _LoaderState.LOADER_STATE.ERROR;
     }
   }, {
     key: 'downloadIsDone',
@@ -3585,13 +3822,49 @@ var LoadManager = function () {
 exports.default = LoadManager;
 ;
 
-_gameSystemManager2.default.register('Loader', LoadManager, 'load');
+_GameSystemManager2.default.register('Loader', LoadManager, 'load');
 
 /***/ }),
 
-/***/ "./loader/URLobject.js":
+/***/ "./loader/LoaderState.js":
+/*!*******************************!*\
+  !*** ./loader/LoaderState.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.LOADER_STATE = exports.AssetTypeHandler = undefined;
+
+var _ListInjector = __webpack_require__(/*! ./ListInjector */ "./loader/ListInjector.js");
+
+var _ListInjector2 = _interopRequireDefault(_ListInjector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AssetTypeHandler = exports.AssetTypeHandler = new _ListInjector2.default();
+
+var LOADER_STATE = exports.LOADER_STATE = {
+    NONE: 0,
+    IDLE: 1,
+    PENDING: 2,
+    LOADING: 3,
+    PROCESSING: 4,
+    ERROR: 5,
+    FINISHED: 6,
+    DONE: 7
+};
+
+/***/ }),
+
+/***/ "./loader/URLObject.js":
 /*!*****************************!*\
-  !*** ./loader/URLobject.js ***!
+  !*** ./loader/URLObject.js ***!
   \*****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -3715,9 +3988,9 @@ exports.default = function () {
 
 /***/ }),
 
-/***/ "./loader/assets/imagefile.js":
+/***/ "./loader/assets/ImageFile.js":
 /*!************************************!*\
-  !*** ./loader/assets/imagefile.js ***!
+  !*** ./loader/assets/ImageFile.js ***!
   \************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -3731,27 +4004,27 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
-var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
-var _file2 = _interopRequireDefault(_file);
+var _File3 = _interopRequireDefault(_File2);
 
-var _URLobject = __webpack_require__(/*! ../URLobject */ "./loader/URLobject.js");
+var _URLObject = __webpack_require__(/*! ../URLObject */ "./loader/URLObject.js");
 
-var _URLobject2 = _interopRequireDefault(_URLobject);
+var _URLObject2 = _interopRequireDefault(_URLObject);
 
-var _objectutils = __webpack_require__(/*! ../../utils/objectutils */ "./utils/objectutils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
-var _objectutils2 = _interopRequireDefault(_objectutils);
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
-var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathutils.js");
+var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
 
-var _pathutils2 = _interopRequireDefault(_pathutils);
+var _Path2 = _interopRequireDefault(_Path);
 
-var _assetsType = __webpack_require__(/*! ../assetsType */ "./loader/assetsType.js");
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
-var _assetsType2 = _interopRequireDefault(_assetsType);
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3772,18 +4045,18 @@ var ImageFile = function (_File) {
         if (typeof tag === 'string') {
             assetTag = tag;
         } else {
-            assetTag = _objectutils2.default.getValue(tag, 'tag', '');
+            assetTag = _ObjectUtils2.default.getValue(tag, 'tag', '');
         }
 
         var fileConfig = {
-            type: _assetsType2.default.image,
+            type: _AssetsType2.default.image,
             tag: assetTag,
-            ext: _objectutils2.default.getValue(tag, 'ext', _pathutils2.default.getExtension(url)),
-            url: _objectutils2.default.getValue(tag, 'file', url),
+            ext: _ObjectUtils2.default.getValue(tag, 'ext', _Path2.default.getExtension(url)),
+            url: _ObjectUtils2.default.getValue(tag, 'file', url),
             path: path,
             responseType: 'blob',
-            xhrSettings: _objectutils2.default.getValue(tag, 'xhr', xhrSettings),
-            config: _objectutils2.default.getValue(tag, 'config', config)
+            xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings),
+            config: _ObjectUtils2.default.getValue(tag, 'config', config)
         };
 
         return _possibleConstructorReturn(this, (ImageFile.__proto__ || Object.getPrototypeOf(ImageFile)).call(this, fileConfig));
@@ -3792,7 +4065,7 @@ var ImageFile = function (_File) {
     _createClass(ImageFile, [{
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
-            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LOADER_STATE.PROCESSING;
             this.data = new Image();
             this.data.crossOrigin = this.crossOrigin;
 
@@ -3800,7 +4073,7 @@ var ImageFile = function (_File) {
 
             this.data.onload = function () {
 
-                _URLobject2.default.revoke(self.data);
+                _URLObject2.default.revoke(self.data);
 
                 self.onDone();
 
@@ -3809,26 +4082,26 @@ var ImageFile = function (_File) {
 
             this.data.onerror = function () {
 
-                _URLobject2.default.revoke(self.data);
+                _URLObject2.default.revoke(self.data);
 
                 console.warn("Loader.ImageFile: Error on load file: " + self.url + ".");
 
-                self.state = _loaderstate.LOADER_STATE.ERROR;
+                self.state = _LoaderState.LOADER_STATE.ERROR;
 
                 processingCallback(self);
             };
 
-            _URLobject2.default.create(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
+            _URLObject2.default.create(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
         }
     }]);
 
     return ImageFile;
-}(_file2.default);
+}(_File3.default);
 
 exports.default = ImageFile;
 
 
-_loaderstate.AssetTypeHandler.register('image', function (tag, url, path, xhrSettings, force) {
+_LoaderState.AssetTypeHandler.register('image', function (tag, url, path, xhrSettings, force) {
 
     this.addAsset(new ImageFile(tag, url, this.path, xhrSettings), force);
 
@@ -3839,28 +4112,9 @@ module.exports = ImageFile;
 
 /***/ }),
 
-/***/ "./loader/assets/index.js":
-/*!********************************!*\
-  !*** ./loader/assets/index.js ***!
-  \********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    ImageFile: __webpack_require__(/*! ./imagefile */ "./loader/assets/imagefile.js"),
-    TextFile: __webpack_require__(/*! ./textfile */ "./loader/assets/textfile.js"),
-    JSONFile: __webpack_require__(/*! ./jsonfile */ "./loader/assets/jsonfile.js"),
-    TilemapJSON: __webpack_require__(/*! ./tilemapJSON */ "./loader/assets/tilemapJSON.js")
-};
-
-/***/ }),
-
-/***/ "./loader/assets/jsonfile.js":
+/***/ "./loader/assets/JSONFile.js":
 /*!***********************************!*\
-  !*** ./loader/assets/jsonfile.js ***!
+  !*** ./loader/assets/JSONFile.js ***!
   \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -3876,19 +4130,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
-var _file2 = _interopRequireDefault(_file);
+var _File3 = _interopRequireDefault(_File2);
 
-var _objectutils = __webpack_require__(/*! ../../utils/objectutils */ "./utils/objectutils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
-var _objectutils2 = _interopRequireDefault(_objectutils);
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
-var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
-var _assetsType = __webpack_require__(/*! ../assetsType */ "./loader/assetsType.js");
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
-var _assetsType2 = _interopRequireDefault(_assetsType);
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3905,20 +4159,20 @@ var JSONFile = function (_File) {
         _classCallCheck(this, JSONFile);
 
         var config = {
-            type: _assetsType2.default.json,
-            ext: _objectutils2.default.getValue(tag, 'ext', 'json'),
+            type: _AssetsType2.default.json,
+            ext: _ObjectUtils2.default.getValue(tag, 'ext', 'json'),
             responseType: 'text',
             tag: tag,
-            url: _objectutils2.default.getValue(tag, 'file', url),
+            url: _ObjectUtils2.default.getValue(tag, 'file', url),
             path: path,
-            xhrSettings: _objectutils2.default.getValue(tag, 'xhr', xhrSettings)
+            xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings)
         };
 
         var _this = _possibleConstructorReturn(this, (JSONFile.__proto__ || Object.getPrototypeOf(JSONFile)).call(this, config));
 
         if (_typeof(config.url) === 'object') {
             _this.data = config.url;
-            _this.state = _loaderstate.LOADER_STATE.DONE;
+            _this.state = _LoaderState.LOADER_STATE.DONE;
         }
 
         return _this;
@@ -3927,7 +4181,7 @@ var JSONFile = function (_File) {
     _createClass(JSONFile, [{
         key: "onProcess",
         value: function onProcess(processingCallback) {
-            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LOADER_STATE.PROCESSING;
             this.data = JSON.parse(this.xhrLoader.responseText);
             this.onDone();
             callback(this);
@@ -3935,21 +4189,21 @@ var JSONFile = function (_File) {
     }]);
 
     return JSONFile;
-}(_file2.default);
+}(_File3.default);
 
 exports.default = JSONFile;
 
 
-_loaderstate.AssetTypeHandler.register('json', function (tag, url, path, xhrSettings) {
+_LoaderState.AssetTypeHandler.register('json', function (tag, url, path, xhrSettings) {
     this.addAsset(new JSONFile(tag, url, this.path, xhrSettings));
     return this;
 });
 
 /***/ }),
 
-/***/ "./loader/assets/textfile.js":
+/***/ "./loader/assets/TextFile.js":
 /*!***********************************!*\
-  !*** ./loader/assets/textfile.js ***!
+  !*** ./loader/assets/TextFile.js ***!
   \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -3963,23 +4217,23 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
-var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
-var _file2 = _interopRequireDefault(_file);
+var _File3 = _interopRequireDefault(_File2);
 
-var _objectutils = __webpack_require__(/*! ../../utils/objectutils */ "./utils/objectutils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
-var _objectutils2 = _interopRequireDefault(_objectutils);
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
-var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathutils.js");
+var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
 
-var _pathutils2 = _interopRequireDefault(_pathutils);
+var _Path2 = _interopRequireDefault(_Path);
 
-var _assetsType = __webpack_require__(/*! ../assetsType */ "./loader/assetsType.js");
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
-var _assetsType2 = _interopRequireDefault(_assetsType);
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4000,7 +4254,7 @@ var TextFile = function (_File) {
         if (typeof tag === 'string') {
             assetTag = tag;
         } else {
-            assetTag = _objectutils2.default.getValue(tag, 'tag', '');
+            assetTag = _ObjectUtils2.default.getValue(tag, 'tag', '');
         }
 
         var useExternal = false;
@@ -4010,14 +4264,14 @@ var TextFile = function (_File) {
         }
 
         var fileConfig = {
-            type: _assetsType2.default.text,
+            type: _AssetsType2.default.text,
             tag: assetTag,
-            ext: _objectutils2.default.getValue(tag, 'ext', _pathutils2.default.getExtension(url)),
-            url: _objectutils2.default.getValue(tag, 'file', url),
+            ext: _ObjectUtils2.default.getValue(tag, 'ext', _Path2.default.getExtension(url)),
+            url: _ObjectUtils2.default.getValue(tag, 'file', url),
             path: path,
             responseType: '',
-            xhrSettings: _objectutils2.default.getValue(tag, 'xhr', xhrSettings),
-            config: _objectutils2.default.getValue(tag, 'config', config),
+            xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings),
+            config: _ObjectUtils2.default.getValue(tag, 'config', config),
             useExternal: useExternal
         };
 
@@ -4050,7 +4304,7 @@ var TextFile = function (_File) {
     _createClass(TextFile, [{
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
-            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LOADER_STATE.PROCESSING;
             //this.data = window.URL.createObjectURL(this.xhrRequest.response);
             this.data = this.xhrRequest.responseText;
             /*var style = document.createElement('style');
@@ -4064,12 +4318,12 @@ var TextFile = function (_File) {
     }]);
 
     return TextFile;
-}(_file2.default);
+}(_File3.default);
 
 exports.default = TextFile;
 
 
-_loaderstate.AssetTypeHandler.register('text', function (tag, url, path, xhrSettings) {
+_LoaderState.AssetTypeHandler.register('text', function (tag, url, path, xhrSettings) {
     var endPointPath = this.path;
 
     if (path !== undefined) {
@@ -4087,9 +4341,9 @@ module.exports = TextFile;
 
 /***/ }),
 
-/***/ "./loader/assets/tilemapJSON.js":
+/***/ "./loader/assets/TilemapJSON.js":
 /*!**************************************!*\
-  !*** ./loader/assets/tilemapJSON.js ***!
+  !*** ./loader/assets/TilemapJSON.js ***!
   \**************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -4103,23 +4357,23 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _file = __webpack_require__(/*! ../file */ "./loader/file.js");
+var _File = __webpack_require__(/*! ../File */ "./loader/File.js");
 
-var _file2 = _interopRequireDefault(_file);
+var _File2 = _interopRequireDefault(_File);
 
-var _jsonfile = __webpack_require__(/*! ./jsonfile */ "./loader/assets/jsonfile.js");
+var _JSONFile2 = __webpack_require__(/*! ./JSONFile */ "./loader/assets/JSONFile.js");
 
-var _jsonfile2 = _interopRequireDefault(_jsonfile);
+var _JSONFile3 = _interopRequireDefault(_JSONFile2);
 
-var _loaderstate = __webpack_require__(/*! ../loaderstate */ "./loader/loaderstate.js");
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
-var _pathutils = __webpack_require__(/*! ../../utils/pathutils */ "./utils/pathutils.js");
+var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
 
-var _pathutils2 = _interopRequireDefault(_pathutils);
+var _Path2 = _interopRequireDefault(_Path);
 
-var _assetsType = __webpack_require__(/*! ../assetsType */ "./loader/assetsType.js");
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
-var _assetsType2 = _interopRequireDefault(_assetsType);
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4142,8 +4396,8 @@ function CheckImagesSources(loader, source, fullPath) {
         var tileset = source[i];
 
         if (tileset.image) {
-            var name = tileset.name || _pathutils2.default.getFilenameWithoutExtension(tileset.image);
-            var path = _pathutils2.default.getPathWithoutRoot(fullPath).concat(_pathutils2.default.getFilename(tileset.image));
+            var name = tileset.name || _Path2.default.getFilenameWithoutExtension(tileset.image);
+            var path = _Path2.default.getPathWithoutRoot(fullPath).concat(_Path2.default.getFilename(tileset.image));
             loader.image(name, path, undefined, undefined, false);
         }
     }
@@ -4157,7 +4411,7 @@ var TilemapFileJSON = function (_JSONFile) {
 
         var _this = _possibleConstructorReturn(this, (TilemapFileJSON.__proto__ || Object.getPrototypeOf(TilemapFileJSON)).call(this, tag, url, path, xhrSettings));
 
-        _this.type = _assetsType2.default.tilemapJSON;
+        _this.type = _AssetsType2.default.tilemapJSON;
 
         return _this;
     }
@@ -4166,7 +4420,7 @@ var TilemapFileJSON = function (_JSONFile) {
         key: 'onPostLoad',
         value: function onPostLoad(loader, xhrLoader) {
 
-            this.state = _loaderstate.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LOADER_STATE.PROCESSING;
             this.data = JSON.parse(xhrLoader.responseText);
 
             // check tileset images and pipe to the loader
@@ -4181,200 +4435,34 @@ var TilemapFileJSON = function (_JSONFile) {
     }]);
 
     return TilemapFileJSON;
-}(_jsonfile2.default);
+}(_JSONFile3.default);
 
 exports.default = TilemapFileJSON;
 
 
-_loaderstate.AssetTypeHandler.register('tilemapJSON', function (tag, url, path, xhrSettings) {
+_LoaderState.AssetTypeHandler.register('tilemapJSON', function (tag, url, path, xhrSettings) {
     this.addAsset(new TilemapFileJSON(tag, url, this.path, xhrSettings));
     return this;
 });
 
 /***/ }),
 
-/***/ "./loader/assetsType.js":
-/*!******************************!*\
-  !*** ./loader/assetsType.js ***!
-  \******************************/
+/***/ "./loader/assets/index.js":
+/*!********************************!*\
+  !*** ./loader/assets/index.js ***!
+  \********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var AssetsType = {
-    'none': 0,
-    'image': 1,
-    'audio': 2,
-    'text': 3,
-    'json': 4,
-    'tilemapJSON': 5
+module.exports = {
+    ImageFile: __webpack_require__(/*! ./ImageFile */ "./loader/assets/ImageFile.js"),
+    TextFile: __webpack_require__(/*! ./TextFile */ "./loader/assets/TextFile.js"),
+    JSONFile: __webpack_require__(/*! ./JSONFile */ "./loader/assets/JSONFile.js"),
+    TilemapJSON: __webpack_require__(/*! ./TilemapJSON */ "./loader/assets/TilemapJSON.js")
 };
-
-exports.default = AssetsType;
-
-/***/ }),
-
-/***/ "./loader/file.js":
-/*!************************!*\
-  !*** ./loader/file.js ***!
-  \************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
-
-var _objectutils2 = _interopRequireDefault(_objectutils);
-
-var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
-
-var _XHR2 = _interopRequireDefault(_XHR);
-
-var _loaderstate = __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var File = function () {
-    function File(config) {
-        _classCallCheck(this, File);
-
-        this.type = _objectutils2.default.getValue(config, 'type', null);
-        this.tag = _objectutils2.default.getValue(config, 'tag', null);
-        this.useExternal = _objectutils2.default.getValue(config, 'useExternal', false);
-
-        if (this.type == null || this.tag == null) {
-            throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
-        }
-
-        this.url = _objectutils2.default.getValue(config, 'url', undefined);
-
-        if (this.url === undefined) this.url = _objectutils2.default.getValue(config, 'path', '') + this.tag + '.' + _objectutils2.default.getValue(config, 'ext', '');else {
-            if (!this.useExternal || this.useExternal !== undefined) this.url = _objectutils2.default.getValue(config, 'path', '').concat(this.url);
-        }
-
-        this.xhrSettings = _XHR2.default.createSettings(_objectutils2.default.getValue(config, 'responseType', undefined));
-
-        if (_objectutils2.default.getValue(config, 'xhrSettings', false)) this.xhrSettings = _XHR2.default.merge(this.xhrSettings, _objectutils2.default.getValue(config, 'xhrSettings', {}));
-
-        //console.log(this.xhrSettings);
-
-        this.loader = null;
-        this.state = _loaderstate.LOADER_STATE.PENDING;
-        this.totalBytes = 0;
-        this.loadedBytes = 0;
-        this.progress = 0;
-        this.data = undefined;
-        this.source = null;
-        this.xhrRequest = null;
-        this.config = _objectutils2.default.getValue(config, 'config', {});
-        this.crossOrigin = undefined;
-
-        // callbacks
-        //loaded: false,
-        //error: false,
-        //loading:false,
-    }
-
-    _createClass(File, [{
-        key: 'load',
-        value: function load(gameLoader) {
-            this.loader = gameLoader;
-
-            if (this.state === _loaderstate.LOADER_STATE.FINISHED) {
-                this.onDone();
-
-                this.loader.nextFile(this);
-            } else {
-
-                this.source = _objectutils2.default.getURL(this.url, gameLoader.baseURL);
-
-                if (this.source.indexOf('data:') === 0 || this.source == null) {
-                    console.warn("Loader.File.load: unsupported URI.");
-                } else {
-                    this.xhrRequest = _XHR2.default.createFileRequest(this, gameLoader.xhr);
-                }
-            }
-        }
-    }, {
-        key: 'onLoad',
-        value: function onLoad(event) {
-
-            this.XHRreset();
-
-            if (event.target && event.target.status !== 200) {
-                this.loader.next(this, true);
-            } else {
-
-                if (this.onPostLoad !== undefined) this.onPostLoad(this.loader, this.xhrRequest);
-
-                this.loader.next(this, false);
-            }
-        }
-    }, {
-        key: 'onError',
-        value: function onError(event) {
-            console.error("Loader.File: Error on load file: " + this.url + ".");
-
-            this.XHRreset();
-
-            this.loader.next(this, true);
-        }
-    }, {
-        key: 'onProgress',
-        value: function onProgress(event) {
-            if (event.lengthComputable) {
-                this.loadedBytes = event.loaded;
-                this.totalBytes = event.total;
-
-                this.progress = Math.min(this.loadedBytes / this.totalBytes, 1);
-            }
-        }
-    }, {
-        key: 'onDone',
-        value: function onDone() {
-            this.state = _loaderstate.LOADER_STATE.DONE;
-        }
-    }, {
-        key: 'onProcessing',
-        value: function onProcessing(processingCallback) {
-            this.state = _loaderstate.LOADER_STATE.PROCESSING;
-
-            this.onDone();
-
-            processingCallback(this);
-        }
-    }, {
-        key: 'XHRreset',
-        value: function XHRreset() {
-            if (this.xhrRequest) {
-                this.xhrRequest.onload = undefined;
-                this.xhrRequest.onerror = undefined;
-                this.xhrRequest.onprogress = undefined;
-                //this.xhrRequest.onreadystatechange = undefined;
-            }
-        }
-    }]);
-
-    return File;
-}();
-
-exports.default = File;
 
 /***/ }),
 
@@ -4390,109 +4478,21 @@ exports.default = File;
 
 module.exports = {
 
-    File: __webpack_require__(/*! ./file */ "./loader/file.js"),
+    File: __webpack_require__(/*! ./File */ "./loader/File.js"),
     XHR: __webpack_require__(/*! ./XHR */ "./loader/XHR.js"),
-    URLObject: __webpack_require__(/*! ./URLobject */ "./loader/URLobject.js"),
-    AssetsType: __webpack_require__(/*! ./assetsType */ "./loader/assetsType.js"),
+    URLObject: __webpack_require__(/*! ./URLObject */ "./loader/URLObject.js"),
+    AssetsType: __webpack_require__(/*! ./AssetsType */ "./loader/AssetsType.js"),
     Assets: __webpack_require__(/*! ./assets */ "./loader/assets/index.js"),
-    LoaderState: __webpack_require__(/*! ./loaderstate */ "./loader/loaderstate.js"),
+    LoaderState: __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js"),
     LoaderManager: __webpack_require__(/*! ./LoaderManager */ "./loader/LoaderManager.js")
 
 };
 
 /***/ }),
 
-/***/ "./loader/listinjector.js":
-/*!********************************!*\
-  !*** ./loader/listinjector.js ***!
-  \********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ListInjector = function () {
-    function ListInjector() {
-        _classCallCheck(this, ListInjector);
-
-        this.list = {};
-    }
-
-    _createClass(ListInjector, [{
-        key: "inject",
-        value: function inject(toObj) {
-            for (var key in this.list) {
-                toObj[key] = this.list[key];
-            }
-        }
-    }, {
-        key: "register",
-        value: function register(key, func) {
-            this.list[key] = func;
-        }
-    }, {
-        key: "destroyfunction",
-        value: function destroyfunction() {
-            this.list = {};
-        }
-    }]);
-
-    return ListInjector;
-}();
-
-exports.default = ListInjector;
-;
-
-/***/ }),
-
-/***/ "./loader/loaderstate.js":
-/*!*******************************!*\
-  !*** ./loader/loaderstate.js ***!
-  \*******************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.LOADER_STATE = exports.AssetTypeHandler = undefined;
-
-var _listinjector = __webpack_require__(/*! ./listinjector */ "./loader/listinjector.js");
-
-var _listinjector2 = _interopRequireDefault(_listinjector);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var AssetTypeHandler = exports.AssetTypeHandler = new _listinjector2.default();
-
-var LOADER_STATE = exports.LOADER_STATE = {
-    NONE: 0,
-    IDLE: 1,
-    PENDING: 2,
-    LOADING: 3,
-    PROCESSING: 4,
-    ERROR: 5,
-    FINISHED: 6,
-    DONE: 7
-};
-
-/***/ }),
-
-/***/ "./math/boundingbox.js":
+/***/ "./math/BoundingBox.js":
 /*!*****************************!*\
-  !*** ./math/boundingbox.js ***!
+  !*** ./math/BoundingBox.js ***!
   \*****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -4506,13 +4506,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _vector = __webpack_require__(/*! ./vector */ "./math/vector.js");
+var _Vector = __webpack_require__(/*! ./Vector */ "./math/Vector.js");
 
-var _vector2 = _interopRequireDefault(_vector);
+var _Vector2 = _interopRequireDefault(_Vector);
 
-var _rect = __webpack_require__(/*! ./rect */ "./math/rect.js");
+var _Rect = __webpack_require__(/*! ./Rect */ "./math/Rect.js");
 
-var _rect2 = _interopRequireDefault(_rect);
+var _Rect2 = _interopRequireDefault(_Rect);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4526,8 +4526,8 @@ var BoundingBox = function () {
     y = y || Infinity;
     width = width || -Infinity;
     height = height || -Infinity;
-    this.min = new _vector2.default(x, y);
-    this.max = new _vector2.default(x + width, y + height);
+    this.min = new _Vector2.default(x, y);
+    this.max = new _Vector2.default(x + width, y + height);
     //this.box = new Rect(xx,yy,w,h);
   }
 
@@ -4583,7 +4583,7 @@ var BoundingBox = function () {
         this.max.x = Math.max(this.max.x, value.max.x);
         this.max.y = Math.max(this.max.y, value.max.y);
         return this;
-      } else if (value instanceof _vector2.default) {
+      } else if (value instanceof _Vector2.default) {
         return this.mergeWithPoint(value.x, value.y);
       } else {
         this.min.x = Math.min(this.min.x, value);
@@ -4654,12 +4654,12 @@ var BoundingBox = function () {
   }, {
     key: 'center',
     get: function get() {
-      return new _vector2.default((this.max.x - this.min.x) / 2, (this.max.y - this.min.y) / 2);
+      return new _Vector2.default((this.max.x - this.min.x) / 2, (this.max.y - this.min.y) / 2);
     }
   }, {
     key: 'size',
     get: function get() {
-      return new _vector2.default(this.max.x - this.min.x, this.max.y - this.min.y);
+      return new _Vector2.default(this.max.x - this.min.x, this.max.y - this.min.y);
     }
   }]);
 
@@ -4670,9 +4670,9 @@ exports.default = BoundingBox;
 
 /***/ }),
 
-/***/ "./math/mathutils.js":
+/***/ "./math/MathUtils.js":
 /*!***************************!*\
-  !*** ./math/mathutils.js ***!
+  !*** ./math/MathUtils.js ***!
   \***************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -4771,9 +4771,9 @@ exports.default = MathUtils;
 
 /***/ }),
 
-/***/ "./math/matrix.js":
+/***/ "./math/Matrix.js":
 /*!************************!*\
-  !*** ./math/matrix.js ***!
+  !*** ./math/Matrix.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5082,9 +5082,9 @@ module.exports = Matrix;
 
 /***/ }),
 
-/***/ "./math/rect.js":
+/***/ "./math/Rect.js":
 /*!**********************!*\
-  !*** ./math/rect.js ***!
+  !*** ./math/Rect.js ***!
   \**********************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5183,9 +5183,9 @@ exports.default = Rect;
 
 /***/ }),
 
-/***/ "./math/vector.js":
+/***/ "./math/Vector.js":
 /*!************************!*\
-  !*** ./math/vector.js ***!
+  !*** ./math/Vector.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5199,9 +5199,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _mathutils = __webpack_require__(/*! ./mathutils */ "./math/mathutils.js");
+var _MathUtils = __webpack_require__(/*! ./MathUtils */ "./math/MathUtils.js");
 
-var _mathutils2 = _interopRequireDefault(_mathutils);
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5383,12 +5383,12 @@ var Vector = function () {
   }, {
     key: 'distance',
     value: function distance(a, b) {
-      return _mathutils2.default.distance(a.x, a.y, b.x, b.y);
+      return _MathUtils2.default.distance(a.x, a.y, b.x, b.y);
     }
   }, {
     key: 'angleBetween',
     value: function angleBetween(a, b) {
-      return _mathutils2.default.angleBetween(a.x, a.y, b.x, b.y);
+      return _MathUtils2.default.angleBetween(a.x, a.y, b.x, b.y);
     }
   }, {
     key: 'dot',
@@ -5433,7 +5433,7 @@ var Vector = function () {
   }, {
     key: 'lerp',
     value: function lerp(a, b, t) {
-      var vec = new Vector(_mathutils2.default.lerp(a.x, b.x, t), _mathutils2.default.lerp(a.y, b.y, t));
+      var vec = new Vector(_MathUtils2.default.lerp(a.x, b.x, t), _MathUtils2.default.lerp(a.y, b.y, t));
       return vec;
     }
   }]);
@@ -5448,9 +5448,238 @@ module.exports = Vector;
 
 /***/ }),
 
-/***/ "./modules/core/computeDelimiterPoint.js":
+/***/ "./modules/Module.js":
+/*!***************************!*\
+  !*** ./modules/Module.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Module = function () {
+    function Module(name, moduleManager) {
+        _classCallCheck(this, Module);
+
+        this._type = name || "none";
+        this._enabled = true;
+        this.entity = null;
+        this.moduleManager = moduleManager || undefined;
+
+        if (moduleManager !== undefined) {
+            this.entity = moduleManager.entity;
+        }
+        //this.game = moduleManager.game || null;
+    }
+
+    _createClass(Module, [{
+        key: "init",
+        value: function init(instace, game) {
+
+            this.entity = instace;
+            //this.game = game;
+            this.moduleManager = instace.modules;
+        }
+    }, {
+        key: "type",
+        get: function get() {
+            return this._type;
+        }
+    }, {
+        key: "enabled",
+        get: function get() {
+            return this._enabled;
+        },
+        set: function set(value) {
+            value = !!value;
+
+            if (value !== this._enabled) {
+                this._enabled = value;
+            }
+        }
+    }]);
+
+    return Module;
+}();
+
+exports.default = Module;
+
+
+module.exports = Module;
+
+/***/ }),
+
+/***/ "./modules/ModuleAttacher.js":
+/*!***********************************!*\
+  !*** ./modules/ModuleAttacher.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _ModuleProvider = __webpack_require__(/*! ./ModuleProvider */ "./modules/ModuleProvider.js");
+
+var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModuleAttacher = function () {
+    function ModuleAttacher(moduleManager) {
+        _classCallCheck(this, ModuleAttacher);
+
+        this.moduleManager = moduleManager;
+    }
+
+    _createClass(ModuleAttacher, [{
+        key: "sprite",
+        value: function sprite(tag) {
+            return _ModuleProvider2.default.attach(this.moduleManager, 'sprite', tag);
+        }
+    }]);
+
+    return ModuleAttacher;
+}();
+
+exports.default = ModuleAttacher;
+
+/***/ }),
+
+/***/ "./modules/ModuleManager.js":
+/*!**********************************!*\
+  !*** ./modules/ModuleManager.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+var _ModuleAttacher = __webpack_require__(/*! ./ModuleAttacher */ "./modules/ModuleAttacher.js");
+
+var _ModuleAttacher2 = _interopRequireDefault(_ModuleAttacher);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModuleManager = function () {
+    function ModuleManager(entity) {
+        _classCallCheck(this, ModuleManager);
+
+        this.entity = entity || null;
+        this.attached = new _Map2.default();
+        this._pendingModules = new _List2.default();
+        this.attach = new _ModuleAttacher2.default(this);
+    }
+
+    _createClass(ModuleManager, [{
+        key: 'detach',
+        value: function detach(moduleName, index) {}
+    }]);
+
+    return ModuleManager;
+}();
+
+exports.default = ModuleManager;
+
+/***/ }),
+
+/***/ "./modules/ModuleProvider.js":
+/*!***********************************!*\
+  !*** ./modules/ModuleProvider.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModuleProviderManager = function () {
+    function ModuleProviderManager() {
+        _classCallCheck(this, ModuleProviderManager);
+
+        this.proxyModules = new _Map2.default();
+    }
+
+    _createClass(ModuleProviderManager, [{
+        key: 'attach',
+        value: function attach(manager, moduleName, args) {
+            var modules = manager.attached;
+
+            if (modules.has(moduleName)) throw new Error('ModuleManager.attach: Could not attach module ' + moduleName + '. Already exists');
+
+            if (!this.proxyModules.has(moduleName)) throw new Error('ModuleManager.attach: Module type ' + moduleName + ' don\'t exists.');
+
+            var mod = this.proxyModules.get(moduleName)(manager, args);
+            manager._pendingModules.push(mod);
+            return mod;
+        }
+    }, {
+        key: 'register',
+        value: function register(moduleName, func) {
+            if (!ModuleProvider.proxyModules.has(moduleName)) ModuleProvider.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
+        }
+    }]);
+
+    return ModuleProviderManager;
+}();
+
+var ModuleProvider = new ModuleProviderManager();
+
+exports.default = ModuleProvider;
+
+/***/ }),
+
+/***/ "./modules/core/ComputeDelimiterPoint.js":
 /*!***********************************************!*\
-  !*** ./modules/core/computeDelimiterPoint.js ***!
+  !*** ./modules/core/ComputeDelimiterPoint.js ***!
   \***********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5479,9 +5708,9 @@ function ComputeDelimiterPoint(x, y, rotation, anchor) {
 
 /***/ }),
 
-/***/ "./modules/core/transform.js":
+/***/ "./modules/core/Transform.js":
 /*!***********************************!*\
-  !*** ./modules/core/transform.js ***!
+  !*** ./modules/core/Transform.js ***!
   \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5495,17 +5724,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _vector = __webpack_require__(/*! ../../math/vector */ "./math/vector.js");
+var _Vector = __webpack_require__(/*! ../../math/Vector */ "./math/Vector.js");
 
-var _vector2 = _interopRequireDefault(_vector);
+var _Vector2 = _interopRequireDefault(_Vector);
 
-var _matrix = __webpack_require__(/*! ../../math/matrix */ "./math/matrix.js");
+var _Matrix = __webpack_require__(/*! ../../math/Matrix */ "./math/Matrix.js");
 
-var _matrix2 = _interopRequireDefault(_matrix);
+var _Matrix2 = _interopRequireDefault(_Matrix);
 
-var _boundingbox = __webpack_require__(/*! ../../math/boundingbox */ "./math/boundingbox.js");
+var _BoundingBox = __webpack_require__(/*! ../../math/BoundingBox */ "./math/BoundingBox.js");
 
-var _boundingbox2 = _interopRequireDefault(_boundingbox);
+var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5515,10 +5744,10 @@ var Transform = function () {
     function Transform() {
         _classCallCheck(this, Transform);
 
-        this.matrix = new _matrix2.default(1);
-        this.position = new _vector2.default(0, 0);
-        this.scale = new _vector2.default(1, 1);
-        this.origin = new _vector2.default(0, 0);
+        this.matrix = new _Matrix2.default(1);
+        this.position = new _Vector2.default(0, 0);
+        this.scale = new _Vector2.default(1, 1);
+        this.origin = new _Vector2.default(0, 0);
         this.angle = 0;
         this.rotation = 0;
         this._cosSin = { x: 1, y: 0 };
@@ -5568,9 +5797,9 @@ exports.default = Transform;
 
 /***/ }),
 
-/***/ "./modules/core/updateBounds.js":
+/***/ "./modules/core/UpdateBounds.js":
 /*!**************************************!*\
-  !*** ./modules/core/updateBounds.js ***!
+  !*** ./modules/core/UpdateBounds.js ***!
   \**************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5583,9 +5812,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = UpdateBounds;
 
-var _computeDelimiterPoint = __webpack_require__(/*! ./computeDelimiterPoint */ "./modules/core/computeDelimiterPoint.js");
+var _ComputeDelimiterPoint = __webpack_require__(/*! ./ComputeDelimiterPoint */ "./modules/core/ComputeDelimiterPoint.js");
 
-var _computeDelimiterPoint2 = _interopRequireDefault(_computeDelimiterPoint);
+var _ComputeDelimiterPoint2 = _interopRequireDefault(_ComputeDelimiterPoint);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5593,10 +5822,10 @@ function UpdateBounds(bounds, x, y, width, height, cosSin) {
 
     var coords = [];
 
-    coords[0] = (0, _computeDelimiterPoint2.default)(x, y, cosSin);
-    coords[1] = (0, _computeDelimiterPoint2.default)(x + width, y, cosSin);
-    coords[2] = (0, _computeDelimiterPoint2.default)(x, y + height, cosSin);
-    coords[3] = (0, _computeDelimiterPoint2.default)(x + width, y + height, cosSin);
+    coords[0] = (0, _ComputeDelimiterPoint2.default)(x, y, cosSin);
+    coords[1] = (0, _ComputeDelimiterPoint2.default)(x + width, y, cosSin);
+    coords[2] = (0, _ComputeDelimiterPoint2.default)(x, y + height, cosSin);
+    coords[3] = (0, _ComputeDelimiterPoint2.default)(x + width, y + height, cosSin);
 
     bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
     bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
@@ -5606,9 +5835,9 @@ function UpdateBounds(bounds, x, y, width, height, cosSin) {
 
 /***/ }),
 
-/***/ "./modules/core/updateModules.js":
+/***/ "./modules/core/UpdateModules.js":
 /*!***************************************!*\
-  !*** ./modules/core/updateModules.js ***!
+  !*** ./modules/core/UpdateModules.js ***!
   \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5621,9 +5850,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = UpdateModules;
 
-var _renderable = __webpack_require__(/*! ../renderables/renderable */ "./modules/renderables/renderable.js");
+var _Renderable = __webpack_require__(/*! ../renderables/Renderable */ "./modules/renderables/Renderable.js");
 
-var _renderable2 = _interopRequireDefault(_renderable);
+var _Renderable2 = _interopRequireDefault(_Renderable);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5639,7 +5868,7 @@ function UpdateModules(modulesManager, game) {
             modulesManager.attached.set(mod.type, mod);
 
             // RENDERABLES
-            if (mod instanceof _renderable2.default) {
+            if (mod instanceof _Renderable2.default) {
                 game.system.render.layer.renderLayers.at(0).add(mod);
             }
         });
@@ -5655,9 +5884,9 @@ function UpdateModules(modulesManager, game) {
 
 /***/ }),
 
-/***/ "./modules/core/updateTransform.js":
+/***/ "./modules/core/UpdateTransform.js":
 /*!*****************************************!*\
-  !*** ./modules/core/updateTransform.js ***!
+  !*** ./modules/core/UpdateTransform.js ***!
   \*****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5670,13 +5899,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = UpdateTransform;
 
-var _mathutils = __webpack_require__(/*! ../../math/mathutils */ "./math/mathutils.js");
+var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
 
-var _mathutils2 = _interopRequireDefault(_mathutils);
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
-var _matrix = __webpack_require__(/*! ../../math/matrix */ "./math/matrix.js");
+var _Matrix = __webpack_require__(/*! ../../math/Matrix */ "./math/Matrix.js");
 
-var _matrix2 = _interopRequireDefault(_matrix);
+var _Matrix2 = _interopRequireDefault(_Matrix);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5706,7 +5935,7 @@ function UpdateTransform(transform, parentTransform) {
         y = void 0;
     var wt = transform.matrix;
 
-    transform.rotation = transform.angle * _mathutils2.default.degToRad;
+    transform.rotation = transform.angle * _MathUtils2.default.degToRad;
 
     // if (transform.rotation % MathUtils.TAU) {
 
@@ -5743,9 +5972,9 @@ function UpdateTransform(transform, parentTransform) {
 
 /***/ }),
 
-/***/ "./modules/core/updateTransformBounds.js":
+/***/ "./modules/core/UpdateTransformBounds.js":
 /*!***********************************************!*\
-  !*** ./modules/core/updateTransformBounds.js ***!
+  !*** ./modules/core/UpdateTransformBounds.js ***!
   \***********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -5758,24 +5987,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = UpdateTransformBounds;
 
-var _mathutils = __webpack_require__(/*! ../../math/mathutils */ "./math/mathutils.js");
+var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
 
-var _mathutils2 = _interopRequireDefault(_mathutils);
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
-var _vector = __webpack_require__(/*! ../../math/vector */ "./math/vector.js");
+var _Vector = __webpack_require__(/*! ../../math/Vector */ "./math/Vector.js");
 
-var _vector2 = _interopRequireDefault(_vector);
+var _Vector2 = _interopRequireDefault(_Vector);
 
-var _computeDelimiterPoint = __webpack_require__(/*! ./computeDelimiterPoint */ "./modules/core/computeDelimiterPoint.js");
+var _ComputeDelimiterPoint = __webpack_require__(/*! ./ComputeDelimiterPoint */ "./modules/core/ComputeDelimiterPoint.js");
 
-var _computeDelimiterPoint2 = _interopRequireDefault(_computeDelimiterPoint);
+var _ComputeDelimiterPoint2 = _interopRequireDefault(_ComputeDelimiterPoint);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function UpdateTransformBounds(bounds, frame, transform) {
 
     var coords = [];
-    var scale = _vector2.default.abs(transform.scale);
+    var scale = _Vector2.default.abs(transform.scale);
     var pos = transform.position;
     var anchor = transform.origin;
     var size = {
@@ -5790,10 +6019,10 @@ function UpdateTransformBounds(bounds, frame, transform) {
     anchor.x += pos.x;
     anchor.y += pos.y;
 
-    coords[0] = (0, _computeDelimiterPoint2.default)(pos.x, pos.y, rotation, anchor);
-    coords[1] = (0, _computeDelimiterPoint2.default)(pos.x + size.x, pos.y, rotation, anchor);
-    coords[2] = (0, _computeDelimiterPoint2.default)(pos.x, pos.y + size.y, rotation, anchor);
-    coords[3] = (0, _computeDelimiterPoint2.default)(pos.x + size.x, pos.y + size.y, rotation, anchor);
+    coords[0] = (0, _ComputeDelimiterPoint2.default)(pos.x, pos.y, rotation, anchor);
+    coords[1] = (0, _ComputeDelimiterPoint2.default)(pos.x + size.x, pos.y, rotation, anchor);
+    coords[2] = (0, _ComputeDelimiterPoint2.default)(pos.x, pos.y + size.y, rotation, anchor);
+    coords[3] = (0, _ComputeDelimiterPoint2.default)(pos.x + size.x, pos.y + size.y, rotation, anchor);
 
     bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
     bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
@@ -5922,248 +6151,19 @@ setByShape(shape,position) {
 
 
 module.exports = {
-    Module: __webpack_require__(/*! ./module */ "./modules/module.js"),
-    ModuleProvider: __webpack_require__(/*! ./moduleProvider */ "./modules/moduleProvider.js"),
-    ModuleAttacher: __webpack_require__(/*! ./moduleAttacher */ "./modules/moduleAttacher.js"),
+    Module: __webpack_require__(/*! ./Module */ "./modules/Module.js"),
+    ModuleProvider: __webpack_require__(/*! ./ModuleProvider */ "./modules/ModuleProvider.js"),
+    ModuleAttacher: __webpack_require__(/*! ./ModuleAttacher */ "./modules/ModuleAttacher.js"),
 
-    Transform: __webpack_require__(/*! ./core/transform */ "./modules/core/transform.js"),
+    Transform: __webpack_require__(/*! ./core/Transform */ "./modules/core/Transform.js"),
     Renderables: __webpack_require__(/*! ./renderables */ "./modules/renderables/index.js")
 };
 
 /***/ }),
 
-/***/ "./modules/module.js":
-/*!***************************!*\
-  !*** ./modules/module.js ***!
-  \***************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Module = function () {
-    function Module(name, moduleManager) {
-        _classCallCheck(this, Module);
-
-        this._type = name || "none";
-        this._enabled = true;
-        this.entity = null;
-        this.moduleManager = moduleManager || undefined;
-
-        if (moduleManager !== undefined) {
-            this.entity = moduleManager.entity;
-        }
-        //this.game = moduleManager.game || null;
-    }
-
-    _createClass(Module, [{
-        key: "init",
-        value: function init(instace, game) {
-
-            this.entity = instace;
-            //this.game = game;
-            this.moduleManager = instace.modules;
-        }
-    }, {
-        key: "type",
-        get: function get() {
-            return this._type;
-        }
-    }, {
-        key: "enabled",
-        get: function get() {
-            return this._enabled;
-        },
-        set: function set(value) {
-            value = !!value;
-
-            if (value !== this._enabled) {
-                this._enabled = value;
-            }
-        }
-    }]);
-
-    return Module;
-}();
-
-exports.default = Module;
-
-
-module.exports = Module;
-
-/***/ }),
-
-/***/ "./modules/moduleAttacher.js":
-/*!***********************************!*\
-  !*** ./modules/moduleAttacher.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _moduleProvider = __webpack_require__(/*! ./moduleProvider */ "./modules/moduleProvider.js");
-
-var _moduleProvider2 = _interopRequireDefault(_moduleProvider);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ModuleAttacher = function () {
-    function ModuleAttacher(moduleManager) {
-        _classCallCheck(this, ModuleAttacher);
-
-        this.moduleManager = moduleManager;
-    }
-
-    _createClass(ModuleAttacher, [{
-        key: "sprite",
-        value: function sprite(tag) {
-            return _moduleProvider2.default.attach(this.moduleManager, 'sprite', tag);
-        }
-    }]);
-
-    return ModuleAttacher;
-}();
-
-exports.default = ModuleAttacher;
-
-/***/ }),
-
-/***/ "./modules/moduleManager.js":
-/*!**********************************!*\
-  !*** ./modules/moduleManager.js ***!
-  \**********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
-
-var _map2 = _interopRequireDefault(_map);
-
-var _list = __webpack_require__(/*! ../structures/list */ "./structures/list.js");
-
-var _list2 = _interopRequireDefault(_list);
-
-var _moduleAttacher = __webpack_require__(/*! ./moduleAttacher */ "./modules/moduleAttacher.js");
-
-var _moduleAttacher2 = _interopRequireDefault(_moduleAttacher);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ModuleManager = function () {
-    function ModuleManager(entity) {
-        _classCallCheck(this, ModuleManager);
-
-        this.entity = entity || null;
-        this.attached = new _map2.default();
-        this._pendingModules = new _list2.default();
-        this.attach = new _moduleAttacher2.default(this);
-    }
-
-    _createClass(ModuleManager, [{
-        key: 'detach',
-        value: function detach(moduleName, index) {}
-    }]);
-
-    return ModuleManager;
-}();
-
-exports.default = ModuleManager;
-
-/***/ }),
-
-/***/ "./modules/moduleProvider.js":
-/*!***********************************!*\
-  !*** ./modules/moduleProvider.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
-
-var _map2 = _interopRequireDefault(_map);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ModuleProviderManager = function () {
-    function ModuleProviderManager() {
-        _classCallCheck(this, ModuleProviderManager);
-
-        this.proxyModules = new _map2.default();
-    }
-
-    _createClass(ModuleProviderManager, [{
-        key: 'attach',
-        value: function attach(manager, moduleName, args) {
-            var modules = manager.attached;
-
-            if (modules.has(moduleName)) throw new Error('ModuleManager.attach: Could not attach module ' + moduleName + '. Already exists');
-
-            if (!this.proxyModules.has(moduleName)) throw new Error('ModuleManager.attach: Module type ' + moduleName + ' don\'t exists.');
-
-            var mod = this.proxyModules.get(moduleName)(manager, args);
-            manager._pendingModules.push(mod);
-            return mod;
-        }
-    }, {
-        key: 'register',
-        value: function register(moduleName, func) {
-            if (!ModuleProvider.proxyModules.has(moduleName)) ModuleProvider.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
-        }
-    }]);
-
-    return ModuleProviderManager;
-}();
-
-var ModuleProvider = new ModuleProviderManager();
-
-exports.default = ModuleProvider;
-
-/***/ }),
-
-/***/ "./modules/renderables/drawImage.js":
+/***/ "./modules/renderables/DrawImage.js":
 /*!******************************************!*\
-  !*** ./modules/renderables/drawImage.js ***!
+  !*** ./modules/renderables/DrawImage.js ***!
   \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -6212,27 +6212,9 @@ exports.default = DrawImage;
 
 /***/ }),
 
-/***/ "./modules/renderables/index.js":
-/*!**************************************!*\
-  !*** ./modules/renderables/index.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    Renderable: __webpack_require__(/*! ./renderable */ "./modules/renderables/renderable.js"),
-    Sprite: __webpack_require__(/*! ./sprite */ "./modules/renderables/sprite.js")
-
-};
-
-/***/ }),
-
-/***/ "./modules/renderables/renderable.js":
+/***/ "./modules/renderables/Renderable.js":
 /*!*******************************************!*\
-  !*** ./modules/renderables/renderable.js ***!
+  !*** ./modules/renderables/Renderable.js ***!
   \*******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -6246,13 +6228,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _boundingbox = __webpack_require__(/*! ../../math/boundingbox */ "./math/boundingbox.js");
+var _BoundingBox = __webpack_require__(/*! ../../math/BoundingBox */ "./math/BoundingBox.js");
 
-var _boundingbox2 = _interopRequireDefault(_boundingbox);
+var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
 
-var _module = __webpack_require__(/*! ../module */ "./modules/module.js");
+var _Module2 = __webpack_require__(/*! ../Module */ "./modules/Module.js");
 
-var _module2 = _interopRequireDefault(_module);
+var _Module3 = _interopRequireDefault(_Module2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6278,7 +6260,7 @@ var Renderable = function (_Module) {
         _this._visible = true;
         _this._alpha = 1;
         _this._depthDirty = true;
-        _this.bounds = new _boundingbox2.default();
+        _this.bounds = new _BoundingBox2.default();
         _this.source = null;
 
         //this.type = EntityType.Renderable;
@@ -6345,15 +6327,15 @@ var Renderable = function (_Module) {
     }]);
 
     return Renderable;
-}(_module2.default);
+}(_Module3.default);
 
 exports.default = Renderable;
 
 /***/ }),
 
-/***/ "./modules/renderables/sprite.js":
+/***/ "./modules/renderables/Sprite.js":
 /*!***************************************!*\
-  !*** ./modules/renderables/sprite.js ***!
+  !*** ./modules/renderables/Sprite.js ***!
   \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -6367,25 +6349,25 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _renderable = __webpack_require__(/*! ./renderable */ "./modules/renderables/renderable.js");
+var _Renderable2 = __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js");
 
-var _renderable2 = _interopRequireDefault(_renderable);
+var _Renderable3 = _interopRequireDefault(_Renderable2);
 
-var _rect = __webpack_require__(/*! ../../math/rect */ "./math/rect.js");
+var _Rect = __webpack_require__(/*! ../../math/Rect */ "./math/Rect.js");
 
-var _rect2 = _interopRequireDefault(_rect);
+var _Rect2 = _interopRequireDefault(_Rect);
 
-var _drawImage = __webpack_require__(/*! ./drawImage */ "./modules/renderables/drawImage.js");
+var _DrawImage = __webpack_require__(/*! ./DrawImage */ "./modules/renderables/DrawImage.js");
 
-var _drawImage2 = _interopRequireDefault(_drawImage);
+var _DrawImage2 = _interopRequireDefault(_DrawImage);
 
-var _moduleProvider = __webpack_require__(/*! ../moduleProvider */ "./modules/moduleProvider.js");
+var _ModuleProvider = __webpack_require__(/*! ../ModuleProvider */ "./modules/ModuleProvider.js");
 
-var _moduleProvider2 = _interopRequireDefault(_moduleProvider);
+var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
 
-var _updateTransformBounds = __webpack_require__(/*! ../core/updateTransformBounds */ "./modules/core/updateTransformBounds.js");
+var _UpdateTransformBounds = __webpack_require__(/*! ../core/UpdateTransformBounds */ "./modules/core/UpdateTransformBounds.js");
 
-var _updateTransformBounds2 = _interopRequireDefault(_updateTransformBounds);
+var _UpdateTransformBounds2 = _interopRequireDefault(_UpdateTransformBounds);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6404,7 +6386,7 @@ var Sprite = function (_Renderable) {
         var _this = _possibleConstructorReturn(this, (Sprite.__proto__ || Object.getPrototypeOf(Sprite)).call(this, moduleManager));
 
         _this._type = "sprite";
-        _this.frame = new _rect2.default();
+        _this.frame = new _Rect2.default();
         return _this;
     }
 
@@ -6450,24 +6432,24 @@ var Sprite = function (_Renderable) {
 
             if (!this.entity.transform._isDirty) return;
 
-            (0, _updateTransformBounds2.default)(this.bounds, this.frame, this.entity.transform);
+            (0, _UpdateTransformBounds2.default)(this.bounds, this.frame, this.entity.transform);
         }
     }, {
         key: "render",
         value: function render(context) {
             if (!this._visible) return false;
 
-            return (0, _drawImage2.default)(context, this.source, this.entity.transform, this.frame);
+            return (0, _DrawImage2.default)(context, this.source, this.entity.transform, this.frame);
         }
     }]);
 
     return Sprite;
-}(_renderable2.default);
+}(_Renderable3.default);
 
 exports.default = Sprite;
 
 
-_moduleProvider2.default.register('sprite', function (moduleManager, tag) {
+_ModuleProvider2.default.register('sprite', function (moduleManager, tag) {
 
     var spr = new Sprite(moduleManager);
 
@@ -6477,6 +6459,24 @@ _moduleProvider2.default.register('sprite', function (moduleManager, tag) {
 
     return spr;
 });
+
+/***/ }),
+
+/***/ "./modules/renderables/index.js":
+/*!**************************************!*\
+  !*** ./modules/renderables/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Renderable: __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js"),
+    Sprite: __webpack_require__(/*! ./Sprite */ "./modules/renderables/Sprite.js")
+
+};
 
 /***/ }),
 
@@ -6706,9 +6706,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _vector = __webpack_require__(/*! ../math/vector */ "./math/vector.js");
+var _Vector = __webpack_require__(/*! ../math/Vector */ "./math/Vector.js");
 
-var _vector2 = _interopRequireDefault(_vector);
+var _Vector2 = _interopRequireDefault(_Vector);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6720,7 +6720,7 @@ var SAT = function () {
 
         this.VECTORS = [];
         for (var v = 0; v < 10; v++) {
-            VECTORS.push(new _vector2.default());
+            VECTORS.push(new _Vector2.default());
         }
 
         this.ARRAYS = [];
@@ -6905,8 +6905,8 @@ var SATResponse = function () {
 
         this.a = null;
         this.b = null;
-        this.overlapN = new scintilla.Vector();
-        this.overlapV = new scintilla.Vector();
+        this.overlapN = new Vector();
+        this.overlapV = new Vector();
         this.aInB = true;
         this.bInA = true;
         this.overlap = Number.MAX_VALUE;
@@ -7147,9 +7147,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7260,7 +7260,7 @@ var Draw = function () {
 exports.default = Draw;
 
 
-_gameSystemManager2.default.register('Draw', Draw, 'draw');
+_GameSystemManager2.default.register('Draw', Draw, 'draw');
 
 /***/ }),
 
@@ -7299,9 +7299,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
-var _map2 = _interopRequireDefault(_map);
+var _Map2 = _interopRequireDefault(_Map);
 
 var _renderlayer = __webpack_require__(/*! ./renderlayer */ "./render/renderlayer.js");
 
@@ -7317,9 +7317,9 @@ var _canvas2 = _interopRequireDefault(_canvas);
 
 var _define = __webpack_require__(/*! ./define */ "./render/define.js");
 
-var _gameSystemManager = __webpack_require__(/*! ../core/gameSystemManager */ "./core/gameSystemManager.js");
+var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
 
-var _gameSystemManager2 = _interopRequireDefault(_gameSystemManager);
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
 var _smoothing = __webpack_require__(/*! ./canvas/smoothing */ "./render/canvas/smoothing.js");
 
@@ -7449,7 +7449,7 @@ var Render = function () {
 exports.default = Render;
 
 
-_gameSystemManager2.default.register('Render', Render, 'render');
+_GameSystemManager2.default.register('Render', Render, 'render');
 
 /***/ }),
 
@@ -7469,9 +7469,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _list = __webpack_require__(/*! ../structures/list */ "./structures/list.js");
+var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
 
-var _list2 = _interopRequireDefault(_list);
+var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7483,7 +7483,7 @@ var RenderLayer = function () {
 
         this._name = layerName;
         this.game = game;
-        this.renderList = new _list2.default(true);
+        this.renderList = new _List2.default(true);
         this.__drawCalls = 0;
         this.__enable = true;
         this.__isDirty = false;
@@ -7615,17 +7615,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
-var _map2 = _interopRequireDefault(_map);
+var _Map2 = _interopRequireDefault(_Map);
 
 var _renderlayer = __webpack_require__(/*! ./renderlayer */ "./render/renderlayer.js");
 
 var _renderlayer2 = _interopRequireDefault(_renderlayer);
 
-var _list = __webpack_require__(/*! ../structures/list */ "./structures/list.js");
+var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
 
-var _list2 = _interopRequireDefault(_list);
+var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7636,7 +7636,7 @@ var RenderLayersManagement = function () {
         _classCallCheck(this, RenderLayersManagement);
 
         this.game = game;
-        this.renderLayers = new _list2.default();
+        this.renderLayers = new _List2.default();
         //this.__renderLayersMap = new DataMap();
         this.add('default');
     }
@@ -7688,9 +7688,9 @@ exports.default = RenderLayersManagement;
 
 /***/ }),
 
-/***/ "./scene/scene.js":
+/***/ "./scene/Scene.js":
 /*!************************!*\
-  !*** ./scene/scene.js ***!
+  !*** ./scene/Scene.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7776,9 +7776,9 @@ exports.default = Scene;
 
 /***/ }),
 
-/***/ "./scene/scenemanager.js":
+/***/ "./scene/SceneManager.js":
 /*!*******************************!*\
-  !*** ./scene/scenemanager.js ***!
+  !*** ./scene/SceneManager.js ***!
   \*******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7792,13 +7792,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _map = __webpack_require__(/*! ../structures/map */ "./structures/map.js");
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
-var _map2 = _interopRequireDefault(_map);
+var _Map2 = _interopRequireDefault(_Map);
 
-var _scene = __webpack_require__(/*! ./scene */ "./scene/scene.js");
+var _Scene = __webpack_require__(/*! ./Scene */ "./scene/Scene.js");
 
-var _scene2 = _interopRequireDefault(_scene);
+var _Scene2 = _interopRequireDefault(_Scene);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7810,7 +7810,7 @@ var SceneManager = function () {
 
     this.game = game;
     this.entityUpdateList = null;
-    this._scenes = new _map2.default();
+    this._scenes = new _Map2.default();
 
     this.currentScene = null;
     this._currentSceneName = '';
@@ -7852,7 +7852,7 @@ var SceneManager = function () {
         return null;
       }
 
-      var newScene = new _scene2.default(this.game, sceneName);
+      var newScene = new _Scene2.default(this.game, sceneName);
       this._scenes.set(sceneName, newScene);
 
       return newScene;
@@ -8018,28 +8018,9 @@ exports.default = SceneManager;
 
 /***/ }),
 
-/***/ "./structures/index.js":
-/*!*****************************!*\
-  !*** ./structures/index.js ***!
-  \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-    Utils: __webpack_require__(/*! ./useful */ "./structures/useful/index.js"),
-    Set: __webpack_require__(/*! ./set */ "./structures/set.js"),
-    Map: __webpack_require__(/*! ./map */ "./structures/map.js"),
-    List: __webpack_require__(/*! ./list */ "./structures/list.js")
-};
-
-/***/ }),
-
-/***/ "./structures/list.js":
+/***/ "./structures/List.js":
 /*!****************************!*\
-  !*** ./structures/list.js ***!
+  !*** ./structures/List.js ***!
   \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -8053,9 +8034,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _mergesort = __webpack_require__(/*! ./useful/mergesort */ "./structures/useful/mergesort.js");
+var _MergeSort = __webpack_require__(/*! ./useful/MergeSort */ "./structures/useful/MergeSort.js");
 
-var _mergesort2 = _interopRequireDefault(_mergesort);
+var _MergeSort2 = _interopRequireDefault(_MergeSort);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8222,7 +8203,7 @@ var DataList = function () {
         key: 'sort',
         value: function sort(predicate) {
             if (predicate === undefined) return;
-            return (0, _mergesort2.default)(this.childs, predicate);
+            return (0, _MergeSort2.default)(this.childs, predicate);
 
             //childs.sort(predicate);
         }
@@ -8299,9 +8280,9 @@ exports.default = DataList;
 
 /***/ }),
 
-/***/ "./structures/map.js":
+/***/ "./structures/Map.js":
 /*!***************************!*\
-  !*** ./structures/map.js ***!
+  !*** ./structures/Map.js ***!
   \***************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -8463,9 +8444,9 @@ exports.default = DataMap;
 
 /***/ }),
 
-/***/ "./structures/set.js":
+/***/ "./structures/Set.js":
 /*!***************************!*\
-  !*** ./structures/set.js ***!
+  !*** ./structures/Set.js ***!
   \***************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -8479,9 +8460,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _mergesort = __webpack_require__(/*! ./useful/mergesort */ "./structures/useful/mergesort.js");
+var _MergeSort = __webpack_require__(/*! ./useful/MergeSort */ "./structures/useful/MergeSort.js");
 
-var _mergesort2 = _interopRequireDefault(_mergesort);
+var _MergeSort2 = _interopRequireDefault(_MergeSort);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8561,7 +8542,7 @@ var DataSet = function () {
         key: "sort",
         value: function sort(predicate) {
             if (predicate === undefined) return;
-            return (0, _mergesort2.default)(this._content, predicate);
+            return (0, _MergeSort2.default)(this._content, predicate);
         }
     }, {
         key: "size",
@@ -8582,10 +8563,10 @@ exports.default = DataSet;
 
 /***/ }),
 
-/***/ "./structures/useful/index.js":
-/*!************************************!*\
-  !*** ./structures/useful/index.js ***!
-  \************************************/
+/***/ "./structures/index.js":
+/*!*****************************!*\
+  !*** ./structures/index.js ***!
+  \*****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8593,14 +8574,17 @@ exports.default = DataSet;
 
 
 module.exports = {
-    MergeSort: __webpack_require__(/*! ./mergesort */ "./structures/useful/mergesort.js")
+    Utils: __webpack_require__(/*! ./useful */ "./structures/useful/index.js"),
+    Set: __webpack_require__(/*! ./Set */ "./structures/Set.js"),
+    Map: __webpack_require__(/*! ./Map */ "./structures/Map.js"),
+    List: __webpack_require__(/*! ./List */ "./structures/List.js")
 };
 
 /***/ }),
 
-/***/ "./structures/useful/mergesort.js":
+/***/ "./structures/useful/MergeSort.js":
 /*!****************************************!*\
-  !*** ./structures/useful/mergesort.js ***!
+  !*** ./structures/useful/MergeSort.js ***!
   \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -8689,9 +8673,25 @@ function MergeSort(array, predicate) {
 
 /***/ }),
 
-/***/ "./time/gameTime.js":
+/***/ "./structures/useful/index.js":
+/*!************************************!*\
+  !*** ./structures/useful/index.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    MergeSort: __webpack_require__(/*! ./MergeSort */ "./structures/useful/MergeSort.js")
+};
+
+/***/ }),
+
+/***/ "./time/GameTime.js":
 /*!**************************!*\
-  !*** ./time/gameTime.js ***!
+  !*** ./time/GameTime.js ***!
   \**************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -8760,9 +8760,9 @@ exports.default = GameTime;
 
 /***/ }),
 
-/***/ "./time/updateStep.js":
+/***/ "./time/UpdateStep.js":
 /*!****************************!*\
-  !*** ./time/updateStep.js ***!
+  !*** ./time/UpdateStep.js ***!
   \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -8776,17 +8776,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _requestAnimationFrame = __webpack_require__(/*! ../dom/requestAnimationFrame */ "./dom/requestAnimationFrame.js");
+var _RequestAnimationFrame = __webpack_require__(/*! ../dom/RequestAnimationFrame */ "./dom/RequestAnimationFrame.js");
 
-var _requestAnimationFrame2 = _interopRequireDefault(_requestAnimationFrame);
+var _RequestAnimationFrame2 = _interopRequireDefault(_RequestAnimationFrame);
 
-var _objectutils = __webpack_require__(/*! ../utils/objectutils */ "./utils/objectutils.js");
+var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
-var _objectutils2 = _interopRequireDefault(_objectutils);
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
-var _mathutils = __webpack_require__(/*! ../math/mathutils */ "./math/mathutils.js");
+var _MathUtils = __webpack_require__(/*! ../math/MathUtils */ "./math/MathUtils.js");
 
-var _mathutils2 = _interopRequireDefault(_mathutils);
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8798,7 +8798,7 @@ var UpdateStep = function () {
 
                 // CORE
                 this.game = game;
-                this.requestAnimationFrame = new _requestAnimationFrame2.default(config.time.timeoutMode);
+                this.requestAnimationFrame = new _RequestAnimationFrame2.default(config.time.timeoutMode);
                 this.isRunning = false;
                 this.loop = null;
                 this.render = null;
@@ -8812,7 +8812,7 @@ var UpdateStep = function () {
                 this.deltaTime = 0; // delta time in miliseconds
                 // FPS
                 this.requireFpsUpdate = true;
-                this.fpsDesired = _objectutils2.default.getValue(config, 'fps', config.fps);
+                this.fpsDesired = _ObjectUtils2.default.getValue(config, 'fps', config.fps);
                 this.fps = this.fpsDesired;
                 this.currentFps = 0;
                 this._nextFpsUpdate = 0;
@@ -8876,7 +8876,7 @@ var UpdateStep = function () {
 
                         if (timeStamp > this._nextFpsUpdate) {
                                 this.currentFps = 0.25 * this._framesThisSecond + 0.75 * this.fps;
-                                this.fps = _mathutils2.default.clamp(~~this.currentFps, 0, this.fpsDesired);
+                                this.fps = _MathUtils2.default.clamp(~~this.currentFps, 0, this.fpsDesired);
 
                                 this._nextFpsUpdate = timeStamp + 1000;
                                 this._framesThisSecond = 0;
@@ -9047,9 +9047,9 @@ exports.default = Base64Utils;
 
 /***/ }),
 
-/***/ "./utils/color.js":
+/***/ "./utils/Color.js":
 /*!************************!*\
-  !*** ./utils/color.js ***!
+  !*** ./utils/Color.js ***!
   \************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -9137,9 +9137,9 @@ module.exports = Color;
 
 /***/ }),
 
-/***/ "./utils/objectutils.js":
+/***/ "./utils/ObjectUtils.js":
 /*!******************************!*\
-  !*** ./utils/objectutils.js ***!
+  !*** ./utils/ObjectUtils.js ***!
   \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -9218,10 +9218,10 @@ exports.default = new ObjectUtils();
 
 /***/ }),
 
-/***/ "./utils/pathutils.js":
-/*!****************************!*\
-  !*** ./utils/pathutils.js ***!
-  \****************************/
+/***/ "./utils/Path.js":
+/*!***********************!*\
+  !*** ./utils/Path.js ***!
+  \***********************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9232,7 +9232,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var PathUtils = {
+var Path = {
   getExtension: function getExtension(filename) {
     return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || "";
   },
@@ -9263,7 +9263,7 @@ var PathUtils = {
   }
 };
 
-exports.default = PathUtils;
+exports.default = Path;
 
 /***/ })
 

@@ -1,5 +1,5 @@
 
-import ListInjector from './listinjector'
+import ListInjector from './ListInjector'
 
 export var AssetTypeHandler = new ListInjector();
 

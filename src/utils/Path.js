@@ -1,5 +1,5 @@
 
-const PathUtils = {
+const Path = {
 
   getExtension(filename) {
     return filename.substring(filename.lastIndexOf('.')+1, filename.length) || "";
@@ -42,4 +42,4 @@ const PathUtils = {
 
 }
 
-export default PathUtils;
+export default Path;

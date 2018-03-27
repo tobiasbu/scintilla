@@ -1,7 +1,7 @@
 
-import ObjectUtils from '../utils/objectutils'
+import ObjectUtils from '../utils/ObjectUtils'
 import XHR from './XHR'
-import {LOADER_STATE} from './loaderstate'
+import {LOADER_STATE} from './LoaderState'
 
 export default class File {
 

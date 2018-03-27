@@ -1,6 +1,6 @@
-import RequestAnimationFrame from "../dom/requestAnimationFrame";
-import ObjectUtils from "../utils/objectutils";
-import MathUtils from '../math/mathutils'
+import RequestAnimationFrame from "../dom/RequestAnimationFrame";
+import ObjectUtils from "../utils/ObjectUtils";
+import MathUtils from '../math/MathUtils'
 
 export default class UpdateStep {
 

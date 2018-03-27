@@ -1,8 +1,8 @@
 
-import EntityHierarchy from './entityhierarchy'
-import BoundingBox from '../math/boundingbox'
-import Transform from '../modules/core/transform'
-import ModuleManager from '../modules/moduleManager';
+import EntityHierarchy from './EntityHierarchy'
+import BoundingBox from '../math/BoundingBox'
+import Transform from '../modules/core/Transform'
+import ModuleManager from '../modules/ModuleManager';
 
 export default class SceneEntity extends EntityHierarchy
 {

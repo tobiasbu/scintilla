@@ -1,5 +1,5 @@
 
-import MergeSort from './useful/mergesort'
+import MergeSort from './useful/MergeSort'
 
 export default class DataList
 {

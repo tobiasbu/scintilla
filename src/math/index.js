@@ -1,10 +1,10 @@
 
 module.exports = {
 
-    MathUtils : require('./mathutils'),
-    Vector : require('./vector'),
-    Matrix : require('./matrix'),
-    Rect : require('./rect'),
-    BoundingBox : require('./boundingbox')
+    Utils : require('./MathUtils'),
+    Vector : require('./Vector'),
+    Matrix : require('./Matrix'),
+    Rect : require('./Rect'),
+    BoundingBox : require('./BoundingBox')
     
 }

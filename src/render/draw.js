@@ -1,4 +1,4 @@
-import GameSystemManager from "../core/gameSystemManager";
+import GameSystemManager from "../core/GameSystemManager";
 
 export default class Draw {
   

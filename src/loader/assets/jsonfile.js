@@ -1,7 +1,7 @@
-import File from "../file";
-import ObjectUtils from "../../utils/objectutils";
-import { LOADER_STATE, AssetTypeHandler } from "../loaderstate";
-import AssetsType from "../assetsType";
+import File from "../File";
+import ObjectUtils from "../../utils/ObjectUtils";
+import { LOADER_STATE, AssetTypeHandler } from "../LoaderState";
+import AssetsType from "../AssetsType";
 
 export default class JSONFile extends File {
 

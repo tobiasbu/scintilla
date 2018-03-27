@@ -1,10 +1,10 @@
 
-import DataMap from '../structures/map'
+import DataMap from '../structures/Map'
 import RenderLayer from './renderlayer'
 import RenderLayerManagment from './renderlayersmanagement'
 import Canvas from './canvas/canvas'
 import {RENDERING_TYPE} from './define'
-import GameSystemManager from '../core/gameSystemManager';
+import GameSystemManager from '../core/GameSystemManager';
 import CanvasSmoothing from './canvas/smoothing';
 
 

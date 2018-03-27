@@ -1,11 +1,11 @@
 
-import Config from './config';
-import Input from '../input/input'
-import SceneManager from '../scene/scenemanager'
+import Config from './Config';
+import Input from '../input/Input'
+import SceneManager from '../scene/SceneManager'
 import Physics from '../physics/physics'
 import Debug from '../others/debug'
-import GameSystemManager from './gameSystemManager';
-import GameTime from '../time/gameTime';
+import GameSystemManager from './GameSystemManager';
+import GameTime from '../time/GameTime';
 
 /**
 * Main class of engine. Holds all main data.

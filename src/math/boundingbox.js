@@ -1,6 +1,6 @@
 
-import Vector from './vector'
-import Rect from './rect'
+import Vector from './Vector'
+import Rect from './Rect'
 
 export default class BoundingBox {
   

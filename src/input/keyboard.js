@@ -1,8 +1,8 @@
 
 
-import Key from './key'
-import DataMap from '../structures/map'
-import KeyCode from './keycode'
+import Key from './Key'
+import DataMap from '../structures/Map'
+import KeyCode from './KeyCode'
 
 export default class Keyboard {
   

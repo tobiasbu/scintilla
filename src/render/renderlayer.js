@@ -1,4 +1,4 @@
-import DataList from "../structures/list";
+import DataList from "../structures/List";
 
 
 export default class RenderLayer { 

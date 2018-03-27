@@ -1,6 +1,6 @@
 
 module.exports = {
-    Renderable : require('./renderable'),
-    Sprite : require('./sprite'),
+    Renderable : require('./Renderable'),
+    Sprite : require('./Sprite'),
     
 }

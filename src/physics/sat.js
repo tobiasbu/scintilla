@@ -1,5 +1,5 @@
 
-import Vector from '../math/vector' 
+import Vector from '../math/Vector' 
 
 export default class SAT {
 

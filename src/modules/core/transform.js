@@ -1,7 +1,7 @@
 
-import Vector from '../../math/vector'
-import Matrix from '../../math/matrix'
-import BoundingBox from '../../math/boundingbox'
+import Vector from '../../math/Vector'
+import Matrix from '../../math/Matrix'
+import BoundingBox from '../../math/BoundingBox'
 
 export default class Transform {
 

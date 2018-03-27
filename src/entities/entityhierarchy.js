@@ -1,5 +1,5 @@
 
-import Entity from './entity'
+import Entity from './Entity'
 
 // Hierarchy Tree of instances
 // Instance is a children of the Hierarchy tree

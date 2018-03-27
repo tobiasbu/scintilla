@@ -1,12 +1,12 @@
 
 module.exports = {
 
-    File: require('./file'),
+    File: require('./File'),
     XHR: require('./XHR'),
-    URLObject : require('./URLobject'),
-    AssetsType : require('./assetsType'),
+    URLObject : require('./URLObject'),
+    AssetsType : require('./AssetsType'),
     Assets: require('./assets'),
-    LoaderState: require('./loaderstate'),    
+    LoaderState: require('./LoaderState'),    
     LoaderManager: require('./LoaderManager'),
 
 };

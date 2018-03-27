@@ -1,10 +1,10 @@
 
-import { LOADER_STATE, AssetTypeHandler} from '../loaderstate'
-import File from '../file'
-import URLObject from '../URLobject'
-import ObjectUtils from '../../utils/objectutils'
-import PathUtils from '../../utils/pathutils'
-import AssetsType from '../assetsType';
+import { LOADER_STATE, AssetTypeHandler} from '../LoaderState'
+import File from '../File'
+import URLObject from '../URLObject'
+import ObjectUtils from '../../utils/ObjectUtils'
+import Path from '../../utils/Path'
+import AssetsType from '../AssetsType';
 
 export default class ImageFile extends File {
     
@@ -25,7 +25,7 @@ export default class ImageFile extends File {
         var fileConfig = {
             type: AssetsType.image,
             tag: assetTag,
-            ext: ObjectUtils.getValue(tag, 'ext', PathUtils.getExtension(url)),
+            ext: ObjectUtils.getValue(tag, 'ext', Path.getExtension(url)),
             url: ObjectUtils.getValue(tag, 'file', url),
             path: path,
             responseType: 'blob',

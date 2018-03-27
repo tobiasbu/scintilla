@@ -1,5 +1,5 @@
 import ImageResource from "./resources/imageResource";
-import GameSystemManager from "../core/gameSystemManager";
+import GameSystemManager from "../core/GameSystemManager";
 import TilemapResource from "./resources/tilemapResource";
 import Cache from "./Cache";
 

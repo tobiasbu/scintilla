@@ -1,6 +1,6 @@
 
 
-import DataMap from '../structures/map'
+import DataMap from '../structures/Map'
 
 
 class ModuleProviderManager

@@ -1,6 +1,6 @@
 
 
-import MathUtils from './mathutils'
+import MathUtils from './MathUtils'
 
 /**
 * Class for points and vectors.

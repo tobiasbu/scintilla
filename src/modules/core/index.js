@@ -1,8 +1,8 @@
 
 module.exports = {
    // Transform : require('./transform'),
-    UpdateTransform : require('./updateTransform'),
-    UpdateTransformBounds : require('./updateTransformBounds'),
-    UpdateBounds : require('./updateBounds'),
-    UpdateModules : require('./updateModules'),
+    UpdateTransform : require('./UpdateTransform'),
+    UpdateTransformBounds : require('./UpdateTransformBounds'),
+    UpdateBounds : require('./UpdateBounds'),
+    UpdateModules : require('./UpdateModules'),
 }

@@ -1,6 +1,6 @@
 
-import MathUtils from '../../math/mathutils'
-import Matrix from '../../math/matrix'
+import MathUtils from '../../math/MathUtils'
+import Matrix from '../../math/Matrix'
 
 /*
 

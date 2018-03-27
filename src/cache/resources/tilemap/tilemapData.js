@@ -1,5 +1,5 @@
-import ObjectUtils from "../../../utils/objectutils";
-import DataList from "../../../structures/list";
+import ObjectUtils from "../../../utils/ObjectUtils";
+import DataList from "../../../structures/List";
 
 export default class TilemapData {
 

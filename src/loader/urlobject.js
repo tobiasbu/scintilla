@@ -1,5 +1,5 @@
 
-var URLObject = {
+const URLObject = {
 
     create : function(asset, response, type)
     {

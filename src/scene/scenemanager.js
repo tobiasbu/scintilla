@@ -1,6 +1,6 @@
 
-import DataMap from '../structures/map'
-import Scene from './scene'
+import DataMap from '../structures/Map'
+import Scene from './Scene'
 
 export default class SceneManager {
   

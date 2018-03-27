@@ -1,5 +1,5 @@
-import GameSystemManager from "../core/gameSystemManager";
-import SceneEntity from "./sceneentity";
+import GameSystemManager from "../core/GameSystemManager";
+import SceneEntity from "./SceneEntity";
 
 export default class EntityFactory {
     

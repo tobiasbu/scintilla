@@ -1,6 +1,6 @@
 
-import Keyboard from "./keyboard";
-import Mouse from "./mouse";
+import Keyboard from "./Keyboard";
+import Mouse from "./Mouse";
 
 export default class Input {
 

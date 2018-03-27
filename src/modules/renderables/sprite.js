@@ -1,8 +1,8 @@
-import Renderable from "./renderable";
-import Rect from "../../math/rect";
-import DrawImage from "./drawImage";
-import ModuleProvider from "../moduleProvider";
-import UpdateTransformBounds from '../core/updateTransformBounds'
+import Renderable from "./Renderable";
+import Rect from "../../math/Rect";
+import DrawImage from "./DrawImage";
+import ModuleProvider from "../ModuleProvider";
+import UpdateTransformBounds from '../core/UpdateTransformBounds'
 
 
 export default class Sprite extends Renderable {

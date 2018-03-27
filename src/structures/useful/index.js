@@ -1,4 +1,4 @@
 
 module.exports = {
-    MergeSort : require('./mergesort')
+    MergeSort : require('./MergeSort')
 }

@@ -28,22 +28,22 @@ var scintilla = scintilla || {
   // RENDER
   Render : require('./render'),
   // INPUT
-  KeyCode : require('./input/keycode'),
-  MouseButton : require('./input/mousebutton'),
+  KeyCode : require('./input/KeyCode'),
+  MouseButton : require('./input/MouseButton'),
   Input : require('./input'),
   // MATH
-  MathUtils : require('./math/mathutils'),
-  Matrix : require('./math/matrix'),
+  MathUtils : require('./math/MathUtils'),
+  Matrix : require('./math/Matrix'),
   // ENTITIES
-  Camera : require('./camera/camera'),
+  Camera : require('./camera/Camera'),
   Module : require('./modules'),
   Entity : require('./entities'),
   // CORE
   Cache : require('./cache/CacheManager'),
   Loader : require('./loader'),
-  Game : require('./core/game'),
+  Game : require('./core/Game'),
   // UTILITIES
-  Color : require('./utils/color')
+  Color : require('./utils/Color')
 };
 
 scintilla.ShapeType = {

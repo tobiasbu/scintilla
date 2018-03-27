@@ -1,5 +1,5 @@
 
-import ObjectUtils from '../../../utils/objectutils'
+import ObjectUtils from '../../../utils/ObjectUtils'
 import Base64Utils from '../../../utils/Base64Utils';
 
 export default function ParseLayers(json, mapdata) {

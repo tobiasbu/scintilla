@@ -1,9 +1,9 @@
 
 module.exports = {
-    Module : require('./module'),
-    ModuleProvider : require('./moduleProvider'),
-    ModuleAttacher : require('./moduleAttacher'),
+    Module : require('./Module'),
+    ModuleProvider : require('./ModuleProvider'),
+    ModuleAttacher : require('./ModuleAttacher'),
 
-    Transform : require('./core/transform'),
+    Transform : require('./core/Transform'),
     Renderables : require('./renderables')
 }

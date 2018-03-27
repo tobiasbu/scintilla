@@ -1,7 +1,7 @@
 
-import BoundingBox from '../../math/boundingbox';
+import BoundingBox from '../../math/BoundingBox';
 //import { EntityType } from '../entitytype';
-import Module from '../module';
+import Module from '../Module';
 
 export default class Renderable extends Module
 {

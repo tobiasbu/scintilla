@@ -1,8 +1,8 @@
 
 module.exports = {
     Utils : require('./useful'),
-    Set : require('./set'),
-    Map : require('./map'),
-    List : require('./list'),
+    Set : require('./Set'),
+    Map : require('./Map'),
+    List : require('./List'),
 }
     

@@ -1,7 +1,7 @@
 
 module.exports = {
-    Entity : require('./entity'),
-    SceneEntity : require('./sceneentity'),
-    EntityUpdateList : require('./entityupdatelist'),
-    EntityFactory : require('./entityFactory'),
+    Entity : require('./Entity'),
+    SceneEntity : require('./SceneEntity'),
+    EntityUpdateList : require('./EntityUpdateList'),
+    EntityFactory : require('./EntityFactory'),
 }

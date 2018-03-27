@@ -1,7 +1,7 @@
-import RequestAnimationFrame from "../dom/requestAnimationFrame";
-import GameSystemManager from "./gameSystemManager";
-import UpdateStep from "../time/updateStep";
-import UpdateCamera from "../camera/updateCamera";
+import RequestAnimationFrame from "../dom/RequestAnimationFrame";
+import GameSystemManager from "./GameSystemManager";
+import UpdateStep from "../time/UpdateStep";
+import UpdateCamera from "../camera/UpdateCamera";
 
 
 /*

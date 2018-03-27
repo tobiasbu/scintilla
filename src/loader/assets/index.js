@@ -1,7 +1,7 @@
 
 module.exports = {
-    ImageFile : require('./imagefile'),
-    TextFile : require('./textfile'),
-    JSONFile : require('./jsonfile'),
-    TilemapJSON : require('./tilemapJSON')
+    ImageFile : require('./ImageFile'),
+    TextFile : require('./TextFile'),
+    JSONFile : require('./JSONFile'),
+    TilemapJSON : require('./TilemapJSON')
 }

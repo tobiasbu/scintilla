@@ -1,6 +1,6 @@
 
 
-import MouseButton from './mousebutton'
+import MouseButton from './MouseButton'
   
   export const MouseEvent = {
   NONE : 0,

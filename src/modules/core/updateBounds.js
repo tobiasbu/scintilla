@@ -1,4 +1,4 @@
-import ComputeDelimiterPoint from "./computeDelimiterPoint";
+import ComputeDelimiterPoint from "./ComputeDelimiterPoint";
 
 
 export default function UpdateBounds(bounds, x, y, width, height, cosSin) {

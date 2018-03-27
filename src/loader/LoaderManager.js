@@ -1,10 +1,10 @@
 
-import { LOADER_STATE, AssetTypeHandler} from './loaderstate'
-import DataSet from '../structures/set'
+import { LOADER_STATE, AssetTypeHandler} from './LoaderState'
+import DataSet from '../structures/Set'
 import XHR from './XHR'
-import ObjectUtils from '../utils/objectutils';
-import GameSystemManager from '../core/gameSystemManager';
-import AssetsType from './assetsType';
+import ObjectUtils from '../utils/ObjectUtils';
+import GameSystemManager from '../core/GameSystemManager';
+import AssetsType from './AssetsType';
 
 // Class LoaderManager
 export default class LoadManager {

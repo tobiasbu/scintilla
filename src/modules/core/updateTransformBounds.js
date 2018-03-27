@@ -1,7 +1,7 @@
 
-import MathUtils from '../../math/mathutils'
-import Vector from '../../math/vector'
-import ComputeDelimiterPoint from './computeDelimiterPoint';
+import MathUtils from '../../math/MathUtils'
+import Vector from '../../math/Vector'
+import ComputeDelimiterPoint from './ComputeDelimiterPoint';
 
 
 

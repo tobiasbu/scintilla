@@ -1,4 +1,4 @@
-import Renderable from "../renderables/renderable";
+import Renderable from "../renderables/Renderable";
 
 export default function UpdateModules(modulesManager, game)
 {

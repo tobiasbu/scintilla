@@ -1,7 +1,7 @@
 
-import DataMap from '../structures/map'
-import DataList from '../structures/list'
-import ModuleAttacher from './moduleAttacher'
+import DataMap from '../structures/Map'
+import DataList from '../structures/List'
+import ModuleAttacher from './ModuleAttacher'
 
 
 export default class ModuleManager

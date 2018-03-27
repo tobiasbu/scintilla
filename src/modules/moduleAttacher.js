@@ -1,4 +1,4 @@
-import ModuleProvider from "./moduleProvider";
+import ModuleProvider from "./ModuleProvider";
 
 
 export default class ModuleAttacher

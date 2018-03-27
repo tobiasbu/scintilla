@@ -1,9 +1,9 @@
 
-import BoundingBox from '../math/boundingbox';
-import Transform  from '../modules/core/transform';
-import Color from '../utils/color'
-import GameSystemManager from '../core/gameSystemManager';
-import MathUtils from '../math/mathutils'
+import BoundingBox from '../math/BoundingBox';
+import Transform  from '../modules/core/Transform';
+import Color from '../utils/Color'
+import GameSystemManager from '../core/GameSystemManager';
+import MathUtils from '../math/MathUtils'
 
 export default class Camera {
   

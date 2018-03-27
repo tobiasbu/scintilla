@@ -1,4 +1,4 @@
-import SceneSystem from "./scenesystem";
+import SceneSystem from "./SceneSystem";
 
 
 var gameSystems = {};

@@ -1,5 +1,5 @@
-import Tileset from "./tileset";
-import DataList from "../../../structures/list";
+import Tileset from "./Tileset";
+import DataList from "../../../structures/List";
 
 export default function ParseTilesets(json, cache) {
 

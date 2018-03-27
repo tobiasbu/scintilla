@@ -1,8 +1,8 @@
-import Resource from "./resource";
-import TilemapData from "./tilemap/tilemapData";
-import { ResourceType } from "./resource";
-import ParseTilesets from "./tilemap/parseTileset";
-import ParseLayers from "./tilemap/parseLayers";
+import Resource from "./Resource";
+import TilemapData from "./tilemap/TilemapData";
+import { ResourceType } from "./Resource";
+import ParseTilesets from "./tilemap/ParseTileset";
+import ParseLayers from "./tilemap/ParseLayers";
 
 export default class TilemapResource extends Resource {
 

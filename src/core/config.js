@@ -1,5 +1,5 @@
 
-import ObjectUtils from '../utils/objectutils';
+import ObjectUtils from '../utils/ObjectUtils';
 
 export default class Config {
 

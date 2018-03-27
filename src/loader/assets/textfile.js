@@ -1,9 +1,9 @@
 
-import { LOADER_STATE, AssetTypeHandler} from '../loaderstate'
-import File from '../file'
-import ObjectUtils from '../../utils/objectutils'
-import PathUtils from '../../utils/pathutils'
-import AssetsType from '../assetsType';
+import { LOADER_STATE, AssetTypeHandler} from '../LoaderState'
+import File from '../File'
+import ObjectUtils from '../../utils/ObjectUtils'
+import Path from '../../utils/Path'
+import AssetsType from '../AssetsType';
 
 export default class TextFile extends File {
 
@@ -33,7 +33,7 @@ export default class TextFile extends File {
         var fileConfig = {
             type: AssetsType.text,
             tag: assetTag,
-            ext: ObjectUtils.getValue(tag, 'ext', PathUtils.getExtension(url)),
+            ext: ObjectUtils.getValue(tag, 'ext', Path.getExtension(url)),
             url: ObjectUtils.getValue(tag, 'file', url),
             path: path,
             responseType: '',

@@ -5,8 +5,8 @@ export default class SATResponse {
     {
         this.a = null;
         this.b = null;
-        this.overlapN = new scintilla.Vector();
-        this.overlapV = new scintilla.Vector();
+        this.overlapN = new Vector();
+        this.overlapV = new Vector();
         this.aInB = true;
         this.bInA = true;
         this.overlap = Number.MAX_VALUE;

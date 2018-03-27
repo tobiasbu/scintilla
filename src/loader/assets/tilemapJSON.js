@@ -1,8 +1,8 @@
-import File from '../file'
-import JSONFile from './jsonfile';
-import { AssetTypeHandler, LOADER_STATE } from '../loaderstate';
-import PathUtils from '../../utils/pathutils';
-import AssetsType from '../assetsType';
+import File from '../File'
+import JSONFile from './JSONFile';
+import { AssetTypeHandler, LOADER_STATE } from '../LoaderState';
+import Path from '../../utils/Path';
+import AssetsType from '../AssetsType';
 
 
 function CheckImagesSources(loader, source, fullPath) {
@@ -24,8 +24,8 @@ function CheckImagesSources(loader, source, fullPath) {
         let tileset = source[i];
 
         if (tileset.image) {
-            let name = tileset.name || PathUtils.getFilenameWithoutExtension(tileset.image);
-            let path = PathUtils.getPathWithoutRoot(fullPath).concat(PathUtils.getFilename(tileset.image));
+            let name = tileset.name || Path.getFilenameWithoutExtension(tileset.image);
+            let path = Path.getPathWithoutRoot(fullPath).concat(Path.getFilename(tileset.image));
             loader.image(name, path, undefined, undefined, false);
         }
     }

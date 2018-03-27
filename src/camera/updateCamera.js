@@ -1,4 +1,4 @@
-import UpdateBounds from "../modules/core/updateBounds";
+import UpdateBounds from "../modules/core/UpdateBounds";
 
 
 export default function UpdateCamera(camera, canvas) {

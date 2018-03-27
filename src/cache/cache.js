@@ -1,4 +1,4 @@
-import DataMap from "../structures/map";
+import DataMap from "../structures/Map";
 
 export default class Cache {
 

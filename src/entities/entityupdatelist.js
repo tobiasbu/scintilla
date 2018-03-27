@@ -1,8 +1,8 @@
-import DataList from "../structures/list";
-import GameSystemManager from "../core/gameSystemManager";
-import UpdateTransform from '../modules/core/updateTransform'
-import UpdateModules from '../modules/core/updateModules'
-import Matrix from '../math/matrix'
+import DataList from "../structures/List";
+import GameSystemManager from "../core/GameSystemManager";
+import UpdateTransform from '../modules/core/UpdateTransform'
+import UpdateModules from '../modules/core/UpdateModules'
+import Matrix from '../math/Matrix'
 
 export default class EntityUpdateList {
 

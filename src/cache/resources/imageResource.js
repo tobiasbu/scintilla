@@ -1,4 +1,4 @@
-import Resource, { ResourceType } from "./resource";
+import Resource, { ResourceType } from "./Resource";
 
 /**
 * Image that holds image data.
