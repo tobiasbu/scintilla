@@ -1,6 +1,6 @@
 
-import MathUtils from '../../math/MathUtils'
-import Vector from '../../math/Vector'
+import MathUtils from '../math/MathUtils'
+import Vector from '../math/Vector'
 import ComputeDelimiterPoint from './ComputeDelimiterPoint';
 
 

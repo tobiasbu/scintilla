@@ -432,7 +432,7 @@ var _BoundingBox = __webpack_require__(/*! ../math/BoundingBox */ "./math/Boundi
 
 var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
 
-var _Transform = __webpack_require__(/*! ../modules/core/Transform */ "./modules/core/Transform.js");
+var _Transform = __webpack_require__(/*! ../transform/Transform */ "./transform/Transform.js");
 
 var _Transform2 = _interopRequireDefault(_Transform);
 
@@ -458,7 +458,7 @@ var Camera = function () {
 
     this.game = game;
     //this._view = new Rect(0, 0, game.config.width, game.config.height);
-    this._bounds = new _BoundingBox2.default();
+    this.bounds = new _BoundingBox2.default();
     this.transform = new _Transform2.default();
     this.width = game.config.camera.width;
     this.height = game.config.camera.height;
@@ -659,9 +659,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = UpdateCamera;
 
-var _UpdateBounds = __webpack_require__(/*! ../modules/core/UpdateBounds */ "./modules/core/UpdateBounds.js");
+var _UpdateBounds = __webpack_require__(/*! ../transform/UpdateBounds */ "./transform/UpdateBounds.js");
 
 var _UpdateBounds2 = _interopRequireDefault(_UpdateBounds);
+
+var _ComputeDelimiterPoint = __webpack_require__(/*! ../transform/ComputeDelimiterPoint */ "./transform/ComputeDelimiterPoint.js");
+
+var _ComputeDelimiterPoint2 = _interopRequireDefault(_ComputeDelimiterPoint);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -671,7 +675,7 @@ function UpdateCamera(camera, canvas) {
 
   var t = camera.transform;
 
-  var pixelUnit = { x: 0, y: 0 };
+  var pixelUnit = { x: 1, y: 1 };
 
   pixelUnit.x = canvas.width / camera.width;
   pixelUnit.y = canvas.height / camera.height;
@@ -694,10 +698,28 @@ function UpdateCamera(camera, canvas) {
     y: camera.height * t.origin.y
   };
 
-  (0, _UpdateBounds2.default)(camera._bounds, t.position.x, t.position.y, camera.width, camera.height, t._cosSin);
-
   // todo resolution
   t.matrix.setIdentity().scale(pixelUnit.x, pixelUnit.y).translate(t.position.x + origin.x, t.position.y + origin.y).radianRotate(t._cosSin.x, t._cosSin.y).scale(t.scale.x, t.scale.x).translate(-origin.x, -origin.y);
+
+  var x = t.matrix.a[6];
+  var y = t.matrix.a[7];
+
+  //let coords = [];
+
+  //coords[0] = ComputeDelimiterPoint( x, y, t._cosSin);
+  //coords[1] = ComputeDelimiterPoint( x + camera.width,  y, t._cosSin);
+  //coords[2] = ComputeDelimiterPoint( x , y +  camera.height, t._cosSin);
+  //coords[3] = ComputeDelimiterPoint( x +  camera.width , y +  camera.height, t._cosSin);
+
+  //camera.bounds.min.x = Math.min(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
+  //camera.bounds.min.y = Math.min(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+  //camera.bounds.max.x = Math.max(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
+  //camera.bounds.max.y = Math.max(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+
+
+  //console.log("min:" + camera.bounds.min.toString());
+  //console.log("max" + camera.bounds.max);
+
 }
 
 /***/ }),
@@ -986,6 +1008,18 @@ var _UpdateCamera = __webpack_require__(/*! ../camera/UpdateCamera */ "./camera/
 
 var _UpdateCamera2 = _interopRequireDefault(_UpdateCamera);
 
+var _BeginDrawRender = __webpack_require__(/*! ../render/components/BeginDrawRender */ "./render/components/BeginDrawRender.js");
+
+var _BeginDrawRender2 = _interopRequireDefault(_BeginDrawRender);
+
+var _DrawRender = __webpack_require__(/*! ../render/components/DrawRender */ "./render/components/DrawRender.js");
+
+var _DrawRender2 = _interopRequireDefault(_DrawRender);
+
+var _EndDrawRender = __webpack_require__(/*! ../render/components/EndDrawRender */ "./render/components/EndDrawRender.js");
+
+var _EndDrawRender2 = _interopRequireDefault(_EndDrawRender);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1065,9 +1099,11 @@ var GameLoop = function () {
 
             if (this.currentScene == null || this.currentScene === undefined) return;
 
-            this.system.render.renderBegin();
-            this.system.render.render(deltaTime);
-            this.system.render.renderEnd();
+            (0, _BeginDrawRender2.default)(this.system.render);
+
+            (0, _DrawRender2.default)(this.system.render, this.camera, deltaTime);
+
+            (0, _EndDrawRender2.default)(this.system.render);
         }
     }]);
 
@@ -1656,11 +1692,11 @@ var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ ".
 
 var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _UpdateTransform = __webpack_require__(/*! ../modules/core/UpdateTransform */ "./modules/core/UpdateTransform.js");
+var _UpdateTransform = __webpack_require__(/*! ../transform/UpdateTransform */ "./transform/UpdateTransform.js");
 
 var _UpdateTransform2 = _interopRequireDefault(_UpdateTransform);
 
-var _UpdateModules = __webpack_require__(/*! ../modules/core/UpdateModules */ "./modules/core/UpdateModules.js");
+var _UpdateModules = __webpack_require__(/*! ../modules/UpdateModules */ "./modules/UpdateModules.js");
 
 var _UpdateModules2 = _interopRequireDefault(_UpdateModules);
 
@@ -1784,7 +1820,7 @@ var _BoundingBox = __webpack_require__(/*! ../math/BoundingBox */ "./math/Boundi
 
 var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
 
-var _Transform = __webpack_require__(/*! ../modules/core/Transform */ "./modules/core/Transform.js");
+var _Transform = __webpack_require__(/*! ../transform/Transform */ "./transform/Transform.js");
 
 var _Transform2 = _interopRequireDefault(_Transform);
 
@@ -4828,21 +4864,21 @@ var Vector = function () {
   get y() {return this.y;}*/
 
   _createClass(Vector, [{
-    key: 'set',
+    key: "set",
     value: function set(x, y) {
 
       this.x = x;
       this.y = y || x;
     }
   }, {
-    key: 'move',
+    key: "move",
     value: function move(x, y) {
 
       this.x += x;
       this.y += y;
     }
   }, {
-    key: 'scale',
+    key: "scale",
     value: function scale(x, y) {
 
       this.x *= x;
@@ -4850,7 +4886,7 @@ var Vector = function () {
       return this;
     }
   }, {
-    key: 'rotate',
+    key: "rotate",
     value: function rotate(radians) {
 
       var x = this.x;
@@ -4860,7 +4896,7 @@ var Vector = function () {
       return this;
     }
   }, {
-    key: 'rotateAround',
+    key: "rotateAround",
     value: function rotateAround(radians, other) {
 
       /*var x = this.x;
@@ -4880,7 +4916,7 @@ var Vector = function () {
       return this;
     }
   }, {
-    key: 'copy',
+    key: "copy",
     value: function copy(otherVector) {
 
       this.x = otherVector.x;
@@ -4888,7 +4924,7 @@ var Vector = function () {
       return this;
     }
   }, {
-    key: 'normalize',
+    key: "normalize",
     value: function normalize() {
 
       var mag = this.length();
@@ -4899,28 +4935,28 @@ var Vector = function () {
       return this;
     }
   }, {
-    key: 'reverse',
+    key: "reverse",
     value: function reverse() {
       this.x = -this.x;
       this.y = -this.y;
       return this;
     }
   }, {
-    key: 'add',
+    key: "add",
     value: function add(other) {
       this.x += other.x;
       this.y += other.y;
       return this;
     }
   }, {
-    key: 'sub',
+    key: "sub",
     value: function sub(other) {
       this.x -= other.x;
       this.y -= other.y;
       return this;
     }
   }, {
-    key: 'perp',
+    key: "perp",
     value: function perp() {
 
       var x = this.x;
@@ -4929,76 +4965,81 @@ var Vector = function () {
       return this;
     }
   }, {
-    key: 'dot',
+    key: "dot",
     value: function dot(other) {
       return Vector.dot(this, other);
     }
   }, {
-    key: 'project',
+    key: "project",
     value: function project(other) {
       return Vector.project(this, other);
     }
   }, {
-    key: 'clone',
+    key: "clone",
     value: function clone() {
       return new Vector(this.x, this.y);
     }
   }, {
-    key: 'length',
+    key: "length",
     value: function length() {
       return Math.sqrt(this.squaredLenght());
     }
   }, {
-    key: 'squaredLenght',
+    key: "toString",
+    value: function toString() {
+      return "{ x: " + this.x + ", y: " + this.y + " }";
+    }
+  }, {
+    key: "squaredLenght",
     value: function squaredLenght() {
       return Vector.dot(this, this);
     }
   }, {
-    key: 'magnitude',
+    key: "magnitude",
     get: function get() {
       return Math.sqrt(this.x * this.x + this.y * this.y);
     }
   }, {
-    key: 'normal',
+    key: "normal",
     get: function get() {
       var mag = this.magnitude;
       var vec = new tobiJS.Vector(this.x / mag, this.y / mag);
       return vec;
     }
   }], [{
-    key: 'abs',
+    key: "abs",
     value: function abs(vector) {
       return new Vector(Math.abs(vector.x), Math.abs(vector.y));
     }
   }, {
-    key: 'scalar',
+    key: "scalar",
     value: function scalar(a, b) {
       return a.x * b.y - a.y * b.x;
     }
   }, {
-    key: 'distance',
+    key: "distance",
     value: function distance(a, b) {
       return _MathUtils2.default.distance(a.x, a.y, b.x, b.y);
     }
   }, {
-    key: 'angleBetween',
+    key: "angleBetween",
     value: function angleBetween(a, b) {
       return _MathUtils2.default.angleBetween(a.x, a.y, b.x, b.y);
     }
   }, {
-    key: 'dot',
+    key: "dot",
     value: function dot(a, b) {
       return a.x * b.x + a.y * b.y;
     }
   }, {
-    key: 'project',
+    key: "project",
     value: function project(a, b) {
       var dp = Vector.dot(a, b);
       var proj = new Vector(dp / (b.x * b.x + b.y * b.y) * b.x, dp / (b.x * b.x + b.y * b.y) * b.y);
       return proj;
     }
   }, {
-    key: 'projectNormal',
+    key: "projectNormal",
 
 
     // project for unit vector
@@ -5008,7 +5049,7 @@ var Vector = function () {
       return proj;
     }
   }, {
-    key: 'reflect',
+    key: "reflect",
     value: function reflect(vec, axis) {
 
       var r = Vector.project(vec, axis);
@@ -5017,7 +5058,7 @@ var Vector = function () {
       return r;
     }
   }, {
-    key: 'reflectNormal',
+    key: "reflectNormal",
     value: function reflectNormal(vec, axis) {
 
       var r = Vector.projectNormal(vec, axis);
@@ -5026,7 +5067,7 @@ var Vector = function () {
       return r;
     }
   }, {
-    key: 'lerp',
+    key: "lerp",
     value: function lerp(a, b, t) {
       var vec = new Vector(_MathUtils2.default.lerp(a.x, b.x, t), _MathUtils2.default.lerp(a.y, b.y, t));
       return vec;
@@ -5285,168 +5326,10 @@ exports.default = ModuleProvider;
 
 /***/ }),
 
-/***/ "./modules/core/ComputeDelimiterPoint.js":
-/*!***********************************************!*\
-  !*** ./modules/core/ComputeDelimiterPoint.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = ComputeDelimiterPoint;
-function ComputeDelimiterPoint(x, y, rotation, anchor) {
-
-    var coord = { x: 0, y: 0 };
-
-    if (anchor === undefined) {
-        coord.x = x * rotation.x - y * rotation.x;
-        coord.y = x * rotation.y - y * rotation.y;
-    } else {
-        coord.x = anchor.x + (x - anchor.x) * rotation.x - (y - anchor.y) * rotation.x;
-        coord.y = anchor.y - (x - anchor.x) * rotation.y - (y - anchor.y) * rotation.y;
-    }
-
-    return coord;
-}
-
-/***/ }),
-
-/***/ "./modules/core/Transform.js":
-/*!***********************************!*\
-  !*** ./modules/core/Transform.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Vector = __webpack_require__(/*! ../../math/Vector */ "./math/Vector.js");
-
-var _Vector2 = _interopRequireDefault(_Vector);
-
-var _Matrix = __webpack_require__(/*! ../../math/Matrix */ "./math/Matrix.js");
-
-var _Matrix2 = _interopRequireDefault(_Matrix);
-
-var _BoundingBox = __webpack_require__(/*! ../../math/BoundingBox */ "./math/BoundingBox.js");
-
-var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Transform = function () {
-    function Transform() {
-        _classCallCheck(this, Transform);
-
-        this.matrix = new _Matrix2.default(1);
-        this.position = new _Vector2.default(0, 0);
-        this.scale = new _Vector2.default(1, 1);
-        this.origin = new _Vector2.default(0, 0);
-        this.angle = 0;
-        this.rotation = 0;
-        this._cosSin = { x: 1, y: 0 };
-        this._oldRotation = -1;
-        this._isDirty = true;
-        //this.worldPosition = new Vector(0,0);
-        //this.worldScale =  new Vector(1,1);
-        //this.worldRotation = 0;
-        //this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
-        //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
-    }
-
-    _createClass(Transform, [{
-        key: 'destroy',
-        value: function destroy() {
-
-            delete this.position;
-            delete this.scale;
-            delete this.matrix;
-            delete this.worldPosition;
-            delete this.worldScale;
-            delete this.origin;
-            delete this.bounds;
-            delete this.globalBounds;
-            delete this._cosSin;
-        }
-    }, {
-        key: 'reset',
-        value: function reset() {
-            this.matrix.setIdentity();
-            this._isDirty = true;
-            this._cosSin.x = 1;
-            this._cosSin.y = 0;
-            this.position.set(0, 0);
-            this.angle = 0;
-            this.rotation = 0;
-            this._oldRotation = 0;
-            this.origin.set(0, 0);
-            this.scale.set(0, 0);
-        }
-    }]);
-
-    return Transform;
-}();
-
-exports.default = Transform;
-
-/***/ }),
-
-/***/ "./modules/core/UpdateBounds.js":
-/*!**************************************!*\
-  !*** ./modules/core/UpdateBounds.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = UpdateBounds;
-
-var _ComputeDelimiterPoint = __webpack_require__(/*! ./ComputeDelimiterPoint */ "./modules/core/ComputeDelimiterPoint.js");
-
-var _ComputeDelimiterPoint2 = _interopRequireDefault(_ComputeDelimiterPoint);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function UpdateBounds(bounds, x, y, width, height, cosSin) {
-
-    var coords = [];
-
-    coords[0] = (0, _ComputeDelimiterPoint2.default)(x, y, cosSin);
-    coords[1] = (0, _ComputeDelimiterPoint2.default)(x + width, y, cosSin);
-    coords[2] = (0, _ComputeDelimiterPoint2.default)(x, y + height, cosSin);
-    coords[3] = (0, _ComputeDelimiterPoint2.default)(x + width, y + height, cosSin);
-
-    bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
-    bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
-    bounds.max.x = Math.max(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
-    bounds.max.y = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
-}
-
-/***/ }),
-
-/***/ "./modules/core/UpdateModules.js":
-/*!***************************************!*\
-  !*** ./modules/core/UpdateModules.js ***!
-  \***************************************/
+/***/ "./modules/UpdateModules.js":
+/*!**********************************!*\
+  !*** ./modules/UpdateModules.js ***!
+  \**********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5458,15 +5341,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = UpdateModules;
 
-var _Renderable = __webpack_require__(/*! ../renderables/Renderable */ "./modules/renderables/Renderable.js");
+var _Renderable = __webpack_require__(/*! ./renderables/Renderable */ "./modules/renderables/Renderable.js");
 
 var _Renderable2 = _interopRequireDefault(_Renderable);
 
-var _Tilemap = __webpack_require__(/*! ../renderables/Tilemap */ "./modules/renderables/Tilemap.js");
+var _Tilemap = __webpack_require__(/*! ./renderables/Tilemap */ "./modules/renderables/Tilemap.js");
 
 var _Tilemap2 = _interopRequireDefault(_Tilemap);
 
-var _Sprite = __webpack_require__(/*! ../renderables/Sprite */ "./modules/renderables/Sprite.js");
+var _Sprite = __webpack_require__(/*! ./renderables/Sprite */ "./modules/renderables/Sprite.js");
 
 var _Sprite2 = _interopRequireDefault(_Sprite);
 
@@ -5504,262 +5387,6 @@ function UpdateModules(modulesManager, game) {
 
 /***/ }),
 
-/***/ "./modules/core/UpdateTransform.js":
-/*!*****************************************!*\
-  !*** ./modules/core/UpdateTransform.js ***!
-  \*****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = UpdateTransform;
-
-var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
-
-var _MathUtils2 = _interopRequireDefault(_MathUtils);
-
-var _Matrix = __webpack_require__(/*! ../../math/Matrix */ "./math/Matrix.js");
-
-var _Matrix2 = _interopRequireDefault(_Matrix);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/*
-
-* | a | b | x |
-* | c | d | y |
-* | 0 | 0 | 1 |
-
-* | 0 | 3 | 6 | * | a | d | x |
-* | 1 | 4 | 7 | * | b | e | y |
-* | 2 | 5 | 8 | * | c | f | 1 |
-
-*/
-
-function UpdateTransform(transform, parentTransform) {
-
-    //if (parentMatrix === undefined) parentMatrix = null;
-
-    if (!transform._isDirty && !parentTransform._isDirty) return;
-
-    var a = void 0,
-        b = void 0,
-        c = void 0,
-        d = void 0,
-        x = void 0,
-        y = void 0;
-    var wt = transform.matrix;
-
-    transform.rotation = transform.angle * _MathUtils2.default.degToRad;
-
-    // if (transform.rotation % MathUtils.TAU) {
-
-
-    if (transform.rotation !== transform._oldRotation) {
-        transform._oldRotation = transform.rotation;
-        transform._cosSin.y = Math.sin(transform.rotation);
-        transform._cosSin.x = Math.cos(transform.rotation);
-    }
-
-    transform.matrix.setModelMatrix(transform.position, transform.scale, transform._cosSin, transform.origin).concat(parentTransform.matrix);
-
-    // } else {
-
-    /*a  = transform.scale.x;
-    d  = transform.scale.y;
-    x =  transform.position.x;
-    y =  transform.position.y;
-    x -= transform.origin.x * a;
-    y -= transform.origin.y * d;
-      wt.a  = a  * pt.a;
-    wt.b  = a  * pt.b;
-    wt.c  = d  * pt.c;
-    wt.d  = d  * pt.d;
-    wt.x = x * pt.a + y * pt.c + pt.x;
-    wt.y = x * pt.b + y * pt.d + pt.y;*/
-
-    //  }
-
-    //transform.worldPosition.set(wt.x ,wt.y);
-    //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
-    //transform.worldRotation = Math.atan2(-wt.c, wt.d);
-}
-
-/***/ }),
-
-/***/ "./modules/core/UpdateTransformBounds.js":
-/*!***********************************************!*\
-  !*** ./modules/core/UpdateTransformBounds.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = UpdateTransformBounds;
-
-var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
-
-var _MathUtils2 = _interopRequireDefault(_MathUtils);
-
-var _Vector = __webpack_require__(/*! ../../math/Vector */ "./math/Vector.js");
-
-var _Vector2 = _interopRequireDefault(_Vector);
-
-var _ComputeDelimiterPoint = __webpack_require__(/*! ./ComputeDelimiterPoint */ "./modules/core/ComputeDelimiterPoint.js");
-
-var _ComputeDelimiterPoint2 = _interopRequireDefault(_ComputeDelimiterPoint);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function UpdateTransformBounds(bounds, frame, transform) {
-
-    var coords = [];
-    var scale = _Vector2.default.abs(transform.scale);
-    var pos = transform.position;
-    var anchor = transform.origin;
-    var size = {
-        x: frame.width * scale.x,
-        y: frame.height * scale.y
-    };
-
-    anchor.x *= scale.x;
-    anchor.y *= scale.y;
-    pos.x -= anchor.x;
-    pos.y -= anchor.y;
-    anchor.x += pos.x;
-    anchor.y += pos.y;
-
-    coords[0] = (0, _ComputeDelimiterPoint2.default)(pos.x, pos.y, rotation, anchor);
-    coords[1] = (0, _ComputeDelimiterPoint2.default)(pos.x + size.x, pos.y, rotation, anchor);
-    coords[2] = (0, _ComputeDelimiterPoint2.default)(pos.x, pos.y + size.y, rotation, anchor);
-    coords[3] = (0, _ComputeDelimiterPoint2.default)(pos.x + size.x, pos.y + size.y, rotation, anchor);
-
-    bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
-    bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
-    bounds.max.x = Math.max(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
-    bounds.max.y = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
-}
-
-// position (vector)
-// scale (vector)
-// rotation (vector x = cos, y = sin)
-/*
-setup(pos, scale, rotation, anchor, width, height) {
-    var coords = [];
-  var negx = 1;
-  var negy = 1;
-    if (scale.x < 0)
-        negx = -1;
-  if (scale.y < 0)
-        negy = -1;
-
-    this.size.x = width*scale.x*negx;
-  this.size.y = height*scale.y*negy;
-  anchor.x *= scale.x*negx;
-  anchor.y *= scale.y*negy;
-  pos.x -= anchor.x;
-  pos.y -= anchor.y;
-  anchor.x += pos.x;
-  anchor.y += pos.y;
-    var callback = null;
-    if (rotation instanceof  scintilla.Vector)
-      callback = this['calcCoordsCosSin'];
-    else
-      callback = this['calcCoords'];
-    coords[0] = callback( pos.x, pos.y, anchor, rotation);
-  coords[1] = callback( pos.x + this.size.x,  pos.y, anchor,rotation);
-    coords[2] = callback( pos.x , pos.y + this.size.y, anchor,rotation);
-  coords[3] = callback( pos.x + this.size.x , pos.y + this.size.y,anchor, rotation);
-
-    this.min.x = Math.min(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
-  this.min.y = Math.min(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
-    this.max.x = Math.max(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
-  this.max.y = Math.max(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
-  this.center.x = pos.x+(this.max.x-this.min.x)/2;
-  this.center.y = pos.y+(this.max.y-this.min.y)/2;
-  this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
-  }
-
-setByGameObject(gameObject, local) {
-    //if (gameObject.render != null) {
-      if (local) {
-      this.setup(gameObject.position,
-              gameObject.scale,
-              gameObject._cosSin,
-              gameObject.render.origin,
-              gameObject.render.width,
-              gameObject.render.height
-            );
-    } else {
-        var frame = gameObject.component['render'].frame;
-        var pos = {x:gameObject.worldPosition.x, y:gameObject.worldPosition.y};
-      var org = {
-        x:gameObject.origin.x * frame.width,
-        y:gameObject.origin.y * frame.height};
-        pos.x += gameObject.game.camera.view.x;
-      pos.y += gameObject.game.camera.view.y;
-        this.setup(pos,
-              gameObject.worldScale,
-              gameObject.worldRotation,
-              org,
-              frame.width,
-              frame.height
-            );
-    }
-
-  return this;
-
-}
-
-setByShape(shape,position) {
-
-  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  var type = shape.getType();
-    if (type == "Polygon") {
-      var points = shape.getPoints();
-      points.forEach(function (point) {
-        minX = Math.min(minX, point.x);
-        minY = Math.min(minY, point.y);
-        maxX = Math.max(maxX, point.x);
-        maxY = Math.max(maxY, point.y);
-      });
-  }
-    if (position !== undefined) {
-    minX += position.x;
-    minY += position.y;
-    maxX += position.x;
-    maxY += position.y;
-  }
-
-  this.min.set(minX,minY);
-  this.max.set(maxX,maxY)
-  this.box.set(minX,minY,maxX-minX,maxY-minY);
-  }
-  calcCoordsCosSin(x, y, anchor, cos_and_sin) {
-    var coord = {x:0,y:0};
-    coord.x = anchor.x + ((x-anchor.x) * cos_and_sin.x) - ((y-anchor.y) * cos_and_sin.y);
-  coord.y = anchor.y - ((x-anchor.x) * cos_and_sin.y) - ((y-anchor.y) * cos_and_sin.x);
-      return coord;
-  }
-  calcCoords(x,y,anchor,rotation) {
-    var coord = {x:0,y:0};
-    coord.x = anchor.x + ((x-anchor.x) * Math.cos(rotation)) - ((y-anchor.y) * Math.sin(rotation));
-  coord.y = anchor.y - ((x-anchor.x) * Math.sin(rotation)) - ((y-anchor.y) * Math.cos(rotation));
-      return coord;
-  }*/
-
-/***/ }),
-
 /***/ "./modules/index.js":
 /*!**************************!*\
   !*** ./modules/index.js ***!
@@ -5774,8 +5401,6 @@ module.exports = {
     Module: __webpack_require__(/*! ./Module */ "./modules/Module.js"),
     ModuleProvider: __webpack_require__(/*! ./ModuleProvider */ "./modules/ModuleProvider.js"),
     ModuleAttacher: __webpack_require__(/*! ./ModuleAttacher */ "./modules/ModuleAttacher.js"),
-
-    Transform: __webpack_require__(/*! ./core/Transform */ "./modules/core/Transform.js"),
     Renderables: __webpack_require__(/*! ./renderables */ "./modules/renderables/index.js")
 };
 
@@ -5933,7 +5558,7 @@ var _ModuleProvider = __webpack_require__(/*! ../ModuleProvider */ "./modules/Mo
 
 var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
 
-var _UpdateTransformBounds = __webpack_require__(/*! ../core/UpdateTransformBounds */ "./modules/core/UpdateTransformBounds.js");
+var _UpdateTransformBounds = __webpack_require__(/*! ../../transform/UpdateTransformBounds */ "./transform/UpdateTransformBounds.js");
 
 var _UpdateTransformBounds2 = _interopRequireDefault(_UpdateTransformBounds);
 
@@ -5951,9 +5576,9 @@ var Sprite = function (_Renderable) {
     function Sprite(moduleManager) {
         _classCallCheck(this, Sprite);
 
+        //this._type = "sprite";
         var _this = _possibleConstructorReturn(this, (Sprite.__proto__ || Object.getPrototypeOf(Sprite)).call(this, moduleManager));
 
-        _this._type = "sprite";
         _this.source = null;
         _this.frame = new _Rect2.default();
         return _this;
@@ -6059,7 +5684,7 @@ var _TilemapLayer = __webpack_require__(/*! ./TilemapLayer */ "./modules/rendera
 
 var _TilemapLayer2 = _interopRequireDefault(_TilemapLayer);
 
-var _UpdateBounds = __webpack_require__(/*! ../core/UpdateBounds */ "./modules/core/UpdateBounds.js");
+var _UpdateBounds = __webpack_require__(/*! ../../transform/UpdateBounds */ "./transform/UpdateBounds.js");
 
 var _UpdateBounds2 = _interopRequireDefault(_UpdateBounds);
 
@@ -6077,9 +5702,9 @@ var Tilemap = function (_Renderable) {
     function Tilemap(moduleManager, resource) {
         _classCallCheck(this, Tilemap);
 
+        //this._type = "tilemap";
         var _this = _possibleConstructorReturn(this, (Tilemap.__proto__ || Object.getPrototypeOf(Tilemap)).call(this, moduleManager));
 
-        _this._type = "tilemap";
         _this.tileWidth = resource.metaData.tileWidth;
         _this.tileHeight = resource.metaData.tileHeight;
         _this.width = resource.metaData.width;
@@ -6093,8 +5718,7 @@ var Tilemap = function (_Renderable) {
 
         for (var i = 0; i < resource.layers.length; i++) {
             _this.layers.push(new _TilemapLayer2.default(_this, resource.layers.at(i)));
-        }console.log(_this.layers);
-        return _this;
+        }return _this;
     }
 
     _createClass(Tilemap, [{
@@ -6103,6 +5727,8 @@ var Tilemap = function (_Renderable) {
             if (!this.entity.transform._isDirty) return;
 
             (0, _UpdateBounds2.default)(this.bounds, this.entity.transform.position.x, this.entity.transform.position.y, this.pixelsWidth, this.pixelsHeight, this.entity.transform._cosSin);
+
+            console.log(this.bounds);
         }
     }]);
 
@@ -6952,6 +6578,10 @@ var _Smoothing = __webpack_require__(/*! ./canvas/Smoothing */ "./render/canvas/
 
 var _Smoothing2 = _interopRequireDefault(_Smoothing);
 
+var _DrawRenderLayer = __webpack_require__(/*! ./components/DrawRenderLayer */ "./render/components/DrawRenderLayer.js");
+
+var _DrawRenderLayer2 = _interopRequireDefault(_DrawRenderLayer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -6976,77 +6606,6 @@ var Render = function () {
     }
 
     _createClass(Render, [{
-        key: 'renderBegin',
-        value: function renderBegin() {
-
-            if (this.clear) {
-                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            }
-
-            this.context.fillStyle = this._backgroundColor;
-            this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-            this.drawCalls = 0;
-        }
-    }, {
-        key: 'renderEnd',
-        value: function renderEnd() {
-            this.context.globalAlpha = 1;
-            this.context.globalCompositeOperation = 'source-over';
-        }
-    }, {
-        key: 'render',
-        value: function render(camera, delta) {
-
-            if (!this._enable) return;
-
-            var clip = camera.x !== 0 || camera.y !== 0 || camera.width !== this.context.canvas.width || camera.height !== this.context.canvas.height;
-
-            // alpha
-            if (this._alpha !== 1) {
-                ctx.globalAlpha = 1;
-                this._alpha = 1;
-            }
-
-            // blend
-            this.context.globalCompositeOperation = 'source-over';
-
-            /*if (clip)
-            {
-                let resolution = 1;
-                this.context.save();
-                this.context.beginPath();
-                this.context.rect(
-                    0,
-                    0,
-                    320 * resolution,
-                    240 * resolution);
-                this.context.clip();
-            }*/
-
-            for (var i = 0; i < this.layer.renderLayers.length; i++) {
-                var layer = this.layer.renderLayers.at(i);
-
-                if (!layer.enable) continue;
-
-                layer.render(this.context);
-
-                this.drawCalls += layer.drawCalls;
-            }
-
-            this.context.setTransform(1, 0, 0, 1, 0, 0);
-
-            this.game.scene.render();
-
-            /* if (clip)
-                 this.context.restore();*/
-
-            if (this.game.debug != null) {
-
-                this.game.debug.test();
-            }
-        }
-    }, {
         key: 'backgroundColor',
         get: function get() {
             return this._backgroundColor;
@@ -7144,25 +6703,6 @@ var RenderLayer = function () {
                 throw new Error('RenderLayer.at: Renderer at ' + index + ' does not exist in the render layer list: \"' + name + "\".");
             }
             return this.renderList.at(index);
-        }
-    }, {
-        key: 'render',
-        value: function render(context) {
-            this.__drawCalls = 0;
-
-            if (!this.__enable) return;
-
-            if (this.__isDirty) {
-                this.renderList.sort(this.sortDepth);
-
-                this.__isDirty = false;
-            }
-
-            var self = this;
-
-            this.renderList.each(function (element) {
-                if (element.render(context)) self.__drawCalls++;
-            });
         }
     }, {
         key: 'sortDepth',
@@ -7489,6 +7029,169 @@ var CanvasSmoothing = function () {
 }();
 
 exports.default = CanvasSmoothing;
+
+/***/ }),
+
+/***/ "./render/components/BeginDrawRender.js":
+/*!**********************************************!*\
+  !*** ./render/components/BeginDrawRender.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = BeginDrawRender;
+function BeginDrawRender(render) {
+
+    if (render.clear) {
+        render.context.clearRect(0, 0, render.canvas.width, render.canvas.height);
+    }
+
+    render.context.fillStyle = render._backgroundColor;
+    render.context.fillRect(0, 0, render.canvas.width, render.canvas.height);
+
+    render.drawCalls = 0;
+}
+
+/***/ }),
+
+/***/ "./render/components/DrawRender.js":
+/*!*****************************************!*\
+  !*** ./render/components/DrawRender.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DrawRender;
+
+var _DrawRenderLayer = __webpack_require__(/*! ./DrawRenderLayer */ "./render/components/DrawRenderLayer.js");
+
+var _DrawRenderLayer2 = _interopRequireDefault(_DrawRenderLayer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DrawRender(render, camera, delta) {
+
+    if (!render._enable) return;
+
+    var clip = camera.x !== 0 || camera.y !== 0 || camera.width !== render.context.canvas.width || camera.height !== render.context.canvas.height;
+
+    // alpha
+    if (render._alpha !== 1) {
+        render.context.globalAlpha = 1;
+        render._alpha = 1;
+    }
+
+    // blend
+    render.context.globalCompositeOperation = 'source-over';
+
+    /*if (clip)
+    {
+        let resolution = 1;
+        this.context.save();
+        this.context.beginPath();
+        this.context.rect(
+            0,
+            0,
+            320 * resolution,
+            240 * resolution);
+        this.context.clip();
+    }*/
+
+    for (var i = 0; i < render.layer.renderLayers.length; i++) {
+        var layer = render.layer.renderLayers.at(i);
+
+        if (!layer.enable) continue;
+
+        var drawCalls = 0;
+        drawCalls += (0, _DrawRenderLayer2.default)(layer, camera, render.context);
+
+        render.drawCalls += drawCalls;
+    }
+
+    render.context.setTransform(1, 0, 0, 1, 0, 0);
+
+    render.game.scene.render();
+
+    if (render.game.debug != null) {
+
+        render.game.debug.test();
+    }
+}
+
+/***/ }),
+
+/***/ "./render/components/DrawRenderLayer.js":
+/*!**********************************************!*\
+  !*** ./render/components/DrawRenderLayer.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+exports.default = DrawRenderLayer;
+function DrawRenderLayer(layer, camera, context) {
+
+        if (!layer.__enable) return 0;
+
+        var drawCalls = 0;
+
+        if (layer.__isDirty) {
+                layer.renderList.sort(layer.sortDepth);
+
+                layer.__isDirty = false;
+        }
+
+        var self = this;
+        var size = layer.renderList.size;
+
+        for (var i = 0; i < size; i++) {
+                var element = layer.renderList.at(i);
+
+                if (camera.bounds.intersects(element.bounds)) {
+                        drawCalls += element.render(context);
+                }
+        }
+
+        return drawCalls;
+}
+
+/***/ }),
+
+/***/ "./render/components/EndDrawRender.js":
+/*!********************************************!*\
+  !*** ./render/components/EndDrawRender.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = EndDrawRender;
+function EndDrawRender(render) {
+    render.context.globalAlpha = 1;
+    render.context.globalCompositeOperation = 'source-over';
+}
 
 /***/ }),
 
@@ -9546,6 +9249,425 @@ if (this.game.systemInited) {
 
 
 exports.default = UpdateStep;
+
+/***/ }),
+
+/***/ "./transform/ComputeDelimiterPoint.js":
+/*!********************************************!*\
+  !*** ./transform/ComputeDelimiterPoint.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ComputeDelimiterPoint;
+function ComputeDelimiterPoint(x, y, rotation, anchor) {
+
+    var coord = { x: 0, y: 0 };
+
+    if (anchor === undefined) {
+        coord.x = x * rotation.x - y * rotation.y;
+        coord.y = x * rotation.y - y * rotation.x;
+    } else {
+        var xa = x - anchor.x;
+        var ya = y - anchor.y;
+        coord.x = anchor.x + xa * rotation.x - ya * rotation.y;
+        coord.y = anchor.y - xa * rotation.y - ya * rotation.x;
+    }
+
+    //coord.x = anchor.x + ((x-anchor.x) * cos_and_sin.x) - ((y-anchor.y) * cos_and_sin.y);
+    //coord.y = anchor.y - ((x-anchor.x) * cos_and_sin.y) - ((y-anchor.y) * cos_and_sin.x);
+
+    return coord;
+}
+
+/***/ }),
+
+/***/ "./transform/Transform.js":
+/*!********************************!*\
+  !*** ./transform/Transform.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Vector = __webpack_require__(/*! ../math/Vector */ "./math/Vector.js");
+
+var _Vector2 = _interopRequireDefault(_Vector);
+
+var _Matrix = __webpack_require__(/*! ../math/Matrix */ "./math/Matrix.js");
+
+var _Matrix2 = _interopRequireDefault(_Matrix);
+
+var _BoundingBox = __webpack_require__(/*! ../math/BoundingBox */ "./math/BoundingBox.js");
+
+var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Transform = function () {
+    function Transform() {
+        _classCallCheck(this, Transform);
+
+        this.matrix = new _Matrix2.default(1);
+        this.position = new _Vector2.default(0, 0);
+        this.scale = new _Vector2.default(1, 1);
+        this.origin = new _Vector2.default(0, 0);
+        this.angle = 0;
+        this.rotation = 0;
+        this._cosSin = { x: 1, y: 0 };
+        this._oldRotation = -1;
+        this._isDirty = true;
+        //this.worldPosition = new Vector(0,0);
+        //this.worldScale =  new Vector(1,1);
+        //this.worldRotation = 0;
+        //this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
+        //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
+    }
+
+    _createClass(Transform, [{
+        key: 'destroy',
+        value: function destroy() {
+
+            delete this.position;
+            delete this.scale;
+            delete this.matrix;
+            delete this.worldPosition;
+            delete this.worldScale;
+            delete this.origin;
+            delete this.bounds;
+            delete this.globalBounds;
+            delete this._cosSin;
+        }
+    }, {
+        key: 'reset',
+        value: function reset() {
+            this.matrix.setIdentity();
+            this._isDirty = true;
+            this._cosSin.x = 1;
+            this._cosSin.y = 0;
+            this.position.set(0, 0);
+            this.angle = 0;
+            this.rotation = 0;
+            this._oldRotation = 0;
+            this.origin.set(0, 0);
+            this.scale.set(0, 0);
+        }
+    }]);
+
+    return Transform;
+}();
+
+exports.default = Transform;
+
+/***/ }),
+
+/***/ "./transform/UpdateBounds.js":
+/*!***********************************!*\
+  !*** ./transform/UpdateBounds.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateBounds;
+
+var _ComputeDelimiterPoint = __webpack_require__(/*! ./ComputeDelimiterPoint */ "./transform/ComputeDelimiterPoint.js");
+
+var _ComputeDelimiterPoint2 = _interopRequireDefault(_ComputeDelimiterPoint);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function UpdateBounds(bounds, x, y, width, height, cosSin, origin) {
+
+    var coords = [];
+
+    coords[0] = (0, _ComputeDelimiterPoint2.default)(x, y, cosSin, origin);
+    coords[1] = (0, _ComputeDelimiterPoint2.default)(x + width, y, cosSin, origin);
+    coords[2] = (0, _ComputeDelimiterPoint2.default)(x, y + height, cosSin, origin);
+    coords[3] = (0, _ComputeDelimiterPoint2.default)(x + width, y + height, cosSin, origin);
+
+    bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+    bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+    bounds.max.x = Math.max(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+    bounds.max.y = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+}
+
+/***/ }),
+
+/***/ "./transform/UpdateTransform.js":
+/*!**************************************!*\
+  !*** ./transform/UpdateTransform.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateTransform;
+
+var _MathUtils = __webpack_require__(/*! ../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _Matrix = __webpack_require__(/*! ../math/Matrix */ "./math/Matrix.js");
+
+var _Matrix2 = _interopRequireDefault(_Matrix);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/*
+
+* | a | b | x |
+* | c | d | y |
+* | 0 | 0 | 1 |
+
+* | 0 | 3 | 6 | * | a | d | x |
+* | 1 | 4 | 7 | * | b | e | y |
+* | 2 | 5 | 8 | * | c | f | 1 |
+
+*/
+
+function UpdateTransform(transform, parentTransform) {
+
+    //if (parentMatrix === undefined) parentMatrix = null;
+
+    if (!transform._isDirty && !parentTransform._isDirty) return;
+
+    var a = void 0,
+        b = void 0,
+        c = void 0,
+        d = void 0,
+        x = void 0,
+        y = void 0;
+    var wt = transform.matrix;
+
+    transform.rotation = transform.angle * _MathUtils2.default.degToRad;
+
+    // if (transform.rotation % MathUtils.TAU) {
+
+
+    if (transform.rotation !== transform._oldRotation) {
+        transform._oldRotation = transform.rotation;
+        transform._cosSin.y = Math.sin(transform.rotation);
+        transform._cosSin.x = Math.cos(transform.rotation);
+    }
+
+    transform.matrix.setModelMatrix(transform.position, transform.scale, transform._cosSin, transform.origin).concat(parentTransform.matrix);
+
+    // } else {
+
+    /*a  = transform.scale.x;
+    d  = transform.scale.y;
+    x =  transform.position.x;
+    y =  transform.position.y;
+    x -= transform.origin.x * a;
+    y -= transform.origin.y * d;
+      wt.a  = a  * pt.a;
+    wt.b  = a  * pt.b;
+    wt.c  = d  * pt.c;
+    wt.d  = d  * pt.d;
+    wt.x = x * pt.a + y * pt.c + pt.x;
+    wt.y = x * pt.b + y * pt.d + pt.y;*/
+
+    //  }
+
+    //transform.worldPosition.set(wt.x ,wt.y);
+    //transform.worldScale.set(Math.sqrt(wt.a * wt.a + wt.b * wt.b), Math.sqrt(wt.c * wt.c + wt.d * wt.d));
+    //transform.worldRotation = Math.atan2(-wt.c, wt.d);
+}
+
+/***/ }),
+
+/***/ "./transform/UpdateTransformBounds.js":
+/*!********************************************!*\
+  !*** ./transform/UpdateTransformBounds.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateTransformBounds;
+
+var _MathUtils = __webpack_require__(/*! ../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _Vector = __webpack_require__(/*! ../math/Vector */ "./math/Vector.js");
+
+var _Vector2 = _interopRequireDefault(_Vector);
+
+var _ComputeDelimiterPoint = __webpack_require__(/*! ./ComputeDelimiterPoint */ "./transform/ComputeDelimiterPoint.js");
+
+var _ComputeDelimiterPoint2 = _interopRequireDefault(_ComputeDelimiterPoint);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function UpdateTransformBounds(bounds, frame, transform) {
+
+    var coords = [];
+    var scale = _Vector2.default.abs(transform.scale);
+    var pos = transform.position;
+    var anchor = transform.origin;
+    var size = {
+        x: frame.width * scale.x,
+        y: frame.height * scale.y
+    };
+
+    anchor.x *= scale.x;
+    anchor.y *= scale.y;
+    pos.x -= anchor.x;
+    pos.y -= anchor.y;
+    anchor.x += pos.x;
+    anchor.y += pos.y;
+
+    coords[0] = (0, _ComputeDelimiterPoint2.default)(pos.x, pos.y, rotation, anchor);
+    coords[1] = (0, _ComputeDelimiterPoint2.default)(pos.x + size.x, pos.y, rotation, anchor);
+    coords[2] = (0, _ComputeDelimiterPoint2.default)(pos.x, pos.y + size.y, rotation, anchor);
+    coords[3] = (0, _ComputeDelimiterPoint2.default)(pos.x + size.x, pos.y + size.y, rotation, anchor);
+
+    bounds.min.x = Math.min(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+    bounds.min.y = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+    bounds.max.x = Math.max(coords[0].x, coords[1].x, coords[2].x, coords[3].x);
+    bounds.max.y = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y);
+}
+
+// position (vector)
+// scale (vector)
+// rotation (vector x = cos, y = sin)
+/*
+setup(pos, scale, rotation, anchor, width, height) {
+    var coords = [];
+  var negx = 1;
+  var negy = 1;
+    if (scale.x < 0)
+        negx = -1;
+  if (scale.y < 0)
+        negy = -1;
+
+    this.size.x = width*scale.x*negx;
+  this.size.y = height*scale.y*negy;
+  anchor.x *= scale.x*negx;
+  anchor.y *= scale.y*negy;
+  pos.x -= anchor.x;
+  pos.y -= anchor.y;
+  anchor.x += pos.x;
+  anchor.y += pos.y;
+    var callback = null;
+    if (rotation instanceof  scintilla.Vector)
+      callback = this['calcCoordsCosSin'];
+    else
+      callback = this['calcCoords'];
+    coords[0] = callback( pos.x, pos.y, anchor, rotation);
+  coords[1] = callback( pos.x + this.size.x,  pos.y, anchor,rotation);
+    coords[2] = callback( pos.x , pos.y + this.size.y, anchor,rotation);
+  coords[3] = callback( pos.x + this.size.x , pos.y + this.size.y,anchor, rotation);
+
+    this.min.x = Math.min(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
+  this.min.y = Math.min(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+    this.max.x = Math.max(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
+  this.max.y = Math.max(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+  this.center.x = pos.x+(this.max.x-this.min.x)/2;
+  this.center.y = pos.y+(this.max.y-this.min.y)/2;
+  this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
+  }
+
+setByGameObject(gameObject, local) {
+    //if (gameObject.render != null) {
+      if (local) {
+      this.setup(gameObject.position,
+              gameObject.scale,
+              gameObject._cosSin,
+              gameObject.render.origin,
+              gameObject.render.width,
+              gameObject.render.height
+            );
+    } else {
+        var frame = gameObject.component['render'].frame;
+        var pos = {x:gameObject.worldPosition.x, y:gameObject.worldPosition.y};
+      var org = {
+        x:gameObject.origin.x * frame.width,
+        y:gameObject.origin.y * frame.height};
+        pos.x += gameObject.game.camera.view.x;
+      pos.y += gameObject.game.camera.view.y;
+        this.setup(pos,
+              gameObject.worldScale,
+              gameObject.worldRotation,
+              org,
+              frame.width,
+              frame.height
+            );
+    }
+
+  return this;
+
+}
+
+setByShape(shape,position) {
+
+  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  var type = shape.getType();
+    if (type == "Polygon") {
+      var points = shape.getPoints();
+      points.forEach(function (point) {
+        minX = Math.min(minX, point.x);
+        minY = Math.min(minY, point.y);
+        maxX = Math.max(maxX, point.x);
+        maxY = Math.max(maxY, point.y);
+      });
+  }
+    if (position !== undefined) {
+    minX += position.x;
+    minY += position.y;
+    maxX += position.x;
+    maxY += position.y;
+  }
+
+  this.min.set(minX,minY);
+  this.max.set(maxX,maxY)
+  this.box.set(minX,minY,maxX-minX,maxY-minY);
+  }
+  calcCoordsCosSin(x, y, anchor, cos_and_sin) {
+    var coord = {x:0,y:0};
+    coord.x = anchor.x + ((x-anchor.x) * cos_and_sin.x) - ((y-anchor.y) * cos_and_sin.y);
+  coord.y = anchor.y - ((x-anchor.x) * cos_and_sin.y) - ((y-anchor.y) * cos_and_sin.x);
+      return coord;
+  }
+  calcCoords(x,y,anchor,rotation) {
+    var coord = {x:0,y:0};
+    coord.x = anchor.x + ((x-anchor.x) * Math.cos(rotation)) - ((y-anchor.y) * Math.sin(rotation));
+  coord.y = anchor.y - ((x-anchor.x) * Math.sin(rotation)) - ((y-anchor.y) * Math.cos(rotation));
+      return coord;
+  }*/
 
 /***/ }),
 

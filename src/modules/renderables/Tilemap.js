@@ -1,7 +1,7 @@
 import Renderable from "./Renderable";
 import ModuleProvider from "../ModuleProvider";
 import TilemapLayer from "./TilemapLayer";
-import UpdateBounds from '../core/UpdateBounds'
+import UpdateBounds from '../../transform/UpdateBounds'
 
 export default class Tilemap extends Renderable {
     
@@ -9,7 +9,7 @@ export default class Tilemap extends Renderable {
     {
         super(moduleManager);
 
-        this._type = "tilemap";
+        //this._type = "tilemap";
         this.tileWidth = resource.metaData.tileWidth;
         this.tileHeight = resource.metaData.tileHeight;
         this.width = resource.metaData.width;
@@ -24,7 +24,6 @@ export default class Tilemap extends Renderable {
         for (let i = 0; i < resource.layers.length; i++)
             this.layers.push(new TilemapLayer(this, resource.layers.at(i)));
 
-        console.log(this.layers);
     }
 
     moduleUpdate() {
@@ -32,6 +31,8 @@ export default class Tilemap extends Renderable {
             return;
 
         UpdateBounds(this.bounds, this.entity.transform.position.x, this.entity.transform.position.y, this.pixelsWidth, this.pixelsHeight, this.entity.transform._cosSin);
+    
+        console.log(this.bounds);
     }
 
 }

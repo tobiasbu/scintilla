@@ -47,31 +47,6 @@ export default class RenderLayer {
 
     }
 
-    render(context)
-    {
-        this.__drawCalls = 0;
-
-        if (!this.__enable)
-            return;
-
-        
-
-        if (this.__isDirty)
-        {
-            this.renderList.sort(this.sortDepth);
-
-            this.__isDirty = false;
-        }
-
-        var self = this;
-
-        this.renderList.each((element) => {
-            if (element.render(context))
-                self.__drawCalls++;
-        });
-
-    }
-
     sortDepth(a, b) { // sort ascending
 
         return a._depthSorting - b._depthSorting;

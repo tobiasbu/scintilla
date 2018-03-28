@@ -1,6 +1,6 @@
 
 import BoundingBox from '../math/BoundingBox';
-import Transform  from '../modules/core/Transform';
+import Transform  from '../transform/Transform';
 import Color from '../utils/Color'
 import GameSystemManager from '../core/GameSystemManager';
 import MathUtils from '../math/MathUtils'
@@ -11,7 +11,7 @@ export default class Camera {
 
     this.game = game;
     //this._view = new Rect(0, 0, game.config.width, game.config.height);
-    this._bounds = new BoundingBox();
+    this.bounds = new BoundingBox();
     this.transform = new Transform();
     this.width = game.config.camera.width;
     this.height = game.config.camera.height;

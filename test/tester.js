@@ -18,7 +18,7 @@ var config = {
         height: 240
     },
     parent: "canvas-container",
-    debug: false,
+    debug: true,
     fps: 60,
     pixelated: true
 };

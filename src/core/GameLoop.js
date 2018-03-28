@@ -2,6 +2,9 @@ import RequestAnimationFrame from "../dom/RequestAnimationFrame";
 import GameSystemManager from "./GameSystemManager";
 import UpdateStep from "../time/UpdateStep";
 import UpdateCamera from "../camera/UpdateCamera";
+import BeginDrawRender from "../render/components/BeginDrawRender";
+import DrawRender from "../render/components/DrawRender";
+import EndDrawRender from "../render/components/EndDrawRender";
 
 
 /*
@@ -84,10 +87,12 @@ export default class GameLoop {
         if (this.currentScene == null || this.currentScene === undefined)
             return;
 
-        this.system.render.renderBegin();
-        this.system.render.render(deltaTime);
-        this.system.render.renderEnd();
-          
+        BeginDrawRender(this.system.render);
+
+        DrawRender(this.system.render, this.camera, deltaTime);
+
+        EndDrawRender(this.system.render);
+
     }
 
 }

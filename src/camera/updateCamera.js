@@ -1,4 +1,5 @@
-import UpdateBounds from "../modules/core/UpdateBounds";
+import UpdateBounds from "../transform/UpdateBounds";
+import ComputeDelimiterPoint from "../transform/ComputeDelimiterPoint";
 
 
 export default function UpdateCamera(camera, canvas) {
@@ -9,7 +10,7 @@ export default function UpdateCamera(camera, canvas) {
     let t = camera.transform;
 
 
-  let pixelUnit = {x:0,y:0};
+  let pixelUnit = {x:1,y:1};
 
     pixelUnit.x = canvas.width / camera.width;
     pixelUnit.y = canvas.height / camera.height;
@@ -32,12 +33,6 @@ export default function UpdateCamera(camera, canvas) {
     y:camera.height * t.origin.y
   };
 
-  UpdateBounds(
-      camera._bounds, 
-      t.position.x, t.position.y,
-      camera.width, camera.height,
-      t._cosSin);
-
   // todo resolution
   t.matrix.setIdentity()
   .scale(pixelUnit.x, pixelUnit.y)
@@ -45,6 +40,25 @@ export default function UpdateCamera(camera, canvas) {
   .radianRotate(t._cosSin.x, t._cosSin.y)
   .scale(t.scale.x, t.scale.x)
   .translate(-origin.x, -origin.y)
+
+  let x = t.matrix.a[6];
+  let y = t.matrix.a[7];
+
+  //let coords = [];
+
+    //coords[0] = ComputeDelimiterPoint( x, y, t._cosSin);
+    //coords[1] = ComputeDelimiterPoint( x + camera.width,  y, t._cosSin);
+    //coords[2] = ComputeDelimiterPoint( x , y +  camera.height, t._cosSin);
+    //coords[3] = ComputeDelimiterPoint( x +  camera.width , y +  camera.height, t._cosSin);
+  
+    //camera.bounds.min.x = Math.min(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
+    //camera.bounds.min.y = Math.min(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+    //camera.bounds.max.x = Math.max(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
+    //camera.bounds.max.y = Math.max(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+
+  
+  //console.log("min:" + camera.bounds.min.toString());
+  //console.log("max" + camera.bounds.max);
 
 
 }

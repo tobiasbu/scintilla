@@ -1,6 +1,6 @@
-import Renderable from "../renderables/Renderable";
-import Tilemap from "../renderables/Tilemap";
-import Sprite from "../renderables/Sprite";
+import Renderable from "./renderables/Renderable";
+import Tilemap from "./renderables/Tilemap";
+import Sprite from "./renderables/Sprite";
 
 export default function UpdateModules(modulesManager, game)
 {

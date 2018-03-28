@@ -2,7 +2,7 @@ import Renderable from "./Renderable";
 import Rect from "../../math/Rect";
 import DrawImage from "./components/DrawImage";
 import ModuleProvider from "../ModuleProvider";
-import UpdateTransformBounds from '../core/UpdateTransformBounds'
+import UpdateTransformBounds from '../../transform/UpdateTransformBounds'
 
 
 export default class Sprite extends Renderable {
@@ -11,7 +11,7 @@ export default class Sprite extends Renderable {
     {
         super(moduleManager);
 
-        this._type = "sprite";
+        //this._type = "sprite";
         this.source = null;
         this.frame = new Rect();
     }

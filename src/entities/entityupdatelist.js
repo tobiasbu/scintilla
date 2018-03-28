@@ -1,7 +1,7 @@
 import DataList from "../structures/List";
 import GameSystemManager from "../core/GameSystemManager";
-import UpdateTransform from '../modules/core/UpdateTransform'
-import UpdateModules from '../modules/core/UpdateModules'
+import UpdateTransform from '../transform/UpdateTransform'
+import UpdateModules from '../modules/UpdateModules'
 import Matrix from '../math/Matrix'
 
 export default class EntityUpdateList {

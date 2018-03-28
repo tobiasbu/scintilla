@@ -141,6 +141,10 @@ export default class Vector {
     return Math.sqrt(this.squaredLenght());
   }
 
+  toString() {
+    return "{ x: " + this.x + ", y: " + this.y + " }"
+  }
+
   squaredLenght() {
     return Vector.dot(this,this);
   }
