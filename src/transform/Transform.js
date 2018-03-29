@@ -9,9 +9,9 @@ export default class Transform {
   constructor() {
 
     this.matrix = new Matrix(1);
-    this.position = new Vector(0,0);
-    this.scale = new Vector(1,1);
-    this.origin = new Vector(0,0);
+    this.position = new Vector(0,0, this);
+    this.scale = new Vector(1,1, this);
+    this.origin = new Vector(0,0, this);
     this.angle = 0;
     this.rotation = 0;
     this._cosSin = {x:1,y:0};
@@ -24,7 +24,9 @@ export default class Transform {
     //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
   }
 
-  
+  markDirty() {
+    this._isDirty = true;
+  }
 
     destroy() {
 

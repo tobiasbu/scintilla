@@ -17,7 +17,6 @@ import Matrix from '../math/Matrix'
 export default function UpdateTransform(transform, parentTransform) {
 
     //if (parentMatrix === undefined) parentMatrix = null;
-
     if (!transform._isDirty && !parentTransform._isDirty)
         return;
 

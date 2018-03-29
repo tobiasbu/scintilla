@@ -9,10 +9,11 @@ import MathUtils from './MathUtils'
 */
 export default class Vector {
   
-  constructor(x,y) {
+  constructor(x,y, managed) {
 
     this.x = x || 0;
     this.y = y || 0;
+    this.managed = managed || undefined;
   }
 
   /*
@@ -32,6 +33,10 @@ export default class Vector {
     this.x = x;
     this.y = y || x
 
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
+    return this;
   }
 
   move(x,y) {
@@ -39,12 +44,21 @@ export default class Vector {
     this.x += x;
     this.y += y;
 
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
+    return this;
+
   }
 
   scale(x, y) {
 
     this.x *= x;
     this.y *= y || x;
+
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
 
   }
@@ -55,6 +69,10 @@ export default class Vector {
     let y = this.y;
     this.x = x * Math.cos(radians) - y * Math.sin(radians);
     this.y = x * Math.sin(radians) + y * Math.cos(radians);
+
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
 
   }
@@ -76,6 +94,9 @@ export default class Vector {
     this.x =  other.x + (c * dx - s * dy);
     this.y =  other.y + (s * dx + c * dy);
 
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
 
   }
@@ -84,6 +105,10 @@ export default class Vector {
 
     this.x = otherVector.x;
     this.y = otherVector.y;
+
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
 
   }
@@ -95,6 +120,10 @@ export default class Vector {
       this.x = this.x / mag;
       this.y = this.y / mag;
     }
+
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
 
   }
@@ -102,18 +131,30 @@ export default class Vector {
   reverse() {
     this.x = -this.x;
     this.y = -this.y;
+
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
   }
 
   add(other) {
     this.x += other.x;
     this.y += other.y;
+
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
   }
 
   sub(other) {
     this.x -= other.x;
     this.y -= other.y;
+
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
   }
 
@@ -122,6 +163,10 @@ export default class Vector {
     let x = this.x;
     this.x = this.y;
     this.y = -x;
+
+    if (this.managed !== undefined)
+      this.managed.markDirty();
+
     return this;
   }
 

@@ -14,8 +14,8 @@ export default class TilemapResource extends Resource {
             name: source.name,
             width: source.width,
             height: source.height,
-            tileWidth: source.tileWidth,
-            tileHeight: source.tileHeight,
+            tileWidth: source.tilewidth,
+            tileHeight: source.tileheight,
             orietation: source.orietation
         });
 

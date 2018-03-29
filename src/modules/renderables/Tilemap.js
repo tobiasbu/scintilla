@@ -7,13 +7,13 @@ export default class Tilemap extends Renderable {
     
     constructor(moduleManager, resource)
     {
-        super(moduleManager);
+        super('tilemap', moduleManager);
 
         //this._type = "tilemap";
         this.tileWidth = resource.metaData.tileWidth;
         this.tileHeight = resource.metaData.tileHeight;
-        this.width = resource.metaData.width;
-        this.height = resource.metaData.height;
+        this.mapWidth = resource.metaData.width;
+        this.mapHeight = resource.metaData.height;
         this.orientation = resource.metaData.orientation;
         this.pixelsWidth = resource.metaData.pixelsWidth;
         this.pixelsHeight = resource.metaData.pixelsHeight;
@@ -26,6 +26,7 @@ export default class Tilemap extends Renderable {
 
     }
 
+  
     moduleUpdate() {
         if (!this.entity.transform._isDirty)
             return;

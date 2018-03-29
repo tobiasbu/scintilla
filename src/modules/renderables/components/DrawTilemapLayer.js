@@ -1,6 +1,7 @@
 
 export default function DrawTilemapLayer(context, tilemap, layer, transform) {
 
+    let draws = 0;
     let matrix = transform.matrix;
 
     context.setTransform(
@@ -15,18 +16,22 @@ export default function DrawTilemapLayer(context, tilemap, layer, transform) {
 
         if (tile == null || tile === undefined) continue;
 
-    context.drawImage(
-        tile.data.tileset.image.data, // image
-        tile.frame.x, // sx - pos crop x
-        tile.frame.y, // sy - pos crop y
-        tile.frame.width, // sWidth - crop width
-        tile.frame.height, // sHeight - crop height
-        tile.x, // destination x
-        tile.y,  // destination y
-        tile.frame.width,
-        tile.frame.height
-            );
+        context.drawImage(
+            tile.data.tileset.image.data, // image
+            tile.frame.x, // sx - pos crop x
+            tile.frame.y, // sy - pos crop y
+            tile.frame.width, // sWidth - crop width
+            tile.frame.height, // sHeight - crop height
+            tile.x, // destination x
+            tile.y,  // destination y
+            tile.frame.width,
+            tile.frame.height
+                );
 
-        }
+                draws++;
+
+    }
+
+    return draws;
 
 }

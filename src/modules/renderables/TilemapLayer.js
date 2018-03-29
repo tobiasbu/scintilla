@@ -5,11 +5,15 @@ export default class TilemapLayer extends Renderable {
 
     constructor(tilemap, layerData) {
 
-        super(tilemap.moduleManager);
-        this._type = "tile";        
+        super('tilemapLayer', tilemap.moduleManager);     
         this.tilemap = tilemap;
         this.layerData = layerData;
     }
+
+
+    get width() {return this.layerData.width * this.tilemap.tileWidth;}
+    get height() {return this.layerData.height * this.tilemap.tileHeight;}
+
 
     render(context) {
 

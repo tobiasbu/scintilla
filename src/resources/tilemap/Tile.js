@@ -9,8 +9,8 @@ export default class Tile {
         this.id = id;
         this.frame = tileData.st;
         // pixels positions
-        this.x = tileX * tileData.st.width;
-        this.y = tileY * tileData.st.height;
+        this.x = Math.floor(tileX * tileData.st.width);
+        this.y = Math.floor(tileY * tileData.st.height);
     }
 
 }

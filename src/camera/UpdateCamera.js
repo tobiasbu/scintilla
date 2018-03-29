@@ -41,13 +41,18 @@ export default function UpdateCamera(camera, canvas) {
   t.matrix.setIdentity()
   .scale(pixelUnit.x, pixelUnit.y) // resolution
   .translate(pos.x , pos.y)
-  .radianRotate(t._cosSin.x, t._cosSin.y)
   .scale(t.scale.x, t.scale.x)
-  .translate(-origin.x, -origin.y)
+  
 
   ComputeBounds(
     camera.bounds, camera.transform, 
     camera.width, camera.height, 
     pos);
+
+    t.matrix
+    .radianRotate(t._cosSin.x, t._cosSin.y)
+    .translate(-origin.x, -origin.y);
+
+  
 
 }

@@ -52,18 +52,15 @@ scene.preload = function() {
 var t = null;
 
 scene.start = function() {
-    //t = this.create.tilemap('tilemap');
-    t = this.create.sprite('test');
-    t.position.x = 100;
-    t.position.y = 100;
+    this.camera.roundPixels = false;
+    t = this.create.tilemap('tilemap');
+    //t = this.create.sprite('test');
+    //t.position.y = 100;
+    
+
+    //t.update.bind(update);
     //let render = t.modules.get('render');
-    t.origin.x = 0.5;
-    t.origin.y = 0.5;
-    t.update = function(dt){
-      
-        this.angle += game.time.delta * 20;
-        //this.position.x += 10 * dt;
-    }
+
 }
 
 scene.render = function() {
@@ -74,11 +71,9 @@ scene.render = function() {
 
   scene.update = function(dt) {
 
-    //
-    //x += game.time.deltaTime * 20;
-
 
     //console.log(this.camera.x);
+    //t.position.x += 80 * dt;
 
     if (game.input.keyboard.press(scintilla.KeyCode.Right)) 
     {
@@ -87,6 +82,15 @@ scene.render = function() {
     if (game.input.keyboard.press(scintilla.KeyCode.Left)) 
     {
         this.camera.x -= dt * 50;
+    }
+
+    if (game.input.keyboard.press(scintilla.KeyCode.Up)) 
+    {
+        this.camera.y += dt * 50;
+    }
+    if (game.input.keyboard.press(scintilla.KeyCode.Down)) 
+    {
+        this.camera.y -= dt * 50;
     }
 
 

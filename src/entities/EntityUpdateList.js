@@ -41,12 +41,16 @@ export default class EntityUpdateList {
     update(dt) {
 
         
+        for (let i = 0; i < this._instances.size; i++) {
 
-        this._instances.each(element => {
-            
+            let element = this._instances.at(i);
+
             if (element.active)
             {
                 
+                if (element.update !== undefined)
+                    element.update.call(element, dt); //update(dt);
+
                 UpdateTransform(element.transform, this._camera.transform);
 
                 ModulesUpdater(element.modules, this.game);
@@ -54,13 +58,13 @@ export default class EntityUpdateList {
                 if (element.transform._isDirty)
                     element.transform._isDirty = false;
 
-                if (element.update !== undefined)
-                    element.update(dt);
+                
 
             }
 
-            
-        });
+
+        }
+
     }
 
     lateUpdate()
