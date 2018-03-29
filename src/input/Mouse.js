@@ -100,7 +100,7 @@ export default class Mouse {
 
     var value = event.button;
 
-    if (this._mouseButtonsLocksPressed[value] != KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != KeyEvent.PRESS) {
+    if (this._mouseButtonsLocksPressed[value] != MouseEvent.PRESSED && this._mouseButtonsLocksPressed[value] != MouseEvent.PRESS) {
       this._mouseButtonsLocksPressed[value] = MouseEvent.PRESSED;
       this._mouseDownDuration[value] = 1;
     }

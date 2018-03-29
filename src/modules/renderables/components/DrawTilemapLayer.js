@@ -1,3 +1,4 @@
+import MathUtils from "../../../math/MathUtils";
 
 export default function DrawTilemapLayer(context, tilemap, layer, transform) {
 
@@ -31,6 +32,13 @@ export default function DrawTilemapLayer(context, tilemap, layer, transform) {
                 draws++;
 
     }
+
+    /*
+MathUtils.round(tile.x - 0.1), // destination x
+            MathUtils.round(tile.y - 0.1),  // destination y
+            MathUtils.round(tile.frame.width + 0.1),
+            MathUtils.round(tile.frame.height + 0.1)
+    */
 
     return draws;
 

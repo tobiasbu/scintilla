@@ -688,12 +688,7 @@ function UpdateCamera(camera, canvas) {
   pixelUnit.x = canvas.width / camera.width;
   pixelUnit.y = canvas.height / camera.height;
 
-  if (camera.roundPixels) {
-    t.position.x = Math.round(t.position.x);
-    t.position.y = Math.round(t.position.y);
-  }
-
-  //camera._rotation = camera._angle * MathUtils.degToRad;
+  if (camera.roundPixels) t.position.round();
 
   if (t.rotation != t._oldRotation) {
     t._oldRotation = t.rotation;
@@ -731,7 +726,7 @@ function UpdateCamera(camera, canvas) {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 
 var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
@@ -743,47 +738,49 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Config = function Config(config) {
-    _classCallCheck(this, Config);
+        _classCallCheck(this, Config);
 
-    if (config === undefined) config = {};
+        if (config === undefined) config = {};
 
-    var callback = _ObjectUtils2.default.getValue;
-    var callback_2 = _ObjectUtils2.default.getPropertyValue;
+        var callback = _ObjectUtils2.default.getValue;
+        var callback_2 = _ObjectUtils2.default.getPropertyValue;
 
-    // view and canvas
-    this.width = callback(config, 'width', 640);
-    this.height = callback(config, 'height', 480);
-    this.parent = callback(config, 'parent', null);
-    this.debug = callback(config, 'debug', false);
+        // view and canvas
+        this.width = callback(config, 'width', 640);
+        this.height = callback(config, 'height', 480);
+        this.parent = callback(config, 'parent', null);
+        this.debug = callback(config, 'debug', false);
+        //this.floatPrecision = callback(config, 'precision', undefined);
+        //this.fixedFloat = callback(config, 'fixedFloat', undefined);
 
-    // loader
-    this.loader = {
-        baseURL: callback_2(config, 'loader.baseURL', ''),
-        path: callback_2(config, 'loader.path', ''),
-        responseType: callback_2(config, 'loader.responseType', ''),
-        async: callback_2(config, 'loader.async', true)
-    };
+        // loader
+        this.loader = {
+                baseURL: callback_2(config, 'loader.baseURL', ''),
+                path: callback_2(config, 'loader.path', ''),
+                responseType: callback_2(config, 'loader.responseType', ''),
+                async: callback_2(config, 'loader.async', true)
+        };
 
-    this.fps = callback(config, 'fps', 60);
+        this.fps = callback(config, 'fps', 60);
 
-    this.time = {
-        timeoutMode: callback_2(config, 'time.timeOutMode', false)
+        this.time = {
+                timeoutMode: callback_2(config, 'time.timeOutMode', false)
 
-    };
+        };
 
-    this.camera = {
-        width: callback_2(config, 'camera.width', this.width),
-        height: callback_2(config, 'camera.height', this.height)
-    };
+        this.camera = {
+                width: callback_2(config, 'camera.width', this.width),
+                height: callback_2(config, 'camera.height', this.height)
+        };
 
-    this.pixelated = callback(config, 'pixelated', false);
-    /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
-        this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
-        this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
-        
-        this.loaderUser = GetValue(config, 'loader.user', '');
-        this.loaderPassword = GetValue(config, 'loader.password', '');
-    this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
+        this.pixelated = callback(config, 'pixelated', false);
+        /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
+            this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
+            this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
+            
+            this.loaderUser = GetValue(config, 'loader.user', '');
+            this.loaderPassword = GetValue(config, 'loader.password', '');
+        this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
 };
 
 exports.default = Config;
@@ -2033,14 +2030,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/KeyEvent.js");
 
-var KeyEvent = exports.KeyEvent = {
-    NONE: -1,
-    IDLE: 0,
-    PRESSED: 1,
-    RELEASED: 2
-};
+var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Key = function () {
     function Key(keycode, game) {
@@ -2054,7 +2050,7 @@ var Key = function () {
         this.press = false;
         this.release = false;
 
-        this._event = KeyEvent.NONE;
+        this._event = _KeyEvent2.default.NONE;
 
         this.pressTime = 0;
         this.pressDuration = -2500;
@@ -2063,7 +2059,7 @@ var Key = function () {
     }
 
     _createClass(Key, [{
-        key: "onKeyDown",
+        key: 'onKeyDown',
         value: function onKeyDown() {
             if (!this._enabled) return;
 
@@ -2080,7 +2076,7 @@ var Key = function () {
             this.releaseDuration = this.game.time.time - this.releaseTime;
         }
     }, {
-        key: "onKeyUp",
+        key: 'onKeyUp',
         value: function onKeyUp() {
             if (!this._enabled) return;
 
@@ -2097,7 +2093,7 @@ var Key = function () {
             this.releaseDuration = 0;
         }
     }, {
-        key: "update",
+        key: 'update',
         value: function update() {
             if (!this._enabled) return;
 
@@ -2109,46 +2105,46 @@ var Key = function () {
 
             if (this.press) {
                 if (this.pressDuration == 0) {
-                    this._event = KeyEvent.PRESSED;
+                    this._event = _KeyEvent2.default.PRESSED;
                 }
             } else {
 
                 if (this.releaseDuration == 0) {
-                    this._event = KeyEvent.RELEASED;
+                    this._event = _KeyEvent2.default.RELEASED;
                 } else {
-                    this._event = KeyEvent.IDLE;
+                    this._event = _KeyEvent2.default.IDLE;
                 }
             }
 
-            if (this._event == KeyEvent.IDLE) {
-                this._event = KeyEvent.NONE;
+            if (this._event == _KeyEvent2.default.IDLE) {
+                this._event = _KeyEvent2.default.NONE;
             }
         }
     }, {
-        key: "isPressing",
+        key: 'isPressing',
         value: function isPressing() {
             return this.status;
         }
     }, {
-        key: "isPressed",
+        key: 'isPressed',
         value: function isPressed() {
             return this.press && this.pressDuration == 0;
         }
     }, {
-        key: "isReleased",
+        key: 'isReleased',
         value: function isReleased() {
             return !this.press && this.releaseDuration == 0;
         }
     }, {
-        key: "event",
+        key: 'event',
         value: function event() {
             return this._event;
         }
     }, {
-        key: "reset",
+        key: 'reset',
         value: function reset() {
             this.status = false;
-            this._event = KeyEvent.NONE;
+            this._event = _KeyEvent2.default.NONE;
             this.press = false;
             this.release = false;
 
@@ -2158,7 +2154,7 @@ var Key = function () {
             this.releaseDuration = -2500;
         }
     }, {
-        key: "enabled",
+        key: 'enabled',
         get: function get() {
             return this._enabled;
         },
@@ -2296,6 +2292,31 @@ module.exports = KeyCode;
 
 /***/ }),
 
+/***/ "./input/KeyEvent.js":
+/*!***************************!*\
+  !*** ./input/KeyEvent.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var KeyEvent = {
+    NONE: -1,
+    IDLE: 0,
+    PRESSED: 1,
+    RELEASED: 2
+};
+
+exports.default = KeyEvent;
+
+/***/ }),
+
 /***/ "./input/Keyboard.js":
 /*!***************************!*\
   !*** ./input/Keyboard.js ***!
@@ -2323,6 +2344,10 @@ var _Map2 = _interopRequireDefault(_Map);
 var _KeyCode = __webpack_require__(/*! ./KeyCode */ "./input/KeyCode.js");
 
 var _KeyCode2 = _interopRequireDefault(_KeyCode);
+
+var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/KeyEvent.js");
+
+var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2486,7 +2511,7 @@ var Keyboard = function () {
 
         //console.log(value);
 
-        if (value.event() == KeyEvent.IDLE) {
+        if (value.event() == _KeyEvent2.default.IDLE) {
 
           // value.reset();
           self._keyGarbage.push(key);
@@ -2692,7 +2717,7 @@ var Mouse = function () {
 
             var value = event.button;
 
-            if (this._mouseButtonsLocksPressed[value] != KeyEvent.PRESSED && this._mouseButtonsLocksPressed[value] != KeyEvent.PRESS) {
+            if (this._mouseButtonsLocksPressed[value] != MouseEvent.PRESSED && this._mouseButtonsLocksPressed[value] != MouseEvent.PRESS) {
                 this._mouseButtonsLocksPressed[value] = MouseEvent.PRESSED;
                 this._mouseDownDuration[value] = 1;
             }
@@ -3546,74 +3571,61 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var XHR = {
+    createFileRequest: function createFileRequest(file, settings) {
+        var xhrSettings = XHR.merge(settings, file.xhrSettings);
 
-exports.default = function () {
-    function XHR() {
-        _classCallCheck(this, XHR);
-    }
+        var xmlHttpRequest = new XMLHttpRequest();
+        xmlHttpRequest.open("GET", file.source, xhrSettings.async);
 
-    _createClass(XHR, null, [{
-        key: "createFileRequest",
-        value: function createFileRequest(file, settings) {
-            var xhrSettings = XHR.merge(settings, file.xhrSettings);
+        if (file.xhrSettings.responseType !== undefined) xmlHttpRequest.responseType = file.xhrSettings.responseType;
 
-            var xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.open("GET", file.source, xhrSettings.async);
+        xmlHttpRequest.timeout = xhrSettings.timeout;
 
-            if (file.xhrSettings.responseType !== undefined) xmlHttpRequest.responseType = file.xhrSettings.responseType;
-            xmlHttpRequest.timeout = xhrSettings.timeout;
+        xmlHttpRequest.onload = file.onLoad.bind(file);
+        xmlHttpRequest.onerror = file.onError.bind(file);
+        xmlHttpRequest.onprogress = file.onProgress.bind(file);
 
-            xmlHttpRequest.onload = file.onLoad.bind(file);
-            xmlHttpRequest.onerror = file.onError.bind(file);
-            xmlHttpRequest.onprogress = file.onProgress.bind(file);
+        if (file.onReadyStateChange !== undefined) xmlHttpRequest.onreadystatechange = file.onReadyStateChange.bind(file);
 
-            if (file.onReadyStateChange !== undefined) xmlHttpRequest.onreadystatechange = file.onReadyStateChange.bind(file);
+        xmlHttpRequest.send();
 
-            xmlHttpRequest.send();
+        return xmlHttpRequest;
+    },
+    createSettings: function createSettings(type, doAsync, timeout) {
+        if (type === undefined) type = '';
 
-            return xmlHttpRequest;
-        }
-    }, {
-        key: "createSettings",
-        value: function createSettings(type, doAsync, timeout) {
-            if (type === undefined) type = '';
+        if (doAsync === undefined) doAsync = true;
 
-            if (doAsync === undefined) doAsync = true;
+        if (timeout === undefined) timeout = 0;
 
-            if (timeout === undefined) timeout = 0;
+        var settings = {
+            responseType: type,
+            timeout: timeout,
+            async: doAsync
+        };
 
-            var settings = {
-                responseType: type,
-                timeout: timeout,
-                async: doAsync
-            };
+        return settings;
+    },
+    merge: function merge(a, b) {
+        var out = {};
 
-            return settings;
-        }
-    }, {
-        key: "merge",
-        value: function merge(a, b) {
-            var out = {};
+        if (a === undefined) out = XHR.createSettings(); // : Extend(global);
+        // else
+        // do something cool
 
-            if (a === undefined) out = XHR.createSettings(); // : Extend(global);
-            // else
-            // do something cool
-
-            if (b) {
-                for (var setting in b) {
-                    if (b[setting] !== undefined) out[setting] = b[setting];
-                }
+        if (b) {
+            for (var setting in b) {
+                if (b[setting] !== undefined) out[setting] = b[setting];
             }
-
-            return out;
         }
-    }]);
 
-    return XHR;
-}();
+        return out;
+    }
+};
+
+exports.default = XHR;
 
 /***/ }),
 
@@ -4329,6 +4341,18 @@ Object.defineProperty(exports, "__esModule", {
 
 var MathUtils = {
 
+  round: function round(value) {
+
+    // With a bitwise or.
+    //let rounded = (0.5 + value) | 0;
+
+    // FASTEST - A double bitwise not.
+    return ~~(0.5 + value);
+
+    // Finally, a left bitwise shift.
+    //rounded = (0.5 + value) << 0;
+  },
+
   clamp: function clamp(value, min, max) {
     return value > min ? value < max ? value : max : min;
   },
@@ -4977,6 +5001,13 @@ var Vector = function () {
 
       if (this.managed !== undefined) this.managed.markDirty();
 
+      return this;
+    }
+  }, {
+    key: "round",
+    value: function round() {
+      this.x = _MathUtils2.default.round(this.x);
+      this.y = _MathUtils2.default.round(this.y);
       return this;
     }
   }, {
@@ -6015,6 +6046,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = DrawTilemapLayer;
+
+var _MathUtils = __webpack_require__(/*! ../../../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function DrawTilemapLayer(context, tilemap, layer, transform) {
 
     var draws = 0;
@@ -6036,9 +6074,9 @@ function DrawTilemapLayer(context, tilemap, layer, transform) {
         tile.frame.y, // sy - pos crop y
         tile.frame.width, // sWidth - crop width
         tile.frame.height, // sHeight - crop height
-        tile.x, // destination x
-        tile.y, // destination y
-        tile.frame.width, tile.frame.height);
+        _MathUtils2.default.round(tile.x - 0.1), // destination x
+        _MathUtils2.default.round(tile.y - 0.1), // destination y
+        _MathUtils2.default.round(tile.frame.width + 0.1), _MathUtils2.default.round(tile.frame.height + 0.1));
 
         draws++;
     }
@@ -7879,8 +7917,8 @@ var Tile = function Tile(layer, tileData, tileX, tileY, id) {
     this.id = id;
     this.frame = tileData.st;
     // pixels positions
-    this.x = Math.floor(tileX * tileData.st.width);
-    this.y = Math.floor(tileY * tileData.st.height);
+    this.x = Math.round(tileX * tileData.st.width);
+    this.y = Math.round(tileY * tileData.st.height);
 };
 
 exports.default = Tile;

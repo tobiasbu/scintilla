@@ -1,10 +1,8 @@
 
 
-export default (
-    class XHR {
+const XHR = {
 
-    static createFileRequest(file, settings)
-    {
+    createFileRequest(file, settings) {
         var xhrSettings = XHR.merge(settings, file.xhrSettings);
 
         var xmlHttpRequest = new XMLHttpRequest();
@@ -12,6 +10,7 @@ export default (
 
         if (file.xhrSettings.responseType !== undefined)
             xmlHttpRequest.responseType = file.xhrSettings.responseType;
+
         xmlHttpRequest.timeout = xhrSettings.timeout;
 
         xmlHttpRequest.onload = file.onLoad.bind(file);
@@ -24,10 +23,9 @@ export default (
         xmlHttpRequest.send();
 
         return xmlHttpRequest;
-    }
+    },
 
-    static createSettings(type, doAsync, timeout)
-    {
+    createSettings(type, doAsync, timeout) {
         if (type === undefined) 
             type = '';
 
@@ -44,10 +42,9 @@ export default (
         }
 
         return settings;
-    }
+    },
 
-    static merge(a, b)
-    {
+    merge(a, b) {
         var out = {};
 
         if (a === undefined)
@@ -67,7 +64,7 @@ export default (
         return out;
     }
 
+};
 
-
-})
+export default XHR;
 

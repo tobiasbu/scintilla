@@ -16,7 +16,10 @@ export default class Config {
         this.height = callback(config, 'height', 480);
         this.parent = callback(config, 'parent', null);
         this.debug =  callback(config, 'debug', false);
-        
+        //this.floatPrecision = callback(config, 'precision', undefined);
+        //this.fixedFloat = callback(config, 'fixedFloat', undefined);
+        this.roundPixels = callback(config, 'roundPixels', false);
+
         // loader
         this.loader = {
             baseURL : callback_2(config, 'loader.baseURL', ''),

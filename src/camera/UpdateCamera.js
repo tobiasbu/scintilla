@@ -16,12 +16,8 @@ export default function UpdateCamera(camera, canvas) {
     pixelUnit.x = canvas.width / camera.width;
     pixelUnit.y = canvas.height / camera.height;
 
-  if (camera.roundPixels) {
-    t.position.x = Math.round(t.position.x);
-    t.position.y = Math.round(t.position.y);
-  }
-
-  //camera._rotation = camera._angle * MathUtils.degToRad;
+  if (camera.roundPixels)
+    t.position.round();
 
   if (t.rotation != t._oldRotation) {
     t._oldRotation = t.rotation;

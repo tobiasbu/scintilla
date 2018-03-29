@@ -4,6 +4,19 @@
 
 const MathUtils = {
 
+round : function(value) {
+
+    // With a bitwise or.
+    //let rounded = (0.5 + value) | 0;
+    
+    // FASTEST - A double bitwise not.
+    return ~~ (0.5 + value);
+
+    // Finally, a left bitwise shift.
+    //rounded = (0.5 + value) << 0;
+
+},
+
 clamp : function(value, min, max) {
   return (value > min) ? (value < max) ? value : max : min;
 },

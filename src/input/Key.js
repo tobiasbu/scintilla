@@ -1,11 +1,6 @@
 
 
-export const KeyEvent = {
-    NONE : -1,
-    IDLE: 0,
-    PRESSED : 1,
-    RELEASED : 2,
-};
+import KeyEvent from './KeyEvent'
 
 export default class Key {
     

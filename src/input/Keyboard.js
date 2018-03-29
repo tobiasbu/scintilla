@@ -3,6 +3,7 @@
 import Key from './Key'
 import DataMap from '../structures/Map'
 import KeyCode from './KeyCode'
+import KeyEvent from './KeyEvent'
 
 export default class Keyboard {
   

@@ -128,6 +128,12 @@ export default class Vector {
 
   }
 
+  round() {
+    this.x = MathUtils.round(this.x);
+    this.y = MathUtils.round(this.y);
+    return this;
+  }
+
   reverse() {
     this.x = -this.x;
     this.y = -this.y;
@@ -169,6 +175,8 @@ export default class Vector {
 
     return this;
   }
+
+  
 
   dot(other) {
     return Vector.dot(this,other);
