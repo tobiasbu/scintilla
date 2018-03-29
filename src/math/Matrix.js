@@ -168,10 +168,10 @@ class Matrix {
     this.a[6] = position.x; // x
     this.a[7] = position.y; // y
 
-    if (origin !== undefined) {
-      //this.a[6] -= origin.x * this.a[0] + origin.y * this.a[3];
-      //this.a[7] -= origin.y * this.a[1] + origin.y * this.a[4];
-    }
+    /*if (origin !== undefined) {
+      this.a[6] -= origin.x * this.a[0] + origin.y * this.a[3];
+      this.a[7] -= origin.y * this.a[1] + origin.y * this.a[4];
+    }*/
 
     return this;
     /*
@@ -232,6 +232,16 @@ class Matrix {
 
   return this;
  }
+
+ transformPoint(x, y) {
+
+  let point = {x:0,y:0}
+
+  point.x = x * this.a[0] + y * this.a[3] + this.a[6];
+  point.y = x * this.a[1] + y * this.a[4] + this.a[7];
+
+  return point;
+}
 
  transpose() {
   return this.setAll(

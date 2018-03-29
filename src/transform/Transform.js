@@ -24,6 +24,8 @@ export default class Transform {
     //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
   }
 
+  
+
     destroy() {
 
       delete this.position;

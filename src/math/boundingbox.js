@@ -41,17 +41,24 @@ export default class BoundingBox {
 
   }
 
+  move(x, y) {
+    this.min.x += x;
+    this.min.y += y;
+    this.max.x += x;
+    this.max.y += y;
+  }
+
   intersects(bounds) {
     return (
-      (this.max.x > bounds.min.x && 
-      this.max.y > bounds.min.y &&
-      this.min.x < bounds.max.x && 
-      this.min.y < bounds.max.y) ||
+      (this.max.x >= bounds.min.x && 
+      this.max.y >= bounds.min.y &&
+      this.min.x <= bounds.max.x && 
+      this.min.y <= bounds.max.y) ||
 
-      (this.min.x > bounds.max.x &&
-      this.min.y > bounds.max.y &&
-      this.max.x < bounds.min.x &&
-      this.max.y < bounds.min.y));
+      (this.min.x >= bounds.max.x &&
+      this.min.y >= bounds.max.y &&
+      this.max.x <= bounds.min.x &&
+      this.max.y <= bounds.min.y));
   }
 
   contains(x, y) {
@@ -171,6 +178,10 @@ export default class BoundingBox {
       o.y /= this.max.y - this.min.y;
       
     return o;
+  }
+
+  toString() {
+    return "{ min: " + this.min.toString() + ", max: " + this.max.toString() + " }";
   }
 
   

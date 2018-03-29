@@ -1,8 +1,8 @@
 import DataList from "../structures/List";
 import GameSystemManager from "../core/GameSystemManager";
 import UpdateTransform from '../transform/UpdateTransform'
-import UpdateModules from '../modules/UpdateModules'
 import Matrix from '../math/Matrix'
+import ModulesUpdater from "../modules/components/ModulesUpdater";
 
 export default class EntityUpdateList {
 
@@ -49,7 +49,7 @@ export default class EntityUpdateList {
                 
                 UpdateTransform(element.transform, this._camera.transform);
 
-                UpdateModules(element.modules, this.game);
+                ModulesUpdater(element.modules, this.game);
 
                 if (element.transform._isDirty)
                     element.transform._isDirty = false;

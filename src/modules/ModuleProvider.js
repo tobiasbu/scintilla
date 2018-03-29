@@ -1,6 +1,7 @@
 
 
 import DataMap from '../structures/Map'
+import InitializeModuleBase from './components/InitializeModuleBase';
 
 
 class ModuleProviderManager
@@ -10,19 +11,29 @@ class ModuleProviderManager
         this.proxyModules = new DataMap();
     }
 
-    attach(manager, moduleName, args)
+    attach(modulesManager, moduleName, args)
     {
-        let modules = manager.attached;
+        let attached = modulesManager.attached;
 
-        if (modules.has(moduleName))
+        if (attached.has(moduleName))
             throw new Error('ModuleManager.attach: Could not attach module ' + moduleName + '. Already exists');
 
         if (!this.proxyModules.has(moduleName))
             throw new Error('ModuleManager.attach: Module type ' + moduleName + ' don\'t exists.');
 
-        var mod = this.proxyModules.get(moduleName)(manager, args);
-        manager._pendingModules.push(mod);
-        return mod;
+        // create a new module
+        let newModule = this.proxyModules.get(moduleName)(modulesManager, args);
+
+        // initialize entity module
+        InitializeModuleBase(newModule, modulesManager.entity);
+
+        // attach the new module to manager
+        attached.set(newModule.type, newModule);
+
+        // add to pending initialization list
+        modulesManager._pendingModulesInitialization.push(newModule);
+
+        return newModule;
     }
 
     register(moduleName, func)

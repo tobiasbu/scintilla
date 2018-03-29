@@ -75,12 +75,13 @@ export default class Draw {
 
   outlineRectangle(x,y,width,height,color,outlineWidth) {
 
-    this.context.beginPath();
+    //this.context.beginPath();
     this.context.lineWidth=outlineWidth;
-    this.context.setLineDash([6]);
+    //this.context.setLineDash([6]);
     this.context.strokeStyle=color;
-    this.context.rect(x,y,width,height);
-    this.context.stroke();
+    this.context.strokeRect(x, y, width, height);
+    //this.context.rect(x,y,width,height);
+    //this.context.stroke();
 
   }
 
@@ -96,12 +97,12 @@ export default class Draw {
 
   }
 
-  boundingbox(bb,color) {
+  bounds(bb,color) {
 
   if (color === undefined)
-    color = 'black';
-    this.context.setTransform(1,0,0,1,0,0);
-  this.outlineRectangle(bb.min.x,bb.min.y,bb.max.x-bb.min.x,bb.max.y-bb.min.y,color,2);
+    color = 'red';
+  this.context.setTransform(1,0,0,1,0,0);
+  this.outlineRectangle(bb.min.x,bb.min.y,bb.max.x-bb.min.x,bb.max.y-bb.min.y,color,1);
 
   }
 

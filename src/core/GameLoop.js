@@ -64,19 +64,14 @@ export default class GameLoop {
                     this.currentScene.loading(deltaTime);
             }
 
-            //console.clear();
-
             UpdateCamera(this.camera, this.canvas);
             
-            //console.log(this.camera.transform.matrix.toString())
-            
-
             this.entityUpdateList.update(deltaTime);
 
             this.entityUpdateList.lateUpdate(deltaTime);
 
-            if (this.camera._isDirty)
-                this.camera._isDirty = false;
+            if (this.camera.transform._isDirty)
+                this.camera.transform._isDirty = false;
 
         }
 

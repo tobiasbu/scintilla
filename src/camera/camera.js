@@ -4,6 +4,7 @@ import Transform  from '../transform/Transform';
 import Color from '../utils/Color'
 import GameSystemManager from '../core/GameSystemManager';
 import MathUtils from '../math/MathUtils'
+import Vector from '../math/Vector'
 
 export default class Camera {
   
@@ -35,27 +36,27 @@ export default class Camera {
   set position(value) { 
     this.transform.position.x = value.x;
     this.transform.position.y = value.y; 
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
   get x() {return this.transform.position.x;}
   set x(value) { 
     this.transform.position.x = value; 
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
   
   get y() {return this.transform.position.y;}
   set y(value) { 
     this.transform.position.y = value; 
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
 
   get scale() { return this.transform.scale.x; }
   set scale(value) { 
     this.transform.scale.x = value; 
-    this._isDirty = true; 
+    this.transform._isDirty = true; 
     return this;
   }
 
@@ -63,15 +64,15 @@ export default class Camera {
   set angle(value) { 
     this.transform.angle = value; 
     this.transform.rotation = value * MathUtils.degToRad;
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
 
   get origin() { return this.transform.origin; }
   set origin(value) {
-    this.transform.origin.x = value.x;
-    this.transform.origin.y = value.y;
-    this._isDirty = true;
+    this.transform.x = value.x;
+    this.transform.y = value.y;
+    this.transform._isDirty = true;
     return this;
   }
 
@@ -88,24 +89,24 @@ export default class Camera {
 
   set roundPixels(flag) {
     this._roundPixels = flag;
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
   get size() {
-    return {x:this._view.width, y:this._view.height};
+    return {x:this.width, y:this.height};
   }
 
   centerView() {
     this.x = this.width * 0.5;
     this.y = this.height * 0.5;
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
 
   centerToEntity(entity) {
     this.x = entity.position.x;
     this.y = entity.position.y;
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
 
@@ -120,7 +121,7 @@ export default class Camera {
 
   setSize(width, height) {
     this._onResize(width, height);
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
 
@@ -128,7 +129,7 @@ export default class Camera {
     this.transform.position.x = x;
     this.transform.position.y = y;
     this._onResize(width, height);
-    this._isDirty = true;
+    this.transform._isDirty = true;
     return this;
   }
 

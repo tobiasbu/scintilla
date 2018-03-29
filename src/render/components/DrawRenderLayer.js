@@ -25,6 +25,8 @@
             if (camera.bounds.intersects(element.bounds))
             {
                 drawCalls += element.render(context);
+
+            camera.game.system.draw.bounds(element.bounds);
             }
         }
 

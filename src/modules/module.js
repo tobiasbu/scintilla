@@ -1,9 +1,10 @@
 
 export default class Module
 {
-    constructor(name, moduleManager)
+    constructor(moduleType, moduleName, moduleManager)
     {
-        this._type = name || "none";
+        this._moduleType = moduleType || "none";
+        this._moduleName = moduleName || "noName";
         this._enabled = true;
         this.entity = null;
         this.moduleManager = moduleManager || undefined;
@@ -15,15 +16,9 @@ export default class Module
         //this.game = moduleManager.game || null;
     }
 
-    init(instace, game) {
 
-        this.entity = instace;
-        //this.game = game;
-        this.moduleManager = instace.modules;
-
-    }
-
-    get type() {return this._type;}
+    get type() {return this._moduleType;}
+    get name() {return this._moduleName;}
     get enabled() {return this._enabled;}
     set enabled(value) {
         value = !!value;

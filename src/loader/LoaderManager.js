@@ -287,8 +287,6 @@ export default class LoadManager {
         return (a.type > b.type);
       });
 
-      console.log(this._processedFiles);
-
       this._processedFiles.each(function(file) {
 
         switch (file.type)

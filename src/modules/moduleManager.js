@@ -10,7 +10,7 @@ export default class ModuleManager
     {
         this.entity = entity || null;
         this.attached = new DataMap();
-        this._pendingModules = new DataList();
+        this._pendingModulesInitialization = new DataList();
         this.attach = new ModuleAttacher(this);
     }
 
@@ -21,6 +21,10 @@ export default class ModuleManager
 
     has(moduleName) {
         return this.attached.has(moduleName);
+    }
+
+    get(moduleName) {
+        return this.attached.get(moduleName);
     }
 
 } 

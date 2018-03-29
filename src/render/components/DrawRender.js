@@ -50,7 +50,11 @@ export default function DrawRender(render, camera, delta) {
         render.drawCalls += drawCalls;
     }
 
+    camera.game.system.draw.bounds(camera.bounds);
+
     render.context.setTransform(1, 0, 0, 1, 0, 0);
+
+    
 
     render.game.scene.render();
 

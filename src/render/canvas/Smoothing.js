@@ -29,10 +29,6 @@ export default class CanvasSmoothing {
         if (this.prefix === '' || this.prefix === undefined)
             this.prefix = this.getPrefix(this.context);
 
-        //
-
-        console.log(flag);
-
         if (this.prefix)
             this.context[this.prefix] = flag;
 

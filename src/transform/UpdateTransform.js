@@ -22,9 +22,6 @@ export default function UpdateTransform(transform, parentTransform) {
         return;
 
 
-    let a, b, c, d, x, y;
-    let wt = transform.matrix;
-
     transform.rotation = transform.angle * MathUtils.degToRad;
 
      // if (transform.rotation % MathUtils.TAU) {
@@ -37,8 +34,6 @@ export default function UpdateTransform(transform, parentTransform) {
             transform._cosSin.x = Math.cos(transform.rotation);
         }
 
-
-       
 
         transform.matrix.setModelMatrix(
           transform.position, 

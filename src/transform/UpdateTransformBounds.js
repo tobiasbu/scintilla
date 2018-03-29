@@ -8,7 +8,7 @@ import ComputeDelimiterPoint from './ComputeDelimiterPoint';
 export default function UpdateTransformBounds(bounds, frame, transform) {
     
   let coords = [];
-  let scale = Vector.abs(transform.scale);
+ /* let scale = Vector.abs(transform.scale);
   let pos = transform.position;
   let anchor = transform.origin;
   let size = {
@@ -21,17 +21,22 @@ export default function UpdateTransformBounds(bounds, frame, transform) {
   pos.x -= anchor.x;
   pos.y -= anchor.y;
   anchor.x += pos.x;
-  anchor.y += pos.y;
+  anchor.y += pos.y;*/
   
-  coords[0] = ComputeDelimiterPoint( pos.x, pos.y, rotation, anchor);
-  coords[1] = ComputeDelimiterPoint( pos.x + size.x,  pos.y, rotation, anchor);
-  coords[2] = ComputeDelimiterPoint( pos.x , pos.y + size.y, rotation, anchor);
-  coords[3] = ComputeDelimiterPoint( pos.x + size.x , pos.y + size.y, rotation, anchor);
+  //coords[0] = ComputeDelimiterPoint( pos.x, pos.y, transform._cosSin, anchor);
+  //coords[1] = ComputeDelimiterPoint( pos.x + size.x,  pos.y, transform._cosSin, anchor);
+  //coords[2] = ComputeDelimiterPoint( pos.x , pos.y + size.y, transform._cosSin, anchor);
+  //coords[3] = ComputeDelimiterPoint( pos.x + size.x , pos.y + size.y, transform._cosSin, anchor);
 
-  bounds.min.x = Math.min(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
-  bounds.min.y = Math.min(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
-  bounds.max.x = Math.max(coords[0].x,coords[1].x,coords[2].x,coords[3].x);
-  bounds.max.y = Math.max(coords[0].y,coords[1].y,coords[2].y,coords[3].y);
+  let top = transform.matrix.transformPoint(0, 0);
+  let left = transform.matrix.transformPoint(frame.width, 0);
+  let bottom = transform.matrix.transformPoint(0, frame.height);
+  let right = transform.matrix.transformPoint(frame.width, frame.height);
+
+  bounds.min.x = Math.min(top.x,left.x,bottom.x,right.x);
+  bounds.min.y = Math.min(top.y,left.y,bottom.y,right.y);
+  bounds.max.x = Math.max(top.x,left.x,bottom.x,right.x);
+  bounds.max.y = Math.max(top.y,left.y,bottom.y,right.y);
 
 }
 

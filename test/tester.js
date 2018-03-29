@@ -52,12 +52,16 @@ scene.preload = function() {
 var t = null;
 
 scene.start = function() {
-    t = this.create.tilemap('tilemap');
-    t.position.x = 0;
-    t.position.y = 0;
-    t.origin.set(0,0);
+    //t = this.create.tilemap('tilemap');
+    t = this.create.sprite('test');
+    t.position.x = 100;
+    t.position.y = 100;
+    //let render = t.modules.get('render');
+    t.origin.x = 0.5;
+    t.origin.y = 0.5;
     t.update = function(dt){
-        //this.angle += game.time.delta * 20;
+      
+        this.angle += game.time.delta * 20;
         //this.position.x += 10 * dt;
     }
 }
@@ -70,22 +74,21 @@ scene.render = function() {
 
   scene.update = function(dt) {
 
-    
+    //
     //x += game.time.deltaTime * 20;
 
-    //this.camera.x += dt * 20;
-    //this.camera.angle += dt * 100;
+
     //console.log(this.camera.x);
 
-    if (game.input.keyboard.pressed(scintilla.KeyCode.Space)) 
+    if (game.input.keyboard.press(scintilla.KeyCode.Right)) 
     {
-        console.log("pressed")
+        this.camera.x += dt * 50;
+    }
+    if (game.input.keyboard.press(scintilla.KeyCode.Left)) 
+    {
+        this.camera.x -= dt * 50;
     }
 
-    if (game.input.keyboard.release(scintilla.KeyCode.Space)) 
-    {
-        console.log("release")
-    }
 
 
   }

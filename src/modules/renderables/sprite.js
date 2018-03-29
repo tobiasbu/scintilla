@@ -9,12 +9,17 @@ export default class Sprite extends Renderable {
 
     constructor(moduleManager)
     {
-        super(moduleManager);
+        super('sprite', moduleManager);
 
         //this._type = "sprite";
         this.source = null;
         this.frame = new Rect();
+   
+    
     }
+
+    get width() {return this.frame.width; }
+    get height() {return this.frame.height; }
 
     setFrame(x, y, width, height)
     {
@@ -30,8 +35,6 @@ export default class Sprite extends Renderable {
 
         if (this.entity != null || this.entity !== undefined) {
             var sprite = this.entity.game.system.cache.image.get(tag);
-           
-            console.log(sprite);
 
             if (sprite != null) {
                 this.setSource(sprite.data, true);
@@ -55,20 +58,16 @@ export default class Sprite extends Renderable {
       
     }
 
-    moduleUpdate() {
-
-        if (!this.entity.transform._isDirty)
-            return;
-
-        UpdateTransformBounds(this.bounds, this.frame, this.entity.transform);
-    }
-
     render(context)
     {
-        if (!this._visible)
+        if (!this._enabled)
             return false;
 
-        return DrawImage(context, this.source, this.entity.transform, this.frame);
+        DrawImage(context, 
+            this.source, this.frame,
+            this.entity.transform, this._originInPixels);
+   
+       return true;
     }
 }
 
