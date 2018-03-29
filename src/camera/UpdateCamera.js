@@ -49,8 +49,5 @@ export default function UpdateCamera(camera, canvas) {
     camera.bounds, camera.transform, 
     camera.width, camera.height, 
     pos);
-  //camera.bounds.move(t.position.x + origin.x, t.position.y + origin.y);
-
-
 
 }
