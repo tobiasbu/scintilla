@@ -8,6 +8,7 @@ export default class TilemapLayer extends Renderable {
         super('tilemapLayer', tilemap.moduleManager);     
         this.tilemap = tilemap;
         this.layerData = layerData;
+       
     }
 
 
@@ -17,12 +18,11 @@ export default class TilemapLayer extends Renderable {
 
     render(context) {
 
-        if (!this._visible && !this.tilemap.visible)
+        if (!this._enabled && !this.tilemap._enabled)
             return false;
 
-        DrawTilemapLayer(context, this.tilemap, this.layerData, this.tilemap.moduleManager.entity.transform);
-    
-        return true;
+        return DrawTilemapLayer(context, this.tilemap, this.layerData, this.tilemap.moduleManager.entity.transform);
+
     }
 
 }

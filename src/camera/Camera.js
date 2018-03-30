@@ -5,26 +5,39 @@ import Color from '../utils/Color'
 import GameSystemManager from '../core/GameSystemManager';
 import MathUtils from '../math/MathUtils'
 import Vector from '../math/Vector'
+import ResizeCamera from './ResizeCamera';
 
 export default class Camera {
   
   constructor(game) {
 
     this.game = game;
-    //this._view = new Rect(0, 0, game.config.width, game.config.height);
-    this.bounds = new BoundingBox();
-    this.transform = new Transform();
+    this.canvas = null;
+
+   
     this.width = game.config.camera.width;
     this.height = game.config.camera.height;
-    this._onResize(this.width, this.height);
+
+
+    this.bounds = new BoundingBox(); // render bounds
+    this.viewBounds = new BoundingBox(0,0, this.width, this.height); // global bounds
+    this.transform = new Transform();
+   
+    
     //this.transform.origin.set(0.5,0.5)
     //this.centerView();
-    this._resolution = 1;
-    this.aspectRatio = 1;
+    // this._resolution = 1;
+    this._pixelUnit = {x:1,y:1};    
+    this._aspectRatio = 1;
 
     this._backgroundColor = Color.rgbToHex(0,0,0);
-    this._roundPixels = false;
+    this._roundPixels = game.config.roundPixels;
 
+  }
+
+  init() {
+    this.canvas = this.game.system.render.canvas;
+    ResizeCamera(this, this.canvas, this.width, this.height);
   }
 
   get position() { 
@@ -120,7 +133,7 @@ export default class Camera {
   }
 
   setSize(width, height) {
-    this._onResize(width, height);
+    ResizeCamera(this, this.canvas, width, height);
     this.transform._isDirty = true;
     return this;
   }
@@ -128,22 +141,13 @@ export default class Camera {
   setView(x, y, width, height) {
     this.transform.position.x = x;
     this.transform.position.y = y;
-    this._onResize(width, height);
+    ResizeCamera(width, height);
     this.transform._isDirty = true;
     return this;
   }
 
   reset() {
     this.transform.reset();
-  }
-
-  _onResize(width, height) {
-
-    this.width = width;
-    this.height = height;
-    this.aspectRatio = this.width / this.height;
-    //this._areaRatio = (this.width - (_aspectPreviewRatioBox.x * 2)) / height;
-    //this._pixelUnit =  (height / (settings.OrthographicSize * 2)) * _areaRatio;
   }
 
 }

@@ -10,8 +10,8 @@ export default class TilemapMetadata {
         this.height =  ObjectUtils.getValue(config,'height',0);
         this.tileWidth =  ObjectUtils.getValue(config,'tileWidth',16);
         this.tileHeight =  ObjectUtils.getValue(config,'tileHeight',16);
-        this.widthPixels = ObjectUtils.getValue(config,'pixelsWidth',this.width * this.tileWidth);
-        this.heightPixels = ObjectUtils.getValue(config,'pixelsHeight',this.height * this.tileHeight);
+        this.pixelsWidth = ObjectUtils.getValue(config,'pixelsWidth',this.width * this.tileWidth);
+        this.pixelsHeight = ObjectUtils.getValue(config,'pixelsHeight',this.height * this.tileHeight);
         this.orientation = ObjectUtils.getValue(config, 'orientation', 'orthogonal');
     }
 

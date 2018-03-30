@@ -16,9 +16,9 @@ export default class Config {
         this.height = callback(config, 'height', 480);
         this.parent = callback(config, 'parent', null);
         this.debug =  callback(config, 'debug', false);
-        //this.floatPrecision = callback(config, 'precision', undefined);
-        //this.fixedFloat = callback(config, 'fixedFloat', undefined);
+
         this.roundPixels = callback(config, 'roundPixels', false);
+        this.floorTiles = callback(config, 'floorTiles', false),
 
         // loader
         this.loader = {
@@ -27,6 +27,8 @@ export default class Config {
             responseType : callback_2(config, 'loader.responseType', ''),
             async : callback_2(config, 'loader.async', true),
         }
+
+
 
         this.fps = callback(config, 'fps', 60);
 

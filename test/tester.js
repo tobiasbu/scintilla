@@ -20,7 +20,9 @@ var config = {
     parent: "canvas-container",
     debug: true,
     fps: 60,
-    pixelated: true
+    pixelated: true,
+    roundPixels : false,
+    floorTiles : true
 };
   
   var game = new scintilla.Game(config);
@@ -52,8 +54,10 @@ scene.preload = function() {
 var t = null;
 
 scene.start = function() {
-    this.camera.roundPixels = true;
+
     t = this.create.tilemap('tilemap');
+    t.origin.set(0,0)
+    t.angle = 0;
     //t = this.create.sprite('test');
     //t.position.y = 100;
     

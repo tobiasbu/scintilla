@@ -1,17 +1,59 @@
 import MathUtils from "../../../math/MathUtils";
+import CullingMethod from "./CullingMethod";
 
 export default function DrawTilemapLayer(context, tilemap, layer, transform) {
 
     let draws = 0;
     let matrix = transform.matrix;
+    let x = matrix.a[6];
+    let y = matrix.a[7];
 
+    if (tilemap.floorTiles)
+    {
+       x = Math.round(x);
+       y = Math.round(y);
+    }
     context.setTransform(
         matrix.a[0], matrix.a[1], // 2
         matrix.a[3], matrix.a[4], // 5
-        matrix.a[6], matrix.a[7]);
+        x, y);
+
+    if (tilemap.culling.method <= 1) {
+
+        let idx = 0;
+
+        for (let j = tilemap.culling.start.y; j < tilemap.culling.end.y; j++) {
+            for (let i = tilemap.culling.start.x; i < tilemap.culling.end.x; i++) {
+    
+                //if (tilemap.culling.method == CullingMethod.LINEAR)
+                    idx = i + j * tilemap.width;
+                //else if (tilemap.culling.method == CullingMethod.LINEAR90DEG)
+                //    idx = j + i * tilemap.width;
+
+                let tile = layer.tiles[idx];
+
+                if (tile == null || tile === undefined) continue;
+
+
+                context.drawImage(
+                tile.data.tileset.image.data, // image
+                tile.frame.x, // sx - pos crop x
+                tile.frame.y, // sy - pos crop y
+                tile.frame.width, // sWidth - crop width
+                tile.frame.height, // sHeight - crop height
+                tile.x - tilemap._originInPixels.x, // destination x
+                tile.y - tilemap._originInPixels.y,  // destination y
+                tile.frame.width,
+                tile.frame.height
+                    );
+
+                draws++;
+            }
+        }
+    }
     
    //for (let i = 0; i < layer.culledTiles.lenght; i++) {
-    for (let i = 0; i < layer.tiles.length; i++) {
+    /*for (let i = 0; i < layer.tiles.length; i++) {
 
         let tile = layer.tiles[i];
 
@@ -29,16 +71,9 @@ export default function DrawTilemapLayer(context, tilemap, layer, transform) {
             tile.frame.height
                 );
 
-                draws++;
+        draws++;
 
-    }
-
-    /*
-MathUtils.round(tile.x - 0.1), // destination x
-            MathUtils.round(tile.y - 0.1),  // destination y
-            MathUtils.round(tile.frame.width + 0.1),
-            MathUtils.round(tile.frame.height + 0.1)
-    */
+    }*/
 
     return draws;
 

@@ -21,20 +21,35 @@ export default class Rect {
     return vec;
   }
 
-  intersects(rect) {
-      return Rect.intersects(this, rect);
-  }
-
-  contains(x,y) {
-    return Rect.contains(this,x,y);
-  }
-
   set(x,y,width,height) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+    return this;
   }
+
+  setPostion(x,y) {
+    this.x = x;
+    this.y = y;
+    return this;
+  }
+
+  setSize(width, height) {
+    this.width = width;
+    this.height = height;
+    return this;
+  }
+
+  
+  intersects(rect) {
+    return Rect.intersects(this, rect);
+  }
+
+  contains(x,y) {
+  return Rect.contains(this,x,y);
+  }
+
 
   static intersects(rect1, rect2) {
 

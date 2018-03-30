@@ -1,23 +1,16 @@
 import UpdateBounds from "../transform/UpdateBounds";
 import ComputeDelimiterPoint from "../transform/ComputeDelimiterPoint";
 import ComputeBounds from "../transform/ComputeBounds";
+import MathUtils from "../math/MathUtils";
 
 
 export default function UpdateCamera(camera, canvas) {
     
-    if (!camera.transform._isDirty)
-        return;
+  if (!camera.transform._isDirty)
+    return;
 
-    let t = camera.transform;
+  let t = camera.transform;
 
-
-  let pixelUnit = {x:1,y:1};
-
-    pixelUnit.x = canvas.width / camera.width;
-    pixelUnit.y = canvas.height / camera.height;
-
-  if (camera.roundPixels)
-    t.position.round();
 
   if (t.rotation != t._oldRotation) {
     t._oldRotation = t.rotation;
@@ -30,16 +23,29 @@ export default function UpdateCamera(camera, canvas) {
     y: camera.height * t.origin.y
   };
 
-  let pos = {x: -(t.position.x + origin.x),
-             y: -(t.position.y + origin.y)};
+  let pos = {x: (t.position.x + origin.x),
+             y: (t.position.y + origin.y)};
 
-  // todo resolution
+  if (camera._roundPixels) {
+    pos.x = MathUtils.round(pos.x);
+    pos.y = MathUtils.round(pos.y);
+  }
+
+  // update camera view
+  camera.viewBounds
+  .setMin(pos.x, pos.y)
+  .setMax(pos.x + camera.width, pos.y + camera.height)
+
+  pos.x = -pos.x;
+  pos.y = -pos.y;
+
+  // compute the basic rotation
   t.matrix.setIdentity()
-  .scale(pixelUnit.x, pixelUnit.y) // resolution
+  .scale(camera._pixelUnit.x, camera._pixelUnit.y) // resolution
   .translate(pos.x , pos.y)
   .scale(t.scale.x, t.scale.x)
   
-
+  // bounds should not be rotated
   ComputeBounds(
     camera.bounds, camera.transform, 
     camera.width, camera.height, 

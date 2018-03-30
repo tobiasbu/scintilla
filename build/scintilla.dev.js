@@ -452,6 +452,10 @@ var _Vector = __webpack_require__(/*! ../math/Vector */ "./math/Vector.js");
 
 var _Vector2 = _interopRequireDefault(_Vector);
 
+var _ResizeCamera = __webpack_require__(/*! ./ResizeCamera */ "./camera/ResizeCamera.js");
+
+var _ResizeCamera2 = _interopRequireDefault(_ResizeCamera);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -461,22 +465,32 @@ var Camera = function () {
     _classCallCheck(this, Camera);
 
     this.game = game;
-    //this._view = new Rect(0, 0, game.config.width, game.config.height);
-    this.bounds = new _BoundingBox2.default();
-    this.transform = new _Transform2.default();
+    this.canvas = null;
+
     this.width = game.config.camera.width;
     this.height = game.config.camera.height;
-    this._onResize(this.width, this.height);
+
+    this.bounds = new _BoundingBox2.default(); // render bounds
+    this.viewBounds = new _BoundingBox2.default(0, 0, this.width, this.height); // global bounds
+    this.transform = new _Transform2.default();
+
     //this.transform.origin.set(0.5,0.5)
     //this.centerView();
-    this._resolution = 1;
-    this.aspectRatio = 1;
+    // this._resolution = 1;
+    this._pixelUnit = { x: 1, y: 1 };
+    this._aspectRatio = 1;
 
     this._backgroundColor = _Color2.default.rgbToHex(0, 0, 0);
-    this._roundPixels = false;
+    this._roundPixels = game.config.roundPixels;
   }
 
   _createClass(Camera, [{
+    key: 'init',
+    value: function init() {
+      this.canvas = this.game.system.render.canvas;
+      (0, _ResizeCamera2.default)(this, this.canvas, this.width, this.height);
+    }
+  }, {
     key: 'centerView',
     value: function centerView() {
       this.x = this.width * 0.5;
@@ -513,7 +527,7 @@ var Camera = function () {
   }, {
     key: 'setSize',
     value: function setSize(width, height) {
-      this._onResize(width, height);
+      (0, _ResizeCamera2.default)(this, this.canvas, width, height);
       this.transform._isDirty = true;
       return this;
     }
@@ -522,7 +536,7 @@ var Camera = function () {
     value: function setView(x, y, width, height) {
       this.transform.position.x = x;
       this.transform.position.y = y;
-      this._onResize(width, height);
+      (0, _ResizeCamera2.default)(width, height);
       this.transform._isDirty = true;
       return this;
     }
@@ -530,16 +544,6 @@ var Camera = function () {
     key: 'reset',
     value: function reset() {
       this.transform.reset();
-    }
-  }, {
-    key: '_onResize',
-    value: function _onResize(width, height) {
-
-      this.width = width;
-      this.height = height;
-      this.aspectRatio = this.width / this.height;
-      //this._areaRatio = (this.width - (_aspectPreviewRatioBox.x * 2)) / height;
-      //this._pixelUnit =  (height / (settings.OrthographicSize * 2)) * _areaRatio;
     }
   }, {
     key: 'position',
@@ -648,6 +652,31 @@ _GameSystemManager2.default.register('Camera', Camera, 'camera');
 
 /***/ }),
 
+/***/ "./camera/ResizeCamera.js":
+/*!********************************!*\
+  !*** ./camera/ResizeCamera.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ResizeCamera;
+function ResizeCamera(camera, canvas, width, height) {
+
+    camera.width = width;
+    camera.height = height;
+    camera._aspectRatio = width / height;
+    camera._pixelUnit.x = canvas.width / camera.width;
+    camera._pixelUnit.y = canvas.height / camera.height;
+}
+
+/***/ }),
+
 /***/ "./camera/UpdateCamera.js":
 /*!********************************!*\
   !*** ./camera/UpdateCamera.js ***!
@@ -675,6 +704,10 @@ var _ComputeBounds = __webpack_require__(/*! ../transform/ComputeBounds */ "./tr
 
 var _ComputeBounds2 = _interopRequireDefault(_ComputeBounds);
 
+var _MathUtils = __webpack_require__(/*! ../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function UpdateCamera(camera, canvas) {
@@ -682,13 +715,6 @@ function UpdateCamera(camera, canvas) {
   if (!camera.transform._isDirty) return;
 
   var t = camera.transform;
-
-  var pixelUnit = { x: 1, y: 1 };
-
-  pixelUnit.x = canvas.width / camera.width;
-  pixelUnit.y = canvas.height / camera.height;
-
-  if (camera.roundPixels) t.position.round();
 
   if (t.rotation != t._oldRotation) {
     t._oldRotation = t.rotation;
@@ -701,13 +727,25 @@ function UpdateCamera(camera, canvas) {
     y: camera.height * t.origin.y
   };
 
-  var pos = { x: -(t.position.x + origin.x),
-    y: -(t.position.y + origin.y) };
+  var pos = { x: t.position.x + origin.x,
+    y: t.position.y + origin.y };
 
-  // todo resolution
-  t.matrix.setIdentity().scale(pixelUnit.x, pixelUnit.y) // resolution
+  if (camera._roundPixels) {
+    pos.x = _MathUtils2.default.round(pos.x);
+    pos.y = _MathUtils2.default.round(pos.y);
+  }
+
+  // update camera view
+  camera.viewBounds.setMin(pos.x, pos.y).setMax(pos.x + camera.width, pos.y + camera.height);
+
+  pos.x = -pos.x;
+  pos.y = -pos.y;
+
+  // compute the basic rotation
+  t.matrix.setIdentity().scale(camera._pixelUnit.x, camera._pixelUnit.y) // resolution
   .translate(pos.x, pos.y).scale(t.scale.x, t.scale.x);
 
+  // bounds should not be rotated
   (0, _ComputeBounds2.default)(camera.bounds, camera.transform, camera.width, camera.height, pos);
 
   t.matrix.radianRotate(t._cosSin.x, t._cosSin.y).translate(-origin.x, -origin.y);
@@ -750,8 +788,9 @@ var Config = function Config(config) {
         this.height = callback(config, 'height', 480);
         this.parent = callback(config, 'parent', null);
         this.debug = callback(config, 'debug', false);
-        //this.floatPrecision = callback(config, 'precision', undefined);
-        //this.fixedFloat = callback(config, 'fixedFloat', undefined);
+
+        this.roundPixels = callback(config, 'roundPixels', false);
+        this.floorTiles = callback(config, 'floorTiles', false),
 
         // loader
         this.loader = {
@@ -4178,7 +4217,21 @@ var BoundingBox = function () {
 
       this.min.set(minX, minY);
       this.max.set(maxX, maxY);
-      this.box.set(this.min.x, this.min.y, this.max.x - this.min.x, this.max.y - this.min.y);
+      //this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
+      return this;
+    }
+  }, {
+    key: 'setMin',
+    value: function setMin(minX, minY) {
+      this.min.x = minX;
+      this.min.y = minY;
+      return this;
+    }
+  }, {
+    key: 'setMax',
+    value: function setMax(maxX, maxY) {
+      this.max.x = maxX;
+      this.max.y = maxY;
       return this;
     }
   }, {
@@ -4341,6 +4394,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var MathUtils = {
 
+  degToRad: Math.PI / 180,
+  radToDeg: 180 / Math.PI,
+  TAU: Math.PI * 2,
+  //HALFPI : Math.PI / 2,
+  EPSILON: Math.pow(2, -52),
+  HALFPI: 1.5707963267948966,
+
   round: function round(value) {
 
     // With a bitwise or.
@@ -4416,10 +4476,6 @@ var MathUtils = {
 
     return angle;
   },
-
-  degToRad: Math.PI / 180,
-  radToDeg: 180 / Math.PI,
-  TAU: Math.PI * 2,
 
   toDegree: function toDegree(radians) {
 
@@ -4794,6 +4850,29 @@ var Rect = function () {
   }
 
   _createClass(Rect, [{
+    key: "set",
+    value: function set(x, y, width, height) {
+      this.x = x;
+      this.y = y;
+      this.width = width;
+      this.height = height;
+      return this;
+    }
+  }, {
+    key: "setPostion",
+    value: function setPostion(x, y) {
+      this.x = x;
+      this.y = y;
+      return this;
+    }
+  }, {
+    key: "setSize",
+    value: function setSize(width, height) {
+      this.width = width;
+      this.height = height;
+      return this;
+    }
+  }, {
     key: "intersects",
     value: function intersects(rect) {
       return Rect.intersects(this, rect);
@@ -4802,14 +4881,6 @@ var Rect = function () {
     key: "contains",
     value: function contains(x, y) {
       return Rect.contains(this, x, y);
-    }
-  }, {
-    key: "set",
-    value: function set(x, y, width, height) {
-      this.x = x;
-      this.y = y;
-      this.width = width;
-      this.height = height;
     }
   }, {
     key: "center",
@@ -5540,7 +5611,7 @@ function ModulesUpdater(modulesManager, game) {
 
     var render = modulesManager.attached.get('render');
     if (render !== undefined || render != null) {
-        (0, _UpdateRenderable2.default)(entity, render);
+        (0, _UpdateRenderable2.default)(entity, render, game.system.camera);
     }
 }
 
@@ -5611,14 +5682,11 @@ var Renderable = function (_Module) {
 
         _this._layerID = 0;
         _this._depth = 0;
-        _this._visible = true;
         _this._alpha = 1;
         _this._depthDirty = true;
         _this._bounds = new _BoundingBox2.default();
         _this._originInPixels = { x: 0, y: 0 };
         _this._originIsDirty = true;
-
-        //this.type = EntityType.Renderable;
         return _this;
     }
 
@@ -5627,9 +5695,6 @@ var Renderable = function (_Module) {
         get: function get() {
             return this._bounds;
         }
-
-        //get originInPixels() {return this._originInPixels; }
-
     }, {
         key: 'depth',
         get: function get() {
@@ -5640,15 +5705,6 @@ var Renderable = function (_Module) {
                 this._depthSorting = value;
                 this._depthDirty = true;
             }
-            return this;
-        }
-    }, {
-        key: 'visible',
-        get: function get() {
-            return this._visible;
-        },
-        set: function set(value) {
-            this._visible = value;
             return this;
         }
     }, {
@@ -5831,8 +5887,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 var _Renderable2 = __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js");
 
 var _Renderable3 = _interopRequireDefault(_Renderable2);
@@ -5848,6 +5902,10 @@ var _TilemapLayer2 = _interopRequireDefault(_TilemapLayer);
 var _UpdateBounds = __webpack_require__(/*! ../../transform/UpdateBounds */ "./transform/UpdateBounds.js");
 
 var _UpdateBounds2 = _interopRequireDefault(_UpdateBounds);
+
+var _CullTiles = __webpack_require__(/*! ./components/CullTiles */ "./modules/renderables/components/CullTiles.js");
+
+var _CullTiles2 = _interopRequireDefault(_CullTiles);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5868,12 +5926,19 @@ var Tilemap = function (_Renderable) {
 
         _this.tileWidth = resource.metaData.tileWidth;
         _this.tileHeight = resource.metaData.tileHeight;
-        _this.mapWidth = resource.metaData.width;
-        _this.mapHeight = resource.metaData.height;
+        _this.width = resource.metaData.width;
+        _this.height = resource.metaData.height;
         _this.orientation = resource.metaData.orientation;
         _this.pixelsWidth = resource.metaData.pixelsWidth;
         _this.pixelsHeight = resource.metaData.pixelsHeight;
 
+        _this.culling = {
+            method: 0,
+            start: { x: 0, y: 0 },
+            end: { x: 0, y: 0 }
+        };
+
+        _this.floorTiles = false;
         _this.tilesets = resource.tilesets;
         _this.layers = [];
 
@@ -5881,17 +5946,6 @@ var Tilemap = function (_Renderable) {
             _this.layers.push(new _TilemapLayer2.default(_this, resource.layers.at(i)));
         }return _this;
     }
-
-    _createClass(Tilemap, [{
-        key: "moduleUpdate",
-        value: function moduleUpdate() {
-            if (!this.entity.transform._isDirty) return;
-
-            (0, _UpdateBounds2.default)(this.bounds, this.entity.transform.position.x, this.entity.transform.position.y, this.pixelsWidth, this.pixelsHeight, this.entity.transform._cosSin);
-
-            console.log(this.bounds);
-        }
-    }]);
 
     return Tilemap;
 }(_Renderable3.default);
@@ -5907,6 +5961,7 @@ _ModuleProvider2.default.register('tilemap', function (moduleManager, tag) {
     if (cache !== undefined) res = cache.tilemap.get(tag);
 
     var tilemap = new Tilemap(moduleManager, res);
+    tilemap.floorTiles = moduleManager.entity.game.config.floorTiles || false;
 
     return tilemap;
 });
@@ -5955,6 +6010,7 @@ var TilemapLayer = function (_Renderable) {
 
         _this.tilemap = tilemap;
         _this.layerData = layerData;
+
         return _this;
     }
 
@@ -5962,11 +6018,9 @@ var TilemapLayer = function (_Renderable) {
         key: "render",
         value: function render(context) {
 
-            if (!this._visible && !this.tilemap.visible) return false;
+            if (!this._enabled && !this.tilemap._enabled) return false;
 
-            (0, _DrawTilemapLayer2.default)(context, this.tilemap, this.layerData, this.tilemap.moduleManager.entity.transform);
-
-            return true;
+            return (0, _DrawTilemapLayer2.default)(context, this.tilemap, this.layerData, this.tilemap.moduleManager.entity.transform);
         }
     }, {
         key: "width",
@@ -5984,6 +6038,102 @@ var TilemapLayer = function (_Renderable) {
 }(_Renderable3.default);
 
 exports.default = TilemapLayer;
+
+/***/ }),
+
+/***/ "./modules/renderables/components/CullTiles.js":
+/*!*****************************************************!*\
+  !*** ./modules/renderables/components/CullTiles.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = CullTiles;
+
+var _MathUtils = __webpack_require__(/*! ../../../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _CullingMethod = __webpack_require__(/*! ./CullingMethod */ "./modules/renderables/components/CullingMethod.js");
+
+var _CullingMethod2 = _interopRequireDefault(_CullingMethod);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function LimitCulling(culling, tilemap) {
+
+    // limit culling
+
+    if (culling.start.x < 0) culling.start.x = 0;
+
+    if (culling.start.y < 0) culling.start.y = 0;
+
+    if (culling.end.x > tilemap.width) culling.end.x = tilemap.width;
+
+    if (culling.end.y > tilemap.height) culling.end.y = tilemap.height;
+}
+
+function CullTiles(tilemap, camera) {
+
+    var t = tilemap.entity.transform;
+    var rot = camera.transform.rotation + t.rotation;
+
+    // 90 DEGREE ROTATION
+    // We will use the linear culling that is faster
+
+
+    if (rot % _MathUtils2.default.HALFPI === 0) {
+
+        var tx = t.position.x - tilemap._originInPixels.x;
+        var ty = t.position.y - tilemap._originInPixels.y;
+
+        tilemap.culling.method = _CullingMethod2.default.LINEAR;
+
+        tilemap.culling.start.x = Math.floor((camera.viewBounds.min.x - tx) / tilemap.tileWidth);
+        tilemap.culling.start.y = Math.floor((camera.viewBounds.min.y - ty) / tilemap.tileHeight);
+        tilemap.culling.end.x = Math.ceil((camera.viewBounds.max.x - tx) / tilemap.tileWidth);
+        tilemap.culling.end.y = Math.ceil((camera.viewBounds.max.y - ty) / tilemap.tileHeight);
+
+        LimitCulling(tilemap.culling, tilemap);
+
+        // TODO FOR 90 Deg TILES
+
+    } else {
+
+        tilemap.culling.method = 1;
+
+        // TODO ROTATED TILES
+    }
+}
+
+/***/ }),
+
+/***/ "./modules/renderables/components/CullingMethod.js":
+/*!*********************************************************!*\
+  !*** ./modules/renderables/components/CullingMethod.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var CullingMethod = {
+    LINEAR: 0,
+    LINEAR90DEG: 1
+};
+
+exports.default = CullingMethod;
 
 /***/ }),
 
@@ -6051,35 +6201,74 @@ var _MathUtils = __webpack_require__(/*! ../../../math/MathUtils */ "./math/Math
 
 var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
+var _CullingMethod = __webpack_require__(/*! ./CullingMethod */ "./modules/renderables/components/CullingMethod.js");
+
+var _CullingMethod2 = _interopRequireDefault(_CullingMethod);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function DrawTilemapLayer(context, tilemap, layer, transform) {
 
     var draws = 0;
     var matrix = transform.matrix;
+    var x = matrix.a[6];
+    var y = matrix.a[7];
 
+    if (tilemap.floorTiles) {
+        x = Math.round(x);
+        y = Math.round(y);
+    }
     context.setTransform(matrix.a[0], matrix.a[1], // 2
     matrix.a[3], matrix.a[4], // 5
-    matrix.a[6], matrix.a[7]);
+    x, y);
+
+    if (tilemap.culling.method <= 1) {
+
+        var idx = 0;
+
+        for (var j = tilemap.culling.start.y; j < tilemap.culling.end.y; j++) {
+            for (var i = tilemap.culling.start.x; i < tilemap.culling.end.x; i++) {
+
+                //if (tilemap.culling.method == CullingMethod.LINEAR)
+                idx = i + j * tilemap.width;
+                //else if (tilemap.culling.method == CullingMethod.LINEAR90DEG)
+                //    idx = j + i * tilemap.width;
+
+                var tile = layer.tiles[idx];
+
+                if (tile == null || tile === undefined) continue;
+
+                context.drawImage(tile.data.tileset.image.data, // image
+                tile.frame.x, // sx - pos crop x
+                tile.frame.y, // sy - pos crop y
+                tile.frame.width, // sWidth - crop width
+                tile.frame.height, // sHeight - crop height
+                tile.x - tilemap._originInPixels.x, // destination x
+                tile.y - tilemap._originInPixels.y, // destination y
+                tile.frame.width, tile.frame.height);
+
+                draws++;
+            }
+        }
+    }
 
     //for (let i = 0; i < layer.culledTiles.lenght; i++) {
-    for (var i = 0; i < layer.tiles.length; i++) {
-
-        var tile = layer.tiles[i];
-
-        if (tile == null || tile === undefined) continue;
-
-        context.drawImage(tile.data.tileset.image.data, // image
-        tile.frame.x, // sx - pos crop x
-        tile.frame.y, // sy - pos crop y
-        tile.frame.width, // sWidth - crop width
-        tile.frame.height, // sHeight - crop height
-        _MathUtils2.default.round(tile.x - 0.1), // destination x
-        _MathUtils2.default.round(tile.y - 0.1), // destination y
-        _MathUtils2.default.round(tile.frame.width + 0.1), _MathUtils2.default.round(tile.frame.height + 0.1));
-
-        draws++;
-    }
+    /*for (let i = 0; i < layer.tiles.length; i++) {
+          let tile = layer.tiles[i];
+          if (tile == null || tile === undefined) continue;
+          context.drawImage(
+            tile.data.tileset.image.data, // image
+            tile.frame.x, // sx - pos crop x
+            tile.frame.y, // sy - pos crop y
+            tile.frame.width, // sWidth - crop width
+            tile.frame.height, // sHeight - crop height
+            tile.x, // destination x
+            tile.y,  // destination y
+            tile.frame.width,
+            tile.frame.height
+                );
+          draws++;
+      }*/
 
     return draws;
 }
@@ -6105,17 +6294,31 @@ var _ComputeBounds = __webpack_require__(/*! ../../../transform/ComputeBounds */
 
 var _ComputeBounds2 = _interopRequireDefault(_ComputeBounds);
 
+var _CullTiles = __webpack_require__(/*! ./CullTiles */ "./modules/renderables/components/CullTiles.js");
+
+var _CullTiles2 = _interopRequireDefault(_CullTiles);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function UpdateRenderable(entity, renderable) {
+function UpdateRenderable(entity, renderable, camera) {
 
-    if (!entity.transform._isDirty && !renderable._originIsDirty) return;
+    if (!entity.transform._isDirty && !camera.transform._isDirty) return;
 
     if (renderable.name == 'tilemap') {
+
+        if (renderable._originIsDirty) {
+            // destination
+            renderable._originInPixels.x = entity.transform.origin.x * renderable.pixelsWidth;
+            renderable._originInPixels.y = entity.transform.origin.y * renderable.pixelsHeight;
+        }
+
+        (0, _CullTiles2.default)(renderable, camera);
+
         for (var i = 0; i < renderable.layers.length; i++) {
-            UpdateRenderable(entity, renderable.layers[i]);
+            UpdateRenderable(entity, renderable.layers[i], camera);
         }
     } else {
+
         if (renderable._originIsDirty) {
             // destination
             renderable._originInPixels.x = entity.transform.origin.x * renderable.width;
@@ -8034,8 +8237,8 @@ var TilemapMetadata = function TilemapMetadata(config) {
     this.height = _ObjectUtils2.default.getValue(config, 'height', 0);
     this.tileWidth = _ObjectUtils2.default.getValue(config, 'tileWidth', 16);
     this.tileHeight = _ObjectUtils2.default.getValue(config, 'tileHeight', 16);
-    this.widthPixels = _ObjectUtils2.default.getValue(config, 'pixelsWidth', this.width * this.tileWidth);
-    this.heightPixels = _ObjectUtils2.default.getValue(config, 'pixelsHeight', this.height * this.tileHeight);
+    this.pixelsWidth = _ObjectUtils2.default.getValue(config, 'pixelsWidth', this.width * this.tileWidth);
+    this.pixelsHeight = _ObjectUtils2.default.getValue(config, 'pixelsHeight', this.height * this.tileHeight);
     this.orientation = _ObjectUtils2.default.getValue(config, 'orientation', 'orthogonal');
 };
 

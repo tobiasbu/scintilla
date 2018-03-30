@@ -2,6 +2,7 @@ import Renderable from "./Renderable";
 import ModuleProvider from "../ModuleProvider";
 import TilemapLayer from "./TilemapLayer";
 import UpdateBounds from '../../transform/UpdateBounds'
+import CullTiles from "./components/CullTiles";
 
 export default class Tilemap extends Renderable {
     
@@ -12,12 +13,19 @@ export default class Tilemap extends Renderable {
         //this._type = "tilemap";
         this.tileWidth = resource.metaData.tileWidth;
         this.tileHeight = resource.metaData.tileHeight;
-        this.mapWidth = resource.metaData.width;
-        this.mapHeight = resource.metaData.height;
+        this.width = resource.metaData.width;
+        this.height = resource.metaData.height;
         this.orientation = resource.metaData.orientation;
         this.pixelsWidth = resource.metaData.pixelsWidth;
         this.pixelsHeight = resource.metaData.pixelsHeight;
 
+        this.culling = {
+            method : 0,
+            start : {x: 0, y: 0},
+            end : {x : 0, y : 0}
+        }
+
+        this.floorTiles = false;
         this.tilesets = resource.tilesets;
         this.layers = [];
 
@@ -26,15 +34,8 @@ export default class Tilemap extends Renderable {
 
     }
 
-  
-    moduleUpdate() {
-        if (!this.entity.transform._isDirty)
-            return;
 
-        UpdateBounds(this.bounds, this.entity.transform.position.x, this.entity.transform.position.y, this.pixelsWidth, this.pixelsHeight, this.entity.transform._cosSin);
     
-        console.log(this.bounds);
-    }
 
 }
 
@@ -47,6 +48,7 @@ ModuleProvider.register('tilemap', function(moduleManager, tag) {
         res = cache.tilemap.get(tag);
 
     var tilemap = new Tilemap(moduleManager, res);
+    tilemap.floorTiles = moduleManager.entity.game.config.floorTiles || false;
 
     return tilemap;
 

@@ -36,9 +36,21 @@ export default class BoundingBox {
 
     this.min.set(minX,minY);
     this.max.set(maxX,maxY);
-    this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
+    //this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
     return this;
 
+  }
+
+  setMin(minX, minY) {
+    this.min.x = minX;
+    this.min.y = minY;
+    return this;
+  }
+
+  setMax(maxX, maxY) {
+    this.max.x = maxX;
+    this.max.y = maxY;
+    return this;
   }
 
   move(x, y) {
