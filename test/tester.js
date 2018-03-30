@@ -18,10 +18,10 @@ var config = {
         height: 240
     },
     parent: "canvas-container",
-    debug: true,
+    debug: false,
     fps: 60,
     pixelated: true,
-    roundPixels : false,
+    roundPixels : true,
     floorTiles : true
 };
   

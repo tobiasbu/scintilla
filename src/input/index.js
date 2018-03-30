@@ -1,8 +1,8 @@
 
 module.exports = {
 
-    Key : require('./Key'),
-    Keyboard : require('./Keyboard'),
+    Key : require('./keyboard/Key'),
+    Keyboard : require('./keyboard/Keyboard'),
     Mouse : require('./Mouse'),
     Input : require('./Input')
     

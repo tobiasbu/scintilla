@@ -10,6 +10,7 @@ export default (
 
   // default definition
   let defaultDef = {
+    tabindex: '1',
     width: width,
     height: height,
     id: Math.random().toString(36).substr(2, 9),
@@ -35,12 +36,6 @@ export default (
 
   Canvas.appendDOM(canvas,parent);
   //document.body.appendChild(canvas);
-  //var context = canvas.getContext("2d");
-
-
-  //tobiJS.Canvas.list.parent = document.body;
-
-  //console.log("Canvas Created!");
 
   return canvas;
 }
@@ -80,6 +75,7 @@ static appendDOM(canvas,parent) {
 
     target.appendChild(canvas);
 
+    return canvas;
 }
 
 })

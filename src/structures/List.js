@@ -144,6 +144,10 @@ export default class DataList
         return this;
     }
 
+    splice(start, count) {
+        return this.childs.splice(start, count);
+    }
+
     destroy() {
         this.clear();
         this.childs = [];

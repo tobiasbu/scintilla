@@ -28,7 +28,7 @@ var scintilla = scintilla || {
   // RENDER
   Render : require('./render'),
   // INPUT
-  KeyCode : require('./input/KeyCode'),
+  KeyCode : require('./input/keyboard/KeyCode'),
   MouseButton : require('./input/MouseButton'),
   Input : require('./input'),
   // MATH

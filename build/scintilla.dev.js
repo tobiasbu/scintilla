@@ -152,7 +152,7 @@ var scintilla = scintilla || {
   // RENDER
   Render: __webpack_require__(/*! ./render */ "./render/index.js"),
   // INPUT
-  KeyCode: __webpack_require__(/*! ./input/KeyCode */ "./input/KeyCode.js"),
+  KeyCode: __webpack_require__(/*! ./input/keyboard/KeyCode */ "./input/keyboard/KeyCode.js"),
   MouseButton: __webpack_require__(/*! ./input/MouseButton */ "./input/MouseButton.js"),
   Input: __webpack_require__(/*! ./input */ "./input/index.js"),
   // MATH
@@ -2000,7 +2000,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Keyboard = __webpack_require__(/*! ./Keyboard */ "./input/Keyboard.js");
+var _Keyboard = __webpack_require__(/*! ./keyboard/Keyboard */ "./input/keyboard/Keyboard.js");
 
 var _Keyboard2 = _interopRequireDefault(_Keyboard);
 
@@ -2050,596 +2050,6 @@ var Input = function () {
 }();
 
 exports.default = Input;
-
-/***/ }),
-
-/***/ "./input/Key.js":
-/*!**********************!*\
-  !*** ./input/Key.js ***!
-  \**********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/KeyEvent.js");
-
-var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Key = function () {
-    function Key(keycode, game) {
-        _classCallCheck(this, Key);
-
-        this.game = game;
-        this.keyCode = keycode;
-
-        this._enabled = true;
-        this.status = false;
-        this.press = false;
-        this.release = false;
-
-        this._event = _KeyEvent2.default.NONE;
-
-        this.pressTime = 0;
-        this.pressDuration = -2500;
-        this.releaseTime = 0;
-        this.releaseDuration = -2500;
-    }
-
-    _createClass(Key, [{
-        key: 'onKeyDown',
-        value: function onKeyDown() {
-            if (!this._enabled) return;
-
-            if (this.press) return;
-
-            // set key properties
-            this.status = true;
-            this.press = true;
-            this.release = false;
-
-            // set press time duration
-            this.pressTime = this.game.time.time;
-            this.pressDuration = 0;
-            this.releaseDuration = this.game.time.time - this.releaseTime;
-        }
-    }, {
-        key: 'onKeyUp',
-        value: function onKeyUp() {
-            if (!this._enabled) return;
-
-            if (this.release) return;
-
-            // set key properties
-            this.status = false;
-            this.press = false;
-            this.release = true;
-
-            // set press time duration
-            this.releaseTime = this.game.time.time;
-            this.pressDuration = this.game.time.time - this.pressTime;
-            this.releaseDuration = 0;
-        }
-    }, {
-        key: 'update',
-        value: function update() {
-            if (!this._enabled) return;
-
-            if (this.press) {
-                this.pressDuration = this.game.time.time - this.pressTime;
-            } else {
-                this.releaseDuration = this.game.time.time - this.releaseTime;
-            }
-
-            if (this.press) {
-                if (this.pressDuration == 0) {
-                    this._event = _KeyEvent2.default.PRESSED;
-                }
-            } else {
-
-                if (this.releaseDuration == 0) {
-                    this._event = _KeyEvent2.default.RELEASED;
-                } else {
-                    this._event = _KeyEvent2.default.IDLE;
-                }
-            }
-
-            if (this._event == _KeyEvent2.default.IDLE) {
-                this._event = _KeyEvent2.default.NONE;
-            }
-        }
-    }, {
-        key: 'isPressing',
-        value: function isPressing() {
-            return this.status;
-        }
-    }, {
-        key: 'isPressed',
-        value: function isPressed() {
-            return this.press && this.pressDuration == 0;
-        }
-    }, {
-        key: 'isReleased',
-        value: function isReleased() {
-            return !this.press && this.releaseDuration == 0;
-        }
-    }, {
-        key: 'event',
-        value: function event() {
-            return this._event;
-        }
-    }, {
-        key: 'reset',
-        value: function reset() {
-            this.status = false;
-            this._event = _KeyEvent2.default.NONE;
-            this.press = false;
-            this.release = false;
-
-            this.pressTime = 0;
-            this.pressDuration = -2500;
-            this.releaseTime = 0;
-            this.releaseDuration = -2500;
-        }
-    }, {
-        key: 'enabled',
-        get: function get() {
-            return this._enabled;
-        },
-        set: function set(value) {
-            value = !!value;
-
-            if (value !== this._enabled) {
-                if (!value) this.reset();
-
-                this._enabled = value;
-            }
-        }
-    }]);
-
-    return Key;
-}();
-
-exports.default = Key;
-;
-
-/***/ }),
-
-/***/ "./input/KeyCode.js":
-/*!**************************!*\
-  !*** ./input/KeyCode.js ***!
-  \**************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var KeyCode = {
-    Backspace: 8,
-    Tab: 9,
-    Enter: 13,
-    Shift: 16,
-    Ctrl: 17,
-    Alt: 18,
-    Pause: 19,
-    CapsLock: 20,
-    Escape: 27,
-    Space: 32,
-    PageUp: 33,
-    PageDown: 34,
-    End: 35,
-    Home: 36,
-    Left: 37,
-    Up: 38,
-    Right: 39,
-    Down: 40,
-    Insert: 45,
-    Delete: 46,
-    Num0: 48,
-    Num1: 49,
-    Num2: 50,
-    Num3: 51,
-    Num4: 52,
-    Num5: 53,
-    Num6: 54,
-    Num7: 55,
-    Num8: 56,
-    Num9: 57,
-    A: 65,
-    B: 66,
-    C: 67,
-    D: 68,
-    E: 69,
-    F: 70,
-    G: 71,
-    H: 72,
-    I: 73,
-    J: 74,
-    K: 75,
-    L: 76,
-    M: 77,
-    N: 78,
-    O: 79,
-    P: 80,
-    Q: 81,
-    R: 82,
-    S: 83,
-    T: 84,
-    U: 85,
-    V: 86,
-    W: 87,
-    X: 88,
-    Y: 89,
-    Z: 90,
-    LSystem: 91,
-    RSystem: 92,
-    SelectK: 93,
-    Numpad0: 96,
-    Numpad1: 97,
-    Numpad2: 98,
-    Numpad3: 99,
-    Numpad4: 100,
-    Numpad5: 101,
-    Numpad6: 102,
-    Numpad7: 103,
-    Numpad8: 104,
-    Numpad9: 105,
-    Multiply: 106,
-    Add: 107,
-    Subtract: 109,
-    DecimalPoint: 110,
-    Divide: 111,
-    F1: 112,
-    F2: 113,
-    F3: 114,
-    F4: 115,
-    F5: 116,
-    F6: 117,
-    F7: 118,
-    F8: 119,
-    F9: 120,
-    F10: 121,
-    F11: 122,
-    F12: 123,
-    NumLock: 144,
-    ScrollLock: 145,
-    SemiColon: 186,
-    Equal: 187,
-    Comma: 188,
-    Dash: 189,
-    Period: 190,
-    Slash: 191,
-    LBraket: 219,
-    BackSlash: 220,
-    RBracket: 221,
-    Quote: 222
-};
-
-module.exports = KeyCode;
-
-/***/ }),
-
-/***/ "./input/KeyEvent.js":
-/*!***************************!*\
-  !*** ./input/KeyEvent.js ***!
-  \***************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var KeyEvent = {
-    NONE: -1,
-    IDLE: 0,
-    PRESSED: 1,
-    RELEASED: 2
-};
-
-exports.default = KeyEvent;
-
-/***/ }),
-
-/***/ "./input/Keyboard.js":
-/*!***************************!*\
-  !*** ./input/Keyboard.js ***!
-  \***************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Key = __webpack_require__(/*! ./Key */ "./input/Key.js");
-
-var _Key2 = _interopRequireDefault(_Key);
-
-var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
-
-var _Map2 = _interopRequireDefault(_Map);
-
-var _KeyCode = __webpack_require__(/*! ./KeyCode */ "./input/KeyCode.js");
-
-var _KeyCode2 = _interopRequireDefault(_KeyCode);
-
-var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/KeyEvent.js");
-
-var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Keyboard = function () {
-  function Keyboard(game) {
-    _classCallCheck(this, Keyboard);
-
-    this.game = game;
-    this.context = game.context;
-    this.active = true;
-    //this._keys = [];
-    this._keyMapping = new _Map2.default();
-    this._keyWatch = new _Map2.default();
-    this._keyGarbage = [];
-    //this._keyLock = [];
-    //this._keyLockPressed = [];
-    //this._keyDownDuration = [];
-    this.lastKey = null;
-
-    //callbacks
-    this._onKeyDown = null;
-    this._onKeyUp = null;
-    this._onKeyPress = null;
-    this.reset();
-  }
-
-  _createClass(Keyboard, [{
-    key: 'reset',
-    value: function reset() {
-
-      this._keyMapping.clear();
-      this._keyWatch.clear();
-      this._keyGarbage = [];
-      for (var prop in _KeyCode2.default) {
-
-        if (_KeyCode2.default.hasOwnProperty(prop)) {
-          var value = _KeyCode2.default[prop];
-          this._keyMapping.set(value, new _Key2.default(value, this.game));
-        }
-        /*if (scintilla.KeyCode.hasOwnProperty(prop)) {
-            
-                var value = scintilla.KeyCode[prop];
-              this._keys[value] = false;
-              this._keyLock[value] = scintilla.KeyEvent.NONE;
-              this._keyLockPressed[value] = scintilla.KeyEvent.NONE;
-              this._keyDownDuration[value] = 0;
-        }*/
-      }
-    }
-  }, {
-    key: 'init',
-    value: function init() {
-
-      var self = this;
-
-      this.reset();
-
-      this._onKeyDown = function (event) {
-        return self.processKeyDown(event);
-      };
-
-      this._onKeyUp = function (event) {
-        return self.processKeyUp(event);
-      };
-
-      window.addEventListener('keydown', this._onKeyDown, false);
-      window.addEventListener('keyup', this._onKeyUp, false);
-    }
-  }, {
-    key: 'stop',
-    value: function stop() {
-
-      window.removeEventListener('keydown', this._onKeyDown);
-      window.removeEventListener('keyup', this._onKeyUp);
-      this._onKeyDown = null;
-      this._onKeyUp = null;
-      this._onKeyPress = null;
-
-      this._keyMapping.clear();
-    }
-  }, {
-    key: 'processKeyUp',
-    value: function processKeyUp(event) {
-
-      var key = event.keyCode;
-
-      event.preventDefault();
-
-      if (!this.active) return;
-
-      var keyObj = this._keyMapping.get(key);
-      keyObj.onKeyUp();
-
-      /*this._keyLock[key] = scintilla.KeyEvent.RELEASE;
-      this._keyLockPressed[key] = scintilla.KeyEvent.NONE;
-      this._keys[key] = false;*/
-    }
-  }, {
-    key: 'processKeyDown',
-    value: function processKeyDown(event) {
-
-      var key = event.keyCode;
-
-      event.preventDefault();
-
-      if (!this.active) return;
-
-      this.lastKey = key;
-
-      var keyObj = this._keyMapping.get(key);
-      keyObj.onKeyDown();
-
-      if (!this._keyWatch.has(key)) {
-        this._keyWatch.set(key, keyObj);
-      }
-
-      //_keyMapping[]
-      //this._keys[key] = true;
-      /* if (this._keyLockPressed[key] != scintilla.KeyEvent.PRESSED && this._keyLockPressed[key] != scintilla.KeyEvent.PRESS) {
-        this._keyLockPressed[key] = scintilla.KeyEvent.PRESSED;
-        this._keyDownDuration[key] = 1;
-      }
-        this._keyLock[key] = scintilla.KeyEvent.PRESS;
-      this._keys[key] = true;
-      */
-    }
-
-    /*processKeyPress : function(event) { // commom characters
-        var key = event.keyCode;
-        event.preventDefault();
-        if (!this.active)
-        return;
-    
-        this._keyLock[key] = tobiJS.KeyEvent.PRESS;
-        this._keys[key] = true;
-    
-      },*/
-
-  }, {
-    key: 'update',
-    value: function update() {
-
-      /*var keys = this._keyMapping.keys();
-      for (var key in keys)
-      {
-        if (keys.hasOwnProperty(key)) {
-            var value = this._keyMapping.get(key);
-          value.update();
-          }
-      }*/
-
-      //var keyswatch = this._keyWatch; //.keys();
-
-      var self = this;
-
-      this._keyWatch.each(function (key, value) {
-        //var value = this._keyWatch.get(key);
-        value.update();
-
-        //console.log(value);
-
-        if (value.event() == _KeyEvent2.default.IDLE) {
-
-          // value.reset();
-          self._keyGarbage.push(key);
-        }
-      });
-      /*for (var key in keys)
-      {
-        //console.log("UPDATE")
-          if (keys.hasOwnProperty(key)) {
-              var value = this._keyWatch.get(key);
-            value.update();
-              if (value.event() == scintilla.KeyEvent.IDLE)
-            {
-              // value.reset();
-                this._keyGarbage.push(key);
-            }
-        }
-      }*/
-
-      if (this._keyGarbage.length > 0) {
-        this._keyWatch.deleteByIndexedArray(this._keyGarbage);
-        this._keyGarbage.splice(0, this._keyGarbage.length);
-      }
-    }
-  }, {
-    key: 'pressed',
-    value: function pressed(keycode) {
-
-      /*var keyLock = false;
-      if (this._keyLockPressed[keycode] == scintilla.KeyEvent.PRESSED) {
-        keyLock = true;
-        this._keyLockPressed[keycode] = scintilla.KeyEvent.PRESS;
-      }
-        var hit = this._keys[keycode] && keyLock;*/
-
-      //return hit;
-
-      return this._keyMapping.get(keycode).isPressed();
-
-      /* if (this._keyMapping.has(keycode))
-        {
-          
-        } 
-        else 
-        {
-          return false;
-        }*/
-    }
-  }, {
-    key: 'release',
-    value: function release(keycode) {
-
-      /*var keyLock = false;
-        if (this._keyLock[keycode] ==  scintilla.KeyEvent.PRESSED ||
-        this._keyLock[keycode] ==  scintilla.KeyEvent.PRESS ||
-        this._keyLock[keycode] ==  scintilla.KeyEvent.NONE)
-        keyLock = false;
-      else
-        keyLock = true;
-        var hit = !this._keys[keycode] && keyLock;
-        this._keyLock[keycode] = scintilla.KeyEvent.NONE;
-        return hit;*/
-      return this._keyMapping.get(keycode).isReleased();
-    }
-  }, {
-    key: 'press',
-    value: function press(keycode) {
-
-      /*var key = this._keyWatch.get(keycode);
-        if (key === undefined)
-        return false;*/
-
-      return this._keyMapping.get(keycode).status;
-
-      /*var keyLock = false;
-        if (this._keyLock[keycode] ==  scintilla.KeyEvent.RELEASE ||
-        this._keyLock[keycode] ==  scintilla.KeyEvent.NONE)
-        keyLock = false;
-      else
-        keyLock = true;
-        var hit = this._keys[keycode] && keyLock;
-        return hit;*/
-    }
-  }]);
-
-  return Keyboard;
-}();
-
-exports.default = Keyboard;
 
 /***/ }),
 
@@ -2887,12 +2297,571 @@ var MouseButton = exports.MouseButton = {
 
 module.exports = {
 
-    Key: __webpack_require__(/*! ./Key */ "./input/Key.js"),
-    Keyboard: __webpack_require__(/*! ./Keyboard */ "./input/Keyboard.js"),
+    Key: __webpack_require__(/*! ./keyboard/Key */ "./input/keyboard/Key.js"),
+    Keyboard: __webpack_require__(/*! ./keyboard/Keyboard */ "./input/keyboard/Keyboard.js"),
     Mouse: __webpack_require__(/*! ./Mouse */ "./input/Mouse.js"),
     Input: __webpack_require__(/*! ./Input */ "./input/Input.js")
 
 };
+
+/***/ }),
+
+/***/ "./input/keyboard/Key.js":
+/*!*******************************!*\
+  !*** ./input/keyboard/Key.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/keyboard/KeyEvent.js");
+
+var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Key = function () {
+    function Key(keycode, game) {
+        _classCallCheck(this, Key);
+
+        this.game = game;
+        this.keyCode = keycode;
+
+        this._enabled = true;
+        this.status = false;
+        this.press = false;
+        this.release = false;
+
+        this.preventDefault = true;
+
+        this._event = _KeyEvent2.default.NONE;
+
+        this.pressTime = 0;
+        this.pressDuration = -2500;
+        this.releaseTime = 0;
+        this.releaseDuration = -2500;
+    }
+
+    _createClass(Key, [{
+        key: 'isPressing',
+
+
+        /*update() {
+            if (!this._enabled)
+                return;
+              if (this.press) {
+                this.pressDuration = this.game.time.time - this.pressTime;
+                
+            } else {
+                this.releaseDuration = this.game.time.time - this.releaseTime;
+            }
+                if (this.press) {
+                if (this.pressDuration == 0) {
+                    this._event = KeyEvent.PRESSED;
+                }
+              } else {
+                  if (this.releaseDuration == 0) {
+                    this._event = KeyEvent.RELEASED;
+                } else {
+                    this._event = KeyEvent.IDLE;
+                }
+              }
+          }*/
+
+        value: function isPressing() {
+            return this.status;
+        }
+    }, {
+        key: 'isPressed',
+        value: function isPressed() {
+            return this.press && this.pressDuration === 0;
+        }
+    }, {
+        key: 'isReleased',
+        value: function isReleased() {
+            return !this.press && this.releaseDuration === 0;
+        }
+    }, {
+        key: 'reset',
+        value: function reset() {
+            this.status = false;
+            this._event = _KeyEvent2.default.NONE;
+            this.press = false;
+            this.release = false;
+
+            this.pressTime = 0;
+            this.pressDuration = -2500;
+            this.releaseTime = 0;
+            this.releaseDuration = -2500;
+        }
+    }, {
+        key: 'event',
+        get: function get() {
+            return this._event;
+        }
+    }, {
+        key: 'enabled',
+        get: function get() {
+            return this._enabled;
+        },
+        set: function set(value) {
+            value = !!value;
+
+            if (value !== this._enabled) {
+                if (!value) this.reset();
+
+                this._enabled = value;
+            }
+        }
+    }]);
+
+    return Key;
+}();
+
+exports.default = Key;
+;
+
+/***/ }),
+
+/***/ "./input/keyboard/KeyCode.js":
+/*!***********************************!*\
+  !*** ./input/keyboard/KeyCode.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var KeyCode = {
+    Backspace: 8,
+    Tab: 9,
+    Enter: 13,
+    Shift: 16,
+    Ctrl: 17,
+    Alt: 18,
+    Pause: 19,
+    CapsLock: 20,
+    Escape: 27,
+    Space: 32,
+    PageUp: 33,
+    PageDown: 34,
+    End: 35,
+    Home: 36,
+    Left: 37,
+    Up: 38,
+    Right: 39,
+    Down: 40,
+    Insert: 45,
+    Delete: 46,
+    Num0: 48,
+    Num1: 49,
+    Num2: 50,
+    Num3: 51,
+    Num4: 52,
+    Num5: 53,
+    Num6: 54,
+    Num7: 55,
+    Num8: 56,
+    Num9: 57,
+    A: 65,
+    B: 66,
+    C: 67,
+    D: 68,
+    E: 69,
+    F: 70,
+    G: 71,
+    H: 72,
+    I: 73,
+    J: 74,
+    K: 75,
+    L: 76,
+    M: 77,
+    N: 78,
+    O: 79,
+    P: 80,
+    Q: 81,
+    R: 82,
+    S: 83,
+    T: 84,
+    U: 85,
+    V: 86,
+    W: 87,
+    X: 88,
+    Y: 89,
+    Z: 90,
+    LSystem: 91,
+    RSystem: 92,
+    SelectK: 93,
+    Numpad0: 96,
+    Numpad1: 97,
+    Numpad2: 98,
+    Numpad3: 99,
+    Numpad4: 100,
+    Numpad5: 101,
+    Numpad6: 102,
+    Numpad7: 103,
+    Numpad8: 104,
+    Numpad9: 105,
+    Multiply: 106,
+    Add: 107,
+    Subtract: 109,
+    DecimalPoint: 110,
+    Divide: 111,
+    F1: 112,
+    F2: 113,
+    F3: 114,
+    F4: 115,
+    F5: 116,
+    F6: 117,
+    F7: 118,
+    F8: 119,
+    F9: 120,
+    F10: 121,
+    F11: 122,
+    F12: 123,
+    NumLock: 144,
+    ScrollLock: 145,
+    SemiColon: 186,
+    Equal: 187,
+    Comma: 188,
+    Dash: 189,
+    Period: 190,
+    Slash: 191,
+    LBraket: 219,
+    BackSlash: 220,
+    RBracket: 221,
+    Quote: 222
+};
+
+module.exports = KeyCode;
+
+/***/ }),
+
+/***/ "./input/keyboard/KeyEvent.js":
+/*!************************************!*\
+  !*** ./input/keyboard/KeyEvent.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var KeyEvent = {
+    NONE: -1,
+    IDLE: 0,
+    PRESSED: 1,
+    RELEASED: 2
+};
+
+exports.default = KeyEvent;
+
+/***/ }),
+
+/***/ "./input/keyboard/Keyboard.js":
+/*!************************************!*\
+  !*** ./input/keyboard/Keyboard.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Map = __webpack_require__(/*! ../../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+var _Key = __webpack_require__(/*! ./Key */ "./input/keyboard/Key.js");
+
+var _Key2 = _interopRequireDefault(_Key);
+
+var _KeyCode = __webpack_require__(/*! ./KeyCode */ "./input/keyboard/KeyCode.js");
+
+var _KeyCode2 = _interopRequireDefault(_KeyCode);
+
+var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/keyboard/KeyEvent.js");
+
+var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
+
+var _ProcessKeyPress = __webpack_require__(/*! ./components/ProcessKeyPress */ "./input/keyboard/components/ProcessKeyPress.js");
+
+var _ProcessKeyPress2 = _interopRequireDefault(_ProcessKeyPress);
+
+var _ProcessKeyRelease = __webpack_require__(/*! ./components/ProcessKeyRelease */ "./input/keyboard/components/ProcessKeyRelease.js");
+
+var _ProcessKeyRelease2 = _interopRequireDefault(_ProcessKeyRelease);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Keyboard = function () {
+  function Keyboard(game) {
+    _classCallCheck(this, Keyboard);
+
+    this.game = game;
+    this._enabled = true;
+    this.eventTarget = null;
+    this.eventHandler = null;
+    this._eventQueue = new _List2.default();
+    this._keyMapping = new _Map2.default();
+    //this._keyWatch = new DataMap();
+    //this._keyGarbage = [];
+    this.lastKey = null;
+  }
+
+  _createClass(Keyboard, [{
+    key: 'reset',
+    value: function reset() {
+
+      this._keyMapping.clear();
+      for (var prop in _KeyCode2.default) {
+
+        if (_KeyCode2.default.hasOwnProperty(prop)) {
+          var value = _KeyCode2.default[prop];
+          this._keyMapping.set(value, new _Key2.default(value, this.game));
+        }
+      }
+    }
+  }, {
+    key: 'init',
+    value: function init() {
+
+      this.reset();
+
+      // window;
+      this.eventTarget = document; //this.game.system.render.canvas;
+
+      console.log(this.eventTarget);
+
+      var self = this;
+
+      // key event handler
+      var handler = function handler(event) {
+
+        if (event.defaultPrevented) {
+          return;
+        }
+
+        self._eventQueue.push(event);
+
+        //event.preventDefault();
+      };
+
+      this.eventHandler = handler;
+
+      this.eventTarget.addEventListener('keydown', handler, false);
+      this.eventTarget.addEventListener('keyup', handler, false);
+    }
+  }, {
+    key: 'stop',
+    value: function stop() {
+
+      this.eventTarget.removeEventListener('keydown', this.eventHandler);
+      this.eventTarget.removeEventListener('keyup', this.eventHandler);
+      this._onKeyDown = null;
+      this._onKeyUp = null;
+      this._onKeyPress = null;
+
+      this._keyMapping.clear();
+    }
+  }, {
+    key: 'update',
+    value: function update() {
+
+      var eventSize = this._eventQueue.size;
+
+      if (!this._enabled || eventSize === 0) return;
+
+      // clear and copy queue
+      var queue = this._eventQueue.splice(0, eventSize);
+
+      // process key events
+      for (var i = 0; i < eventSize; i++) {
+        var event = queue[i];
+        var keycode = event.keyCode;
+
+        // check if is valid scintilla key
+        var key = this._keyMapping.get(keycode);
+
+        if (key !== undefined || key !== null) {
+
+          if (event.type === 'keydown') {
+
+            // /*&& (this._keyMapping.at(keycode) === undefined || this._keyMapping[keycode].press === false)*/
+            (0, _ProcessKeyPress2.default)(event, key);
+          } else {
+            // if (event.type === 'keyup') {
+            (0, _ProcessKeyRelease2.default)(event, key);
+          }
+        }
+      }
+    }
+  }, {
+    key: 'pressed',
+    value: function pressed(keycode) {
+      return this._keyMapping.get(keycode).isPressed();
+    }
+  }, {
+    key: 'release',
+    value: function release(keycode) {
+      return this._keyMapping.get(keycode).isReleased();
+    }
+  }, {
+    key: 'press',
+    value: function press(keycode) {
+      return this._keyMapping.get(keycode).status;
+    }
+  }, {
+    key: 'enabled',
+    get: function get() {
+      return this._enabled;
+    },
+    set: function set(value) {
+      value = !!value;
+
+      if (value !== this._enabled) {
+        if (!value) this.reset();
+
+        this._enabled = value;
+      }
+    }
+  }]);
+
+  return Keyboard;
+}();
+
+/* this._keyWatch.each(function (key, value) {
+     //var value = this._keyWatch.get(key);
+     value.update();
+       //console.log(value);
+       if (value.event == KeyEvent.IDLE)
+     {
+         self._keyGarbage.push(key);
+     }
+ });
+     if (this._keyGarbage.length > 0)
+   {
+     this._keyWatch.deleteByIndexedArray(this._keyGarbage);
+     this._keyGarbage.splice(0, this._keyGarbage.length)
+   }*/
+
+
+exports.default = Keyboard;
+
+/***/ }),
+
+/***/ "./input/keyboard/components/ProcessKeyPress.js":
+/*!******************************************************!*\
+  !*** ./input/keyboard/components/ProcessKeyPress.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ProcessKeyPress;
+function ProcessKeyPress(event, key) {
+
+    if (key.preventDefault) event.preventDefault();
+
+    if (!key._enabled) return;
+
+    if (key.press === false) {
+
+        // set key properties
+        key.status = true;
+        key.press = true;
+        key.release = false;
+        // set press time duration
+        key.pressTime = event.timeStamp; //this.game.time.time;
+        key.pressDuration = 0;
+        key.releaseDuration = key.pressTime - key.releaseTime;
+    }
+
+    //this.lastKey = key;
+
+
+    /*var keyObj = this._keyMapping.get(key);
+    keyObj.onKeyDown();
+      if (!this._keyWatch.has(key))
+    {
+      this._keyWatch.set(key, keyObj);
+    }*/
+
+    //_keyMapping[]
+    //this._keys[key] = true;
+    /* if (this._keyLockPressed[key] != scintilla.KeyEvent.PRESSED && this._keyLockPressed[key] != scintilla.KeyEvent.PRESS) {
+      this._keyLockPressed[key] = scintilla.KeyEvent.PRESSED;
+      this._keyDownDuration[key] = 1;
+    }
+      this._keyLock[key] = scintilla.KeyEvent.PRESS;
+    this._keys[key] = true;
+    */
+}
+
+/***/ }),
+
+/***/ "./input/keyboard/components/ProcessKeyRelease.js":
+/*!********************************************************!*\
+  !*** ./input/keyboard/components/ProcessKeyRelease.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = ProcessKeyRelease;
+function ProcessKeyRelease(event, key) {
+
+  if (key.preventDefault) event.preventDefault();
+
+  if (!key._enabled) return;
+
+  // set key properties
+  key.status = false;
+  key.press = false;
+  key.release = true;
+
+  // set press time duration
+  key.releaseTime = event.timeStamp;
+  key.pressDuration = key.releaseTime - key.pressTime;
+  key.releaseDuration = 0;
+}
 
 /***/ }),
 
@@ -7289,7 +7258,7 @@ exports.default = RenderLayersManagement;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -7303,83 +7272,80 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @class Canvas
  */
 exports.default = function () {
-  function Canvas() {
-    _classCallCheck(this, Canvas);
-  }
-
-  _createClass(Canvas, null, [{
-    key: "create",
-    value: function create(parent, width, height) {
-
-      // default definition
-      var defaultDef = {
-        width: width,
-        height: height,
-        id: Math.random().toString(36).substr(2, 9),
-        class: "",
-        container: "body",
-        style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
-      };
-
-      //var CO = Object.assign(defaultDef, options);
-      var CO = defaultDef;
-      var canvas = void 0;
-
-      canvas = document.createElement('canvas');
-      //canvas.parent = parent;
-      canvas.setAttribute("id", CO.id);
-      canvas.setAttribute("width", CO.width);
-      canvas.setAttribute("height", CO.height);
-      canvas.setAttribute("style", CO.style);
-      //canvas.style.position = 'absolute';
-
-
-      Canvas.appendDOM(canvas, parent);
-      //document.body.appendChild(canvas);
-      //var context = canvas.getContext("2d");
-
-
-      //tobiJS.Canvas.list.parent = document.body;
-
-      //console.log("Canvas Created!");
-
-      return canvas;
+    function Canvas() {
+        _classCallCheck(this, Canvas);
     }
-  }, {
-    key: "appendDOM",
-    value: function appendDOM(canvas, parent) {
 
-      var appendTo = void 0;
-      var overflowHidden = true;
-      var target = null;
+    _createClass(Canvas, null, [{
+        key: "create",
+        value: function create(parent, width, height) {
 
-      //if (overflowHidden === undefined) { overflowHidden = true; }
+            // default definition
+            var defaultDef = {
+                tabindex: '1',
+                width: width,
+                height: height,
+                id: Math.random().toString(36).substr(2, 9),
+                class: "",
+                container: "body",
+                style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
+            };
 
-      if (parent) {
-        if (typeof parent === 'string') {
-          // hopefully an element ID
-          target = document.getElementById(parent);
-        } else if ((typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' && parent.nodeType === 1) {
-          // quick test for a HTMLelement
-          target = parent;
+            //var CO = Object.assign(defaultDef, options);
+            var CO = defaultDef;
+            var canvas = void 0;
+
+            canvas = document.createElement('canvas');
+            //canvas.parent = parent;
+            canvas.setAttribute("id", CO.id);
+            canvas.setAttribute("width", CO.width);
+            canvas.setAttribute("height", CO.height);
+            canvas.setAttribute("style", CO.style);
+            //canvas.style.position = 'absolute';
+
+
+            Canvas.appendDOM(canvas, parent);
+            //document.body.appendChild(canvas);
+
+            return canvas;
         }
-      }
+    }, {
+        key: "appendDOM",
+        value: function appendDOM(canvas, parent) {
 
-      // Fallback, covers an invalid ID and a non HTMLelement object
-      if (!target) {
-        target = document.body;
-      }
+            var appendTo = void 0;
+            var overflowHidden = true;
+            var target = null;
 
-      /*if (overflowHidden && target.style)
-      {
-          target.style.overflow = 'hidden';
-      }*/
+            //if (overflowHidden === undefined) { overflowHidden = true; }
 
-      target.appendChild(canvas);
-    }
-  }]);
+            if (parent) {
+                if (typeof parent === 'string') {
+                    // hopefully an element ID
+                    target = document.getElementById(parent);
+                } else if ((typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' && parent.nodeType === 1) {
+                    // quick test for a HTMLelement
+                    target = parent;
+                }
+            }
 
-  return Canvas;
+            // Fallback, covers an invalid ID and a non HTMLelement object
+            if (!target) {
+                target = document.body;
+            }
+
+            /*if (overflowHidden && target.style)
+            {
+                target.style.overflow = 'hidden';
+            }*/
+
+            target.appendChild(canvas);
+
+            return canvas;
+        }
+    }]);
+
+    return Canvas;
 }();
 
 /***/ }),
@@ -7975,9 +7941,11 @@ function ParseLayers(json, map) {
 
     if (size <= 0) return tileLayers;
 
-    for (var i = 0; i < size; i++) {
+    for (var i = size - 1; i >= 0; i--) {
 
         var jsonLayer = json.layers[i];
+
+        if (jsonLayer.type !== "tilelayer") continue;
 
         if (jsonLayer.enconding) {
             if (jsonLayer.enconding === 'base64') {
@@ -8831,6 +8799,11 @@ var DataList = function () {
             }
 
             return this;
+        }
+    }, {
+        key: 'splice',
+        value: function splice(start, count) {
+            return this.childs.splice(start, count);
         }
     }, {
         key: 'destroy',

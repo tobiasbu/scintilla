@@ -14,9 +14,11 @@ export default function ParseLayers(json, map) {
     if (size <= 0)
         return tileLayers;
 
-    for (let i = 0; i < size; i++) {
+    for (let i = size - 1; i >= 0; i--) {
 
         let jsonLayer = json.layers[i];
+
+        if (jsonLayer.type !== "tilelayer") continue;
 
         if (jsonLayer.enconding) {
             if (jsonLayer.enconding === 'base64') {
