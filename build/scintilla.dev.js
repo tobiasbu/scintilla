@@ -162,6 +162,8 @@ var scintilla = scintilla || {
   Camera: __webpack_require__(/*! ./camera/Camera */ "./camera/Camera.js"),
   Module: __webpack_require__(/*! ./modules */ "./modules/index.js"),
   Entity: __webpack_require__(/*! ./entities */ "./entities/index.js"),
+  // EVENTS
+  Event: __webpack_require__(/*! ./event */ "./event/index.js"),
   // CORE
   Resources: __webpack_require__(/*! ./resources */ "./resources/index.js"),
   Cache: __webpack_require__(/*! ./cache/CacheManager */ "./cache/CacheManager.js"),
@@ -1984,6 +1986,519 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./event/EventManager.js":
+/*!*******************************!*\
+  !*** ./event/EventManager.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+var _Signal = __webpack_require__(/*! ./Signal */ "./event/Signal.js");
+
+var _Signal2 = _interopRequireDefault(_Signal);
+
+var _Validate = __webpack_require__(/*! ../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EventManager = function () {
+        function EventManager() {
+                _classCallCheck(this, EventManager);
+
+                this._signalsMap = new _Map2.default();
+        }
+
+        _createClass(EventManager, [{
+                key: 'create',
+                value: function create(eventName) {
+
+                        var has = this._signalsMap.get(eventName);
+
+                        if (has !== undefined && has != null) return has;
+
+                        var signal = new _Signal2.default();
+
+                        this._signalsMap.set(eventName, signal);
+
+                        return signal;
+                }
+        }, {
+                key: 'subscribe',
+                value: function subscribe(eventName, func) {
+
+                        var has = this._signalsMap.get(eventName);
+
+                        if (has === undefined || has === null) {
+                                console.warn("EventManager.subscribe: There is no registered event called \'" + eventName + '\'.');
+                                return this;
+                        }
+
+                        if (!_Validate2.default.isFunction(func)) {
+                                console.warn("EventManager.subscribe: The variable is not a function.");
+                                return this;
+                        }
+
+                        has.subscribe(func);
+
+                        return this;
+                }
+
+                /**
+                * Dispatch to subscribed Signal
+                * @param {String} eventName The subscribed Signal name.
+                * @param {...*} [params] Parameters that should be passed to each handler.
+                */
+
+        }, {
+                key: 'dispatch',
+                value: function dispatch(eventName) {
+
+                        var has = this._signalsMap.get(eventName);
+
+                        if (has === undefined || has === null) return this;
+
+                        var args = arguments.length > 1 ? [arguments[1]] : Array.apply(null, arguments);
+
+                        has.dispatch(args);
+
+                        return this;
+                }
+        }]);
+
+        return EventManager;
+}();
+
+exports.default = EventManager;
+
+/***/ }),
+
+/***/ "./event/Signal.js":
+/*!*************************!*\
+  !*** ./event/Signal.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /** @license
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * JS Signals <http://millermedeiros.github.com/js-signals/>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Released under the MIT license
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Author: Miller Medeiros
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Version: ::VERSION_NUMBER:: - Build: ::BUILD_NUMBER:: (::BUILD_DATE::)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
+
+var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+var _SignalBinding = __webpack_require__(/*! ./SignalBinding */ "./event/SignalBinding.js");
+
+var _SignalBinding2 = _interopRequireDefault(_SignalBinding);
+
+var _IndexOfListener = __webpack_require__(/*! ./components/IndexOfListener */ "./event/components/IndexOfListener.js");
+
+var _IndexOfListener2 = _interopRequireDefault(_IndexOfListener);
+
+var _ValidateListener = __webpack_require__(/*! ./components/ValidateListener */ "./event/components/ValidateListener.js");
+
+var _ValidateListener2 = _interopRequireDefault(_ValidateListener);
+
+var _RegisterListener = __webpack_require__(/*! ./components/RegisterListener */ "./event/components/RegisterListener.js");
+
+var _RegisterListener2 = _interopRequireDefault(_RegisterListener);
+
+var _Validate = __webpack_require__(/*! ../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// Based on https://github.com/millermedeiros/js-signals
+/**
+* Custom event broadcaster
+* Inspired by Robert Penner's AS3 Signals.
+* @name Signal
+* @author Miller Medeiros
+* @class
+*/
+var Signal = function () {
+
+    /**
+     * @constructor
+     */
+    function Signal() {
+        _classCallCheck(this, Signal);
+
+        this._bindings = new _List2.default();
+        this.active = true;
+        this._shouldPropagate = true;
+    }
+
+    _createClass(Signal, [{
+        key: 'has',
+
+
+        /**
+         * Check if listener was attached to Signal.
+         * @param {Function} listener The listener
+         * @param {Object} [context] Context
+         * @return {boolean} if Signal has the specified listener.
+         */
+        value: function has(listener, context) {
+            return (0, _IndexOfListener2.default)(this, listener, context) !== -1;
+        }
+
+        /**
+         * Add a listener to the signal.
+         * @param {Function} listener Signal handler function.
+         * @param {Object} [listenerContext] Context on which listener will be executed (object that should represent the `this` variable inside listener function).
+         * @param {Number} [priority] The priority level of the event listener. Listeners with higher priority will be executed before listeners with lower priority. Listeners with same priority level will be executed at the same order as they were added. (default = 0)
+         * @return {Signal} return this signal.
+         */
+
+    }, {
+        key: 'subscribe',
+        value: function subscribe(listener, context, priority) {
+            (0, _ValidateListener2.default)(listener, 'subscribe');
+            (0, _RegisterListener2.default)(this, listener, context, priority);
+            return this;
+        }
+
+        /**
+         * Remove a single listener from the dispatch queue.
+         * @param {Function} listener Handler function that should be removed.
+         * @param {Object} [context] Execution context (since you can add the same handler multiple times if executing in a different context).
+         * @return {Function} Listener handler function.
+         */
+
+    }, {
+        key: 'unsubscribe',
+        value: function unsubscribe(listener, context) {
+            (0, _ValidateListener2.default)(listener, 'unsubscribe');
+
+            var i = (0, _IndexOfListener2.default)(this, listener, context);
+            if (i !== -1) {
+                this._bindings[i]._destroy();
+                this._bindings.eraseAt(i);
+            }
+
+            return listener;
+        }
+    }, {
+        key: 'unsubscribeAll',
+        value: function unsubscribeAll() {}
+
+        /**
+        * Dispatch/Broadcast Signal to all listeners added to the queue.
+        * @param {...*} [params] Parameters that should be passed to each handler.
+        */
+
+    }, {
+        key: 'dispatch',
+        value: function dispatch(params) {
+            if (!this.active) return;
+
+            var size = this._bindings.length;
+
+            if (!size) return;
+
+            var paramsSize = arguments.length;
+
+            if (paramsSize > 1) {
+                params = Array.prototype.slice.call(arguments);
+            }
+
+            var binds = this._bindings.childs.slice();
+
+            do {
+                size--;
+            } while (binds[size] && this._shouldPropagate && binds[size].execute(params) !== false);
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            this.unsubscribeAll();
+            delete this._bindings;
+        }
+    }, {
+        key: 'propagate',
+        set: function set(value) {
+            this._shouldPropagate = value;
+        },
+        get: function get() {
+            return this._shouldPropagate;
+        }
+    }, {
+        key: 'count',
+        get: function get() {
+            return this._bindings.size;
+        }
+    }]);
+
+    return Signal;
+}();
+
+exports.default = Signal;
+
+/***/ }),
+
+/***/ "./event/SignalBinding.js":
+/*!********************************!*\
+  !*** ./event/SignalBinding.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SignalBinding = function () {
+    function SignalBinding(signal, listener, listenerContext, priority) {
+        _classCallCheck(this, SignalBinding);
+
+        this._signal = signal;
+        this._listener = listener;
+        this.context = listenerContext;
+        this._priority = priority || 0;
+        this.active = true;
+        this.args = undefined;
+        this._isOnce = false;
+    }
+
+    _createClass(SignalBinding, [{
+        key: "execute",
+        value: function execute(argsArray) {
+            var handlerReturn = void 0,
+                params = void 0;
+
+            if (this.active && !!this._listener) {
+
+                params = this.args ? this.args.concat(argsArray) : argsArray;
+                handlerReturn = this._listener.apply(this.context, params);
+                if (this._isOnce) {
+                    this.detach();
+                }
+            }
+            return handlerReturn;
+        }
+    }, {
+        key: "detach",
+        value: function detach() {
+            return this.isBound() ? this._signal.remove(this._listener, this.context) : null;
+        }
+
+        /**
+            * @return {Boolean} `true` if binding is still bound to the signal and have a listener.
+            */
+
+    }, {
+        key: "isBound",
+        value: function isBound() {
+            return !!this._signal && !!this._listener;
+        }
+
+        /**
+            * Delete instance properties
+            * @private
+            */
+
+    }, {
+        key: "_destroy",
+        value: function _destroy() {
+            delete this._signal;
+            delete this._listener;
+            delete this.context;
+        }
+    }, {
+        key: "listener",
+        get: function get() {
+            return this._listener;
+        }
+    }, {
+        key: "signal",
+        get: function get() {
+            return this._signal;
+        }
+    }]);
+
+    return SignalBinding;
+}();
+
+exports.default = SignalBinding;
+
+/***/ }),
+
+/***/ "./event/components/AddBinding.js":
+/*!****************************************!*\
+  !*** ./event/components/AddBinding.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+exports.default = AddBinding;
+function AddBinding(signal, binding) {
+
+        var n = signal._bindings.length;
+
+        do {
+                --n;
+        } while (signal._bindings.at(n) && binding._priority <= signal._bindings.at(n)._priority);
+
+        signal._bindings.insert(binding, n);
+}
+
+/***/ }),
+
+/***/ "./event/components/IndexOfListener.js":
+/*!*********************************************!*\
+  !*** ./event/components/IndexOfListener.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = IndexOfListener;
+function IndexOfListener(signal, listener, context) {
+
+    var r = signal._bindings.each(function (element, index) {
+        if (element._listener === listener && element._context === context) {
+            return index;
+        }
+    });
+
+    return r || -1;
+}
+
+/***/ }),
+
+/***/ "./event/components/RegisterListener.js":
+/*!**********************************************!*\
+  !*** ./event/components/RegisterListener.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = RegisterListener;
+
+var _SignalBinding = __webpack_require__(/*! ../SignalBinding */ "./event/SignalBinding.js");
+
+var _SignalBinding2 = _interopRequireDefault(_SignalBinding);
+
+var _IndexOfListener = __webpack_require__(/*! ./IndexOfListener */ "./event/components/IndexOfListener.js");
+
+var _IndexOfListener2 = _interopRequireDefault(_IndexOfListener);
+
+var _AddBinding = __webpack_require__(/*! ./AddBinding */ "./event/components/AddBinding.js");
+
+var _AddBinding2 = _interopRequireDefault(_AddBinding);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function RegisterListener(signal, listener, listenerContext, priority) {
+
+    var binding = null;
+    var index = (0, _IndexOfListener2.default)(signal, listener, listenerContext);
+
+    if (index !== -1) {
+        binding = signal._bindings[index];
+    } else {
+
+        binding = new _SignalBinding2.default(signal, listener, listenerContext, priority);
+        (0, _AddBinding2.default)(signal, binding);
+    }
+
+    return binding;
+}
+
+/***/ }),
+
+/***/ "./event/components/ValidateListener.js":
+/*!**********************************************!*\
+  !*** ./event/components/ValidateListener.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ValidateListener;
+function ValidateListener(listener, func) {
+    if (typeof listener !== 'function') throw new Error('Signal.{fn}: Listener should be a function.'.replace('{fn}', func));
+}
+
+/***/ }),
+
+/***/ "./event/index.js":
+/*!************************!*\
+  !*** ./event/index.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Signal: __webpack_require__(/*! ./Signal */ "./event/Signal.js"),
+    EventManager: __webpack_require__(/*! ./EventManager */ "./event/EventManager.js")
+};
+
+/***/ }),
+
 /***/ "./input/Input.js":
 /*!************************!*\
   !*** ./input/Input.js ***!
@@ -2882,8 +3397,10 @@ var AssetsType = {
     'image': 1,
     'audio': 2,
     'text': 3,
-    'json': 4,
-    'tilemapJSON': 5
+    'script': 4,
+    'json': 5,
+    'webFont': 6,
+    'tilemapJSON': 7
 };
 
 exports.default = AssetsType;
@@ -2916,6 +3433,10 @@ var _XHR2 = _interopRequireDefault(_XHR);
 
 var _LoaderState = __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js");
 
+var _AssetsType = __webpack_require__(/*! ./AssetsType */ "./loader/AssetsType.js");
+
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2934,15 +3455,18 @@ var File = function () {
 
         this.url = _ObjectUtils2.default.getValue(config, 'url', undefined);
 
-        if (this.url === undefined) this.url = _ObjectUtils2.default.getValue(config, 'path', '') + this.tag + '.' + _ObjectUtils2.default.getValue(config, 'ext', '');else {
+        if (this.url === undefined) this.url = _ObjectUtils2.default.getValue(config, 'path', '') + this.tag + '.' + _ObjectUtils2.default.getValue(config, 'ext', '');else if (typeof this.url !== 'function') {
             if (!this.useExternal || this.useExternal !== undefined) this.url = _ObjectUtils2.default.getValue(config, 'path', '').concat(this.url);
         }
 
-        this.xhrSettings = _XHR2.default.createSettings(_ObjectUtils2.default.getValue(config, 'responseType', undefined));
+        // Web fonts is managed by WebFontLoader provided by google
+        // There is no need to create XHR settings and request
+        if (this.type !== _AssetsType2.default.webFont) {
 
-        if (_ObjectUtils2.default.getValue(config, 'xhrSettings', false)) this.xhrSettings = _XHR2.default.merge(this.xhrSettings, _ObjectUtils2.default.getValue(config, 'xhrSettings', {}));
+            this.xhrSettings = _XHR2.default.createSettings(_ObjectUtils2.default.getValue(config, 'responseType', undefined));
 
-        //console.log(this.xhrSettings);
+            if (_ObjectUtils2.default.getValue(config, 'xhrSettings', false)) this.xhrSettings = _XHR2.default.merge(this.xhrSettings, _ObjectUtils2.default.getValue(config, 'xhrSettings', {}));
+        }
 
         this.loader = null;
         this.state = _LoaderState.LOADER_STATE.PENDING;
@@ -2955,10 +3479,7 @@ var File = function () {
         this.config = _ObjectUtils2.default.getValue(config, 'config', {});
         this.crossOrigin = undefined;
 
-        // callbacks
-        //loaded: false,
-        //error: false,
-        //loading:false,
+        this.onComplete = undefined;
     }
 
     _createClass(File, [{
@@ -2969,7 +3490,7 @@ var File = function () {
             if (this.state === _LoaderState.LOADER_STATE.FINISHED) {
                 this.onDone();
 
-                this.loader.nextFile(this);
+                this.loader.next(this);
             } else {
 
                 this.source = _ObjectUtils2.default.getURL(this.url, gameLoader.baseURL);
@@ -3019,6 +3540,8 @@ var File = function () {
         key: 'onDone',
         value: function onDone() {
             this.state = _LoaderState.LOADER_STATE.DONE;
+
+            this.loader.event.dispatch('oncomplete_' + this.tag);
         }
     }, {
         key: 'onProcessing',
@@ -3138,6 +3661,14 @@ var _AssetsType = __webpack_require__(/*! ./AssetsType */ "./loader/AssetsType.j
 
 var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
+var _ScriptFile = __webpack_require__(/*! ./assets/ScriptFile */ "./loader/assets/ScriptFile.js");
+
+var _ScriptFile2 = _interopRequireDefault(_ScriptFile);
+
+var _EventManager = __webpack_require__(/*! ../event/EventManager */ "./event/EventManager.js");
+
+var _EventManager2 = _interopRequireDefault(_EventManager);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3166,6 +3697,9 @@ var LoadManager = function () {
     this.path = null;
     this.baseURL = null;
     this.state = null;
+    this.webFontLoader = undefined;
+    this.event = null;
+    this.crossOrigin = undefined;
 
     var gameConfig = game.config.loader;
 
@@ -3187,6 +3721,7 @@ var LoadManager = function () {
       this._successFiles = new _Set2.default();
       this._failedFiles = new _Set2.default();
       this._processedFiles = new _Set2.default();
+      this.event = new _EventManager2.default();
 
       this._filesQueueCount = 0;
       this._loadedFilesCount = 0;
@@ -3217,12 +3752,30 @@ var LoadManager = function () {
       return this;
     }
   }, {
+    key: 'setCrossOrigin',
+    value: function setCrossOrigin(crossOrigin) {
+      this.crossOrigin = crossOrigin;
+      return this;
+    }
+  }, {
     key: 'addAsset',
     value: function addAsset(asset, check) {
 
       if (check === undefined) check = true;
 
       if (!this.isOK() && check) return -1;
+
+      // is if web font, we should load the WebFontLoader
+      if (asset.type === _AssetsType2.default.webFont && this.webFontLoader === undefined) {
+
+        this.webFontLoader = new _ScriptFile2.default('webFontLoader', "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
+        this._filesQueue.set(this.webFontLoader);
+        this._filesQueueCount++;
+
+        this.event.create('onpostload_webFontLoader').subscribe(function () {
+          asset.fontLoad();
+        });
+      }
 
       asset.path = this.path;
       this._filesQueue.set(asset);
@@ -3296,8 +3849,6 @@ var LoadManager = function () {
 
       this._filesQueue.each(function (file) {
 
-        //var file = this._filesQueue[i];
-
         if (file.state === _LoaderState.LOADER_STATE.FINISHED || file.state === _LoaderState.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
           {
 
@@ -3312,6 +3863,11 @@ var LoadManager = function () {
   }, {
     key: 'loadAsset',
     value: function loadAsset(file) {
+
+      if (!file.crossOrigin) {
+        file.crossOrigin = this.crossOrigin;
+      }
+
       file.load(this);
     }
   }, {
@@ -3321,7 +3877,6 @@ var LoadManager = function () {
       if (hasError) this._failedFiles.set(concludedFile);else this._successFiles.set(concludedFile);
 
       this._filesLoading.delete(concludedFile);
-      //this._filesQueue.delete(concludedFile);
       this._loadedFilesCount++;
 
       this.updateProgress();
@@ -3805,7 +4360,7 @@ var JSONFile = function (_File) {
     function JSONFile(tag, url, path, xhrSettings, config) {
         _classCallCheck(this, JSONFile);
 
-        var config = {
+        var assetConfig = {
             type: _AssetsType2.default.json,
             ext: _ObjectUtils2.default.getValue(tag, 'ext', 'json'),
             responseType: 'text',
@@ -3815,10 +4370,10 @@ var JSONFile = function (_File) {
             xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings)
         };
 
-        var _this = _possibleConstructorReturn(this, (JSONFile.__proto__ || Object.getPrototypeOf(JSONFile)).call(this, config));
+        var _this = _possibleConstructorReturn(this, (JSONFile.__proto__ || Object.getPrototypeOf(JSONFile)).call(this, assetConfig));
 
-        if (_typeof(config.url) === 'object') {
-            _this.data = config.url;
+        if (_typeof(assetConfig.url) === 'object') {
+            _this.data = assetConfig.url;
             _this.state = _LoaderState.LOADER_STATE.DONE;
         }
 
@@ -3826,12 +4381,12 @@ var JSONFile = function (_File) {
     }
 
     _createClass(JSONFile, [{
-        key: "onProcess",
-        value: function onProcess(processingCallback) {
+        key: "onProcessing",
+        value: function onProcessing(processingCallback) {
             this.state = _LoaderState.LOADER_STATE.PROCESSING;
-            this.data = JSON.parse(this.xhrLoader.responseText);
+            this.data = JSON.parse(this.xhrRequest.responseText);
             this.onDone();
-            callback(this);
+            processingCallback(this);
         }
     }]);
 
@@ -3844,6 +4399,105 @@ exports.default = JSONFile;
 _LoaderState.AssetTypeHandler.register('json', function (tag, url, path, xhrSettings) {
     this.addAsset(new JSONFile(tag, url, this.path, xhrSettings));
     return this;
+});
+
+/***/ }),
+
+/***/ "./loader/assets/ScriptFile.js":
+/*!*************************************!*\
+  !*** ./loader/assets/ScriptFile.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
+
+var _File3 = _interopRequireDefault(_File2);
+
+var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
+
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
+
+var _Path2 = _interopRequireDefault(_Path);
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ScriptFile = function (_File) {
+        _inherits(ScriptFile, _File);
+
+        function ScriptFile(tag, url, path, xhrSettings, config) {
+                _classCallCheck(this, ScriptFile);
+
+                var tagFile = typeof tag === 'string' ? tag : _ObjectUtils2.default.getValue(tag, 'key', '');
+
+                var assetConfig = {
+                        type: _AssetsType2.default.script,
+                        ext: _ObjectUtils2.default.getValue(tag, 'ext', _Path2.default.getExtension(url) || 'js'),
+                        responseType: 'text',
+                        tag: tagFile,
+                        url: _ObjectUtils2.default.getValue(tag, 'file', url),
+                        path: path,
+                        xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings)
+                };
+
+                return _possibleConstructorReturn(this, (ScriptFile.__proto__ || Object.getPrototypeOf(ScriptFile)).call(this, assetConfig));
+        }
+
+        _createClass(ScriptFile, [{
+                key: "onPostLoad",
+                value: function onPostLoad(loader, xhrLoader) {
+                        this.state = _LoaderState.LOADER_STATE.PROCESSING;
+
+                        // create the element
+                        this.data = document.createElement('script');
+                        this.data.language = 'javascript';
+                        this.data.type = 'text/javascript';
+                        this.data.defer = false;
+                        this.data.text = this.xhrRequest.responseText;
+
+                        // append to html document
+                        document.head.appendChild(this.data);
+
+                        this.loader.event.dispatch('onpostload_' + this.tag);
+
+                        //this.onDone();
+
+                        //processingCallback(this);
+                }
+        }]);
+
+        return ScriptFile;
+}(_File3.default);
+
+exports.default = ScriptFile;
+
+
+_LoaderState.AssetTypeHandler.register('script', function (tag, url, path, xhrSettings) {
+        this.addAsset(new ScriptFile(tag, url, this.path, xhrSettings));
+        return this;
 });
 
 /***/ }),
@@ -3910,7 +4564,7 @@ var TextFile = function (_File) {
             if (typeof path === "boolean") useExternal = path;
         }
 
-        var fileConfig = {
+        var assetConfig = {
             type: _AssetsType2.default.text,
             tag: assetTag,
             ext: _ObjectUtils2.default.getValue(tag, 'ext', _Path2.default.getExtension(url)),
@@ -3922,7 +4576,7 @@ var TextFile = function (_File) {
             useExternal: useExternal
         };
 
-        return _possibleConstructorReturn(this, (TextFile.__proto__ || Object.getPrototypeOf(TextFile)).call(this, fileConfig));
+        return _possibleConstructorReturn(this, (TextFile.__proto__ || Object.getPrototypeOf(TextFile)).call(this, assetConfig));
     }
 
     //onLoad(event) {}
@@ -4074,10 +4728,10 @@ var TilemapFileJSON = function (_JSONFile) {
             CheckImagesSources(loader, this.data.tilesets, this.url);
         }
     }, {
-        key: 'onProcess',
-        value: function onProcess(processingCallback) {
+        key: 'onProcessing',
+        value: function onProcessing(processingCallback) {
             this.onDone();
-            callback(this);
+            processingCallback(this);
         }
     }]);
 
@@ -4089,6 +4743,136 @@ exports.default = TilemapFileJSON;
 
 _LoaderState.AssetTypeHandler.register('tilemapJSON', function (tag, url, path, xhrSettings) {
     this.addAsset(new TilemapFileJSON(tag, url, this.path, xhrSettings));
+    return this;
+});
+
+/***/ }),
+
+/***/ "./loader/assets/WebFontFile.js":
+/*!**************************************!*\
+  !*** ./loader/assets/WebFontFile.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
+
+var _File3 = _interopRequireDefault(_File2);
+
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
+
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _Validate = __webpack_require__(/*! ../../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var WebFontFile = function (_File) {
+    _inherits(WebFontFile, _File);
+
+    function WebFontFile(tag, provider, fontFamily, timeout) {
+        _classCallCheck(this, WebFontFile);
+
+        var assetConfig = {
+            type: _AssetsType2.default.webFont,
+            tag: tag,
+            config: {
+                provider: provider || 'google',
+                families: fontFamily,
+                timeout: timeout || 3000
+            }
+        };
+
+        return _possibleConstructorReturn(this, (WebFontFile.__proto__ || Object.getPrototypeOf(WebFontFile)).call(this, assetConfig));
+    }
+
+    _createClass(WebFontFile, [{
+        key: "load",
+        value: function load(gameLoader) {
+            this.loader = gameLoader;
+
+            if (this.state === _LoaderState.LOADER_STATE.FINISHED) {
+                this.onDone();
+
+                this.loader.next(this);
+            } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === _LoaderState.LOADER_STATE.DONE) {
+                if (this.fontLoad !== undefined) this.fontLoad();
+            }
+
+            // Do nothing, wait for signal
+        }
+    }, {
+        key: "fontLoad",
+        value: function fontLoad() {
+
+            if (WebFont !== undefined) {
+
+                this.state = _LoaderState.LOADER_STATE.PROCESSING;
+
+                var provider = this.config['provider'];
+
+                if (!_Validate2.default.isArray(this.config.families)) {
+                    var families = [];
+                    families.push(this.config.families);
+                    this.config.families = families;
+                }
+
+                var WebFontProvider = {
+                    families: this.config.families
+                };
+
+                var WebFontConfig = {
+                    timeout: this.config.timeout,
+                    inactive: this.onError.bind(this),
+                    fontactive: this.onLoad.bind(this),
+                    classes: true
+                };
+
+                WebFontConfig[provider] = WebFontProvider;
+
+                WebFont.load(WebFontConfig);
+            }
+        }
+    }, {
+        key: "onLoad",
+        value: function onLoad(familyName, fvd) {
+
+            this.data = {
+                family: familyName,
+                fvd: fvd
+            };
+
+            this.loader.next(this, true);
+        }
+    }]);
+
+    return WebFontFile;
+}(_File3.default);
+
+exports.default = WebFontFile;
+
+
+_LoaderState.AssetTypeHandler.register('webFont', function (tag, provider, fontFamily, timeout) {
+    this.addAsset(new WebFontFile(tag, provider, fontFamily, timeout));
     return this;
 });
 
@@ -4107,8 +4891,10 @@ _LoaderState.AssetTypeHandler.register('tilemapJSON', function (tag, url, path, 
 module.exports = {
     ImageFile: __webpack_require__(/*! ./ImageFile */ "./loader/assets/ImageFile.js"),
     TextFile: __webpack_require__(/*! ./TextFile */ "./loader/assets/TextFile.js"),
+    ScriptFile: __webpack_require__(/*! ./ScriptFile */ "./loader/assets/ScriptFile.js"),
     JSONFile: __webpack_require__(/*! ./JSONFile */ "./loader/assets/JSONFile.js"),
-    TilemapJSON: __webpack_require__(/*! ./TilemapJSON */ "./loader/assets/TilemapJSON.js")
+    TilemapJSON: __webpack_require__(/*! ./TilemapJSON */ "./loader/assets/TilemapJSON.js"),
+    WebFontFile: __webpack_require__(/*! ./WebFontFile */ "./loader/assets/WebFontFile.js")
 };
 
 /***/ }),
@@ -5892,7 +6678,7 @@ function AnimateTilemap(tilemap, time) {
 
             if (animatedTile.frame + 1 < GID.keyFrames.length) animatedTile.frame++;else animatedTile.frame = 0;
 
-            var nextGID = GID.tileset.getTile(GID.keyFrames[animatedTile.frame].tileID).id;
+            var nextGID = GID.keyFrames[animatedTile.frame].tileID; //GID.tileset.getTile(GID.keyFrames[animatedTile.frame].tileID).id;
 
             GID.currentFrame = nextGID;
         }
@@ -6999,6 +7785,10 @@ var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ ".
 
 var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
+var _Validate = __webpack_require__(/*! ../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7022,9 +7812,13 @@ var Draw = function () {
     }
   }, {
     key: "font",
-    value: function font(fontname, size) {
+    value: function font(fontname, size, style) {
 
-      this.context.font = size + "px " + fontname;
+      if (_Validate2.default.isNumber(size)) size = size.toString() + 'px';
+
+      if (style === undefined) style = "normal";
+
+      this.context.font = style + " " + size + " \'" + fontname + "\'";
     }
   }, {
     key: "text",
@@ -7063,8 +7857,8 @@ var Draw = function () {
     key: "spriteTransformed",
     value: function spriteTransformed(tag, x, y, xscale, yscale, angle) {}
   }, {
-    key: "rectangle",
-    value: function rectangle(x, y, width, height, color) {
+    key: "rect",
+    value: function rect(x, y, width, height, color) {
 
       this.context.fillStyle = color;
       this.context.fillRect(x, y, width, height);
@@ -10557,11 +11351,6 @@ var ObjectUtils = function () {
     }
 
     _createClass(ObjectUtils, [{
-        key: 'isFunction',
-        value: function isFunction(obj) {
-            return !!(obj && obj.constructor && obj.call && obj.apply);
-        }
-    }, {
         key: 'getValue',
         value: function getValue(obj, key, defaultValue) {
             var type = typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
@@ -10658,6 +11447,39 @@ var Path = {
 };
 
 exports.default = Path;
+
+/***/ }),
+
+/***/ "./utils/Validate.js":
+/*!***************************!*\
+  !*** ./utils/Validate.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var Validate = {
+    isFunction: function isFunction(value) {
+        return value instanceof Function;
+    },
+    isClass: function isClass(value) {
+        return !!(value && value.constructor && value.call && value.apply);
+    },
+    isArray: function isArray(value) {
+        return Array.isArray(value);
+    },
+    isNumber: function isNumber(value) {
+        return !isNaN(value);
+    }
+};
+
+exports.default = Validate;
 
 /***/ })
 

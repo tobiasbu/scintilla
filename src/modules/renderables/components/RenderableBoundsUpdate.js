@@ -1,6 +1,5 @@
 import ComputeBounds from "../../../transform/ComputeBounds";
 
-
 export default function RenderableBoundsUpdate(renderable, entity, camera) {
 
     if (!entity.transform._isDirty && !camera.transform._isDirty)

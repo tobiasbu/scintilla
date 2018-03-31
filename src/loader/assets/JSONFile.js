@@ -7,7 +7,7 @@ export default class JSONFile extends File {
 
     constructor(tag, url, path, xhrSettings, config) {
 
-        var config = {
+        let assetConfig = {
             type: AssetsType.json,
             ext: ObjectUtils.getValue(tag, 'ext', 'json'),
             responseType: 'text',
@@ -17,20 +17,20 @@ export default class JSONFile extends File {
             xhrSettings: ObjectUtils.getValue(tag, 'xhr', xhrSettings)
         };
 
-        super(config);
+        super(assetConfig);
 
-        if (typeof config.url === 'object') {
-            this.data = config.url;
+        if (typeof assetConfig.url === 'object') {
+            this.data = assetConfig.url;
             this.state = LOADER_STATE.DONE;
         }
 
     }
 
-    onProcess(processingCallback) {
+    onProcessing(processingCallback) {
         this.state = LOADER_STATE.PROCESSING;
-        this.data = JSON.parse(this.xhrLoader.responseText);
+        this.data = JSON.parse(this.xhrRequest.responseText);
         this.onDone();
-        callback(this);
+        processingCallback(this);
     }
 
 }

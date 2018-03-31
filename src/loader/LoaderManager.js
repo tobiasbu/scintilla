@@ -5,6 +5,8 @@ import XHR from './XHR'
 import ObjectUtils from '../utils/ObjectUtils';
 import GameSystemManager from '../core/GameSystemManager';
 import AssetsType from './AssetsType';
+import ScriptFile from './assets/ScriptFile';
+import EventManager from '../event/EventManager';
 
 // Class LoaderManager
 export default class LoadManager {
@@ -30,6 +32,9 @@ export default class LoadManager {
     this.path = null;
     this.baseURL = null;
     this.state = null;
+    this.webFontLoader = undefined;
+    this.event = null;
+    this.crossOrigin = undefined;
 
     let gameConfig = game.config.loader;
 
@@ -46,6 +51,10 @@ export default class LoadManager {
 
   }
 
+  get totalQueuedFiles() {
+    return this._filesQueueCount - this._loadedFilesCount;
+  }
+
   init()
   {
     this.cache = this.game.system.cache;
@@ -55,6 +64,7 @@ export default class LoadManager {
     this._successFiles = new DataSet();
     this._failedFiles = new DataSet();
     this._processedFiles = new DataSet();
+    this.event = new EventManager();
 
     this._filesQueueCount = 0;
     this._loadedFilesCount = 0;
@@ -86,12 +96,34 @@ export default class LoadManager {
     return this;
   }
 
+  setCrossOrigin(crossOrigin) {
+    this.crossOrigin = crossOrigin;
+    return this;
+  }
+
   addAsset(asset, check) {
 
     if (check === undefined) check = true;
 
     if (!this.isOK() && check)
         return -1;
+
+    // is if web font, we should load the WebFontLoader
+    if (asset.type === AssetsType.webFont && this.webFontLoader === undefined) {
+
+      this.webFontLoader = new ScriptFile('webFontLoader',"https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
+      this._filesQueue.set(this.webFontLoader);
+      this._filesQueueCount++;
+
+
+
+      this.event.create('onpostload_webFontLoader').subscribe(
+        () => {
+        asset.fontLoad();
+        });
+      
+    }
+
 
     asset.path = this.path;
     this._filesQueue.set(asset);
@@ -173,8 +205,6 @@ export default class LoadManager {
 
     this._filesQueue.each(function(file) {
 
-      //var file = this._filesQueue[i];
-
       if (file.state === LOADER_STATE.FINISHED ||
          file.state === LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
       {
@@ -192,6 +222,12 @@ export default class LoadManager {
   }
 
   loadAsset(file) {
+
+      if (!file.crossOrigin) {
+          file.crossOrigin = this.crossOrigin;
+      }
+
+
     file.load(this);
   }
 
@@ -204,7 +240,6 @@ export default class LoadManager {
       
 
       this._filesLoading.delete(concludedFile);
-      //this._filesQueue.delete(concludedFile);
       this._loadedFilesCount++;
 
       this.updateProgress();
@@ -358,10 +393,6 @@ export default class LoadManager {
 
   }
 
-
-  get totalQueuedFiles() {
-    return this._filesQueueCount - this._loadedFilesCount;
-  }
 
 
 };

@@ -11,7 +11,7 @@ export default class ImageFile extends File {
 
     constructor(tag, url, path, xhrSettings, config)
     {
-        var assetTag = null;
+        let assetTag = null;
         
         if (typeof tag === 'string')
         {
@@ -22,7 +22,7 @@ export default class ImageFile extends File {
             assetTag = ObjectUtils.getValue(tag, 'tag', '');
         }
 
-        var fileConfig = {
+        let fileConfig = {
             type: AssetsType.image,
             tag: assetTag,
             ext: ObjectUtils.getValue(tag, 'ext', Path.getExtension(url)),

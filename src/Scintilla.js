@@ -38,6 +38,8 @@ var scintilla = scintilla || {
   Camera : require('./camera/Camera'),
   Module : require('./modules'),
   Entity : require('./entities'),
+  // EVENTS
+  Event : require('./event'),
   // CORE
   Resources : require('./resources'),
   Cache : require('./cache/CacheManager'),

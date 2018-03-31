@@ -1,10 +1,6 @@
 
 class ObjectUtils {
 
-    isFunction(obj) {
-    return !!(obj && obj.constructor && obj.call && obj.apply);
-  }
-
   getValue(obj, key, defaultValue)
   {
     var type = typeof(obj);

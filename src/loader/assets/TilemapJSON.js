@@ -50,9 +50,9 @@ export default class TilemapFileJSON extends JSONFile {
         CheckImagesSources(loader, this.data.tilesets, this.url);
     }
 
-    onProcess(processingCallback) {
+    onProcessing(processingCallback) {
         this.onDone();
-        callback(this);
+        processingCallback(this);
     }
 
 

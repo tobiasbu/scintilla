@@ -7,18 +7,28 @@
 
 import DataList from '../structures/List'
 import SignalBinding from './SignalBinding'
+import IndexOfListener from './components/IndexOfListener';
+import ValidateListener from './components/ValidateListener';
+import RegisterListener from './components/RegisterListener';
+import Validate from '../utils/Validate';
 
-function ValidateListener(listener, func) {
-    if (typeof listener !== 'function') 
-        throw new Error( 'Signal.{fn}: Listener should be a function.'.replace('{fn}', func) );
-    
-}
+
 
 // Based on https://github.com/millermedeiros/js-signals
+ /**
+ * Custom event broadcaster
+ * Inspired by Robert Penner's AS3 Signals.
+ * @name Signal
+ * @author Miller Medeiros
+ * @class
+ */
 export default class Signal {
 
+    /**
+     * @constructor
+     */
     constructor() {
-        this._bindings = new DataList(undefined, true);
+        this._bindings = new DataList();
         this.active = true;
         this._shouldPropagate = true;
     }
@@ -27,57 +37,40 @@ export default class Signal {
     get propagate() {return this._shouldPropagate;}
     get count() {return this._bindings.size;}
 
-    // PRIVATE FUNCTIONS
 
-    _register(listener, context, priority) {
-
-        let binding = null;
-        let index = this._indexOfListener(listener, context);
-
-        if (index !== -1) {
-            binding = this._bindings[index];
-        } else {
-
-            binding = new SignalBinding(this, listener, isOnce, listenerContext, priority);
-            this._addBinding(binding);
-        }
-
-        return binding;
-        
-    }
-
-    _indexOfListener(listener, context) {
- 
-        let r = this.bindings.each(element, index => {
-            if (element._listener === listener && element._context === context) {
-                return index;
-            }
-        })
-
-        return r || -1;
-    }
-
-    _addBinding(binding) {
-        var n = this._bindings.length;
-        do { --n; } while (this._bindings.at(n) && binding._priority <= this._bindings.at(n)._priority);
-        this._bindings.insert(binding,n);
-    }
-
-    // PUBLIC
-
+    /**
+     * Check if listener was attached to Signal.
+     * @param {Function} listener The listener
+     * @param {Object} [context] Context
+     * @return {boolean} if Signal has the specified listener.
+     */
     has(listener, context) {
-        return this._indexOfListener(listener, context) !== -1;
+        return IndexOfListener(this, listener, context) !== -1;
     }
 
+    /**
+     * Add a listener to the signal.
+     * @param {Function} listener Signal handler function.
+     * @param {Object} [listenerContext] Context on which listener will be executed (object that should represent the `this` variable inside listener function).
+     * @param {Number} [priority] The priority level of the event listener. Listeners with higher priority will be executed before listeners with lower priority. Listeners with same priority level will be executed at the same order as they were added. (default = 0)
+     * @return {Signal} return this signal.
+     */
     subscribe(listener, context, priority) {
         ValidateListener(listener, 'subscribe');
-        return this._register(listener, context, priority);
+        RegisterListener(this, listener, context, priority);
+        return this;
     }
 
+    /**
+     * Remove a single listener from the dispatch queue.
+     * @param {Function} listener Handler function that should be removed.
+     * @param {Object} [context] Execution context (since you can add the same handler multiple times if executing in a different context).
+     * @return {Function} Listener handler function.
+     */
     unsubscribe(listener, context) {
         ValidateListener(listener, 'unsubscribe');
 
-        let i = this._indexOfListener(listener, context);
+        let i = IndexOfListener(this, listener, context);
         if (i !== -1) {
             this._bindings[i]._destroy();
             this._bindings.eraseAt(i);
@@ -90,18 +83,30 @@ export default class Signal {
 
     }
 
+     /**
+    * Dispatch/Broadcast Signal to all listeners added to the queue.
+    * @param {...*} [params] Parameters that should be passed to each handler.
+    */
     dispatch(params) {
         if (!this.active)
             return;
         
-        let length = this._bindings.length;
+        let size = this._bindings.length;
 
-        if (!length)
+        if (!size)
             return;
 
-        
+        let paramsSize = arguments.length;
 
-        do { length--; } while (this.bindings[length] && this._shouldPropagate && this.bindings[length].execute(paramsArr) !== false);
+        if (paramsSize > 1)
+        {
+            params = Array.prototype.slice.call(arguments);
+        }
+
+        let binds = this._bindings.childs.slice();
+
+        do { size--; } 
+        while (binds[size] && this._shouldPropagate && binds[size].execute(params) !== false);
     }
 
     destroy() {

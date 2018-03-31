@@ -1,4 +1,5 @@
 import GameSystemManager from "../core/GameSystemManager";
+import Validate from "../utils/Validate";
 
 export default class Draw {
   
@@ -16,9 +17,14 @@ export default class Draw {
     return this;
   }
 
-  font(fontname,size) {
+  font(fontname,size, style) {
 
-    this.context.font = size + "px " + fontname;
+    if (Validate.isNumber(size))
+      size = size.toString() + 'px';
+
+    if (style === undefined) style = "normal";
+
+    this.context.font = style + " " + size + " \'" + fontname + "\'";
 
   }
 
@@ -66,7 +72,7 @@ export default class Draw {
 
   }
 
-  rectangle(x, y, width, height, color) {
+  rect(x, y, width, height, color) {
 
     this.context.fillStyle=color;
     this.context.fillRect(x,y,width,height);

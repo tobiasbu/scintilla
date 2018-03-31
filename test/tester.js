@@ -49,6 +49,7 @@ scene.preload = function() {
     this.load.image('test','img/block.png');
     this.load.image('title','img/neof.png');
     this.load.tilemapJSON('tilemap','map/n_tilemap.json');
+    this.load.webFont('font', 'google', 'Press Start 2P');
     //game.load.text('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
 }
 
@@ -70,7 +71,9 @@ scene.start = function() {
 
 scene.render = function() {
     
-    //this.draw.sprite('test',VIEW.w / 2 + x,VIEW.h / 2-16,[0.5,0.5]);
+    this.draw.rect(0, 0, 640, 32);
+    this.draw.font('Press Start 2P', 12, 'normal');
+    this.draw.text('SCORE',8, 16,'white');
     
 }
 

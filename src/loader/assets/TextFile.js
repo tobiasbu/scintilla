@@ -30,7 +30,7 @@ export default class TextFile extends File {
             
         }
 
-        var fileConfig = {
+        let assetConfig = {
             type: AssetsType.text,
             tag: assetTag,
             ext: ObjectUtils.getValue(tag, 'ext', Path.getExtension(url)),
@@ -42,7 +42,7 @@ export default class TextFile extends File {
             useExternal : useExternal
         };
 
-        super(fileConfig);
+        super(assetConfig);
     }
     
     //onLoad(event) {}

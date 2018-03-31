@@ -2,6 +2,7 @@
 import ObjectUtils from '../utils/ObjectUtils'
 import XHR from './XHR'
 import {LOADER_STATE} from './LoaderState'
+import AssetsType from './AssetsType';
 
 export default class File {
 
@@ -20,21 +21,24 @@ export default class File {
 
         if (this.url === undefined)
             this.url = ObjectUtils.getValue(config, 'path', '') + this.tag + '.' + ObjectUtils.getValue(config, 'ext', '');
-        else
+        else if (typeof(this.url) !== 'function')
         {
             if (!this.useExternal || this.useExternal !== undefined)
                 this.url = ObjectUtils.getValue(config, 'path', '').concat(this.url);
 
         }
 
-        this.xhrSettings = XHR.createSettings(ObjectUtils.getValue(config, 'responseType', undefined));
-        
-        if (ObjectUtils.getValue(config, 'xhrSettings', false))
-            this.xhrSettings = XHR.merge(this.xhrSettings, ObjectUtils.getValue(config, 'xhrSettings', {}));
+        // Web fonts is managed by WebFontLoader provided by google
+        // There is no need to create XHR settings and request
+        if (this.type !== AssetsType.webFont) {
 
-        
-        //console.log(this.xhrSettings);
-       
+            this.xhrSettings = XHR.createSettings(ObjectUtils.getValue(config, 'responseType', undefined));
+            
+            if (ObjectUtils.getValue(config, 'xhrSettings', false))
+                this.xhrSettings = XHR.merge(this.xhrSettings, ObjectUtils.getValue(config, 'xhrSettings', {}));
+        }
+
+
         this.loader = null;
         this.state = LOADER_STATE.PENDING;
         this.totalBytes = 0;
@@ -46,30 +50,23 @@ export default class File {
         this.config = ObjectUtils.getValue(config,'config',{});
         this.crossOrigin = undefined;
 
-        // callbacks
-        //loaded: false,
-        //error: false,
-        //loading:false,
+        this.onComplete = undefined;
 
     }
 
-    load(gameLoader)
-    {
+    load(gameLoader) {
         this.loader = gameLoader;
 
-
-        if (this.state === LOADER_STATE.FINISHED)
-        {
+        if (this.state === LOADER_STATE.FINISHED) {
             this.onDone();
 
-            this.loader.nextFile(this);
+            this.loader.next(this);
+            
         }
         else
         {
-           
 
             this.source = ObjectUtils.getURL(this.url, gameLoader.baseURL);
-
             
             if (this.source.indexOf('data:') === 0 || this.source == null)
             {
@@ -83,16 +80,14 @@ export default class File {
 
     }
 
-    onLoad(event)
-    {
+    onLoad(event) {
        
         this.XHRreset();
-
-        
 
         if (event.target && event.target.status !== 200)
         {
             this.loader.next(this, true);
+
         } else {
             
             if (this.onPostLoad !== undefined)
@@ -100,8 +95,7 @@ export default class File {
 
             this.loader.next(this, false);
         }
-        
-                
+      
     }
 
     onError(event)
@@ -125,9 +119,11 @@ export default class File {
         }
     }
 
-    onDone()
-    {
+    onDone() {
         this.state = LOADER_STATE.DONE;
+
+        this.loader.event.dispatch('oncomplete_' + this.tag);
+
     }
 
     onProcessing(processingCallback)
