@@ -1,7 +1,8 @@
 
-import ObjectUtils from '../../utils/ObjectUtils'
+import ObjectUtils from '../../../utils/ObjectUtils'
 
 export default class TilemapLayerData {
+
     constructor(config) {
         this.width = ObjectUtils.getValue(config,'width', 0);
         this.height = ObjectUtils.getValue(config,'height',0);
@@ -12,6 +13,7 @@ export default class TilemapLayerData {
         //this.type ="tilelayer";
         this.visible = ObjectUtils.getValue(config,'visible', true);
         this.tiles =  ObjectUtils.getValue(config,'tiles', []);
-        
+        this.hasAnimatedTiles = false;
     }
+
 }

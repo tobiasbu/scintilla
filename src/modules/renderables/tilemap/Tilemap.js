@@ -1,8 +1,7 @@
-import Renderable from "./Renderable";
-import ModuleProvider from "../ModuleProvider";
+import Renderable from "../Renderable";
+import ModuleProvider from "../../ModuleProvider";
 import TilemapLayer from "./TilemapLayer";
-import UpdateBounds from '../../transform/UpdateBounds'
-import CullTiles from "./components/CullTiles";
+import TilemapAnimator from "./TilemapAnimator";
 
 export default class Tilemap extends Renderable {
     
@@ -11,6 +10,7 @@ export default class Tilemap extends Renderable {
         super('tilemap', moduleManager);
 
         //this._type = "tilemap";
+        this.resource = resource;
         this.tileWidth = resource.metaData.tileWidth;
         this.tileHeight = resource.metaData.tileHeight;
         this.width = resource.metaData.width;
@@ -18,6 +18,7 @@ export default class Tilemap extends Renderable {
         this.orientation = resource.metaData.orientation;
         this.pixelsWidth = resource.metaData.pixelsWidth;
         this.pixelsHeight = resource.metaData.pixelsHeight;
+        this.animator = undefined;
 
         this.culling = {
             method : 0,
@@ -29,13 +30,23 @@ export default class Tilemap extends Renderable {
         this.tilesets = resource.tilesets;
         this.layers = [];
 
+        let animations = false;
+
         for (let i = 0; i < resource.layers.length; i++)
-            this.layers.push(new TilemapLayer(this, resource.layers.at(i)));
+        {
+            let layer = resource.layers.at(i);
 
-    }
+            if (layer.hasAnimatedTiles)
+                animations = true;
 
+            this.layers.push(new TilemapLayer(this, layer));
+        }
 
-    
+        if (animations === true) {
+            this.animator = new TilemapAnimator(this, this.layers);
+        }
+
+    }   
 
 }
 

@@ -1,5 +1,5 @@
 import InitializeModuleBase from "./InitializeModuleBase";
-import UpdateRenderable from "../renderables/components/UpdateRenderable";
+import RenderableUpdate from "../renderables/components/RenderableUpdate";
 import AttachModuleInGame from "./AttachModuleInGame";
 
 export default function ModulesUpdater(modulesManager, game)
@@ -20,7 +20,7 @@ export default function ModulesUpdater(modulesManager, game)
     
     let render = modulesManager.attached.get('render');
     if (render !== undefined || render != null) {
-        UpdateRenderable(entity, render, game.system.camera);
+        RenderableUpdate(entity, render, game.system.camera, game.system.loop.updateStep);
     }
     
 }

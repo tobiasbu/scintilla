@@ -1,5 +1,5 @@
 import Renderable from "../renderables/Renderable";
-import Tilemap from "../renderables/Tilemap";
+import Tilemap from "../renderables/tilemap/Tilemap";
 import Sprite from "../renderables/Sprite";
 
 export default function AttachModuleInGame(entityModule, modulesManager, game) {

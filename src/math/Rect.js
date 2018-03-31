@@ -41,6 +41,14 @@ export default class Rect {
     return this;
   }
 
+  copy(rect) {
+    this.x = rect.x;
+    this.y = rect.y;
+    this.width = rect.width;
+    this.height = rect.height;
+    return this;
+  }
+
   
   intersects(rect) {
     return Rect.intersects(this, rect);

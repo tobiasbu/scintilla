@@ -1,8 +1,9 @@
-import TilemapMetadata from "./tilemap/TilemapMetadata";
-import Resource from "./Resource";
-import ParseTilesets from "./tilemap/ParseTileset";
-import ParseLayers from "./tilemap/ParseLayers";
-import ResourceType from './ResourceType'
+
+import Resource from "../Resource";
+import TilemapMetadata from "./data/TilemapMetadata";
+import ParseTilesets from "./parser/ParseTileset";
+import ParseLayers from "./parser/ParseLayers";
+import ResourceType from '../ResourceType'
 
 export default class TilemapResource extends Resource {
 
@@ -22,7 +23,6 @@ export default class TilemapResource extends Resource {
         this.name = name;
         this.tilesets = ParseTilesets(source, cache);
         this.layers = ParseLayers(source, this);
-        //this.data.tiles = ParseTiles(this.data);
         this.type = ResourceType.Tilemap;
         
 
@@ -36,6 +36,17 @@ export default class TilemapResource extends Resource {
             }
         }) || null;
 
+    }
+
+    getTileGID(gid) {
+        return this.tilesets.each((set)=>{
+
+            let tileGID = set.getTileGID(gid);
+
+            if (tileGID !== undefined) {
+                return tileGID;
+            }
+        }) || null;
     }
 
 }

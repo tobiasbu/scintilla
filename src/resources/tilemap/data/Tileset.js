@@ -1,5 +1,5 @@
-import DataList from "../../structures/List";
-import TileData from './TileData'
+import DataList from "../../../structures/List";
+import TileGID from './TileGID'
 
 
 
@@ -20,13 +20,22 @@ export default class Tileset {
         this.gidCount = 0;
     }
 
-    getTile(gid) {
+    getTileGID(gid) {
+
+        if (gid === 'string') gid = parseInt(gid);
 
         if (gid < this.firstgid && gid >= this.firstgid + this.gidCount)
             return null;
 
         return this.data.at(gid - this.firstgid);
-    } 
+    }
+
+    getTile(index) {
+
+        if (index === 'string') index = parseInt(index);
+
+        return this.data.at(index);
+    }
 
     hasGID(gid) {
         return (
@@ -47,12 +56,8 @@ export default class Tileset {
         let columns = (imageHeight - this.margin * 2 + this.spacing) / (this.tileHeight + this.spacing);
         let rows = (imageWidth - this.margin * 2 + this.spacing) / (this.tileWidth + this.spacing);
 
-        //rows = Math.floor(rows);
-        //columns = Math.floor(columns);
-
-
-        this.rows = rows;
-        this.collumns = columns;
+        this.rows = Math.floor(rows);
+        this.collumns =  Math.floor(columns);
         this.gidCount = rows * columns;
 
         let u = this.margin;
@@ -60,15 +65,13 @@ export default class Tileset {
         let x = 0;
 
         this.data.clear();
-        //let gid = 0;
 
         for (let i = 0; i < this.gidCount; i++) {
-            //for (let x = 0; x < colCount; x++) {
-            
-               // let gid = x + y * this.rows;
-                this.data.push(new TileData(
+
+                this.data.push(new TileGID(
                     this, 
                     this.firstgid + i,
+                    i,
                     u, v,
                     this.tileWidth, this.tileHeight));
 

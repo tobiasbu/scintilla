@@ -1,6 +1,6 @@
 import GameSystemManager from "../core/GameSystemManager";
 import ImageResource from "../resources/ImageResource";
-import TilemapResource from "../resources/TilemapResource";
+import TilemapResource from "../resources/tilemap/TilemapResource";
 import Cache from "./Cache";
 
 const CacheTypes = [

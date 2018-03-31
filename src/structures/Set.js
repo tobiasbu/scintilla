@@ -15,6 +15,9 @@ export default class DataSet {
 
     }
 
+    get size () { return this._content.length; }
+    get length () { return this._content.length; }
+
     set(value) {
         if (this._content.indexOf(value) === -1)
             this._content.push(value);
@@ -22,14 +25,18 @@ export default class DataSet {
         return this;
     }
 
-    at(value) {
-        var index = this._content.indexOf(value);
+    get(value) {
+        let index = this._content.indexOf(value);
         if (index > -1)
         {
             return this._content[index];
         } else {
             return null;
         }
+    }
+
+    at(index) {
+        return this._content[index];
     }
 
     has(value) {
@@ -78,7 +85,8 @@ export default class DataSet {
         return MergeSort(this._content, predicate);
     }
 
-    get size () { return this._content.length; }
-    get length () { return this._content.length; }
+   values() {
+       return this._content;
+   }
 
 }

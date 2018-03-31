@@ -34,17 +34,25 @@ export default function DrawTilemapLayer(context, tilemap, layer, transform) {
 
                 if (tile == null || tile === undefined) continue;
 
+                let frame;
+
+                if (tile.data.isAnimated === false || tile.data.isAnimated === undefined)
+                    frame = tile.data.st;
+                else
+                    frame = tile.data.tileset.getTile(tile.data.currentFrame).st;
+
+                
 
                 context.drawImage(
                 tile.data.tileset.image.data, // image
-                tile.frame.x, // sx - pos crop x
-                tile.frame.y, // sy - pos crop y
-                tile.frame.width, // sWidth - crop width
-                tile.frame.height, // sHeight - crop height
+                frame.x, // sx - pos crop x
+                frame.y, // sy - pos crop y
+                frame.width, // sWidth - crop width
+                frame.height, // sHeight - crop height
                 tile.x - tilemap._originInPixels.x, // destination x
                 tile.y - tilemap._originInPixels.y,  // destination y
-                tile.frame.width,
-                tile.frame.height
+                frame.width,
+                frame.height
                     );
 
                 draws++;

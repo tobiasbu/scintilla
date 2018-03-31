@@ -288,7 +288,7 @@ var _ImageResource = __webpack_require__(/*! ../resources/ImageResource */ "./re
 
 var _ImageResource2 = _interopRequireDefault(_ImageResource);
 
-var _TilemapResource = __webpack_require__(/*! ../resources/TilemapResource */ "./resources/TilemapResource.js");
+var _TilemapResource = __webpack_require__(/*! ../resources/tilemap/TilemapResource */ "./resources/tilemap/TilemapResource.js");
 
 var _TilemapResource2 = _interopRequireDefault(_TilemapResource);
 
@@ -2658,8 +2658,6 @@ var Keyboard = function () {
       // window;
       this.eventTarget = document; //this.game.system.render.canvas;
 
-      console.log(this.eventTarget);
-
       var self = this;
 
       // key event handler
@@ -4842,6 +4840,15 @@ var Rect = function () {
       return this;
     }
   }, {
+    key: "copy",
+    value: function copy(rect) {
+      this.x = rect.x;
+      this.y = rect.y;
+      this.width = rect.width;
+      this.height = rect.height;
+      return this;
+    }
+  }, {
     key: "intersects",
     value: function intersects(rect) {
       return Rect.intersects(this, rect);
@@ -5490,7 +5497,7 @@ var _Renderable = __webpack_require__(/*! ../renderables/Renderable */ "./module
 
 var _Renderable2 = _interopRequireDefault(_Renderable);
 
-var _Tilemap = __webpack_require__(/*! ../renderables/Tilemap */ "./modules/renderables/Tilemap.js");
+var _Tilemap = __webpack_require__(/*! ../renderables/tilemap/Tilemap */ "./modules/renderables/tilemap/Tilemap.js");
 
 var _Tilemap2 = _interopRequireDefault(_Tilemap);
 
@@ -5555,9 +5562,9 @@ var _InitializeModuleBase = __webpack_require__(/*! ./InitializeModuleBase */ ".
 
 var _InitializeModuleBase2 = _interopRequireDefault(_InitializeModuleBase);
 
-var _UpdateRenderable = __webpack_require__(/*! ../renderables/components/UpdateRenderable */ "./modules/renderables/components/UpdateRenderable.js");
+var _RenderableUpdate = __webpack_require__(/*! ../renderables/components/RenderableUpdate */ "./modules/renderables/components/RenderableUpdate.js");
 
-var _UpdateRenderable2 = _interopRequireDefault(_UpdateRenderable);
+var _RenderableUpdate2 = _interopRequireDefault(_RenderableUpdate);
 
 var _AttachModuleInGame = __webpack_require__(/*! ./AttachModuleInGame */ "./modules/components/AttachModuleInGame.js");
 
@@ -5580,7 +5587,7 @@ function ModulesUpdater(modulesManager, game) {
 
     var render = modulesManager.attached.get('render');
     if (render !== undefined || render != null) {
-        (0, _UpdateRenderable2.default)(entity, render, game.system.camera);
+        (0, _RenderableUpdate2.default)(entity, render, game.system.camera, game.system.loop.updateStep);
     }
 }
 
@@ -5842,10 +5849,10 @@ _ModuleProvider2.default.register('sprite', function (moduleManager, tag) {
 
 /***/ }),
 
-/***/ "./modules/renderables/Tilemap.js":
-/*!****************************************!*\
-  !*** ./modules/renderables/Tilemap.js ***!
-  \****************************************/
+/***/ "./modules/renderables/components/AnimateTilemap.js":
+/*!**********************************************************!*\
+  !*** ./modules/renderables/components/AnimateTilemap.js ***!
+  \**********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5855,158 +5862,42 @@ _ModuleProvider2.default.register('sprite', function (moduleManager, tag) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = AnimateTilemap;
+function AnimateTilemap(tilemap, time) {
 
-var _Renderable2 = __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js");
+    var animator = tilemap.animator;
 
-var _Renderable3 = _interopRequireDefault(_Renderable2);
+    if (animator === undefined) return;
 
-var _ModuleProvider = __webpack_require__(/*! ../ModuleProvider */ "./modules/ModuleProvider.js");
+    //console.log(time.hiDeltaTime);
 
-var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
+    var len = animator.animatedTiles.size;
 
-var _TilemapLayer = __webpack_require__(/*! ./TilemapLayer */ "./modules/renderables/TilemapLayer.js");
+    if (len === 0) return;
 
-var _TilemapLayer2 = _interopRequireDefault(_TilemapLayer);
+    var delta = time.hiDeltaTime;
 
-var _UpdateBounds = __webpack_require__(/*! ../../transform/UpdateBounds */ "./transform/UpdateBounds.js");
+    for (var i = 0; i < len; i++) {
 
-var _UpdateBounds2 = _interopRequireDefault(_UpdateBounds);
+        var animatedTile = animator.animatedTiles.at(i);
 
-var _CullTiles = __webpack_require__(/*! ./components/CullTiles */ "./modules/renderables/components/CullTiles.js");
+        animatedTile.t += delta;
 
-var _CullTiles2 = _interopRequireDefault(_CullTiles);
+        var GID = animatedTile.tileGID;
+        var currentKeyFrame = GID.keyFrames[animatedTile.frame];
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+        if (animatedTile.t >= currentKeyFrame.duration) {
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+            animatedTile.t = 0;
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+            if (animatedTile.frame + 1 < GID.keyFrames.length) animatedTile.frame++;else animatedTile.frame = 0;
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+            var nextGID = GID.tileset.getTile(GID.keyFrames[animatedTile.frame].tileID).id;
 
-var Tilemap = function (_Renderable) {
-    _inherits(Tilemap, _Renderable);
-
-    function Tilemap(moduleManager, resource) {
-        _classCallCheck(this, Tilemap);
-
-        //this._type = "tilemap";
-        var _this = _possibleConstructorReturn(this, (Tilemap.__proto__ || Object.getPrototypeOf(Tilemap)).call(this, 'tilemap', moduleManager));
-
-        _this.tileWidth = resource.metaData.tileWidth;
-        _this.tileHeight = resource.metaData.tileHeight;
-        _this.width = resource.metaData.width;
-        _this.height = resource.metaData.height;
-        _this.orientation = resource.metaData.orientation;
-        _this.pixelsWidth = resource.metaData.pixelsWidth;
-        _this.pixelsHeight = resource.metaData.pixelsHeight;
-
-        _this.culling = {
-            method: 0,
-            start: { x: 0, y: 0 },
-            end: { x: 0, y: 0 }
-        };
-
-        _this.floorTiles = false;
-        _this.tilesets = resource.tilesets;
-        _this.layers = [];
-
-        for (var i = 0; i < resource.layers.length; i++) {
-            _this.layers.push(new _TilemapLayer2.default(_this, resource.layers.at(i)));
-        }return _this;
+            GID.currentFrame = nextGID;
+        }
     }
-
-    return Tilemap;
-}(_Renderable3.default);
-
-exports.default = Tilemap;
-
-
-_ModuleProvider2.default.register('tilemap', function (moduleManager, tag) {
-
-    var res = null;
-    var cache = moduleManager.entity.game.system.cache;
-
-    if (cache !== undefined) res = cache.tilemap.get(tag);
-
-    var tilemap = new Tilemap(moduleManager, res);
-    tilemap.floorTiles = moduleManager.entity.game.config.floorTiles || false;
-
-    return tilemap;
-});
-
-/***/ }),
-
-/***/ "./modules/renderables/TilemapLayer.js":
-/*!*********************************************!*\
-  !*** ./modules/renderables/TilemapLayer.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Renderable2 = __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js");
-
-var _Renderable3 = _interopRequireDefault(_Renderable2);
-
-var _DrawTilemapLayer = __webpack_require__(/*! ./components/DrawTilemapLayer */ "./modules/renderables/components/DrawTilemapLayer.js");
-
-var _DrawTilemapLayer2 = _interopRequireDefault(_DrawTilemapLayer);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var TilemapLayer = function (_Renderable) {
-    _inherits(TilemapLayer, _Renderable);
-
-    function TilemapLayer(tilemap, layerData) {
-        _classCallCheck(this, TilemapLayer);
-
-        var _this = _possibleConstructorReturn(this, (TilemapLayer.__proto__ || Object.getPrototypeOf(TilemapLayer)).call(this, 'tilemapLayer', tilemap.moduleManager));
-
-        _this.tilemap = tilemap;
-        _this.layerData = layerData;
-
-        return _this;
-    }
-
-    _createClass(TilemapLayer, [{
-        key: "render",
-        value: function render(context) {
-
-            if (!this._enabled && !this.tilemap._enabled) return false;
-
-            return (0, _DrawTilemapLayer2.default)(context, this.tilemap, this.layerData, this.tilemap.moduleManager.entity.transform);
-        }
-    }, {
-        key: "width",
-        get: function get() {
-            return this.layerData.width * this.tilemap.tileWidth;
-        }
-    }, {
-        key: "height",
-        get: function get() {
-            return this.layerData.height * this.tilemap.tileHeight;
-        }
-    }]);
-
-    return TilemapLayer;
-}(_Renderable3.default);
-
-exports.default = TilemapLayer;
+}
 
 /***/ }),
 
@@ -6207,14 +6098,18 @@ function DrawTilemapLayer(context, tilemap, layer, transform) {
 
                 if (tile == null || tile === undefined) continue;
 
+                var frame = void 0;
+
+                if (tile.data.isAnimated === false || tile.data.isAnimated === undefined) frame = tile.data.st;else frame = tile.data.tileset.getTile(tile.data.currentFrame).st;
+
                 context.drawImage(tile.data.tileset.image.data, // image
-                tile.frame.x, // sx - pos crop x
-                tile.frame.y, // sy - pos crop y
-                tile.frame.width, // sWidth - crop width
-                tile.frame.height, // sHeight - crop height
+                frame.x, // sx - pos crop x
+                frame.y, // sy - pos crop y
+                frame.width, // sWidth - crop width
+                frame.height, // sHeight - crop height
                 tile.x - tilemap._originInPixels.x, // destination x
                 tile.y - tilemap._originInPixels.y, // destination y
-                tile.frame.width, tile.frame.height);
+                frame.width, frame.height);
 
                 draws++;
             }
@@ -6244,9 +6139,46 @@ function DrawTilemapLayer(context, tilemap, layer, transform) {
 
 /***/ }),
 
-/***/ "./modules/renderables/components/UpdateRenderable.js":
+/***/ "./modules/renderables/components/RenderableBoundsUpdate.js":
+/*!******************************************************************!*\
+  !*** ./modules/renderables/components/RenderableBoundsUpdate.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = RenderableBoundsUpdate;
+
+var _ComputeBounds = __webpack_require__(/*! ../../../transform/ComputeBounds */ "./transform/ComputeBounds.js");
+
+var _ComputeBounds2 = _interopRequireDefault(_ComputeBounds);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function RenderableBoundsUpdate(renderable, entity, camera) {
+
+    if (!entity.transform._isDirty && !camera.transform._isDirty) return;
+
+    if (renderable._originIsDirty) {
+        // destination
+        renderable._originInPixels.x = entity.transform.origin.x * renderable.width;
+        renderable._originInPixels.y = entity.transform.origin.y * renderable.height;
+        // renderable._originIsDirty = false;
+    }
+
+    (0, _ComputeBounds2.default)(renderable._bounds, entity.transform, renderable.width, renderable.height, renderable._originInPixels);
+}
+
+/***/ }),
+
+/***/ "./modules/renderables/components/RenderableUpdate.js":
 /*!************************************************************!*\
-  !*** ./modules/renderables/components/UpdateRenderable.js ***!
+  !*** ./modules/renderables/components/RenderableUpdate.js ***!
   \************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -6257,21 +6189,23 @@ function DrawTilemapLayer(context, tilemap, layer, transform) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = UpdateRenderable;
-
-var _ComputeBounds = __webpack_require__(/*! ../../../transform/ComputeBounds */ "./transform/ComputeBounds.js");
-
-var _ComputeBounds2 = _interopRequireDefault(_ComputeBounds);
+exports.default = RenderableUpdate;
 
 var _CullTiles = __webpack_require__(/*! ./CullTiles */ "./modules/renderables/components/CullTiles.js");
 
 var _CullTiles2 = _interopRequireDefault(_CullTiles);
 
+var _AnimateTilemap = __webpack_require__(/*! ./AnimateTilemap */ "./modules/renderables/components/AnimateTilemap.js");
+
+var _AnimateTilemap2 = _interopRequireDefault(_AnimateTilemap);
+
+var _RenderableBoundsUpdate = __webpack_require__(/*! ./RenderableBoundsUpdate */ "./modules/renderables/components/RenderableBoundsUpdate.js");
+
+var _RenderableBoundsUpdate2 = _interopRequireDefault(_RenderableBoundsUpdate);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function UpdateRenderable(entity, renderable, camera) {
-
-    if (!entity.transform._isDirty && !camera.transform._isDirty) return;
+function RenderableUpdate(entity, renderable, camera, gameTime) {
 
     if (renderable.name == 'tilemap') {
 
@@ -6281,21 +6215,18 @@ function UpdateRenderable(entity, renderable, camera) {
             renderable._originInPixels.y = entity.transform.origin.y * renderable.pixelsHeight;
         }
 
+        (0, _AnimateTilemap2.default)(renderable, gameTime);
+
+        if (!entity.transform._isDirty && !camera.transform._isDirty) return;
+
         (0, _CullTiles2.default)(renderable, camera);
 
         for (var i = 0; i < renderable.layers.length; i++) {
-            UpdateRenderable(entity, renderable.layers[i], camera);
+            (0, _RenderableBoundsUpdate2.default)(renderable, entity, camera);
         }
     } else {
 
-        if (renderable._originIsDirty) {
-            // destination
-            renderable._originInPixels.x = entity.transform.origin.x * renderable.width;
-            renderable._originInPixels.y = entity.transform.origin.y * renderable.height;
-            // renderable._originIsDirty = false;
-        }
-
-        (0, _ComputeBounds2.default)(renderable._bounds, entity.transform, renderable.width, renderable.height, renderable._originInPixels);
+        (0, _RenderableBoundsUpdate2.default)(renderable, entity, camera);
     }
 }
 
@@ -6314,9 +6245,263 @@ function UpdateRenderable(entity, renderable, camera) {
 module.exports = {
     Renderable: __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js"),
     Sprite: __webpack_require__(/*! ./Sprite */ "./modules/renderables/Sprite.js"),
-    TilemapLayer: __webpack_require__(/*! ./TilemapLayer */ "./modules/renderables/TilemapLayer.js"),
-    Tilemap: __webpack_require__(/*! ./Tilemap */ "./modules/renderables/Tilemap.js")
+    Tilemap: __webpack_require__(/*! ./tilemap/Tilemap */ "./modules/renderables/tilemap/Tilemap.js")
 };
+
+/***/ }),
+
+/***/ "./modules/renderables/tilemap/Tilemap.js":
+/*!************************************************!*\
+  !*** ./modules/renderables/tilemap/Tilemap.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Renderable2 = __webpack_require__(/*! ../Renderable */ "./modules/renderables/Renderable.js");
+
+var _Renderable3 = _interopRequireDefault(_Renderable2);
+
+var _ModuleProvider = __webpack_require__(/*! ../../ModuleProvider */ "./modules/ModuleProvider.js");
+
+var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
+
+var _TilemapLayer = __webpack_require__(/*! ./TilemapLayer */ "./modules/renderables/tilemap/TilemapLayer.js");
+
+var _TilemapLayer2 = _interopRequireDefault(_TilemapLayer);
+
+var _TilemapAnimator = __webpack_require__(/*! ./TilemapAnimator */ "./modules/renderables/tilemap/TilemapAnimator.js");
+
+var _TilemapAnimator2 = _interopRequireDefault(_TilemapAnimator);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Tilemap = function (_Renderable) {
+    _inherits(Tilemap, _Renderable);
+
+    function Tilemap(moduleManager, resource) {
+        _classCallCheck(this, Tilemap);
+
+        //this._type = "tilemap";
+        var _this = _possibleConstructorReturn(this, (Tilemap.__proto__ || Object.getPrototypeOf(Tilemap)).call(this, 'tilemap', moduleManager));
+
+        _this.resource = resource;
+        _this.tileWidth = resource.metaData.tileWidth;
+        _this.tileHeight = resource.metaData.tileHeight;
+        _this.width = resource.metaData.width;
+        _this.height = resource.metaData.height;
+        _this.orientation = resource.metaData.orientation;
+        _this.pixelsWidth = resource.metaData.pixelsWidth;
+        _this.pixelsHeight = resource.metaData.pixelsHeight;
+        _this.animator = undefined;
+
+        _this.culling = {
+            method: 0,
+            start: { x: 0, y: 0 },
+            end: { x: 0, y: 0 }
+        };
+
+        _this.floorTiles = false;
+        _this.tilesets = resource.tilesets;
+        _this.layers = [];
+
+        var animations = false;
+
+        for (var i = 0; i < resource.layers.length; i++) {
+            var layer = resource.layers.at(i);
+
+            if (layer.hasAnimatedTiles) animations = true;
+
+            _this.layers.push(new _TilemapLayer2.default(_this, layer));
+        }
+
+        if (animations === true) {
+            _this.animator = new _TilemapAnimator2.default(_this, _this.layers);
+        }
+
+        return _this;
+    }
+
+    return Tilemap;
+}(_Renderable3.default);
+
+exports.default = Tilemap;
+
+
+_ModuleProvider2.default.register('tilemap', function (moduleManager, tag) {
+
+    var res = null;
+    var cache = moduleManager.entity.game.system.cache;
+
+    if (cache !== undefined) res = cache.tilemap.get(tag);
+
+    var tilemap = new Tilemap(moduleManager, res);
+    tilemap.floorTiles = moduleManager.entity.game.config.floorTiles || false;
+
+    return tilemap;
+});
+
+/***/ }),
+
+/***/ "./modules/renderables/tilemap/TilemapAnimator.js":
+/*!********************************************************!*\
+  !*** ./modules/renderables/tilemap/TilemapAnimator.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TilemapAnimator = function () {
+    function TilemapAnimator(tilemap, layers) {
+        var _this = this;
+
+        _classCallCheck(this, TilemapAnimator);
+
+        this.tilemap = tilemap;
+        this.animatedTiles = new _List2.default();
+
+        for (var i = 0; i < layers.length; i++) {
+
+            if (!layers[i].layerData.hasAnimatedTiles) continue;
+
+            var animatedSet = layers[i].layerData.animatedTiles;
+
+            var _loop = function _loop(j) {
+
+                var animID = animatedSet.at(j);
+
+                var tileGID = tilemap.resource.getTileGID(animID);
+
+                var hasGid = _this.animatedTiles.find(function (a) {
+                    return a.tileGID.gid === tileGID.gid;
+                });
+
+                if (hasGid !== null) return "continue";
+
+                _this.animatedTiles.push({
+                    t: 0, // frameTime
+                    frame: 0,
+                    tileGID: tileGID
+                });
+            };
+
+            for (var j = 0; j < animatedSet.size; j++) {
+                var _ret = _loop(j);
+
+                if (_ret === "continue") continue;
+            }
+        }
+    }
+
+    _createClass(TilemapAnimator, [{
+        key: "update",
+        value: function update() {}
+    }]);
+
+    return TilemapAnimator;
+}();
+
+exports.default = TilemapAnimator;
+
+/***/ }),
+
+/***/ "./modules/renderables/tilemap/TilemapLayer.js":
+/*!*****************************************************!*\
+  !*** ./modules/renderables/tilemap/TilemapLayer.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Renderable2 = __webpack_require__(/*! ../Renderable */ "./modules/renderables/Renderable.js");
+
+var _Renderable3 = _interopRequireDefault(_Renderable2);
+
+var _DrawTilemapLayer = __webpack_require__(/*! ../components/DrawTilemapLayer */ "./modules/renderables/components/DrawTilemapLayer.js");
+
+var _DrawTilemapLayer2 = _interopRequireDefault(_DrawTilemapLayer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TilemapLayer = function (_Renderable) {
+    _inherits(TilemapLayer, _Renderable);
+
+    function TilemapLayer(tilemap, layerData) {
+        _classCallCheck(this, TilemapLayer);
+
+        var _this = _possibleConstructorReturn(this, (TilemapLayer.__proto__ || Object.getPrototypeOf(TilemapLayer)).call(this, 'tilemapLayer', tilemap.moduleManager));
+
+        _this.tilemap = tilemap;
+        _this.layerData = layerData;
+        return _this;
+    }
+
+    _createClass(TilemapLayer, [{
+        key: "render",
+        value: function render(context) {
+
+            if (!this._enabled && !this.tilemap._enabled) return false;
+
+            return (0, _DrawTilemapLayer2.default)(context, this.tilemap, this.layerData, this.tilemap.moduleManager.entity.transform);
+        }
+    }, {
+        key: "width",
+        get: function get() {
+            return this.layerData.width * this.tilemap.tileWidth;
+        }
+    }, {
+        key: "height",
+        get: function get() {
+            return this.layerData.height * this.tilemap.tileHeight;
+        }
+    }]);
+
+    return TilemapLayer;
+}(_Renderable3.default);
+
+exports.default = TilemapLayer;
 
 /***/ }),
 
@@ -7726,10 +7911,28 @@ exports.default = ResourceType;
 
 /***/ }),
 
-/***/ "./resources/TilemapResource.js":
-/*!**************************************!*\
-  !*** ./resources/TilemapResource.js ***!
-  \**************************************/
+/***/ "./resources/index.js":
+/*!****************************!*\
+  !*** ./resources/index.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    ResourceType: __webpack_require__(/*! ./ResourceType */ "./resources/ResourceType.js"),
+    ImageResource: __webpack_require__(/*! ./ImageResource */ "./resources/ImageResource.js"),
+    TilemapResource: __webpack_require__(/*! ./tilemap/TilemapResource */ "./resources/tilemap/TilemapResource.js")
+};
+
+/***/ }),
+
+/***/ "./resources/tilemap/TilemapResource.js":
+/*!**********************************************!*\
+  !*** ./resources/tilemap/TilemapResource.js ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7742,23 +7945,23 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _TilemapMetadata = __webpack_require__(/*! ./tilemap/TilemapMetadata */ "./resources/tilemap/TilemapMetadata.js");
-
-var _TilemapMetadata2 = _interopRequireDefault(_TilemapMetadata);
-
-var _Resource2 = __webpack_require__(/*! ./Resource */ "./resources/Resource.js");
+var _Resource2 = __webpack_require__(/*! ../Resource */ "./resources/Resource.js");
 
 var _Resource3 = _interopRequireDefault(_Resource2);
 
-var _ParseTileset = __webpack_require__(/*! ./tilemap/ParseTileset */ "./resources/tilemap/ParseTileset.js");
+var _TilemapMetadata = __webpack_require__(/*! ./data/TilemapMetadata */ "./resources/tilemap/data/TilemapMetadata.js");
+
+var _TilemapMetadata2 = _interopRequireDefault(_TilemapMetadata);
+
+var _ParseTileset = __webpack_require__(/*! ./parser/ParseTileset */ "./resources/tilemap/parser/ParseTileset.js");
 
 var _ParseTileset2 = _interopRequireDefault(_ParseTileset);
 
-var _ParseLayers = __webpack_require__(/*! ./tilemap/ParseLayers */ "./resources/tilemap/ParseLayers.js");
+var _ParseLayers = __webpack_require__(/*! ./parser/ParseLayers */ "./resources/tilemap/parser/ParseLayers.js");
 
 var _ParseLayers2 = _interopRequireDefault(_ParseLayers);
 
-var _ResourceType = __webpack_require__(/*! ./ResourceType */ "./resources/ResourceType.js");
+var _ResourceType = __webpack_require__(/*! ../ResourceType */ "./resources/ResourceType.js");
 
 var _ResourceType2 = _interopRequireDefault(_ResourceType);
 
@@ -7790,7 +7993,6 @@ var TilemapResource = function (_Resource) {
         _this.name = name;
         _this.tilesets = (0, _ParseTileset2.default)(source, cache);
         _this.layers = (0, _ParseLayers2.default)(source, _this);
-        //this.data.tiles = ParseTiles(this.data);
         _this.type = _ResourceType2.default.Tilemap;
 
         return _this;
@@ -7806,6 +8008,18 @@ var TilemapResource = function (_Resource) {
                 }
             }) || null;
         }
+    }, {
+        key: "getTileGID",
+        value: function getTileGID(gid) {
+            return this.tilesets.each(function (set) {
+
+                var tileGID = set.getTileGID(gid);
+
+                if (tileGID !== undefined) {
+                    return tileGID;
+                }
+            }) || null;
+        }
     }]);
 
     return TilemapResource;
@@ -7815,28 +8029,276 @@ exports.default = TilemapResource;
 
 /***/ }),
 
-/***/ "./resources/index.js":
-/*!****************************!*\
-  !*** ./resources/index.js ***!
-  \****************************/
+/***/ "./resources/tilemap/data/Tile.js":
+/*!****************************************!*\
+  !*** ./resources/tilemap/data/Tile.js ***!
+  \****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = {
-    ResourceType: __webpack_require__(/*! ./ResourceType */ "./resources/ResourceType.js"),
-    ImageResource: __webpack_require__(/*! ./ImageResource */ "./resources/ImageResource.js"),
-    TilemapResource: __webpack_require__(/*! ./TilemapResource */ "./resources/TilemapResource.js")
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Tile = function Tile(layer, tileData, tileX, tileY, id) {
+    _classCallCheck(this, Tile);
+
+    this.layer = layer;
+    this.data = tileData;
+    this.tileX = tileX;
+    this.tileY = tileY;
+    this.id = id;
+    this.frame = tileData.st;
+    // pixels positions
+    this.x = Math.round(tileX * tileData.st.width);
+    this.y = Math.round(tileY * tileData.st.height);
 };
+
+exports.default = Tile;
 
 /***/ }),
 
-/***/ "./resources/tilemap/ParseGID.js":
-/*!***************************************!*\
-  !*** ./resources/tilemap/ParseGID.js ***!
-  \***************************************/
+/***/ "./resources/tilemap/data/TileGID.js":
+/*!*******************************************!*\
+  !*** ./resources/tilemap/data/TileGID.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Rect = __webpack_require__(/*! ../../../math/Rect */ "./math/Rect.js");
+
+var _Rect2 = _interopRequireDefault(_Rect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TileGID = function TileGID(tileset, gid, tileID, u, v, umax, vmax) {
+    _classCallCheck(this, TileGID);
+
+    this.id = tileID;
+    this.gid = gid;
+    this.tileset = tileset || null;
+    this.st = new _Rect2.default(u, v, umax, vmax); // tex coords
+    this.keyFrames = undefined;
+    this.isAnimated = false;
+    this.currentFrame = 0;
+};
+
+exports.default = TileGID;
+
+/***/ }),
+
+/***/ "./resources/tilemap/data/TilemapLayerData.js":
+/*!****************************************************!*\
+  !*** ./resources/tilemap/data/TilemapLayerData.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TilemapLayerData = function TilemapLayerData(config) {
+    _classCallCheck(this, TilemapLayerData);
+
+    this.width = _ObjectUtils2.default.getValue(config, 'width', 0);
+    this.height = _ObjectUtils2.default.getValue(config, 'height', 0);
+    this.x = _ObjectUtils2.default.getValue(config, 'x', 0);
+    this.y = _ObjectUtils2.default.getValue(config, 'y', 0);
+    this.name = _ObjectUtils2.default.getValue(config, 'name', 'tilemaplayer');
+    this.alpha = _ObjectUtils2.default.getValue(config, 'alpha', 1);
+    //this.type ="tilelayer";
+    this.visible = _ObjectUtils2.default.getValue(config, 'visible', true);
+    this.tiles = _ObjectUtils2.default.getValue(config, 'tiles', []);
+    this.hasAnimatedTiles = false;
+};
+
+exports.default = TilemapLayerData;
+
+/***/ }),
+
+/***/ "./resources/tilemap/data/TilemapMetadata.js":
+/*!***************************************************!*\
+  !*** ./resources/tilemap/data/TilemapMetadata.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+
+var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TilemapMetadata = function TilemapMetadata(config) {
+    _classCallCheck(this, TilemapMetadata);
+
+    this.name = _ObjectUtils2.default.getValue(config, 'name', 'tilemap');
+    this.width = _ObjectUtils2.default.getValue(config, 'width', 0);
+    this.height = _ObjectUtils2.default.getValue(config, 'height', 0);
+    this.tileWidth = _ObjectUtils2.default.getValue(config, 'tileWidth', 16);
+    this.tileHeight = _ObjectUtils2.default.getValue(config, 'tileHeight', 16);
+    this.pixelsWidth = _ObjectUtils2.default.getValue(config, 'pixelsWidth', this.width * this.tileWidth);
+    this.pixelsHeight = _ObjectUtils2.default.getValue(config, 'pixelsHeight', this.height * this.tileHeight);
+    this.orientation = _ObjectUtils2.default.getValue(config, 'orientation', 'orthogonal');
+};
+
+exports.default = TilemapMetadata;
+
+/***/ }),
+
+/***/ "./resources/tilemap/data/Tileset.js":
+/*!*******************************************!*\
+  !*** ./resources/tilemap/data/Tileset.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+var _TileGID = __webpack_require__(/*! ./TileGID */ "./resources/tilemap/data/TileGID.js");
+
+var _TileGID2 = _interopRequireDefault(_TileGID);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Tileset = function () {
+    function Tileset(name, firstgid, tileWidth, tileHeight, margin, spacing) {
+        _classCallCheck(this, Tileset);
+
+        this.name = name;
+        this.firstgid = firstgid || 1;
+        this.tileWidth = tileWidth || 16;
+        this.tileHeight = tileHeight || 16;
+        this.margin = margin || 0;
+        this.spacing = spacing || 0;
+        this.image = null;
+        this.data = new _List2.default();
+        this.rows = 0;
+        this.collumns = 0;
+        this.gidCount = 0;
+    }
+
+    _createClass(Tileset, [{
+        key: 'getTileGID',
+        value: function getTileGID(gid) {
+
+            if (gid === 'string') gid = parseInt(gid);
+
+            if (gid < this.firstgid && gid >= this.firstgid + this.gidCount) return null;
+
+            return this.data.at(gid - this.firstgid);
+        }
+    }, {
+        key: 'getTile',
+        value: function getTile(index) {
+
+            if (index === 'string') index = parseInt(index);
+
+            return this.data.at(index);
+        }
+    }, {
+        key: 'hasGID',
+        value: function hasGID(gid) {
+            return gid >= this.firstgid && gid < this.firstgid + this.gidCount;
+        }
+    }, {
+        key: 'updateData',
+        value: function updateData(imageWidth, imageHeight) {
+
+            if (this.image !== undefined || this.image != null) {
+                imageWidth = this.image.width;
+                imageHeight = this.image.height;
+            }
+
+            //slice into tiles
+            var columns = (imageHeight - this.margin * 2 + this.spacing) / (this.tileHeight + this.spacing);
+            var rows = (imageWidth - this.margin * 2 + this.spacing) / (this.tileWidth + this.spacing);
+
+            this.rows = Math.floor(rows);
+            this.collumns = Math.floor(columns);
+            this.gidCount = rows * columns;
+
+            var u = this.margin;
+            var v = this.margin;
+            var x = 0;
+
+            this.data.clear();
+
+            for (var i = 0; i < this.gidCount; i++) {
+
+                this.data.push(new _TileGID2.default(this, this.firstgid + i, i, u, v, this.tileWidth, this.tileHeight));
+
+                u += this.tileWidth + this.spacing;
+                x++;
+
+                if (x >= rows) {
+                    x = 0;
+                    u = this.margin;
+                    v += this.tileHeight + this.spacing;
+                }
+            }
+        }
+    }]);
+
+    return Tileset;
+}();
+
+exports.default = Tileset;
+
+/***/ }),
+
+/***/ "./resources/tilemap/parser/ParseGID.js":
+/*!**********************************************!*\
+  !*** ./resources/tilemap/parser/ParseGID.js ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7893,10 +8355,10 @@ function ParseGID(global_tile_id) {
 
 /***/ }),
 
-/***/ "./resources/tilemap/ParseLayers.js":
-/*!******************************************!*\
-  !*** ./resources/tilemap/ParseLayers.js ***!
-  \******************************************/
+/***/ "./resources/tilemap/parser/ParseLayers.js":
+/*!*************************************************!*\
+  !*** ./resources/tilemap/parser/ParseLayers.js ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7908,27 +8370,31 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = ParseLayers;
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
-var _Base64Utils = __webpack_require__(/*! ../../utils/Base64Utils */ "./utils/Base64Utils.js");
+var _Base64Utils = __webpack_require__(/*! ../../../utils/Base64Utils */ "./utils/Base64Utils.js");
 
 var _Base64Utils2 = _interopRequireDefault(_Base64Utils);
 
-var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
+var _Set = __webpack_require__(/*! ../../../structures/Set */ "./structures/Set.js");
+
+var _Set2 = _interopRequireDefault(_Set);
+
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
 
 var _List2 = _interopRequireDefault(_List);
 
-var _ParseGID = __webpack_require__(/*! ./ParseGID */ "./resources/tilemap/ParseGID.js");
+var _ParseGID = __webpack_require__(/*! ./ParseGID */ "./resources/tilemap/parser/ParseGID.js");
 
 var _ParseGID2 = _interopRequireDefault(_ParseGID);
 
-var _TilemapLayerData = __webpack_require__(/*! ./TilemapLayerData */ "./resources/tilemap/TilemapLayerData.js");
+var _TilemapLayerData = __webpack_require__(/*! ../data/TilemapLayerData */ "./resources/tilemap/data/TilemapLayerData.js");
 
 var _TilemapLayerData2 = _interopRequireDefault(_TilemapLayerData);
 
-var _Tile = __webpack_require__(/*! ./Tile */ "./resources/tilemap/Tile.js");
+var _Tile = __webpack_require__(/*! ../data/Tile */ "./resources/tilemap/data/Tile.js");
 
 var _Tile2 = _interopRequireDefault(_Tile);
 
@@ -7971,6 +8437,8 @@ function ParseLayers(json, map) {
         var tiles = [];
         var x = 0;
         var y = 0;
+        var hasAnimatedTiles = false;
+        var animatedTilesGID = new _Set2.default();
 
         for (var j = 0; j < jsonLayer.data.length; j++) {
 
@@ -7980,8 +8448,16 @@ function ParseLayers(json, map) {
 
             // The first tileset always has a firstgid value of 1. 
             if (gidProp.gid > 0) {
-                var tileset = map.getTilesetByGID(gidProp.gid);
-                tile = new _Tile2.default(newLayer, tileset.getTile(gidProp.gid), x, y, id);
+                var gid = gidProp.gid;
+                var tileset = map.getTilesetByGID(gid);
+                var tileData = tileset.getTileGID(gid);
+
+                if (tileData.isAnimated) {
+                    animatedTilesGID.set(gid);
+                    hasAnimatedTiles = true;
+                }
+
+                tile = new _Tile2.default(newLayer, tileData, x, y, id);
             }
 
             tiles.push(tile);
@@ -7995,6 +8471,8 @@ function ParseLayers(json, map) {
         }
 
         newLayer.tiles = tiles;
+        newLayer.hasAnimatedTiles = hasAnimatedTiles;
+        newLayer.animatedTiles = animatedTilesGID.size > 0 ? animatedTilesGID : undefined;
 
         tileLayers.push(newLayer);
     }
@@ -8004,10 +8482,65 @@ function ParseLayers(json, map) {
 
 /***/ }),
 
-/***/ "./resources/tilemap/ParseTileset.js":
-/*!*******************************************!*\
-  !*** ./resources/tilemap/ParseTileset.js ***!
-  \*******************************************/
+/***/ "./resources/tilemap/parser/ParseTilesProperties.js":
+/*!**********************************************************!*\
+  !*** ./resources/tilemap/parser/ParseTilesProperties.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ParseTilesProperties;
+function ParseTilesProperties(tileset, tilesetTilesProperties) {
+
+    for (var tileIndex in tilesetTilesProperties) {
+
+        var tileData = tileset.getTile(tileIndex);
+
+        if (tileData === null || tileData === undefined) continue;
+
+        var tileProperties = tilesetTilesProperties[tileIndex];
+
+        // check properties
+        for (var property in tileProperties) {
+
+            var propertyContent = tileProperties[property];
+
+            if (property == 'animation') {
+
+                var animationSize = propertyContent.length;
+
+                if (animationSize > 1) {
+                    tileData.isAnimated = true;
+
+                    var keyFrames = [];
+
+                    for (var i = 0; i < animationSize; i++) {
+                        var anim = propertyContent[i];
+                        keyFrames.push({
+                            duration: anim.duration,
+                            tileID: anim.tileid
+                        });
+                    }
+
+                    tileData.keyFrames = keyFrames;
+                }
+            }
+        }
+    }
+}
+
+/***/ }),
+
+/***/ "./resources/tilemap/parser/ParseTileset.js":
+/*!**************************************************!*\
+  !*** ./resources/tilemap/parser/ParseTileset.js ***!
+  \**************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8019,17 +8552,21 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = ParseTilesets;
 
-var _Tileset = __webpack_require__(/*! ./Tileset */ "./resources/tilemap/Tileset.js");
+var _Tileset = __webpack_require__(/*! ../data/Tileset */ "./resources/tilemap/data/Tileset.js");
 
 var _Tileset2 = _interopRequireDefault(_Tileset);
 
-var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
 
 var _List2 = _interopRequireDefault(_List);
 
-var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
+var _Path = __webpack_require__(/*! ../../../utils/Path */ "./utils/Path.js");
 
 var _Path2 = _interopRequireDefault(_Path);
+
+var _ParseTilesProperties = __webpack_require__(/*! ./ParseTilesProperties */ "./resources/tilemap/parser/ParseTilesProperties.js");
+
+var _ParseTilesProperties2 = _interopRequireDefault(_ParseTilesProperties);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8052,6 +8589,7 @@ function ParseTilesets(json, cache) {
             newTileSet.updateData(jsonTileset.imagewidth, jsonTileset.imageheight);
 
             // check tile properties
+            if (jsonTileset.tiles !== undefined) (0, _ParseTilesProperties2.default)(newTileSet, jsonTileset.tiles);
 
             tileSets.push(newTileSet);
         }
@@ -8059,269 +8597,6 @@ function ParseTilesets(json, cache) {
 
     return tileSets;
 }
-
-/***/ }),
-
-/***/ "./resources/tilemap/Tile.js":
-/*!***********************************!*\
-  !*** ./resources/tilemap/Tile.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Tile = function Tile(layer, tileData, tileX, tileY, id) {
-    _classCallCheck(this, Tile);
-
-    this.layer = layer;
-    this.data = tileData;
-    this.tileX = tileX;
-    this.tileY = tileY;
-    this.id = id;
-    this.frame = tileData.st;
-    // pixels positions
-    this.x = Math.round(tileX * tileData.st.width);
-    this.y = Math.round(tileY * tileData.st.height);
-};
-
-exports.default = Tile;
-
-/***/ }),
-
-/***/ "./resources/tilemap/TileData.js":
-/*!***************************************!*\
-  !*** ./resources/tilemap/TileData.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _Rect = __webpack_require__(/*! ../../math/Rect */ "./math/Rect.js");
-
-var _Rect2 = _interopRequireDefault(_Rect);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var TileData = function TileData(tileset, gid, u, v, umax, vmax) {
-    _classCallCheck(this, TileData);
-
-    this.gid = gid;
-    this.tileset = tileset || null;
-    this.st = new _Rect2.default(u, v, umax, vmax); // tex coords
-    this.keyFrames = null;
-};
-
-exports.default = TileData;
-
-/***/ }),
-
-/***/ "./resources/tilemap/TilemapLayerData.js":
-/*!***********************************************!*\
-  !*** ./resources/tilemap/TilemapLayerData.js ***!
-  \***********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
-
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var TilemapLayerData = function TilemapLayerData(config) {
-    _classCallCheck(this, TilemapLayerData);
-
-    this.width = _ObjectUtils2.default.getValue(config, 'width', 0);
-    this.height = _ObjectUtils2.default.getValue(config, 'height', 0);
-    this.x = _ObjectUtils2.default.getValue(config, 'x', 0);
-    this.y = _ObjectUtils2.default.getValue(config, 'y', 0);
-    this.name = _ObjectUtils2.default.getValue(config, 'name', 'tilemaplayer');
-    this.alpha = _ObjectUtils2.default.getValue(config, 'alpha', 1);
-    //this.type ="tilelayer";
-    this.visible = _ObjectUtils2.default.getValue(config, 'visible', true);
-    this.tiles = _ObjectUtils2.default.getValue(config, 'tiles', []);
-};
-
-exports.default = TilemapLayerData;
-
-/***/ }),
-
-/***/ "./resources/tilemap/TilemapMetadata.js":
-/*!**********************************************!*\
-  !*** ./resources/tilemap/TilemapMetadata.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
-
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
-
-var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
-
-var _List2 = _interopRequireDefault(_List);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var TilemapMetadata = function TilemapMetadata(config) {
-    _classCallCheck(this, TilemapMetadata);
-
-    this.name = _ObjectUtils2.default.getValue(config, 'name', 'tilemap');
-    this.width = _ObjectUtils2.default.getValue(config, 'width', 0);
-    this.height = _ObjectUtils2.default.getValue(config, 'height', 0);
-    this.tileWidth = _ObjectUtils2.default.getValue(config, 'tileWidth', 16);
-    this.tileHeight = _ObjectUtils2.default.getValue(config, 'tileHeight', 16);
-    this.pixelsWidth = _ObjectUtils2.default.getValue(config, 'pixelsWidth', this.width * this.tileWidth);
-    this.pixelsHeight = _ObjectUtils2.default.getValue(config, 'pixelsHeight', this.height * this.tileHeight);
-    this.orientation = _ObjectUtils2.default.getValue(config, 'orientation', 'orthogonal');
-};
-
-exports.default = TilemapMetadata;
-
-/***/ }),
-
-/***/ "./resources/tilemap/Tileset.js":
-/*!**************************************!*\
-  !*** ./resources/tilemap/Tileset.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
-
-var _List2 = _interopRequireDefault(_List);
-
-var _TileData = __webpack_require__(/*! ./TileData */ "./resources/tilemap/TileData.js");
-
-var _TileData2 = _interopRequireDefault(_TileData);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Tileset = function () {
-    function Tileset(name, firstgid, tileWidth, tileHeight, margin, spacing) {
-        _classCallCheck(this, Tileset);
-
-        this.name = name;
-        this.firstgid = firstgid || 1;
-        this.tileWidth = tileWidth || 16;
-        this.tileHeight = tileHeight || 16;
-        this.margin = margin || 0;
-        this.spacing = spacing || 0;
-        this.image = null;
-        this.data = new _List2.default();
-        this.rows = 0;
-        this.collumns = 0;
-        this.gidCount = 0;
-    }
-
-    _createClass(Tileset, [{
-        key: "getTile",
-        value: function getTile(gid) {
-
-            if (gid < this.firstgid && gid >= this.firstgid + this.gidCount) return null;
-
-            return this.data.at(gid - this.firstgid);
-        }
-    }, {
-        key: "hasGID",
-        value: function hasGID(gid) {
-            return gid >= this.firstgid && gid < this.firstgid + this.gidCount;
-        }
-    }, {
-        key: "updateData",
-        value: function updateData(imageWidth, imageHeight) {
-
-            if (this.image !== undefined || this.image != null) {
-                imageWidth = this.image.width;
-                imageHeight = this.image.height;
-            }
-
-            //slice into tiles
-            var columns = (imageHeight - this.margin * 2 + this.spacing) / (this.tileHeight + this.spacing);
-            var rows = (imageWidth - this.margin * 2 + this.spacing) / (this.tileWidth + this.spacing);
-
-            //rows = Math.floor(rows);
-            //columns = Math.floor(columns);
-
-
-            this.rows = rows;
-            this.collumns = columns;
-            this.gidCount = rows * columns;
-
-            var u = this.margin;
-            var v = this.margin;
-            var x = 0;
-
-            this.data.clear();
-            //let gid = 0;
-
-            for (var i = 0; i < this.gidCount; i++) {
-                //for (let x = 0; x < colCount; x++) {
-
-                // let gid = x + y * this.rows;
-                this.data.push(new _TileData2.default(this, this.firstgid + i, u, v, this.tileWidth, this.tileHeight));
-
-                u += this.tileWidth + this.spacing;
-                x++;
-
-                if (x >= rows) {
-                    x = 0;
-                    u = this.margin;
-                    v += this.tileHeight + this.spacing;
-                }
-            }
-        }
-    }]);
-
-    return Tileset;
-}();
-
-exports.default = Tileset;
 
 /***/ }),
 
@@ -8850,6 +9125,21 @@ var DataList = function () {
             //childs.sort(predicate);
         }
     }, {
+        key: 'find',
+        value: function find(predicate) {
+            if (predicate === undefined) return;
+
+            var size = this.childs.length;
+
+            for (var i = 0; i < size; i++) {
+                if (predicate(this.childs[i])) {
+                    return this.childs[i];
+                }
+            }
+
+            return null;
+        }
+    }, {
         key: 'swap',
         value: function swap(childA, childB) {
 
@@ -8949,15 +9239,15 @@ var DataMap = function () {
     this._size = 0;
   }
 
-  /* 
-  Add or set value to the map
-  key = keyName
-  value = value
-  */
-
-
   _createClass(DataMap, [{
     key: "set",
+
+
+    /* 
+    Add or set value to the map
+    key = keyName
+    value = value
+    */
     value: function set(key, value) {
 
       if (!this.has(key)) {
@@ -9132,14 +9422,19 @@ var DataSet = function () {
             return this;
         }
     }, {
-        key: "at",
-        value: function at(value) {
+        key: "get",
+        value: function get(value) {
             var index = this._content.indexOf(value);
             if (index > -1) {
                 return this._content[index];
             } else {
                 return null;
             }
+        }
+    }, {
+        key: "at",
+        value: function at(index) {
+            return this._content[index];
         }
     }, {
         key: "has",
@@ -9185,6 +9480,11 @@ var DataSet = function () {
         value: function sort(predicate) {
             if (predicate === undefined) return;
             return (0, _MergeSort2.default)(this._content, predicate);
+        }
+    }, {
+        key: "values",
+        value: function values() {
+            return this._content;
         }
     }, {
         key: "size",

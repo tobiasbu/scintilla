@@ -9,6 +9,8 @@ export default class DataMap {
     this._size = 0;
   }
 
+  get size() {return this._size;}
+
   /* 
   Add or set value to the map
   key = keyName
@@ -136,7 +138,7 @@ export default class DataMap {
     return this;
   }
 
-  get size() {return this._size;}
+
 
 }
 

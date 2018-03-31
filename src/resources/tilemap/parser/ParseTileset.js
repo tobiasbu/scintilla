@@ -1,6 +1,7 @@
-import Tileset from "./Tileset";
-import DataList from "../../structures/List";
-import Path from '../../utils/Path'
+import Tileset from "../data/Tileset";
+import DataList from "../../../structures/List";
+import Path from '../../../utils/Path'
+import ParseTilesProperties from "./ParseTilesProperties";
 
 
 export default function ParseTilesets(json, cache) {
@@ -28,7 +29,9 @@ export default function ParseTilesets(json, cache) {
             newTileSet.updateData(jsonTileset.imagewidth, jsonTileset.imageheight);
 
             // check tile properties
-
+            if (jsonTileset.tiles !== undefined)
+                ParseTilesProperties(newTileSet, jsonTileset.tiles);
+                
             tileSets.push(newTileSet);
         }
     }

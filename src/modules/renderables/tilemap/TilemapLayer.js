@@ -1,5 +1,5 @@
-import Renderable from "./Renderable";
-import DrawTilemapLayer from "./components/DrawTilemapLayer";
+import Renderable from "../Renderable";
+import DrawTilemapLayer from "../components/DrawTilemapLayer";
 
 export default class TilemapLayer extends Renderable {
 
@@ -8,7 +8,6 @@ export default class TilemapLayer extends Renderable {
         super('tilemapLayer', tilemap.moduleManager);     
         this.tilemap = tilemap;
         this.layerData = layerData;
-       
     }
 
 

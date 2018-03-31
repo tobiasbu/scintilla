@@ -56,8 +56,6 @@ export default class Keyboard {
     // window;
     this.eventTarget = document; //this.game.system.render.canvas;
 
-    console.log(this.eventTarget)
-
     var self = this;
 
     // key event handler

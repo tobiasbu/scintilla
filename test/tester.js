@@ -33,6 +33,7 @@ var config = {
       console.log('yes');
   }
   var x = 0;
+  var camSpeed = 100;
 
  /* var mat = new scintilla.Matrix(1);
   var mat2 = new scintilla.Matrix(3);
@@ -81,20 +82,20 @@ scene.update = function(dt) {
 
     if (game.input.keyboard.press(scintilla.KeyCode.Right)) 
     {
-        this.camera.x += dt * 50;
+        this.camera.x += dt * camSpeed;
     }
     if (game.input.keyboard.press(scintilla.KeyCode.Left)) 
     {
-        this.camera.x -= dt * 50;
+        this.camera.x -= dt * camSpeed;
     }
 
     if (game.input.keyboard.press(scintilla.KeyCode.Up)) 
     {
-        this.camera.y -= dt * 50;
+        this.camera.y -= dt * camSpeed;
     }
     if (game.input.keyboard.press(scintilla.KeyCode.Down)) 
     {
-        this.camera.y += dt * 50;
+        this.camera.y += dt * camSpeed;
     }
 
 

@@ -1,10 +1,12 @@
 
-import ObjectUtils from '../../utils/ObjectUtils'
-import Base64Utils from '../../utils/Base64Utils';
-import DataList from '../../structures/List';
+import ObjectUtils from '../../../utils/ObjectUtils'
+import Base64Utils from '../../../utils/Base64Utils';
+import DataSet from '../../../structures/Set';
+import DataList from '../../../structures/List';
 import ParseGID from './ParseGID'
-import TilemapLayerData from './TilemapLayerData';
-import Tile from './Tile';
+import TilemapLayerData from '../data/TilemapLayerData';
+import Tile from '../data/Tile';
+
 
 export default function ParseLayers(json, map) {
 
@@ -44,6 +46,8 @@ export default function ParseLayers(json, map) {
         let tiles = [];
         let x = 0;
         let y = 0;
+        let hasAnimatedTiles = false;
+        let animatedTilesGID = new DataSet();
 
         for (let j = 0; j < jsonLayer.data.length; j++) {
 
@@ -53,8 +57,17 @@ export default function ParseLayers(json, map) {
 
             // The first tileset always has a firstgid value of 1. 
             if (gidProp.gid > 0) {
-                let tileset = map.getTilesetByGID(gidProp.gid);
-                tile = new Tile(newLayer, tileset.getTile(gidProp.gid), x, y, id);
+                let gid = gidProp.gid;
+                let tileset = map.getTilesetByGID(gid);
+                let tileData = tileset.getTileGID(gid);
+                
+                if (tileData.isAnimated) {
+                    animatedTilesGID.set(gid);
+                    hasAnimatedTiles = true;
+
+                }
+
+                tile = new Tile(newLayer, tileData, x, y, id);
             } 
 
             tiles.push(tile);
@@ -68,6 +81,8 @@ export default function ParseLayers(json, map) {
         }
 
         newLayer.tiles = tiles;
+        newLayer.hasAnimatedTiles = hasAnimatedTiles;
+        newLayer.animatedTiles = (animatedTilesGID.size > 0) ? animatedTilesGID : undefined;
 
         tileLayers.push(newLayer);
 

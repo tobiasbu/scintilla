@@ -108,8 +108,7 @@ export default class DataList
         return child;
     }
 
-    eraseList(listToRemove, size)
-    {
+    eraseList(listToRemove, size){
         
         if (size === undefined) size = listToRemove.size;
 
@@ -129,6 +128,8 @@ export default class DataList
     has(child) {
         return (this.childs.indexOf(child) > -1);
     }
+
+
 
     empty() {
         return (this.childs.length == 0)
@@ -154,8 +155,7 @@ export default class DataList
         this.parent = null;
     }
 
-    concat(otherList, clearOther)
-    {
+    concat(otherList, clearOther) {
         if (clearOther === undefined) clearOther = false;
 
         if (clearOther) {
@@ -191,6 +191,20 @@ export default class DataList
         
         //childs.sort(predicate);
     }
+
+    find(predicate) {
+        if (predicate === undefined) return;
+
+        let size = this.childs.length;
+
+        for (let i = 0; i < size; i++) {
+            if (predicate(this.childs[i])) {
+                return this.childs[i];
+            }
+        }
+    
+        return null;
+      }
 
     swap(childA, childB) {
 
