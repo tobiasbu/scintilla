@@ -15,12 +15,14 @@
 *
 */
 
+import Defines from './defines'
+import ObjectExtend from './utils/ObjectExtend';
+
 /**
 * @namespace scintilla
 */
 var scintilla = scintilla || {
-  VERSION: '0.0.1',
-
+  
   Core : require('./core'),
 
   // DATA STRUCTURES
@@ -35,6 +37,7 @@ var scintilla = scintilla || {
   MathUtils : require('./math/MathUtils'),
   Matrix : require('./math/Matrix'),
   // ENTITIES
+  SceneManager : require('./scene/SceneManager'),
   Camera : require('./camera/Camera'),
   Module : require('./modules'),
   Entity : require('./entities'),
@@ -49,11 +52,14 @@ var scintilla = scintilla || {
   Color : require('./utils/Color')
 };
 
+ObjectExtend(Defines, scintilla);
+
+/*
 scintilla.ShapeType = {
 Rect : 1,
 Circle : 2,
 Polygon : 3
-}
+}*/
 
 
 module.exports = scintilla;

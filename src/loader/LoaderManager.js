@@ -7,6 +7,7 @@ import GameSystemManager from '../core/GameSystemManager';
 import AssetsType from './AssetsType';
 import ScriptFile from './assets/ScriptFile';
 import EventManager from '../event/EventManager';
+import PreloadSceneComplete from '../scene/components/PreloadSceneComplete';
 
 // Class LoaderManager
 export default class LoadManager {
@@ -364,7 +365,8 @@ export default class LoadManager {
 
     this.state = LOADER_STATE.DONE;
 
-    this.game.scene.preloadComplete();
+    //this.game.scene.preloadComplete();
+    PreloadSceneComplete.call(this.game.scene);
   }
 
   isLoading() {

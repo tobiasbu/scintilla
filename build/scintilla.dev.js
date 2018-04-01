@@ -122,6 +122,19 @@ module.exports = g;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
+var _defines = __webpack_require__(/*! ./defines */ "./defines.js");
+
+var _defines2 = _interopRequireDefault(_defines);
+
+var _ObjectExtend = __webpack_require__(/*! ./utils/ObjectExtend */ "./utils/ObjectExtend.js");
+
+var _ObjectExtend2 = _interopRequireDefault(_ObjectExtend);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+* @namespace scintilla
+*/
 /**
 * @author       Tobias Beise Ulrich
 * @license      MIT
@@ -139,11 +152,7 @@ module.exports = g;
 *
 */
 
-/**
-* @namespace scintilla
-*/
 var scintilla = scintilla || {
-  VERSION: '0.0.1',
 
   Core: __webpack_require__(/*! ./core */ "./core/index.js"),
 
@@ -159,6 +168,7 @@ var scintilla = scintilla || {
   MathUtils: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js"),
   Matrix: __webpack_require__(/*! ./math/Matrix */ "./math/Matrix.js"),
   // ENTITIES
+  SceneManager: __webpack_require__(/*! ./scene/SceneManager */ "./scene/SceneManager.js"),
   Camera: __webpack_require__(/*! ./camera/Camera */ "./camera/Camera.js"),
   Module: __webpack_require__(/*! ./modules */ "./modules/index.js"),
   Entity: __webpack_require__(/*! ./entities */ "./entities/index.js"),
@@ -173,11 +183,14 @@ var scintilla = scintilla || {
   Color: __webpack_require__(/*! ./utils/Color */ "./utils/Color.js")
 };
 
+(0, _ObjectExtend2.default)(_defines2.default, scintilla);
+
+/*
 scintilla.ShapeType = {
-  Rect: 1,
-  Circle: 2,
-  Polygon: 3
-};
+Rect : 1,
+Circle : 2,
+Polygon : 3
+}*/
 
 module.exports = scintilla;
 
@@ -860,7 +873,7 @@ var _physics = __webpack_require__(/*! ../physics/physics */ "./physics/physics.
 
 var _physics2 = _interopRequireDefault(_physics);
 
-var _Debug = __webpack_require__(/*! ../others/Debug */ "./others/Debug.js");
+var _Debug = __webpack_require__(/*! ../render/ui/Debug */ "./render/ui/Debug.js");
 
 var _Debug2 = _interopRequireDefault(_Debug);
 
@@ -907,7 +920,7 @@ var Game = function () {
 
         //objects
         this.debug = null;
-        this.scene = null;
+        //this.scene = null;
         this.sound = null;
         this.input = null;
         this.pool = null;
@@ -957,7 +970,7 @@ var Game = function () {
 
             this.physics = new _physics2.default(this);
             this.input = new _Input2.default(this);
-            this.scene = new _SceneManager2.default(this);
+            //this.scene = new SceneManager(this);
             this.system = new _GameSystemManager2.default(this);
             this.time = new _GameTime2.default(this);
 
@@ -1054,6 +1067,18 @@ var _EndDrawRender = __webpack_require__(/*! ../render/components/EndDrawRender 
 
 var _EndDrawRender2 = _interopRequireDefault(_EndDrawRender);
 
+var _PreUpdateScene = __webpack_require__(/*! ../scene/components/PreUpdateScene */ "./scene/components/PreUpdateScene.js");
+
+var _PreUpdateScene2 = _interopRequireDefault(_PreUpdateScene);
+
+var _UpdateScene = __webpack_require__(/*! ../scene/components/UpdateScene */ "./scene/components/UpdateScene.js");
+
+var _UpdateScene2 = _interopRequireDefault(_UpdateScene);
+
+var _DrawUI = __webpack_require__(/*! ../render/ui/DrawUI */ "./render/ui/DrawUI.js");
+
+var _DrawUI2 = _interopRequireDefault(_DrawUI);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1102,16 +1127,22 @@ var GameLoop = function () {
             //let changeScene = (this.game.scene._changeScene != null || this.game.scene._changeScene !== undefined)
 
             //if (changeScene)
-            this.game.scene.preUpdate();
+            (0, _PreUpdateScene2.default)(this.game.scene);
+            //this.game.scene.preUpdate();
+
 
             if (shouldUpdate) {
 
-                if (this.game.scene._setup) {
+                (0, _UpdateScene2.default)(this.game.scene, deltaTime);
+                /*if (this.game.scene._setup)
+                {
                     // global scene update
-                    if (this.currentScene.update !== undefined) this.currentScene.update(deltaTime);
+                    if (this.currentScene.update !== undefined)
+                        this.currentScene.update(deltaTime);
                 } else {
-                    if (this.currentScene.loading !== undefined) this.currentScene.loading(deltaTime);
-                }
+                    if (this.currentScene.loading !== undefined)
+                        this.currentScene.loading(deltaTime);
+                }*/
 
                 (0, _UpdateCamera2.default)(this.camera, this.canvas);
 
@@ -1133,6 +1164,8 @@ var GameLoop = function () {
             (0, _DrawRender2.default)(this.system.render, this.camera, deltaTime);
 
             (0, _EndDrawRender2.default)(this.system.render);
+
+            (0, _DrawUI2.default)(this.system.ui, this.game.scene);
         }
     }]);
 
@@ -1190,6 +1223,9 @@ var GameSystemManager = function () {
                 this[sys.name] = new sys.system(this.game, this);
             }
 
+            // set core system to game class
+            this.game.scene = this['scene'];
+
             // initialize systems
             for (var _property in gameSystems) {
 
@@ -1213,7 +1249,8 @@ var GameSystemManager = function () {
             for (var property in _SceneSystem2.default) {
 
                 var _sys = gameSystems[_SceneSystem2.default[property]];
-                scene[_sys.name] = this[_sys.name];
+
+                if (_sys !== undefined) scene[_sys.name] = this[_sys.name];
             }
 
             // Special injections, input and sound:
@@ -1266,7 +1303,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 
-var SceneSystem = ['Cache', 'Draw', 'Loader', 'EntityFactory', 'Camera'];
+var SceneSystem = ['Cache',
+//'Draw',
+'Loader', 'EntityFactory', 'Camera', 'SceneManager', 'UserInterface'];
 
 exports.default = SceneSystem;
 
@@ -1288,6 +1327,34 @@ module.exports = {
     SceneSystem: __webpack_require__(/*! ./SceneSystem */ "./core/SceneSystem.js"),
     GameLoop: __webpack_require__(/*! ./GameLoop */ "./core/GameLoop.js")
 };
+
+/***/ }),
+
+/***/ "./defines.js":
+/*!********************!*\
+  !*** ./defines.js ***!
+  \********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+
+var Defines = {
+
+    MAJOR: 0,
+    MINOR: 0,
+    REVISION: 1,
+    VERSION: '0.0.1'
+
+};
+
+exports.default = Defines;
 
 /***/ }),
 
@@ -3669,6 +3736,10 @@ var _EventManager = __webpack_require__(/*! ../event/EventManager */ "./event/Ev
 
 var _EventManager2 = _interopRequireDefault(_EventManager);
 
+var _PreloadSceneComplete = __webpack_require__(/*! ../scene/components/PreloadSceneComplete */ "./scene/components/PreloadSceneComplete.js");
+
+var _PreloadSceneComplete2 = _interopRequireDefault(_PreloadSceneComplete);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3994,7 +4065,8 @@ var LoadManager = function () {
 
       this.state = _LoaderState.LOADER_STATE.DONE;
 
-      this.game.scene.preloadComplete();
+      //this.game.scene.preloadComplete();
+      _PreloadSceneComplete2.default.call(this.game.scene);
     }
   }, {
     key: 'isLoading',
@@ -4089,7 +4161,7 @@ var LOADER_STATE = exports.LOADER_STATE = {
 
 var URLObject = {
 
-    create: function create(asset, response, type) {
+    createFromResponse: function createFromResponse(asset, response, type) {
 
         if (typeof URL === 'function') {
             asset.src = URL.createObjectURL(response);
@@ -4293,7 +4365,7 @@ var ImageFile = function (_File) {
                 processingCallback(self);
             };
 
-            _URLObject2.default.create(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
+            _URLObject2.default.createFromResponse(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
         }
     }]);
 
@@ -7291,84 +7363,6 @@ exports.default = TilemapLayer;
 
 /***/ }),
 
-/***/ "./others/Debug.js":
-/*!*************************!*\
-  !*** ./others/Debug.js ***!
-  \*************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Debug = function () {
-  function Debug(game) {
-    _classCallCheck(this, Debug);
-
-    this.game = game;
-    this.draw = game.system.draw;
-    this.context = game.system.render.context;
-    this.x = 8;
-    this.y = 12;
-    this.lineHeight = 14;
-    this.column = 100;
-    this.font = "10px Verdana";
-    this.textColor = 'white';
-    this.bgcolor = 'black';
-    this.textShadow = 'black';
-  }
-
-  _createClass(Debug, [{
-    key: 'test',
-    value: function test() {
-
-      //this.context.setTransform(1, 0, 0, 1, 0, 0);
-      this.context.strokeStyle = this.bgcolor;
-      this.context.font = this.font;
-      this.draw.alpha(0.5);
-      this.draw.rectangle(0, 0, this.game.width, 14 * 4 + 16, this.bgcolor);
-      this.draw.alpha(1);
-      this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / " + this.game.time.desiredFps);
-      //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
-      this.drawLine("Instances: " + this.game.system.entityList.length);
-      this.drawLine("Draw Calls: " + this.game.system.render.drawCalls); /*this.game.physics.length);*/
-      this.x += this.game.width / 2;
-      this.y = 12 + 8;
-      //this.drawLine("Sounds count " + this.game.sound.length);
-      this.x = 8;
-      this.y = 12 + 8;
-    }
-  }, {
-    key: 'drawLine',
-    value: function drawLine(textLine) {
-
-      var xx = this.x;
-
-      this.context.fillStyle = this.textShadow;
-      this.context.fillText(textLine, xx + 1, this.y + 1);
-      this.context.fillStyle = this.textColor;
-
-      this.context.fillText(textLine, xx, this.y);
-
-      this.y += this.lineHeight;
-    }
-  }]);
-
-  return Debug;
-}();
-
-exports.default = Debug;
-
-/***/ }),
-
 /***/ "./physics/physics.js":
 /*!****************************!*\
   !*** ./physics/physics.js ***!
@@ -7762,148 +7756,6 @@ var RENDERING_TYPE = exports.RENDERING_TYPE = {
     NEAREST: 0,
     LINEAR: 1
 };
-
-/***/ }),
-
-/***/ "./render/Draw.js":
-/*!************************!*\
-  !*** ./render/Draw.js ***!
-  \************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
-
-var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
-
-var _Validate = __webpack_require__(/*! ../utils/Validate */ "./utils/Validate.js");
-
-var _Validate2 = _interopRequireDefault(_Validate);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Draw = function () {
-  function Draw(game) {
-    _classCallCheck(this, Draw);
-
-    this.game = game;
-    this.cache = null;
-    this.context = null;
-  }
-
-  _createClass(Draw, [{
-    key: "init",
-    value: function init() {
-
-      this.cache = this.game.system.cache;
-      this.context = this.game.system.render.context;
-      return this;
-    }
-  }, {
-    key: "font",
-    value: function font(fontname, size, style) {
-
-      if (_Validate2.default.isNumber(size)) size = size.toString() + 'px';
-
-      if (style === undefined) style = "normal";
-
-      this.context.font = style + " " + size + " \'" + fontname + "\'";
-    }
-  }, {
-    key: "text",
-    value: function text(_text, x, y, color) {
-
-      if (color === undefined) color = 'black';
-
-      this.context.fillStyle = color;
-      this.context.fillText(_text, x, y);
-    }
-  }, {
-    key: "sprite",
-    value: function sprite(tag, x, y, anchor) {
-
-      var img = this.cache.getAsset('images', tag);
-
-      if (img != null) {
-
-        if (anchor === undefined) {
-          anchor[0] = 0;
-          anchor[1] = 0;
-        }
-
-        var ctx = this.context;
-
-        ctx.save();
-
-        ctx.translate(x - img.width * anchor[0], y - img.height * anchor[1]);
-
-        ctx.drawImage(img, 0, 0, img.width, img.height);
-
-        ctx.restore();
-      }
-    }
-  }, {
-    key: "spriteTransformed",
-    value: function spriteTransformed(tag, x, y, xscale, yscale, angle) {}
-  }, {
-    key: "rect",
-    value: function rect(x, y, width, height, color) {
-
-      this.context.fillStyle = color;
-      this.context.fillRect(x, y, width, height);
-    }
-  }, {
-    key: "outlineRectangle",
-    value: function outlineRectangle(x, y, width, height, color, outlineWidth) {
-
-      //this.context.beginPath();
-      this.context.lineWidth = outlineWidth;
-      //this.context.setLineDash([6]);
-      this.context.strokeStyle = color;
-      this.context.strokeRect(x, y, width, height);
-      //this.context.rect(x,y,width,height);
-      //this.context.stroke();
-    }
-  }, {
-    key: "alpha",
-    value: function alpha(a) {
-
-      this.context.globalAlpha = a;
-    }
-  }, {
-    key: "color",
-    value: function color(_color) {
-
-      this.context.fillStyle = _color;
-    }
-  }, {
-    key: "bounds",
-    value: function bounds(bb, color) {
-
-      if (color === undefined) color = 'red';
-      this.context.setTransform(1, 0, 0, 1, 0, 0);
-      this.outlineRectangle(bb.min.x, bb.min.y, bb.max.x - bb.min.x, bb.max.y - bb.min.y, color, 1);
-    }
-  }]);
-
-  return Draw;
-}();
-
-exports.default = Draw;
-
-
-_GameSystemManager2.default.register('Draw', Draw, 'draw');
 
 /***/ }),
 
@@ -8443,13 +8295,20 @@ var _DrawRenderLayer = __webpack_require__(/*! ./DrawRenderLayer */ "./render/co
 
 var _DrawRenderLayer2 = _interopRequireDefault(_DrawRenderLayer);
 
+var _RenderScene = __webpack_require__(/*! ../../scene/components/RenderScene */ "./scene/components/RenderScene.js");
+
+var _RenderScene2 = _interopRequireDefault(_RenderScene);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function DrawRender(render, camera, delta) {
 
     if (!render._enable) return;
 
-    var clip = camera.x !== 0 || camera.y !== 0 || camera.width !== render.context.canvas.width || camera.height !== render.context.canvas.height;
+    /* let clip = (camera.x !== 0 ||
+          camera.y !== 0 ||
+          camera.width !== render.context.canvas.width ||
+          camera.height !== render.context.canvas.height);*/
 
     // alpha
     if (render._alpha !== 1) {
@@ -8460,39 +8319,20 @@ function DrawRender(render, camera, delta) {
     // blend
     render.context.globalCompositeOperation = 'source-over';
 
-    /*if (clip)
-    {
-        let resolution = 1;
-        this.context.save();
-        this.context.beginPath();
-        this.context.rect(
-            0,
-            0,
-            320 * resolution,
-            240 * resolution);
-        this.context.clip();
-    }*/
+    if (render.game.scene._setup === true) {
 
-    for (var i = 0; i < render.layer.renderLayers.length; i++) {
-        var layer = render.layer.renderLayers.at(i);
+        for (var i = 0; i < render.layer.renderLayers.length; i++) {
+            var layer = render.layer.renderLayers.at(i);
 
-        if (!layer.enable) continue;
+            if (!layer.enable) continue;
 
-        var drawCalls = 0;
-        drawCalls += (0, _DrawRenderLayer2.default)(layer, camera, render.context);
+            var drawCalls = 0;
+            drawCalls += (0, _DrawRenderLayer2.default)(layer, camera, render.context);
 
-        render.drawCalls += drawCalls;
-    }
+            render.drawCalls += drawCalls;
+        }
 
-    camera.game.system.draw.bounds(camera.bounds);
-
-    render.context.setTransform(1, 0, 0, 1, 0, 0);
-
-    render.game.scene.render();
-
-    if (render.game.debug != null) {
-
-        render.game.debug.test();
+        //camera.game.system.draw.bounds(camera.bounds);
     }
 }
 
@@ -8578,8 +8418,629 @@ module.exports = {
     RenderLayer: __webpack_require__(/*! ./RenderLayer */ "./render/RenderLayer.js"),
     RenderLayerManagement: __webpack_require__(/*! ./RenderLayersManagement */ "./render/RenderLayersManagement.js"),
     Render: __webpack_require__(/*! ./Render */ "./render/Render.js"),
-    Draw: __webpack_require__(/*! ./Draw */ "./render/Draw.js")
+    UI: __webpack_require__(/*! ./ui/UI */ "./render/ui/UI.js")
+    // Draw : require('./Draw')
 };
+
+/***/ }),
+
+/***/ "./render/ui/AspectRatio.js":
+/*!**********************************!*\
+  !*** ./render/ui/AspectRatio.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var AspectRatio = {
+    Square: 0,
+    Pillarbox: 1,
+    Letterbox: 2,
+
+    computeViewPort: function computeViewPort(currentAspectRatio, desiredAspect) {
+
+        var ratioBox = {
+            x: 0,
+            y: 0,
+            w: 1,
+            h: 1,
+            style: 0
+        };
+
+        // If the current aspect ratio is already approximately equal to the desired aspect ratio,
+        // use a full-screen Rect (in case it was set to something else previously)
+        if (Math.round(currentAspectRatio * 100) / 100 == Math.round(desiredAspect * 100) / 100) {
+            return ratioBox;
+        }
+
+        // Pillarbox
+        if (currentAspectRatio > desiredAspect) {
+            var inset = 1.0 - desiredAspect / currentAspectRatio;
+            ratioBox.x = inset / 2;
+            ratioBox.y = 0;
+            ratioBox.w = 1.0 - inset;
+            ratioBox.h = 1.0;
+            ratioBox.style = AspectRatio.Pillarbox;
+        } else // Letterbox
+            {
+                var _inset = 1.0 - currentAspectRatio / desiredAspect;
+
+                ratioBox.x = 0;
+                ratioBox.y = _inset / 2;
+                ratioBox.w = 1.0;
+                ratioBox.h = 1.0 - _inset;
+                ratioBox.style = AspectRatio.Letterbox;
+            }
+
+        return ratioBox;
+    }
+};
+
+exports.default = AspectRatio;
+
+/***/ }),
+
+/***/ "./render/ui/Debug.js":
+/*!****************************!*\
+  !*** ./render/ui/Debug.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Debug = function () {
+  function Debug(game) {
+    _classCallCheck(this, Debug);
+
+    this.game = game;
+    this.draw = game.system.draw;
+    this.context = game.system.render.context;
+    this.x = 8;
+    this.y = 12;
+    this.lineHeight = 14;
+    this.column = 100;
+    this.font = "10px Verdana";
+    this.textColor = 'white';
+    this.bgcolor = 'black';
+    this.textShadow = 'black';
+  }
+
+  _createClass(Debug, [{
+    key: 'test',
+    value: function test() {
+
+      //this.context.setTransform(1, 0, 0, 1, 0, 0);
+      this.context.strokeStyle = this.bgcolor;
+      this.context.font = this.font;
+      this.draw.alpha(0.5);
+      this.draw.rect(0, 0, this.game.width, 14 * 4 + 16, this.bgcolor);
+      this.draw.alpha(1);
+      this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / " + this.game.time.desiredFps);
+      //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
+      this.drawLine("Instances: " + this.game.system.entityList.length);
+      this.drawLine("Draw Calls: " + this.game.system.render.drawCalls); /*this.game.physics.length);*/
+      this.x += this.game.width / 2;
+      this.y = 12 + 8;
+      //this.drawLine("Sounds count " + this.game.sound.length);
+      this.x = 8;
+      this.y = 12 + 8;
+    }
+  }, {
+    key: 'drawLine',
+    value: function drawLine(textLine) {
+
+      var xx = this.x;
+
+      this.context.fillStyle = this.textShadow;
+      this.context.fillText(textLine, xx + 1, this.y + 1);
+      this.context.fillStyle = this.textColor;
+
+      this.context.fillText(textLine, xx, this.y);
+
+      this.y += this.lineHeight;
+    }
+  }]);
+
+  return Debug;
+}();
+
+exports.default = Debug;
+
+/***/ }),
+
+/***/ "./render/ui/DrawUI.js":
+/*!*****************************!*\
+  !*** ./render/ui/DrawUI.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DrawUI;
+
+var _UpdateUIMatrix = __webpack_require__(/*! ./UpdateUIMatrix */ "./render/ui/UpdateUIMatrix.js");
+
+var _UpdateUIMatrix2 = _interopRequireDefault(_UpdateUIMatrix);
+
+var _RenderScene = __webpack_require__(/*! ../../scene/components/RenderScene */ "./scene/components/RenderScene.js");
+
+var _RenderScene2 = _interopRequireDefault(_RenderScene);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DrawUI(gui, sceneManager) {
+
+    (0, _UpdateUIMatrix2.default)(gui);
+
+    // blend
+    //gui.context.globalCompositeOperation = 'source-over';
+
+    var clip = gui.viewport.x !== 0 || gui.viewport.x !== 0 || gui.viewport.width !== gui.canvas.clientWidth || gui.viewport.height !== gui.canvas.clientHeight;
+
+    if (clip) {
+
+        gui.context.save();
+        gui.context.beginPath();
+        gui.context.rect(0, 0, gui.viewport.width, gui.viewport.height);
+        gui.context.clip();
+    }
+
+    gui.context.setTransform(gui.matrix.a[0], gui.matrix.a[1], gui.matrix.a[3], gui.matrix.a[4], gui.matrix.a[6], gui.matrix.a[7]);
+
+    if (gui.backgroundAlpha > 0) {
+        gui.context.globalAlpha = gui.backgroundAlpha;
+        gui.context.fillStyle = gui.backgroundColor;
+        gui.context.fillRect(0, 0, gui.width, gui.height);
+    }
+
+    // alpha
+    if (gui._alpha !== 1) {
+        gui.context.globalAlpha = 1;
+        gui._alpha = 1;
+    }
+
+    (0, _RenderScene2.default)(sceneManager, gui.draw);
+
+    if (clip) gui.context.restore();
+
+    if (gui.debug != null) {
+
+        gui.context.setTransform(1, 0, 0, 1, 0, 0);
+        gui.debug.test();
+    }
+}
+
+/***/ }),
+
+/***/ "./render/ui/UI.js":
+/*!*************************!*\
+  !*** ./render/ui/UI.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Rect = __webpack_require__(/*! ../../math/Rect */ "./math/Rect.js");
+
+var _Rect2 = _interopRequireDefault(_Rect);
+
+var _AspectRatio = __webpack_require__(/*! ./AspectRatio */ "./render/ui/AspectRatio.js");
+
+var _AspectRatio2 = _interopRequireDefault(_AspectRatio);
+
+var _Matrix = __webpack_require__(/*! ../../math/Matrix */ "./math/Matrix.js");
+
+var _Matrix2 = _interopRequireDefault(_Matrix);
+
+var _UIResize = __webpack_require__(/*! ./UIResize */ "./render/ui/UIResize.js");
+
+var _UIResize2 = _interopRequireDefault(_UIResize);
+
+var _GameSystemManager = __webpack_require__(/*! ../../core/GameSystemManager */ "./core/GameSystemManager.js");
+
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
+
+var _Debug = __webpack_require__(/*! ./Debug */ "./render/ui/Debug.js");
+
+var _Debug2 = _interopRequireDefault(_Debug);
+
+var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _UIDrawer = __webpack_require__(/*! ./UIDrawer */ "./render/ui/UIDrawer.js");
+
+var _UIDrawer2 = _interopRequireDefault(_UIDrawer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UI = function () {
+    function UI(game) {
+        _classCallCheck(this, UI);
+
+        this.game = game;
+        this.canvas = null;
+        this.width = this.game.width;
+        this.height = this.game.height;
+        this.viewport = new _Rect2.default(0, 0, this.width, this.height);
+        this.ratiobox = null;
+        this.aspectRatio = this.width / this.height;
+        this.pixelUnit = { x: 1, y: 1 };
+        this._isDirty = true;
+        this.matrix = new _Matrix2.default(1);
+        this.context = null;
+        this._alpha = 1;
+        this.backgroundColor = '#000';
+        this.backgroundAlpha = 0;
+        this.debug = null;
+        this.draw = new _UIDrawer2.default(game, this);
+    }
+
+    _createClass(UI, [{
+        key: 'init',
+        value: function init() {
+            this.canvas = this.game.system.render.canvas;
+            this.context = this.game.system.render.context;
+            this.draw.init();
+
+            if (this.game.config.debug) this.debug = new _Debug2.default(this.game);
+        }
+    }, {
+        key: 'setSize',
+        value: function setSize(width, height) {
+            (0, _UIResize2.default)(this, width, height);
+            return this;
+        }
+    }, {
+        key: 'setViewport',
+        value: function setViewport(x0, y0, x1, y1) {
+            this.viewport.x = x0;
+            this.viewport.y = y0;
+            this.viewport.width = x1;
+            this.viewport.height = y1;
+            this._isDirty = true;
+            return this;
+        }
+    }, {
+        key: 'setViewportByAspectRatio',
+        value: function setViewportByAspectRatio(aspectRatio) {
+
+            // TODO: IMPROVE THAT
+
+            this.ratiobox = _AspectRatio2.default.computeViewPort(this.game.system.render.canvas.clientWidth / this.game.system.render.canvas.clientHeight, aspectRatio);
+            var borderX = 0;
+            var borderY = 0; //rect.y * this.canvas.clientHeight;
+
+            if (this.ratiobox.style === _AspectRatio2.default.Square) {
+                this.viewport.set(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+
+                return this;
+            } else {
+
+                if (this.ratiobox.style === _AspectRatio2.default.Pillarbox) borderX = this.ratiobox.x * this.width; //this.canvas.clientWidth;
+                else if (this.ratiobox.style === _AspectRatio2.default.Letterbox) borderY = this.ratiobox.y * this.height; //this.canvas.clientHeight;
+
+                this.viewport.set(borderX, borderY, this.width * (this.canvas.clientWidth / this.width) - borderX * 2, this.height * (this.canvas.clientHeight / this.height) - borderY * 2);
+            }
+
+            var canvasRatioX = this.canvas.clientWidth * (this.ratiobox.x * 2);
+            var canvasRatioY = this.canvas.clientHeight * (this.ratiobox.y * 2);
+            var areaRatio = (this.canvas.clientWidth - canvasRatioX) / this.canvas.clientHeight;
+            var orthoSize = this.height / 2;
+            var pixelUnit = this.canvas.clientHeight / (orthoSize * 2) * areaRatio;
+
+            this.pixelUnit.x = pixelUnit; //(this.canvas.clientWidth - canvasRatioX) / this.width;
+            this.pixelUnit.y = pixelUnit; //(this.canvas.clientHeight - canvasRatioY) / this.height;
+
+            this._isDirty = true;
+            return this;
+        }
+    }, {
+        key: 'setSizeByCanvas',
+        value: function setSizeByCanvas() {
+            (0, _UIResize2.default)(this, this.game.system.render.canvas.width, this.game.system.render.canvas.height);
+            return this;
+        }
+    }, {
+        key: 'setSizeByCamera',
+        value: function setSizeByCamera() {
+            (0, _UIResize2.default)(this, this.game.system.camera.width, this.game.system.camera.height);
+            return this;
+        }
+    }, {
+        key: 'setSizeByAspectRatio',
+        value: function setSizeByAspectRatio(aspectRatio) {
+            (0, _UIResize2.default)(this, this.game.system.render.canvas.width * aspectRatio, this.game.system.render.canvas.height * aspectRatio);
+            return this;
+        }
+    }, {
+        key: 'alpha',
+        get: function get() {
+            return this._alpha;
+        },
+        set: function set(value) {
+            this._alpha = value;
+        }
+    }]);
+
+    return UI;
+}();
+
+exports.default = UI;
+
+
+_GameSystemManager2.default.register('UserInterface', UI, 'ui');
+
+/***/ }),
+
+/***/ "./render/ui/UIDrawer.js":
+/*!*******************************!*\
+  !*** ./render/ui/UIDrawer.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); //import GameSystemManager from "../core/GameSystemManager";
+
+
+var _Validate = __webpack_require__(/*! ../../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UIDrawer = function () {
+  function UIDrawer(game, ui) {
+    _classCallCheck(this, UIDrawer);
+
+    this.game = game;
+    this.cache = null;
+    this.context = null;
+    this.ui = ui;
+    this.lastAlpha = 1;
+    this.lastColor = '#000';
+    this.currentColor = '#FFF';
+    this.currentTextAlign = 'center';
+  }
+
+  _createClass(UIDrawer, [{
+    key: 'init',
+    value: function init() {
+
+      this.cache = this.game.system.cache;
+      this.context = this.game.system.render.context;
+
+      return this;
+    }
+  }, {
+    key: 'transformPosition',
+    value: function transformPosition(x, y, w, h) {
+      return {
+        x: x - this.ui.viewport.x,
+        y: y - this.ui.viewport.y,
+        w: w - this.ui.viewport.x || 0,
+        h: h - this.ui.viewport.y || 0
+      };
+    }
+  }, {
+    key: 'font',
+    value: function font(fontname, size, style) {
+
+      if (_Validate2.default.isNumber(size)) size = size.toString() + 'px';
+
+      if (style === undefined) style = "normal";
+
+      this.context.font = style + " " + size + " \'" + fontname + "\'";
+    }
+  }, {
+    key: 'text',
+    value: function text(_text, x, y, color, align) {
+
+      if (color === undefined) color = this.currentColor;
+      if (align === undefined) align = this.currentTextAlign;
+
+      var pos = this.transformPosition(x, y);
+      this.context.fillStyle = color;
+      this.context.textAlign = align;
+      this.context.fillText(_text, pos.x, pos.y);
+    }
+  }, {
+    key: 'image',
+    value: function image(source, x, y) {
+
+      if (source === undefined || source === null) return;
+
+      //this.context.save();
+
+      //this.context.translate(x, y);
+
+      var pos = this.transformPosition(x, y);
+
+      this.context.drawImage(source, 0, 0, source.width, source.height, pos.x, pos.y, source.width, source.height);
+      //this.context.restore();
+    }
+  }, {
+    key: 'sprite',
+    value: function sprite(tag, x, y, anchor) {
+
+      var img = this.cache.getAsset('images', tag);
+
+      if (img != null) {
+
+        if (anchor === undefined) {
+          anchor[0] = 0;
+          anchor[1] = 0;
+        }
+
+        var ctx = this.context;
+
+        ctx.save();
+
+        ctx.translate(x - img.width * anchor[0], y - img.height * anchor[1]);
+
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+
+        ctx.restore();
+      }
+    }
+  }, {
+    key: 'spriteTransformed',
+    value: function spriteTransformed(tag, x, y, xscale, yscale, angle) {}
+  }, {
+    key: 'rect',
+    value: function rect(x, y, width, height, color) {
+
+      this.context.fillStyle = color || this.currentColor;
+      var pos = this.transformPosition(x, y, width, height);
+      this.context.fillRect(pos.x, pos.y, pos.w, pos.h);
+    }
+  }, {
+    key: 'outlineRect',
+    value: function outlineRect(x, y, width, height, outlineWidth, color) {
+
+      color = color || this.currentColor;
+      this.context.lineWidth = outlineWidth || 1;
+      var pos = this.transformPosition(x, y, width, height);
+      //this.context.setLineDash([6]);
+      this.context.strokeStyle = color;
+      this.context.strokeRect(pos.x, pos.y, pos.w, pos.h);
+      //this.context.rect(x,y,width,height);
+      //this.context.stroke();
+    }
+  }, {
+    key: 'color',
+    value: function color(_color) {
+
+      this.context.fillStyle = _color;
+    }
+  }, {
+    key: 'bounds',
+    value: function bounds(bb, color) {
+
+      if (color === undefined) color = 'red';
+      this.context.setTransform(1, 0, 0, 1, 0, 0);
+      this.outlineRectangle(bb.min.x, bb.min.y, bb.max.x - bb.min.x, bb.max.y - bb.min.y, color, 1);
+    }
+  }, {
+    key: 'color',
+    set: function set(value) {
+      this.lastColor = this.context.fillStyle;
+      this.context.fillStyle = value;
+      this.currentColor = this.context.fillStyle;
+    }
+  }, {
+    key: 'alpha',
+    set: function set(value) {
+      this.lastAlpha = this.context.globalAlpha;
+      this.context.globalAlpha = value;
+    }
+  }, {
+    key: 'align',
+    set: function set(value) {
+      this.context.textAlign = value;
+      this.currentTextAlign = this.context.textAlign;
+    }
+  }]);
+
+  return UIDrawer;
+}();
+
+//GameSystemManager.register('UIDrawer',UIDraw,'draw');
+
+
+exports.default = UIDrawer;
+
+/***/ }),
+
+/***/ "./render/ui/UIResize.js":
+/*!*******************************!*\
+  !*** ./render/ui/UIResize.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UIResize;
+function UIResize(gui, w, h) {
+    gui.width = w;
+    gui.height = h;
+    gui.aspectRatio = w / h;
+    gui.pixelUnit.x = gui.canvas.width / w;
+    gui.pixelUnit.y = gui.canvas.height / h;
+    gui._isDirty = true;
+}
+
+/***/ }),
+
+/***/ "./render/ui/UpdateUIMatrix.js":
+/*!*************************************!*\
+  !*** ./render/ui/UpdateUIMatrix.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateUIMatrix;
+function UpdateUIMatrix(gui) {
+
+    if (!gui._isDirty) return;
+
+    gui.matrix.setIdentity().scale(gui.pixelUnit.x, gui.pixelUnit.y).translate(gui.viewport.x, gui.viewport.y);
+
+    gui._isDirty = false;
+
+    console.log(gui.matrix);
+}
 
 /***/ }),
 
@@ -9506,6 +9967,14 @@ var _Scene = __webpack_require__(/*! ./Scene */ "./scene/Scene.js");
 
 var _Scene2 = _interopRequireDefault(_Scene);
 
+var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ "./core/GameSystemManager.js");
+
+var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
+
+var _ScintillaLoadingScene = __webpack_require__(/*! ./builtin/ScintillaLoadingScene */ "./scene/builtin/ScintillaLoadingScene.js");
+
+var _ScintillaLoadingScene2 = _interopRequireDefault(_ScintillaLoadingScene);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9515,7 +9984,6 @@ var SceneManager = function () {
     _classCallCheck(this, SceneManager);
 
     this.game = game;
-    this.entityUpdateList = null;
     this._scenes = new _Map2.default();
 
     this.currentScene = null;
@@ -9525,18 +9993,26 @@ var SceneManager = function () {
     this._setup = false;
     this._clearCache = false;
 
+    this._scintillaLoading = false;
+
     // callbacks
 
     this.onStartCallback = null;
     this.onLoadingCallback = null;
     this.onLoadingRenderCallback = null;
     this.onPreloadCallback = null;
-    //this.onUpdateCallback = null;
+    this.onUpdateCallback = null;
     this.onRenderCallback = null;
     this.onDestroyCallback = null;
+    this._loadingPlaceHolder = new _ScintillaLoadingScene2.default(this.game);
   }
 
   _createClass(SceneManager, [{
+    key: 'init',
+    value: function init() {
+      this.game.system.inject(this._loadingPlaceHolder);
+    }
+  }, {
     key: 'add',
     value: function add(sceneName, scene) {
 
@@ -9606,121 +10082,368 @@ var SceneManager = function () {
 
       delete this.scenes[sceneName];
     }
-  }, {
-    key: 'setupScene',
-    value: function setupScene(sceneName) {
-
-      this.currentScene = this._scenes.get(sceneName);
-      this.onStartCallback = this.currentScene['start'] || null;
-      this.onLoadingCallback = this.currentScene['loading'] || null;
-      this.onLoadingRenderCallback = this.currentScene['loadingRender'] || null;
-      this.onPreloadCallback = this.currentScene['preload'] || null;
-      this.onRenderCallback = this.currentScene['render'] || null;
-      this.onDestroyCallback = this.currentScene['destroy'] || null;
-
-      this.game.system.inject(this.currentScene);
-
-      this._currentSceneName = sceneName;
-
-      //this.game.time.refresh();
-
-
-      //this.currentScene.camera = this.game.world.camera;
-
-      //this.game.instance.scene = this.currentScene;
-
-      this._setup = false;
-    }
-  }, {
-    key: 'clearCurrentScene',
-    value: function clearCurrentScene() {
-
-      if (this._currentSceneName) {
-
-        this.game.system.unject(this.currentScene);
-
-        if (this.onDestroyCallback) {
-          this.onDestroyCallback.call(this.currentScene, this.game);
-        }
-
-        if (this._clearCache) {
-          this.game.cache.clear();
-        }
-
-        //this.game.world.destroyAllChilds();
-      }
-    }
-  }, {
-    key: 'preUpdate',
-    value: function preUpdate() {
-
-      if (!this.game.systemInited || this._changeScene == null) return;
-
-      this.clearCurrentScene();
-
-      this.setupScene(this._changeScene);
-
-      if (this._currentSceneName !== this._changeScene) {
-        return;
-      } else {
-        this._changeScene = null;
-      }
-
-      if (this.onPreloadCallback) {
-
-        this.game.system.load.reset();
-        this.onPreloadCallback.call(this.currentScene, this.game);
-
-        if (this.game.system.load.totalQueuedFiles === 0) {
-          this.preloadComplete();
-        } else {
-
-          this.game.system.load.start();
-        }
-      } else {
-
-        this.preloadComplete();
-      }
-    }
-  }, {
-    key: 'preloadComplete',
-    value: function preloadComplete() {
-
-      //this.currentScene.quadtree = new tobiJS.Quadtree({x: 0, y: 0, width: 640,height: 480});
-
-      if (this._setup === false && this.onLoadingCallback) {
-        this.onLoadingCallback.call(this.currentScene, this.game);
-      }
-
-      if (this._setup === false && this.onStartCallback) {
-        this._setup = true;
-        this.onStartCallback.call(this.currentScene, this.game);
-      } else {
-        this._setup = true;
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-
-      if (this._setup) {
-
-        if (this.onRenderCallback) {
-          this.onRenderCallback.call(this.currentScene, this.game);
-        }
-      } else {
-
-        if (this.onLoadingRenderCallback) {
-          this.onLoadingRenderCallback.call(this.currentScene, this.game);
-        }
-      }
-    }
   }]);
 
   return SceneManager;
 }();
 
 exports.default = SceneManager;
+
+
+_GameSystemManager2.default.register('SceneManager', SceneManager, 'scene');
+
+/***/ }),
+
+/***/ "./scene/builtin/ScintillaLoadingScene.js":
+/*!************************************************!*\
+  !*** ./scene/builtin/ScintillaLoadingScene.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Scene2 = __webpack_require__(/*! ../Scene */ "./scene/Scene.js");
+
+var _Scene3 = _interopRequireDefault(_Scene2);
+
+var _defines = __webpack_require__(/*! ../../defines */ "./defines.js");
+
+var _defines2 = _interopRequireDefault(_defines);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ScintillaLoadingScreen = function (_Scene) {
+    _inherits(ScintillaLoadingScreen, _Scene);
+
+    function ScintillaLoadingScreen(game) {
+        _classCallCheck(this, ScintillaLoadingScreen);
+
+        var _this = _possibleConstructorReturn(this, (ScintillaLoadingScreen.__proto__ || Object.getPrototypeOf(ScintillaLoadingScreen)).call(this, 'Scintilla Loading Scene'));
+
+        _this.scintillaLogo = new Image();
+        var logoData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAA0CAQAAABxuOPTAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiBAEENCBdKapvAAABjklEQVRYw+2YSxKDIAyGA6seyiXH8mgsORS7dAFpUMNDJ9CNmakFAnz8MVIswCPbkT8L7IqS4REVgSO2HKiGvQOMa+7yGbhY5XKdhFPV2ZpMLaz3gqeIPd5PeeJaWBX3qiNYqqnn7VVrPayqu/JZl3ISSWstEb2wPtDaHjLhbo4nUwunrHQUOyWN2kBFpRJ26iMjp49qgHuPTDvQKkpbW5+i1n1wa5fAijp7P21/OP+wT0Hnws3uefDUdP7pNLtY5ULgPexE4Ohr4tR31H11er322muPdqXrealWYrPrkQNQgI8ZXVDqGbt/GRh20eSp/jERz7jUQn7qe10Ut5Z+HmdTM08WsaxJx02GUMvIgabsYwMA+AIcsuqQO3vk75CRoQhnyCN5LPu5nKQUYz1G5KmPq5V9tbaWn+aKCGABnAmFonAIijPXVUtKSHXd79H9lNqIAM4AbBm7/fDJNqF8biM1W3WMx9JnA3hkRaXqdD1GQW6j1AqdMVS3zgB49FkvXT16dIaDPFaq+5kC4MwX1X+rgjIvVdUAAAAASUVORK5CYII=";
+        _this.scintillaLogo.src = logoData;
+
+        _this.progress = 0;
+        _this.game = game;
+        _this.nextScene = null;
+
+        var drawFunc = function drawFunc(draw) {
+            draw.image(this.scintillaLogo, 131, 73);
+            draw.color = '#bcbcbc';
+            draw.outlineRect(131, 132, 58, 7);
+            draw.rect(133, 134, 54 * this.progress, 3);
+            draw.font('Verdana', 6);
+            draw.text('WIP - ' + _defines2.default.VERSION, 320 - 4, 240 - 4, '#787878', 'right');
+        };
+
+        _this.loadingGUI = drawFunc;
+        _this.gui = drawFunc;
+        return _this;
+    }
+
+    _createClass(ScintillaLoadingScreen, [{
+        key: "init",
+        value: function init(next) {
+            this.nextScene = next;
+            this.wait = 0;
+
+            this.ui.setSize(320, 240);
+            this.ui.setViewportByAspectRatio(1.33333333333);
+        }
+    }, {
+        key: "start",
+        value: function start() {
+            this.progress = 1;
+        }
+    }, {
+        key: "loading",
+        value: function loading() {
+
+            if (this.load.progress > this.progress) this.progress = this.load.progress;
+        }
+    }, {
+        key: "update",
+        value: function update(dt) {
+            this.wait += dt;
+
+            if (dt >= 5.0) {
+                this.scene.forceSet(nextScene);
+            }
+        }
+    }]);
+
+    return ScintillaLoadingScreen;
+}(_Scene3.default);
+
+exports.default = ScintillaLoadingScreen;
+
+/***/ }),
+
+/***/ "./scene/components/ClearScene.js":
+/*!****************************************!*\
+  !*** ./scene/components/ClearScene.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ClearScene;
+function ClearScene(game, sceneManager) {
+
+    if (sceneManager._currentSceneName) {
+
+        game.system.unject(sceneManager.currentScene);
+
+        if (sceneManager.onDestroyCallback) {
+            sceneManager.onDestroyCallback.call(sceneManager.currentScene, game);
+        }
+
+        if (sceneManager._clearCache) {
+            game.cache.clear();
+        }
+    }
+}
+
+/***/ }),
+
+/***/ "./scene/components/PreUpdateScene.js":
+/*!********************************************!*\
+  !*** ./scene/components/PreUpdateScene.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+      value: true
+});
+exports.default = PreUpdateScene;
+
+var _SetupScene = __webpack_require__(/*! ./SetupScene */ "./scene/components/SetupScene.js");
+
+var _SetupScene2 = _interopRequireDefault(_SetupScene);
+
+var _PreloadSceneComplete = __webpack_require__(/*! ./PreloadSceneComplete */ "./scene/components/PreloadSceneComplete.js");
+
+var _PreloadSceneComplete2 = _interopRequireDefault(_PreloadSceneComplete);
+
+var _ClearScene = __webpack_require__(/*! ./ClearScene */ "./scene/components/ClearScene.js");
+
+var _ClearScene2 = _interopRequireDefault(_ClearScene);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function PreUpdateScene(sceneManager) {
+
+      if (!sceneManager.game.systemInited || sceneManager._changeScene == null) return;
+
+      (0, _ClearScene2.default)(sceneManager, sceneManager.game);
+
+      _SetupScene2.default.call(sceneManager, sceneManager._changeScene);
+
+      if (sceneManager._currentSceneName !== sceneManager._changeScene) {
+            return;
+      } else {
+            sceneManager._changeScene = null;
+      }
+
+      if (sceneManager.onPreloadCallback) {
+
+            sceneManager.game.system.load.reset();
+            sceneManager.onPreloadCallback.call(sceneManager.currentScene, sceneManager.game);
+
+            if (sceneManager.game.system.load.totalQueuedFiles === 0) {
+                  _PreloadSceneComplete2.default.call(sceneManager);
+            } else {
+
+                  sceneManager.game.system.load.start();
+            }
+      } else {
+
+            _PreloadSceneComplete2.default.call(sceneManager);
+      }
+}
+
+/***/ }),
+
+/***/ "./scene/components/PreloadSceneComplete.js":
+/*!**************************************************!*\
+  !*** ./scene/components/PreloadSceneComplete.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+      value: true
+});
+exports.default = PreloadSceneComplete;
+function PreloadSceneComplete() {
+
+      if (this._setup === false && this.onLoadingCallback) {
+            this.onLoadingCallback.call(this.currentScene, this.game);
+      }
+
+      if (this._scintillaLoading) {
+            //this._scintillaLoading = false;
+            sceneManager._loadingPlaceHolder.start();
+      }
+
+      if (this._setup === false && this.onStartCallback) {
+            this._setup = true;
+            this.onStartCallback.call(this.currentScene, this.game);
+      } else {
+            this._setup = true;
+      }
+}
+
+/***/ }),
+
+/***/ "./scene/components/RenderScene.js":
+/*!*****************************************!*\
+  !*** ./scene/components/RenderScene.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = RenderScene;
+function RenderScene(sceneManager, drawer) {
+
+    if (sceneManager._setup) {
+
+        if (sceneManager._scintillaLoading) {
+            sceneManager._loadingPlaceHolder.gui(drawer);
+        } else {
+            if (sceneManager.onRenderCallback) sceneManager.onRenderCallback.call(sceneManager.currentScene, drawer);
+        }
+    } else {
+        if (sceneManager._scintillaLoading) {
+            sceneManager._loadingPlaceHolder.loadingGUI(drawer);
+        } else {
+            if (sceneManager.onLoadingRenderCallback) sceneManager.onLoadingRenderCallback.call(sceneManager.currentScene, drawer);
+        }
+    }
+}
+
+/***/ }),
+
+/***/ "./scene/components/SetupScene.js":
+/*!****************************************!*\
+  !*** ./scene/components/SetupScene.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = SetupScene;
+function SetupScene(sceneName) {
+
+  this.currentScene = this._scenes.get(sceneName);
+
+  this.onLoadingCallback = this.currentScene['loading'] || null;
+  this.onLoadingRenderCallback = this.currentScene['loadingGUI'] || null;
+
+  var bothIsNull = this.onLoadingCallback == null && this.onLoadingRenderCallback == null;
+
+  if (this.onLoadingCallback == null || this.onLoadingRenderCallback == null) {
+    this.onLoadingCallback = this._loadingPlaceHolder.loading || this.onLoadingCallback;
+
+    if (bothIsNull) {
+      this._loadingPlaceHolder.init(this.currentScene);
+      this._scintillaLoading = true;
+    } else {
+      this._scintillaLoading = false;
+    }
+  }
+
+  if (bothIsNull) {
+    this.onUpdateCallback = this._loadingPlaceHolder.update;
+    this.onRenderCallback = this._loadingPlaceHolder.gui;
+    this.onStartCallback = null;
+  } else {
+    this.onUpdateCallback = this.currentScene['update'] || null;
+    this.onStartCallback = this.currentScene['start'] || null;
+  }
+
+  this.onPreloadCallback = this.currentScene['preload'] || null;
+
+  this.onDestroyCallback = this.currentScene['destroy'] || null;
+
+  this.game.system.inject(this.currentScene);
+
+  this._currentSceneName = sceneName;
+
+  this._setup = false;
+}
+
+/***/ }),
+
+/***/ "./scene/components/UpdateScene.js":
+/*!*****************************************!*\
+  !*** ./scene/components/UpdateScene.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateScene;
+function UpdateScene(sceneManager, deltaTime) {
+
+    if (sceneManager._setup) {
+
+        if (sceneManager._scintillaLoading) {
+            sceneManager._loadingPlaceHolder.update(deltaTime);
+        } else {
+            if (sceneManager.onUpdateCallback) sceneManager.onUpdateCallback.call(sceneManager.currentScene, deltaTime);
+        }
+    } else {
+        if (sceneManager._scintillaLoading) {
+            sceneManager._loadingPlaceHolder.loading(deltaTime);
+        } else {
+            if (sceneManager.onLoadingCallback) sceneManager.onLoadingCallback.call(sceneManager.currentScene, deltaTime);
+        }
+    }
+}
 
 /***/ }),
 
@@ -11322,6 +12045,52 @@ var Color = exports.Color = {
 };
 
 module.exports = Color;
+
+/***/ }),
+
+/***/ "./utils/ObjectExtend.js":
+/*!*******************************!*\
+  !*** ./utils/ObjectExtend.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ObjectExtend;
+function ObjectExtend(source, target, deepCopy) {
+
+    var argsLength = arguments.length;
+    target = arguments[1] || {}, deepCopy = deepCopy || false;
+
+    for (var property in source) {
+
+        var src = source[property];
+        var dst = target[property];
+
+        if (deepCopy) {
+
+            // TODO
+            /*
+            if(	
+            x !== "super" && //Never clone the super referance
+            from[x] instanceof Function && //Only overwrite functions
+            !(from[x].prototype instanceof Class) //Never overwrite referances to classes
+            ){
+            //Never create circular super referances.
+            to[x] = from[x].super || superCopy(from, from[x]);
+            }
+            */
+
+        } else if (dst === undefined) {
+            target[property] = src;
+        }
+    }
+}
 
 /***/ }),
 

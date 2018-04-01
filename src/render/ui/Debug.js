@@ -23,7 +23,7 @@ export default class Debug {
     this.context.strokeStyle = this.bgcolor;
     this.context.font = this.font;
     this.draw.alpha(0.5);
-    this.draw.rectangle(0,0,this.game.width,(14 * 4)+ 16,this.bgcolor);
+    this.draw.rect(0,0,this.game.width,(14 * 4)+ 16,this.bgcolor);
     this.draw.alpha(1);
     this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / " + this.game.time.desiredFps);
     //this.drawLine("Instances in view: " + this.game.camera.instancesInView);

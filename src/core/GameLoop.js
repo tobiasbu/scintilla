@@ -5,6 +5,9 @@ import UpdateCamera from "../camera/UpdateCamera";
 import BeginDrawRender from "../render/components/BeginDrawRender";
 import DrawRender from "../render/components/DrawRender";
 import EndDrawRender from "../render/components/EndDrawRender";
+import PreUpdateScene from "../scene/components/PreUpdateScene";
+import UpdateScene from "../scene/components/UpdateScene";
+import DrawUI from "../render/ui/DrawUI";
 
 
 /*
@@ -48,13 +51,15 @@ export default class GameLoop {
         //let changeScene = (this.game.scene._changeScene != null || this.game.scene._changeScene !== undefined)
 
         //if (changeScene)
-            this.game.scene.preUpdate();
+        PreUpdateScene(this.game.scene);
+        //this.game.scene.preUpdate();
         
 
         if (shouldUpdate)
         {
-            
-            if (this.game.scene._setup)
+         
+            UpdateScene(this.game.scene, deltaTime);
+            /*if (this.game.scene._setup)
             {
                 // global scene update
                 if (this.currentScene.update !== undefined)
@@ -62,7 +67,7 @@ export default class GameLoop {
             } else {
                 if (this.currentScene.loading !== undefined)
                     this.currentScene.loading(deltaTime);
-            }
+            }*/
 
             UpdateCamera(this.camera, this.canvas);
             
@@ -87,6 +92,8 @@ export default class GameLoop {
         DrawRender(this.system.render, this.camera, deltaTime);
 
         EndDrawRender(this.system.render);
+
+        DrawUI(this.system.ui, this.game.scene);
 
     }
 

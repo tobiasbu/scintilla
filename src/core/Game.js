@@ -3,7 +3,7 @@ import Config from './Config';
 import Input from '../input/Input'
 import SceneManager from '../scene/SceneManager'
 import Physics from '../physics/physics'
-import Debug from '../others/Debug'
+import Debug from '../render/ui/Debug'
 import GameSystemManager from './GameSystemManager';
 import GameTime from '../time/GameTime';
 
@@ -38,7 +38,7 @@ export default class Game {
 
   //objects
   this.debug = null;
-  this.scene = null;
+  //this.scene = null;
   this.sound = null;
   this.input = null;
   this.pool = null;
@@ -90,7 +90,7 @@ export default class Game {
 
     this.physics = new Physics(this);
     this.input = new Input(this);
-    this.scene = new SceneManager(this);
+    //this.scene = new SceneManager(this);
     this.system = new GameSystemManager(this);
     this.time = new GameTime(this);
 

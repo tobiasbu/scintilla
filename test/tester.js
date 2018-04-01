@@ -7,7 +7,7 @@
 
 var VIEW = {
     w : 640,
-    h : 480
+    h : 480,
 }
 
 var config = {
@@ -28,10 +28,7 @@ var config = {
   var game = new scintilla.Game(config);
   var scene = game.scene.new('scene');
   game.system.render.layer.add('gui');
-  if (game.system.render.layer.contains('gui'))
-  {
-      console.log('yes');
-  }
+
   var x = 0;
   var camSpeed = 100;
 
@@ -42,6 +39,8 @@ var config = {
   mat2.transpose();
   console.log(mat2.toString());
   */
+
+  console.log(scintilla.VERSION)
 
 
 scene.preload = function() {

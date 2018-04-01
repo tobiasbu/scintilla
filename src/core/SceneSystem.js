@@ -2,10 +2,12 @@
 
 const SceneSystem = [
     'Cache',
-    'Draw',
+    //'Draw',
     'Loader',
     'EntityFactory',
-    'Camera'
+    'Camera',
+    'SceneManager',
+    'UserInterface'
 ]
 
 export default SceneSystem;

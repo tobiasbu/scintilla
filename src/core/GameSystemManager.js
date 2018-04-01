@@ -20,6 +20,9 @@ export default class GameSystemManager
             this[sys.name] = new sys.system(this.game, this);
         }
 
+        // set core system to game class
+        this.game.scene = this['scene'];
+
         // initialize systems
         for (let property in gameSystems) {
 
@@ -29,6 +32,8 @@ export default class GameSystemManager
 
             sys.init();
         }
+
+        
     }
 
     get(system) {
@@ -43,7 +48,9 @@ export default class GameSystemManager
         {
             
             let sys = gameSystems[SceneSystem[property]];
-            scene[sys.name] = this[sys.name];
+
+            if (sys !== undefined)
+                scene[sys.name] = this[sys.name];
         }
 
         // Special injections, input and sound:

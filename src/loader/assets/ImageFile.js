@@ -67,7 +67,7 @@ export default class ImageFile extends File {
         };
 
 
-        URLObject.create(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
+        URLObject.createFromResponse(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
     }
 
 }

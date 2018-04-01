@@ -1,9 +1,8 @@
 
 const URLObject = {
 
-    create : function(asset, response, type)
+    createFromResponse : function(asset, response, type)
     {
-
 
         if (typeof URL === 'function')
         {
@@ -11,7 +10,7 @@ const URLObject = {
         }
         else
         {
-            var reader = new FileReader();
+            let reader = new FileReader();
 
             reader.onload = function ()
             {
@@ -24,6 +23,7 @@ const URLObject = {
             reader.readAsDataURL(response);
         }   
     },
+
 
     revoke : function(data)
     {
