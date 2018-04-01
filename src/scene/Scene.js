@@ -1,3 +1,4 @@
+import PostPreloadingScene from "./components/PostPreloadingScene";
 
 export default class Scene {
   
@@ -20,7 +21,12 @@ export default class Scene {
   }
 
 
+  preloadDone() {
 
+    if (this.scene === undefined) return;
+
+    PostPreloadingScene(this.scene);
+  }
 
   instanceDestroy(gameObject) {
 

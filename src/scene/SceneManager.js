@@ -3,6 +3,7 @@ import DataMap from '../structures/Map'
 import Scene from './Scene'
 import GameSystemManager from '../core/GameSystemManager';
 import ScintillaLoadingScreen from './builtin/ScintillaLoadingScene';
+import SetScene from './components/SetScene';
 
 export default class SceneManager {
   
@@ -69,46 +70,36 @@ export default class SceneManager {
   }
 
   set(sceneName, clearCache) {
-
-    if (!this._scenes.has(sceneName))
-      throw new Error('SceneManager.set: Scene' + sceneName + ' does not exist.')
-
-  if (clearCache === undefined) { clearCache = false; }
-
-  
-
-  this._changeScene = sceneName;
-  this._clearCache = clearCache;
-
+    return SetScene(this, sceneName, clearCache, false);
   }
 
   restart(clearCache) {
 
-  if (clearCache === undefined) { clearCache = false; }
+    if (clearCache === undefined) { clearCache = false; }
 
-  this._changeScene = this._currentSceneName;
-  this._clearCache = clearCache;
+    this._changeScene = this._currentSceneName;
+    this._clearCache = clearCache;
 
   }
 
   remove(sceneName) {
 
-  if (this._currentSceneName === sceneName) {
+    if (this._currentSceneName === sceneName) {
 
-    this.currentScene = null;
+      this.currentScene = null;
 
-    this.onStartCallback = null;
-    this.onLoadingCallback = null;
-    this.onLoadingRenderCallback = null;
-    this.onPreloadCallback = null;
-    this.onUpdateCallback = null;
-    this.onRenderCallback = null;
-    this.onDestroyCallback = null;
+      this.onStartCallback = null;
+      this.onLoadingCallback = null;
+      this.onLoadingRenderCallback = null;
+      this.onPreloadCallback = null;
+      this.onUpdateCallback = null;
+      this.onRenderCallback = null;
+      this.onDestroyCallback = null;
 
 
-  }
+    }
 
-  delete this.scenes[sceneName];
+    delete this.scenes[sceneName];
 
   }
 

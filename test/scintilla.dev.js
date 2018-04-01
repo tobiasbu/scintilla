@@ -8373,7 +8373,7 @@ function DrawRenderLayer(layer, camera, context) {
                 if (camera.bounds.intersects(element.bounds)) {
                         drawCalls += element.render(context);
 
-                        //camera.game.system.draw.bounds(element.bounds);
+                        camera.game.system.draw.bounds(element.bounds);
                 }
         }
 
@@ -9871,12 +9871,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _PostPreloadingScene = __webpack_require__(/*! ./components/PostPreloadingScene */ "./scene/components/PostPreloadingScene.js");
-
-var _PostPreloadingScene2 = _interopRequireDefault(_PostPreloadingScene);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Scene = function () {
@@ -9899,14 +9893,6 @@ var Scene = function () {
   }
 
   _createClass(Scene, [{
-    key: 'preloadDone',
-    value: function preloadDone() {
-
-      if (this.scene === undefined) return;
-
-      (0, _PostPreloadingScene2.default)(this.scene);
-    }
-  }, {
     key: 'instanceDestroy',
     value: function instanceDestroy(gameObject) {
 
@@ -9989,10 +9975,6 @@ var _ScintillaLoadingScene = __webpack_require__(/*! ./builtin/ScintillaLoadingS
 
 var _ScintillaLoadingScene2 = _interopRequireDefault(_ScintillaLoadingScene);
 
-var _SetScene = __webpack_require__(/*! ./components/SetScene */ "./scene/components/SetScene.js");
-
-var _SetScene2 = _interopRequireDefault(_SetScene);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10060,7 +10042,15 @@ var SceneManager = function () {
   }, {
     key: 'set',
     value: function set(sceneName, clearCache) {
-      return (0, _SetScene2.default)(this, sceneName, clearCache, false);
+
+      if (!this._scenes.has(sceneName)) throw new Error('SceneManager.set: Scene' + sceneName + ' does not exist.');
+
+      if (clearCache === undefined) {
+        clearCache = false;
+      }
+
+      this._changeScene = sceneName;
+      this._clearCache = clearCache;
     }
   }, {
     key: 'restart',
@@ -10191,8 +10181,8 @@ var ScintillaLoadingScreen = function (_Scene) {
         value: function update(dt) {
             this.wait += dt;
 
-            if (this.wait >= 2.0) {
-                this.preloadDone();
+            if (dt >= 5.0) {
+                this.scene.forceSet(nextScene);
             }
         }
     }]);
@@ -10231,33 +10221,6 @@ function ClearScene(game, sceneManager) {
         if (sceneManager._clearCache) {
             game.cache.clear();
         }
-    }
-}
-
-/***/ }),
-
-/***/ "./scene/components/PostPreloadingScene.js":
-/*!*************************************************!*\
-  !*** ./scene/components/PostPreloadingScene.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = PostPreloadingScene;
-function PostPreloadingScene(sceneManger) {
-
-    sceneManger._scintillaLoading = false;
-
-    if (sceneManger.currentScene === undefined || sceneManger.currentScene === null) return;
-
-    if (sceneManger.onStartCallback) {
-        sceneManger.onStartCallback.call(sceneManger.currentScene, sceneManger.game);
     }
 }
 
@@ -10347,14 +10310,15 @@ function PreloadSceneComplete() {
 
       if (this._scintillaLoading) {
             //this._scintillaLoading = false;
-            this._loadingPlaceHolder.start();
+            sceneManager._loadingPlaceHolder.start();
       }
 
-      this._setup = true;
-
-      /*if (!this._scintillaLoading && this.onStartCallback) {
-          this.onStartCallback.call(this.currentScene, this.game);
-      }*/
+      if (this._setup === false && this.onStartCallback) {
+            this._setup = true;
+            this.onStartCallback.call(this.currentScene, this.game);
+      } else {
+            this._setup = true;
+      }
 }
 
 /***/ }),
@@ -10393,34 +10357,6 @@ function RenderScene(sceneManager, drawer) {
 
 /***/ }),
 
-/***/ "./scene/components/SetScene.js":
-/*!**************************************!*\
-  !*** ./scene/components/SetScene.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = SetScene;
-function SetScene(manager, sceneName, clearCache) {
-
-  if (!manager._scenes.has(sceneName)) throw new Error('SceneManager.set: Scene' + sceneName + ' does not exist.');
-
-  if (clearCache === undefined) {
-    clearCache = false;
-  }
-
-  manager._changeScene = sceneName;
-  manager._clearCache = clearCache;
-}
-
-/***/ }),
-
 /***/ "./scene/components/SetupScene.js":
 /*!****************************************!*\
   !*** ./scene/components/SetupScene.js ***!
@@ -10445,20 +10381,27 @@ function SetupScene(sceneName) {
   var bothIsNull = this.onLoadingCallback == null && this.onLoadingRenderCallback == null;
 
   if (this.onLoadingCallback == null || this.onLoadingRenderCallback == null) {
+    this.onLoadingCallback = this._loadingPlaceHolder.loading || this.onLoadingCallback;
 
     if (bothIsNull) {
       this._loadingPlaceHolder.init(this.currentScene);
-
       this._scintillaLoading = true;
     } else {
       this._scintillaLoading = false;
     }
   }
 
-  this.onRenderCallback = this.currentScene['gui'] || null;
-  this.onUpdateCallback = this.currentScene['update'] || null;
-  this.onStartCallback = this.currentScene['start'] || null;
+  if (bothIsNull) {
+    this.onUpdateCallback = this._loadingPlaceHolder.update;
+    this.onRenderCallback = this._loadingPlaceHolder.gui;
+    this.onStartCallback = null;
+  } else {
+    this.onUpdateCallback = this.currentScene['update'] || null;
+    this.onStartCallback = this.currentScene['start'] || null;
+  }
+
   this.onPreloadCallback = this.currentScene['preload'] || null;
+
   this.onDestroyCallback = this.currentScene['destroy'] || null;
 
   this.game.system.inject(this.currentScene);
@@ -10489,17 +10432,14 @@ function UpdateScene(sceneManager, deltaTime) {
     if (sceneManager._setup) {
 
         if (sceneManager._scintillaLoading) {
-
             sceneManager._loadingPlaceHolder.update(deltaTime);
         } else {
             if (sceneManager.onUpdateCallback) sceneManager.onUpdateCallback.call(sceneManager.currentScene, deltaTime);
         }
     } else {
         if (sceneManager._scintillaLoading) {
-
             sceneManager._loadingPlaceHolder.loading(deltaTime);
         } else {
-
             if (sceneManager.onLoadingCallback) sceneManager.onLoadingCallback.call(sceneManager.currentScene, deltaTime);
         }
     }

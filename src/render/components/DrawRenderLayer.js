@@ -26,7 +26,7 @@
             {
                 drawCalls += element.render(context);
 
-            camera.game.system.draw.bounds(element.bounds);
+            //camera.game.system.draw.bounds(element.bounds);
             }
         }
 

@@ -68,11 +68,12 @@ scene.start = function() {
 
 }
 
-scene.render = function() {
+scene.gui = function(draw) {
     
-    this.draw.rect(0, 0, 640, 32);
-    this.draw.font('Press Start 2P', 12, 'normal');
-    this.draw.text('SCORE',8, 16,'white');
+    draw.color = '#000'
+    draw.rect(0, 0, 640, 16);
+    draw.font('Press Start 2P', 7, 'normal');
+    draw.text('SCORE',8, 12,'white','left');
     
 }
 

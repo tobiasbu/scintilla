@@ -51,8 +51,8 @@ export default class ScintillaLoadingScreen extends Scene {
     update(dt) {
         this.wait += dt;
 
-        if (dt >= 5.0) {
-            this.scene.forceSet(nextScene);
+        if (this.wait >= 2.0) {
+            this.preloadDone();
         }
     }
 

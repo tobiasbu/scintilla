@@ -8,18 +8,13 @@ export default function PreloadSceneComplete() {
 
       if (this._scintillaLoading) {
         //this._scintillaLoading = false;
-        sceneManager._loadingPlaceHolder.start();
+        this._loadingPlaceHolder.start();
       }
 
-      if (this._setup === false && this.onStartCallback) {
-          this._setup  = true;
+      this._setup = true;
+
+      /*if (!this._scintillaLoading && this.onStartCallback) {
           this.onStartCallback.call(this.currentScene, this.game);
+      }*/
 
-
-      }
-      else
-      {
-          this._setup = true;
-
-      }
 }
