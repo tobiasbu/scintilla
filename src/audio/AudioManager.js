@@ -1,3 +1,4 @@
+import GameSystemManager from "../core/GameSystemManager";
 
 export default class AudioManager {
 
@@ -242,3 +243,5 @@ get : function() {
 }
 
 });
+
+GameSystemManager.register('AudioSystem',AudioManager, 'audio');

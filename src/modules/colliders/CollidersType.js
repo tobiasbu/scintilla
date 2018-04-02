@@ -5,3 +5,5 @@ const CollidersType = {
     Circle : 2,
     Polygon : 3,
 }
+
+export default CollidersType;

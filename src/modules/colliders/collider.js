@@ -12,7 +12,7 @@ export default class Collider extends Module {
     this.type = undefined;
     
     this.shape = null;
-    this.isTrigger = false;
+    
     //this.bounds = null;
     //this.offset = null
     //this._gameObject = null;
@@ -21,6 +21,7 @@ export default class Collider extends Module {
     //var _oldRotation = 0;
 
     //this.position = new scintilla.Vector();
+    this.isTrigger = false;
     this._offset = new Vector();
     this._bounds = new BoundingBox(0,0,1,1);
     this.setShape(shape);
