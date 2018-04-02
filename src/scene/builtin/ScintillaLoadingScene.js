@@ -1,5 +1,6 @@
 import Scene from "../Scene";
 import Version from "../../Define";
+import MathUtils from "../../math/MathUtils";
 
 export default class ScintillaLoadingScreen extends Scene {
 
@@ -11,8 +12,12 @@ export default class ScintillaLoadingScreen extends Scene {
         this.scintillaLogo.src = logoData;
 
         this.progress = 0;
+        this.fromProgress = 0;
+        this.toProgress = 0;
+        this.t = 0;
         this.game = game;
         this.nextScene = null;
+        this.preloadingDone = false;
 
         let drawFunc = function(draw) {
             draw.image(this.scintillaLogo, 131,73);
@@ -23,8 +28,41 @@ export default class ScintillaLoadingScreen extends Scene {
             draw.text('WIP - ' + Version.VERSION, 320 - 4, 240 - 4,'#787878','right');
         }
 
+        let loadingFunc = function(dt) {
 
+            this.t += dt / 0.15;
 
+            if (this.t >= 1)
+                this.t = 1.0;
+
+            if (!this.preloadingDone)
+            {
+                let prog = this.load.progress;
+
+                if (prog >= 1.0)
+                    this.preloadingDone = true;
+
+                if (prog > this.progress)
+                {
+                    this.fromProgress = this.progress;
+                    this.toProgress = prog;
+                    this.t = 0;   
+                }
+
+            } else {
+                this.wait += dt;
+
+                if (this.wait >= 2.0) {
+                    this.preloadDone();
+                }
+            }
+
+            
+            this.progress = MathUtils.lerp(this.fromProgress, this.toProgress, this.t);
+        }
+
+        this.loading = loadingFunc;
+        this.update = loadingFunc;
         this.loadingGUI = drawFunc;
         this.gui = drawFunc;
     }
@@ -32,28 +70,16 @@ export default class ScintillaLoadingScreen extends Scene {
     init(next) {
         this.nextScene = next;
         this.wait = 0;
-
+        this.t = 0;
+        this.progress = 0;
+        this.preloadingDone = false;
         this.ui.setSize(320, 240);
         this.ui.setViewportByAspectRatio(1.33333333333);
         
     }
 
     start() {
-        this.progress = 1;
-    }
-
-    loading() {
-
-        if (this.load.progress > this.progress)
-            this.progress = this.load.progress;
-    }
-
-    update(dt) {
-        this.wait += dt;
-
-        if (this.wait >= 2.0) {
-            this.preloadDone();
-        }
+        //this.progress = 1;
     }
 
 }

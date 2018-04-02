@@ -5563,6 +5563,10 @@ var MathUtils = {
   EPSILON: Math.pow(2, -52),
   HALFPI: 1.5707963267948966,
 
+  floor: function floor(value) {
+    return value >> 0;
+  },
+
   round: function round(value) {
 
     // With a bitwise or.
@@ -5586,7 +5590,7 @@ var MathUtils = {
 
   irandomRange: function irandomRange(min, max) {
 
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return MathUtils.floor(Math.random() * (max - min + 1)) + min;
   },
 
   lerp: function lerp(fromValue, toValue, t) {
@@ -5641,12 +5645,12 @@ var MathUtils = {
 
   toDegree: function toDegree(radians) {
 
-    return radians * tobiJS.Math.radToDeg;
+    return radians * MathUtils.radToDeg;
   },
 
   toRadian: function toRadian(degrees) {
 
-    return degrees * tobiJS.Math.degToRad;
+    return degrees * MathUtils.degToRad;
   }
 
 };
@@ -7270,8 +7274,8 @@ function DrawTilemapLayer(context, tilemap, layer, transform) {
     var y = matrix.a[7];
 
     if (tilemap.floorTiles) {
-        x = Math.round(x);
-        y = Math.round(y);
+        x = _MathUtils2.default.round(x);
+        y = _MathUtils2.default.round(y);
     }
     context.setTransform(matrix.a[0], matrix.a[1], // 2
     matrix.a[3], matrix.a[4], // 5
@@ -10465,6 +10469,10 @@ var _Define = __webpack_require__(/*! ../../Define */ "./Define.js");
 
 var _Define2 = _interopRequireDefault(_Define);
 
+var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -10486,8 +10494,12 @@ var ScintillaLoadingScreen = function (_Scene) {
         _this.scintillaLogo.src = logoData;
 
         _this.progress = 0;
+        _this.fromProgress = 0;
+        _this.toProgress = 0;
+        _this.t = 0;
         _this.game = game;
         _this.nextScene = null;
+        _this.preloadingDone = false;
 
         var drawFunc = function drawFunc(draw) {
             draw.image(this.scintillaLogo, 131, 73);
@@ -10498,6 +10510,35 @@ var ScintillaLoadingScreen = function (_Scene) {
             draw.text('WIP - ' + _Define2.default.VERSION, 320 - 4, 240 - 4, '#787878', 'right');
         };
 
+        var loadingFunc = function loadingFunc(dt) {
+
+            this.t += dt / 0.15;
+
+            if (this.t >= 1) this.t = 1.0;
+
+            if (!this.preloadingDone) {
+                var prog = this.load.progress;
+
+                if (prog >= 1.0) this.preloadingDone = true;
+
+                if (prog > this.progress) {
+                    this.fromProgress = this.progress;
+                    this.toProgress = prog;
+                    this.t = 0;
+                }
+            } else {
+                this.wait += dt;
+
+                if (this.wait >= 2.0) {
+                    this.preloadDone();
+                }
+            }
+
+            this.progress = _MathUtils2.default.lerp(this.fromProgress, this.toProgress, this.t);
+        };
+
+        _this.loading = loadingFunc;
+        _this.update = loadingFunc;
         _this.loadingGUI = drawFunc;
         _this.gui = drawFunc;
         return _this;
@@ -10508,29 +10549,16 @@ var ScintillaLoadingScreen = function (_Scene) {
         value: function init(next) {
             this.nextScene = next;
             this.wait = 0;
-
+            this.t = 0;
+            this.progress = 0;
+            this.preloadingDone = false;
             this.ui.setSize(320, 240);
             this.ui.setViewportByAspectRatio(1.33333333333);
         }
     }, {
         key: "start",
         value: function start() {
-            this.progress = 1;
-        }
-    }, {
-        key: "loading",
-        value: function loading() {
-
-            if (this.load.progress > this.progress) this.progress = this.load.progress;
-        }
-    }, {
-        key: "update",
-        value: function update(dt) {
-            this.wait += dt;
-
-            if (this.wait >= 2.0) {
-                this.preloadDone();
-            }
+            //this.progress = 1;
         }
     }]);
 

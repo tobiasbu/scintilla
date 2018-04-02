@@ -12,6 +12,10 @@ const MathUtils = {
   EPSILON : Math.pow(2, -52),
   HALFPI : 1.5707963267948966,
 
+  floor : function(value) {
+    return (value >> 0);
+  },
+
   round : function(value) {
 
       // With a bitwise or.
@@ -37,7 +41,7 @@ const MathUtils = {
 
   irandomRange : function(min, max) {
 
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return MathUtils.floor(Math.random() * (max - min + 1)) + min;
 
   },
 
@@ -105,13 +109,13 @@ const MathUtils = {
 
   toDegree : function(radians) {
 
-    return radians * tobiJS.Math.radToDeg;
+    return radians * MathUtils.radToDeg;
 
   },
 
   toRadian : function(degrees) {
 
-    return degrees * tobiJS.Math.degToRad;
+    return degrees * MathUtils.degToRad;
 
   }
 

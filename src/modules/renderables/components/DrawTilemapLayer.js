@@ -10,8 +10,8 @@ export default function DrawTilemapLayer(context, tilemap, layer, transform) {
 
     if (tilemap.floorTiles)
     {
-       x = Math.round(x);
-       y = Math.round(y);
+       x = MathUtils.round(x);
+       y = MathUtils.round(y);
     }
     context.setTransform(
         matrix.a[0], matrix.a[1], // 2
