@@ -1,5 +1,5 @@
 import Scene from "../Scene";
-import Defines from "../../defines";
+import Version from "../../Define";
 
 export default class ScintillaLoadingScreen extends Scene {
 
@@ -20,7 +20,7 @@ export default class ScintillaLoadingScreen extends Scene {
             draw.outlineRect(131, 132, 58, 7)
             draw.rect(133, 134, 54 * this.progress, 3);
             draw.font('Verdana', 6);
-            draw.text('WIP - ' + Defines.VERSION, 320 - 4, 240 - 4,'#787878','right');
+            draw.text('WIP - ' + Version.VERSION, 320 - 4, 240 - 4,'#787878','right');
         }
 
 

@@ -1,4 +1,4 @@
-import { RENDERING_TYPE } from "../Define";
+import { RenderingType } from "../Define";
 
 
 export default class CanvasSmoothing {
@@ -36,7 +36,7 @@ export default class CanvasSmoothing {
     }
 
     set(renderType) {
-        if (renderType == RENDERING_TYPE.NEAREST)
+        if (renderType == RenderingType.NEAREST)
             this.setEnable(false);
         else
             this.setEnable(true);

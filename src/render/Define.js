@@ -1,5 +1,5 @@
 
-export const RENDERING_TYPE = {
+export const RenderingType = {
     NEAREST : 0,
     LINEAR : 1
 }

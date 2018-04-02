@@ -1,6 +1,6 @@
 
 
-const Defines = {
+const Version = {
 
 
     MAJOR: 0,
@@ -10,4 +10,4 @@ const Defines = {
 
 }
 
-export default Defines;
+export default Version;

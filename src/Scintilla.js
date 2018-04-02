@@ -15,7 +15,7 @@
 *
 */
 
-import Defines from './defines'
+import Defines from './Define'
 import ObjectExtend from './utils/ObjectExtend';
 
 /**

@@ -112,6 +112,34 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./Define.js":
+/*!*******************!*\
+  !*** ./Define.js ***!
+  \*******************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+
+var Version = {
+
+    MAJOR: 0,
+    MINOR: 0,
+    REVISION: 1,
+    VERSION: '0.0.1'
+
+};
+
+exports.default = Version;
+
+/***/ }),
+
 /***/ "./Scintilla.js":
 /*!**********************!*\
   !*** ./Scintilla.js ***!
@@ -122,9 +150,9 @@ module.exports = g;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var _defines = __webpack_require__(/*! ./defines */ "./defines.js");
+var _Define = __webpack_require__(/*! ./Define */ "./Define.js");
 
-var _defines2 = _interopRequireDefault(_defines);
+var _Define2 = _interopRequireDefault(_Define);
 
 var _ObjectExtend = __webpack_require__(/*! ./utils/ObjectExtend */ "./utils/ObjectExtend.js");
 
@@ -183,7 +211,7 @@ var scintilla = scintilla || {
   Color: __webpack_require__(/*! ./utils/Color */ "./utils/Color.js")
 };
 
-(0, _ObjectExtend2.default)(_defines2.default, scintilla);
+(0, _ObjectExtend2.default)(_Define2.default, scintilla);
 
 /*
 scintilla.ShapeType = {
@@ -1327,34 +1355,6 @@ module.exports = {
     SceneSystem: __webpack_require__(/*! ./SceneSystem */ "./core/SceneSystem.js"),
     GameLoop: __webpack_require__(/*! ./GameLoop */ "./core/GameLoop.js")
 };
-
-/***/ }),
-
-/***/ "./defines.js":
-/*!********************!*\
-  !*** ./defines.js ***!
-  \********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-
-var Defines = {
-
-    MAJOR: 0,
-    MINOR: 0,
-    REVISION: 1,
-    VERSION: '0.0.1'
-
-};
-
-exports.default = Defines;
 
 /***/ }),
 
@@ -8089,7 +8089,7 @@ exports.default = SATResponse;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var RENDERING_TYPE = exports.RENDERING_TYPE = {
+var RenderingType = exports.RenderingType = {
     NEAREST: 0,
     LINEAR: 1
 };
@@ -8154,7 +8154,7 @@ var Render = function () {
         this.layer = new _RenderLayersManagement2.default(this.game);
         this.canvas = _Canvas2.default.create(this.game.parent, this.game.width, this.game.height);
         this.context = this.canvas.getContext("2d", { alpha: false });
-        this.imageRendering = game.config.pixelated ? _Define.RENDERING_TYPE.NEAREST : _Define.RENDERING_TYPE.LINEAR;
+        this.imageRendering = game.config.pixelated ? _Define.RenderingType.NEAREST : _Define.RenderingType.LINEAR;
         this.smooth = new _Smoothing2.default(this.context);
         this.smooth.set(this.imageRendering);
 
@@ -8574,7 +8574,7 @@ var CanvasSmoothing = function () {
     }, {
         key: 'set',
         value: function set(renderType) {
-            if (renderType == _Define.RENDERING_TYPE.NEAREST) this.setEnable(false);else this.setEnable(true);
+            if (renderType == _Define.RenderingType.NEAREST) this.setEnable(false);else this.setEnable(true);
         }
     }]);
 
@@ -10461,9 +10461,9 @@ var _Scene2 = __webpack_require__(/*! ../Scene */ "./scene/Scene.js");
 
 var _Scene3 = _interopRequireDefault(_Scene2);
 
-var _defines = __webpack_require__(/*! ../../defines */ "./defines.js");
+var _Define = __webpack_require__(/*! ../../Define */ "./Define.js");
 
-var _defines2 = _interopRequireDefault(_defines);
+var _Define2 = _interopRequireDefault(_Define);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10495,7 +10495,7 @@ var ScintillaLoadingScreen = function (_Scene) {
             draw.outlineRect(131, 132, 58, 7);
             draw.rect(133, 134, 54 * this.progress, 3);
             draw.font('Verdana', 6);
-            draw.text('WIP - ' + _defines2.default.VERSION, 320 - 4, 240 - 4, '#787878', 'right');
+            draw.text('WIP - ' + _Define2.default.VERSION, 320 - 4, 240 - 4, '#787878', 'right');
         };
 
         _this.loadingGUI = drawFunc;
