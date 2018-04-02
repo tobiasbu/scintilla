@@ -2,7 +2,9 @@ import File from "../File";
 import ObjectUtils from "../../utils/ObjectUtils";
 import AssetsType from "../AssetsType";
 import Path from "../../utils/Path";
-import { AssetTypeHandler, LOADER_STATE } from "../LoaderState";
+import LoaderState from "../LoaderState";
+import AddAsset from "../components/AddAsset";
+import AssetTypeHandler from "./AssetTypeHandler";
 
 export default class ScriptFile extends File {
 
@@ -25,7 +27,7 @@ export default class ScriptFile extends File {
     }
 
     onPostLoad(loader, xhrLoader) {
-        this.state = LOADER_STATE.PROCESSING;
+        this.state = LoaderState.PROCESSING;
 
         
 
@@ -49,6 +51,7 @@ export default class ScriptFile extends File {
 }
 
 AssetTypeHandler.register('script', function (tag, url, path, xhrSettings) {
-    this.addAsset(new ScriptFile(tag, url, this.path, xhrSettings));
+    //this.addAsset(new ScriptFile(tag, url, this.path, xhrSettings));
+    AddAsset.call(this, new ScriptFile(tag, url, this.path, xhrSettings));
     return this;
 });

@@ -1,7 +1,10 @@
 import File from "../File";
 import AssetsType from "../AssetsType";
-import { AssetTypeHandler, LOADER_STATE } from "../LoaderState";
+import LoaderState from "../LoaderState";
 import Validate from "../../utils/Validate";
+import AddAsset from "../components/AddAsset";
+import AssetTypeHandler from "./AssetTypeHandler";
+import NextAsset from "../components/NextAsset";
 
 
 export default class WebFontFile extends File {
@@ -25,11 +28,11 @@ export default class WebFontFile extends File {
     load(gameLoader) {
         this.loader = gameLoader;
 
-        if (this.state === LOADER_STATE.FINISHED) {
+        if (this.state === LoaderState.FINISHED) {
             this.onDone();
 
-            this.loader.next(this);
-        } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === LOADER_STATE.DONE) {
+            NextAsset.call(this.loader, this);
+        } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === LoaderState.DONE) {
             if (this.fontLoad !== undefined)
                 this.fontLoad();
         }
@@ -41,7 +44,7 @@ export default class WebFontFile extends File {
 
         if (WebFont !== undefined) {
 
-            this.state = LOADER_STATE.PROCESSING;
+            this.state = LoaderState.PROCESSING;
 
             let provider = this.config['provider'];
 
@@ -77,13 +80,15 @@ export default class WebFontFile extends File {
             fvd : fvd
         }
 
-        this.loader.next(this, true);
+        //this.loader.next(this, true);
+        NextAsset.call(this.loader, this);
 
         
     }
 }
 
 AssetTypeHandler.register('webFont', function (tag, provider, fontFamily, timeout) {
-    this.addAsset(new WebFontFile(tag, provider, fontFamily, timeout));
+    //this.addAsset(new WebFontFile(tag, provider, fontFamily, timeout));
+    AddAsset.call(this, new WebFontFile(tag, provider, fontFamily, timeout));
     return this;
 });

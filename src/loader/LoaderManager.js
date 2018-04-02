@@ -1,13 +1,12 @@
 
-import { LOADER_STATE, AssetTypeHandler} from './LoaderState'
+
 import DataSet from '../structures/Set'
 import XHR from './XHR'
 import ObjectUtils from '../utils/ObjectUtils';
 import GameSystemManager from '../core/GameSystemManager';
-import AssetsType from './AssetsType';
-import ScriptFile from './assets/ScriptFile';
+import LoaderState from './LoaderState'
 import EventManager from '../event/EventManager';
-import PreloadSceneComplete from '../scene/components/PreloadSceneComplete';
+import AssetTypeHandler from './assets/AssetTypeHandler';
 
 // Class LoaderManager
 export default class LoadManager {
@@ -56,8 +55,7 @@ export default class LoadManager {
     return this._filesQueueCount - this._loadedFilesCount;
   }
 
-  init()
-  {
+  init() {
     this.cache = this.game.system.cache;
 
     this._filesQueue = new DataSet();
@@ -73,7 +71,7 @@ export default class LoadManager {
     this.progress = 0;
     this.path = '';
     this.baseURL = '';
-    this.state = LOADER_STATE.IDLE;
+    this.state = LoaderState.IDLE;
   }
 
 
@@ -102,37 +100,6 @@ export default class LoadManager {
     return this;
   }
 
-  addAsset(asset, check) {
-
-    if (check === undefined) check = true;
-
-    if (!this.isOK() && check)
-        return -1;
-
-    // is if web font, we should load the WebFontLoader
-    if (asset.type === AssetsType.webFont && this.webFontLoader === undefined) {
-
-      this.webFontLoader = new ScriptFile('webFontLoader',"https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
-      this._filesQueue.set(this.webFontLoader);
-      this._filesQueueCount++;
-
-
-
-      this.event.create('onpostload_webFontLoader').subscribe(
-        () => {
-        asset.fontLoad();
-        });
-      
-    }
-
-
-    asset.path = this.path;
-    this._filesQueue.set(asset);
-    this._filesQueueCount++;
-    return asset;
-
-  }
-
   reset() {
 
     this.isDownloading = false;
@@ -145,47 +112,20 @@ export default class LoadManager {
     this._loadedFilesCount = 0;
 
     this.progress = 0
-    this.state = LOADER_STATE.IDLE;
+    this.state = LoaderState.IDLE;
 
   }
 
-  start() {
 
-    if (!this.isOK())
-    {
-        return -1;
-    }
-
-    this.progress = 0;
-    this._loadedFilesCount = 0;
-    this.state = LOADER_STATE.LOADING;
-    this._filesQueueCount = this._filesQueue.size;
-
-    if (this._filesQueue.size === 0)
-    {
-      //console.log(0);
-      this.loadFinished();
-    }
-    else
-    {
-      this.isDownloading = true;
-      this._successFiles.clear();
-      this._failedFiles.clear();
-      this._filesLoading.clear();
-
-      this.processFileQueue();
-    }
-
-  }
 
   /*end : function() {
 
-    if (this.state === LOADER_STATE.PROCESSING)
+    if (this.state === LoaderState.PROCESSING)
         return;
   
     this.progress = 1;
     this.isDownloading = false;
-    this.state = LOADER_STATE.PROCESSING;
+    this.state = LoaderState.PROCESSING;
 
     
     this._filesQueue.clear();
@@ -195,32 +135,12 @@ export default class LoadManager {
 
     this._successFiles.clear();
 
-    this.state = LOADER_STATE.DONE;
+    this.state = LoaderState.DONE;
     //this.game.scene.preloadComplete();
 
   },*/
 
-  processFileQueue() {
 
-    var self = this;
-
-    this._filesQueue.each(function(file) {
-
-      if (file.state === LOADER_STATE.FINISHED ||
-         file.state === LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
-      {
-        
-
-        self._filesLoading.set(file);
-
-        self._filesQueue.delete(file);
-
-        self.loadAsset(file);
-      }
-
-    });
-
-  }
 
   loadAsset(file) {
 
@@ -232,169 +152,17 @@ export default class LoadManager {
     file.load(this);
   }
 
-  next(concludedFile, hasError) {
-
-      if (hasError)
-          this._failedFiles.set(concludedFile);
-      else 
-          this._successFiles.set(concludedFile);
-      
-
-      this._filesLoading.delete(concludedFile);
-      this._loadedFilesCount++;
-
-      this.updateProgress();
-
-      if (this._filesQueue.size > 0)//(this._loadedFilesCount < this._filesQueueCount)
-      {
-          this.processFileQueue();
-      } else if (this._filesLoading.size === 0) {
-        
-          this.loadFinished();
-      }
-
-  }
-
-  loadFinished() {
-
-    if (this.state === LOADER_STATE.PROCESSING)
-        return;
-  
-    this.progress = 1;
-    this.isDownloading = false;
-    this.state = LOADER_STATE.PROCESSING;
-
-    this._processedFiles.clear();
-
-    if (this._successFiles.size === 0)
-    {
-        this.processingDone();
-    } else {
-     
-      this._successFiles.each(function(file) {
-        file.onProcessing(this.processingUpdate.bind(this));
-      },this);
-    }
-   
-  }
-
-
-  processingUpdate(file) {
-    
-    if (file.state === LOADER_STATE.ERROR)
-    {
-       this._failedFiles.set(file);
-
-        /*if (file.linkFile)
-        {
-            this.queue.delete(file.linkFile);
-        }*/
-        return this.deleteFromSuccessQueue(file);
-    }
-
-
-    this._processedFiles.set(file);
-
-    return this.deleteFromSuccessQueue(file);
-
-  }
-
-  deleteFromSuccessQueue(file) {
-    
-      this._successFiles.delete(file);
-
-      if (this._successFiles.size === 0 && this.state === LOADER_STATE.PROCESSING)
-          this.processingDone();
-  }
-
-  processingDone() {
-    this._successFiles.clear();
-    this._filesQueue.clear();
-
-    var cache = this.cache;
-
-          
-
-    if (this._processedFiles.size > 0)
-    {
-
-      // sort the assets by type priority 
-      this._processedFiles.sort((a, b) => {
-        return (a.type > b.type);
-      });
-
-      this._processedFiles.each(function(file) {
-
-        switch (file.type)
-        {
-          default:
-            break;
-
-          case AssetsType.image: {
-            cache.image.add(file.tag,file.data);
-            break;
-          }
-          case AssetsType.audio: {
-
-            file.data = requestXHR.response;
-
-            cache.addSound(file.tag,file.url,file.data,true);
-
-            if (file.autoDecode)
-            {
-                this.game.sound.decode(file.tag);
-            }
-
-            break;
-          }
-          case AssetsType.json: {
-            cache.json.add(file.tag, file.data);
-            break;
-          }
-
-          case AssetsType.tilemapJSON: {
-            cache.tilemap.add(file.tag, file.data);
-            break;
-          }
-        }
-
-      })
-
-      this._processedFiles.clear();
-    }
-
-    this.state = LOADER_STATE.DONE;
-
-    //this.game.scene.preloadComplete();
-    PreloadSceneComplete.call(this.game.scene);
-  }
-
   isLoading() {
-    return (this.state === LOADER_STATE.LOADING || this.state === LOADER_STATE.PROCESSING);
+    return (this.state === LoaderState.LOADING || this.state === LoaderState.PROCESSING);
   }
 
   isOK() {
-    return (this.state === LOADER_STATE.IDLE || this.state === LOADER_STATE.DONE || this.state === LOADER_STATE.ERROR);
+    return (this.state === LoaderState.IDLE || this.state === LoaderState.DONE || this.state === LoaderState.ERROR);
   }
 
   downloadIsDone() {
     return (this._filesQueue.length == (this._successCount + this._fileErrorCount));
   }
-
-  updateProgress() {
-
-    var progress = 0;
-
-    if (this._filesQueueCount != 0)
-    {
-      this.progress = 1 - (this._loadedFilesCount / this._filesQueueCount);
-    }
-     //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
-
-    this.progress = progress;
-
-  }
-
 
 
 };

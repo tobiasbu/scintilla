@@ -1,10 +1,12 @@
 
-import { LOADER_STATE, AssetTypeHandler} from '../LoaderState'
+import LoaderState from '../LoaderState'
 import File from '../File'
 import URLObject from '../URLObject'
 import ObjectUtils from '../../utils/ObjectUtils'
 import Path from '../../utils/Path'
 import AssetsType from '../AssetsType';
+import AddAsset from '../components/AddAsset';
+import AssetTypeHandler from './AssetTypeHandler';
 
 export default class ImageFile extends File {
     
@@ -38,7 +40,7 @@ export default class ImageFile extends File {
 
     onProcessing(processingCallback)
     {
-        this.state = LOADER_STATE.PROCESSING;
+        this.state = LoaderState.PROCESSING;
         this.data = new Image();
         this.data.crossOrigin = this.crossOrigin;
 
@@ -60,7 +62,7 @@ export default class ImageFile extends File {
 
             console.warn("Loader.ImageFile: Error on load file: " + self.url + ".")
 
-            self.state = LOADER_STATE.ERROR;
+            self.state = LoaderState.ERROR;
 
             processingCallback(self);
 
@@ -75,7 +77,7 @@ export default class ImageFile extends File {
 AssetTypeHandler.register('image', function (tag, url, path, xhrSettings, force)
 {
 
-    this.addAsset(new ImageFile(tag, url, this.path, xhrSettings), force);
+    AddAsset.call(this, new ImageFile(tag, url, this.path, xhrSettings), force);
 
     return this;
 

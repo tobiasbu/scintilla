@@ -1,8 +1,9 @@
 
 import ObjectUtils from '../utils/ObjectUtils'
 import XHR from './XHR'
-import {LOADER_STATE} from './LoaderState'
+import LoaderState from './LoaderState'
 import AssetsType from './AssetsType';
+import NextAsset from './components/NextAsset';
 
 export default class File {
 
@@ -40,7 +41,7 @@ export default class File {
 
 
         this.loader = null;
-        this.state = LOADER_STATE.PENDING;
+        this.state = LoaderState.PENDING;
         this.totalBytes = 0;
         this.loadedBytes = 0;
         this.progress = 0;
@@ -57,10 +58,11 @@ export default class File {
     load(gameLoader) {
         this.loader = gameLoader;
 
-        if (this.state === LOADER_STATE.FINISHED) {
+        if (this.state === LoaderState.FINISHED) {
             this.onDone();
 
-            this.loader.next(this);
+            NextAsset.call(this.loader, this);
+            //this.loader.next(this);
             
         }
         else
@@ -86,14 +88,16 @@ export default class File {
 
         if (event.target && event.target.status !== 200)
         {
-            this.loader.next(this, true);
+            //this.loader.next(this, true);
+            NextAsset.call(this.loader, this);
 
         } else {
             
             if (this.onPostLoad !== undefined)
                 this.onPostLoad(this.loader, this.xhrRequest);
 
-            this.loader.next(this, false);
+            //this.loader.next(this, false);
+            NextAsset.call(this.loader, this);
         }
       
     }
@@ -104,7 +108,8 @@ export default class File {
 
         this.XHRreset();
 
-        this.loader.next(this, true);
+        //this.loader.next(this, true);
+        NextAsset.call(this.loader, this);
     }
 
     onProgress(event)
@@ -120,7 +125,7 @@ export default class File {
     }
 
     onDone() {
-        this.state = LOADER_STATE.DONE;
+        this.state = LoaderState.DONE;
 
         this.loader.event.dispatch('oncomplete_' + this.tag);
 
@@ -128,7 +133,7 @@ export default class File {
 
     onProcessing(processingCallback)
     {
-        this.state = LOADER_STATE.PROCESSING;
+        this.state = LoaderState.PROCESSING;
 
         this.onDone();
 

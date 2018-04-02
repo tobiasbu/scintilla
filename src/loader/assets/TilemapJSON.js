@@ -1,8 +1,10 @@
 import File from '../File'
 import JSONFile from './JSONFile';
-import { AssetTypeHandler, LOADER_STATE } from '../LoaderState';
+import LoaderState from '../LoaderState';
 import Path from '../../utils/Path';
 import AssetsType from '../AssetsType';
+import AddAsset from '../components/AddAsset';
+import AssetTypeHandler from './AssetTypeHandler';
 
 
 function CheckImagesSources(loader, source, fullPath) {
@@ -43,7 +45,7 @@ export default class TilemapFileJSON extends JSONFile {
 
     onPostLoad(loader, xhrLoader) {
 
-        this.state = LOADER_STATE.PROCESSING;
+        this.state = LoaderState.PROCESSING;
         this.data = JSON.parse(xhrLoader.responseText);
 
         // check tileset images and pipe to the loader
@@ -59,6 +61,7 @@ export default class TilemapFileJSON extends JSONFile {
 }
 
 AssetTypeHandler.register('tilemapJSON', function (tag, url, path, xhrSettings) {
-    this.addAsset(new TilemapFileJSON(tag, url, this.path, xhrSettings));
+    //this.addAsset(new TilemapFileJSON(tag, url, this.path, xhrSettings));
+    AddAsset.call(this, new TilemapFileJSON(tag, url, this.path, xhrSettings));
     return this;
 });

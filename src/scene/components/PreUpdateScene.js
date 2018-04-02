@@ -1,6 +1,7 @@
 import SetupScene from "./SetupScene";
 import PreloadSceneComplete from "./PreloadSceneComplete";
 import ClearScene from "./ClearScene";
+import StartLoadAssets from "../../loader/components/StartLoadAssets";
 
 export default function PreUpdateScene(sceneManager) {
 
@@ -32,7 +33,8 @@ export default function PreUpdateScene(sceneManager) {
 
         } else {
 
-            sceneManager.game.system.load.start();
+            //sceneManager.game.system.load.start();
+            StartLoadAssets.call(sceneManager.game.system.load);
         }
 
       } else {

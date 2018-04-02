@@ -3500,9 +3500,15 @@ var _XHR2 = _interopRequireDefault(_XHR);
 
 var _LoaderState = __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js");
 
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
 var _AssetsType = __webpack_require__(/*! ./AssetsType */ "./loader/AssetsType.js");
 
 var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _NextAsset = __webpack_require__(/*! ./components/NextAsset */ "./loader/components/NextAsset.js");
+
+var _NextAsset2 = _interopRequireDefault(_NextAsset);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3536,7 +3542,7 @@ var File = function () {
         }
 
         this.loader = null;
-        this.state = _LoaderState.LOADER_STATE.PENDING;
+        this.state = _LoaderState2.default.PENDING;
         this.totalBytes = 0;
         this.loadedBytes = 0;
         this.progress = 0;
@@ -3554,10 +3560,11 @@ var File = function () {
         value: function load(gameLoader) {
             this.loader = gameLoader;
 
-            if (this.state === _LoaderState.LOADER_STATE.FINISHED) {
+            if (this.state === _LoaderState2.default.FINISHED) {
                 this.onDone();
 
-                this.loader.next(this);
+                _NextAsset2.default.call(this.loader, this);
+                //this.loader.next(this);
             } else {
 
                 this.source = _ObjectUtils2.default.getURL(this.url, gameLoader.baseURL);
@@ -3576,12 +3583,14 @@ var File = function () {
             this.XHRreset();
 
             if (event.target && event.target.status !== 200) {
-                this.loader.next(this, true);
+                //this.loader.next(this, true);
+                _NextAsset2.default.call(this.loader, this);
             } else {
 
                 if (this.onPostLoad !== undefined) this.onPostLoad(this.loader, this.xhrRequest);
 
-                this.loader.next(this, false);
+                //this.loader.next(this, false);
+                _NextAsset2.default.call(this.loader, this);
             }
         }
     }, {
@@ -3591,7 +3600,8 @@ var File = function () {
 
             this.XHRreset();
 
-            this.loader.next(this, true);
+            //this.loader.next(this, true);
+            _NextAsset2.default.call(this.loader, this);
         }
     }, {
         key: 'onProgress',
@@ -3606,14 +3616,14 @@ var File = function () {
     }, {
         key: 'onDone',
         value: function onDone() {
-            this.state = _LoaderState.LOADER_STATE.DONE;
+            this.state = _LoaderState2.default.DONE;
 
             this.loader.event.dispatch('oncomplete_' + this.tag);
         }
     }, {
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState2.default.PROCESSING;
 
             this.onDone();
 
@@ -3706,8 +3716,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _LoaderState = __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js");
-
 var _Set = __webpack_require__(/*! ../structures/Set */ "./structures/Set.js");
 
 var _Set2 = _interopRequireDefault(_Set);
@@ -3724,21 +3732,17 @@ var _GameSystemManager = __webpack_require__(/*! ../core/GameSystemManager */ ".
 
 var _GameSystemManager2 = _interopRequireDefault(_GameSystemManager);
 
-var _AssetsType = __webpack_require__(/*! ./AssetsType */ "./loader/AssetsType.js");
+var _LoaderState = __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js");
 
-var _AssetsType2 = _interopRequireDefault(_AssetsType);
-
-var _ScriptFile = __webpack_require__(/*! ./assets/ScriptFile */ "./loader/assets/ScriptFile.js");
-
-var _ScriptFile2 = _interopRequireDefault(_ScriptFile);
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
 
 var _EventManager = __webpack_require__(/*! ../event/EventManager */ "./event/EventManager.js");
 
 var _EventManager2 = _interopRequireDefault(_EventManager);
 
-var _PreloadSceneComplete = __webpack_require__(/*! ../scene/components/PreloadSceneComplete */ "./scene/components/PreloadSceneComplete.js");
+var _AssetTypeHandler = __webpack_require__(/*! ./assets/AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
 
-var _PreloadSceneComplete2 = _interopRequireDefault(_PreloadSceneComplete);
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3779,7 +3783,7 @@ var LoadManager = function () {
     //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
     _ObjectUtils2.default.getValue(config, 'timeout', gameConfig.timeout));
 
-    _LoaderState.AssetTypeHandler.inject(this);
+    _AssetTypeHandler2.default.inject(this);
   }
 
   _createClass(LoadManager, [{
@@ -3800,7 +3804,7 @@ var LoadManager = function () {
       this.progress = 0;
       this.path = '';
       this.baseURL = '';
-      this.state = _LoaderState.LOADER_STATE.IDLE;
+      this.state = _LoaderState2.default.IDLE;
     }
   }, {
     key: 'setPath',
@@ -3829,31 +3833,6 @@ var LoadManager = function () {
       return this;
     }
   }, {
-    key: 'addAsset',
-    value: function addAsset(asset, check) {
-
-      if (check === undefined) check = true;
-
-      if (!this.isOK() && check) return -1;
-
-      // is if web font, we should load the WebFontLoader
-      if (asset.type === _AssetsType2.default.webFont && this.webFontLoader === undefined) {
-
-        this.webFontLoader = new _ScriptFile2.default('webFontLoader', "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
-        this._filesQueue.set(this.webFontLoader);
-        this._filesQueueCount++;
-
-        this.event.create('onpostload_webFontLoader').subscribe(function () {
-          asset.fontLoad();
-        });
-      }
-
-      asset.path = this.path;
-      this._filesQueue.set(asset);
-      this._filesQueueCount++;
-      return asset;
-    }
-  }, {
     key: 'reset',
     value: function reset() {
 
@@ -3867,70 +3846,26 @@ var LoadManager = function () {
       this._loadedFilesCount = 0;
 
       this.progress = 0;
-      this.state = _LoaderState.LOADER_STATE.IDLE;
-    }
-  }, {
-    key: 'start',
-    value: function start() {
-
-      if (!this.isOK()) {
-        return -1;
-      }
-
-      this.progress = 0;
-      this._loadedFilesCount = 0;
-      this.state = _LoaderState.LOADER_STATE.LOADING;
-      this._filesQueueCount = this._filesQueue.size;
-
-      if (this._filesQueue.size === 0) {
-        //console.log(0);
-        this.loadFinished();
-      } else {
-        this.isDownloading = true;
-        this._successFiles.clear();
-        this._failedFiles.clear();
-        this._filesLoading.clear();
-
-        this.processFileQueue();
-      }
+      this.state = _LoaderState2.default.IDLE;
     }
 
     /*end : function() {
-        if (this.state === LOADER_STATE.PROCESSING)
+        if (this.state === LoaderState.PROCESSING)
           return;
     
       this.progress = 1;
       this.isDownloading = false;
-      this.state = LOADER_STATE.PROCESSING;
+      this.state = LoaderState.PROCESSING;
         
       this._filesQueue.clear();
       this._failedFiles.length = 0;
       
       this.processFiles();
         this._successFiles.clear();
-        this.state = LOADER_STATE.DONE;
+        this.state = LoaderState.DONE;
       //this.game.scene.preloadComplete();
       },*/
 
-  }, {
-    key: 'processFileQueue',
-    value: function processFileQueue() {
-
-      var self = this;
-
-      this._filesQueue.each(function (file) {
-
-        if (file.state === _LoaderState.LOADER_STATE.FINISHED || file.state === _LoaderState.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
-          {
-
-            self._filesLoading.set(file);
-
-            self._filesQueue.delete(file);
-
-            self.loadAsset(file);
-          }
-      });
-    }
   }, {
     key: 'loadAsset',
     value: function loadAsset(file) {
@@ -3942,159 +3877,19 @@ var LoadManager = function () {
       file.load(this);
     }
   }, {
-    key: 'next',
-    value: function next(concludedFile, hasError) {
-
-      if (hasError) this._failedFiles.set(concludedFile);else this._successFiles.set(concludedFile);
-
-      this._filesLoading.delete(concludedFile);
-      this._loadedFilesCount++;
-
-      this.updateProgress();
-
-      if (this._filesQueue.size > 0) //(this._loadedFilesCount < this._filesQueueCount)
-        {
-          this.processFileQueue();
-        } else if (this._filesLoading.size === 0) {
-
-        this.loadFinished();
-      }
-    }
-  }, {
-    key: 'loadFinished',
-    value: function loadFinished() {
-
-      if (this.state === _LoaderState.LOADER_STATE.PROCESSING) return;
-
-      this.progress = 1;
-      this.isDownloading = false;
-      this.state = _LoaderState.LOADER_STATE.PROCESSING;
-
-      this._processedFiles.clear();
-
-      if (this._successFiles.size === 0) {
-        this.processingDone();
-      } else {
-
-        this._successFiles.each(function (file) {
-          file.onProcessing(this.processingUpdate.bind(this));
-        }, this);
-      }
-    }
-  }, {
-    key: 'processingUpdate',
-    value: function processingUpdate(file) {
-
-      if (file.state === _LoaderState.LOADER_STATE.ERROR) {
-        this._failedFiles.set(file);
-
-        /*if (file.linkFile)
-        {
-            this.queue.delete(file.linkFile);
-        }*/
-        return this.deleteFromSuccessQueue(file);
-      }
-
-      this._processedFiles.set(file);
-
-      return this.deleteFromSuccessQueue(file);
-    }
-  }, {
-    key: 'deleteFromSuccessQueue',
-    value: function deleteFromSuccessQueue(file) {
-
-      this._successFiles.delete(file);
-
-      if (this._successFiles.size === 0 && this.state === _LoaderState.LOADER_STATE.PROCESSING) this.processingDone();
-    }
-  }, {
-    key: 'processingDone',
-    value: function processingDone() {
-      this._successFiles.clear();
-      this._filesQueue.clear();
-
-      var cache = this.cache;
-
-      if (this._processedFiles.size > 0) {
-
-        // sort the assets by type priority 
-        this._processedFiles.sort(function (a, b) {
-          return a.type > b.type;
-        });
-
-        this._processedFiles.each(function (file) {
-
-          switch (file.type) {
-            default:
-              break;
-
-            case _AssetsType2.default.image:
-              {
-                cache.image.add(file.tag, file.data);
-                break;
-              }
-            case _AssetsType2.default.audio:
-              {
-
-                file.data = requestXHR.response;
-
-                cache.addSound(file.tag, file.url, file.data, true);
-
-                if (file.autoDecode) {
-                  this.game.sound.decode(file.tag);
-                }
-
-                break;
-              }
-            case _AssetsType2.default.json:
-              {
-                cache.json.add(file.tag, file.data);
-                break;
-              }
-
-            case _AssetsType2.default.tilemapJSON:
-              {
-                cache.tilemap.add(file.tag, file.data);
-                break;
-              }
-          }
-        });
-
-        this._processedFiles.clear();
-      }
-
-      this.state = _LoaderState.LOADER_STATE.DONE;
-
-      //this.game.scene.preloadComplete();
-      _PreloadSceneComplete2.default.call(this.game.scene);
-    }
-  }, {
     key: 'isLoading',
     value: function isLoading() {
-      return this.state === _LoaderState.LOADER_STATE.LOADING || this.state === _LoaderState.LOADER_STATE.PROCESSING;
+      return this.state === _LoaderState2.default.LOADING || this.state === _LoaderState2.default.PROCESSING;
     }
   }, {
     key: 'isOK',
     value: function isOK() {
-      return this.state === _LoaderState.LOADER_STATE.IDLE || this.state === _LoaderState.LOADER_STATE.DONE || this.state === _LoaderState.LOADER_STATE.ERROR;
+      return this.state === _LoaderState2.default.IDLE || this.state === _LoaderState2.default.DONE || this.state === _LoaderState2.default.ERROR;
     }
   }, {
     key: 'downloadIsDone',
     value: function downloadIsDone() {
       return this._filesQueue.length == this._successCount + this._fileErrorCount;
-    }
-  }, {
-    key: 'updateProgress',
-    value: function updateProgress() {
-
-      var progress = 0;
-
-      if (this._filesQueueCount != 0) {
-        this.progress = 1 - this._loadedFilesCount / this._filesQueueCount;
-      }
-      //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
-
-      this.progress = progress;
     }
   }, {
     key: 'totalQueuedFiles',
@@ -4126,17 +3921,8 @@ _GameSystemManager2.default.register('Loader', LoadManager, 'load');
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.LOADER_STATE = exports.AssetTypeHandler = undefined;
 
-var _ListInjector = __webpack_require__(/*! ./ListInjector */ "./loader/ListInjector.js");
-
-var _ListInjector2 = _interopRequireDefault(_ListInjector);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var AssetTypeHandler = exports.AssetTypeHandler = new _ListInjector2.default();
-
-var LOADER_STATE = exports.LOADER_STATE = {
+var LoaderState = {
     NONE: 0,
     IDLE: 1,
     PENDING: 2,
@@ -4146,6 +3932,8 @@ var LOADER_STATE = exports.LOADER_STATE = {
     FINISHED: 6,
     DONE: 7
 };
+
+exports.default = LoaderState;
 
 /***/ }),
 
@@ -4262,6 +4050,32 @@ exports.default = XHR;
 
 /***/ }),
 
+/***/ "./loader/assets/AssetTypeHandler.js":
+/*!*******************************************!*\
+  !*** ./loader/assets/AssetTypeHandler.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _ListInjector = __webpack_require__(/*! ../ListInjector */ "./loader/ListInjector.js");
+
+var _ListInjector2 = _interopRequireDefault(_ListInjector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AssetTypeHandler = new _ListInjector2.default();
+
+exports.default = AssetTypeHandler;
+
+/***/ }),
+
 /***/ "./loader/assets/ImageFile.js":
 /*!************************************!*\
   !*** ./loader/assets/ImageFile.js ***!
@@ -4279,6 +4093,8 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
 
 var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
@@ -4299,6 +4115,14 @@ var _Path2 = _interopRequireDefault(_Path);
 var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
 var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4339,7 +4163,7 @@ var ImageFile = function (_File) {
     _createClass(ImageFile, [{
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState2.default.PROCESSING;
             this.data = new Image();
             this.data.crossOrigin = this.crossOrigin;
 
@@ -4360,7 +4184,7 @@ var ImageFile = function (_File) {
 
                 console.warn("Loader.ImageFile: Error on load file: " + self.url + ".");
 
-                self.state = _LoaderState.LOADER_STATE.ERROR;
+                self.state = _LoaderState2.default.ERROR;
 
                 processingCallback(self);
             };
@@ -4375,9 +4199,9 @@ var ImageFile = function (_File) {
 exports.default = ImageFile;
 
 
-_LoaderState.AssetTypeHandler.register('image', function (tag, url, path, xhrSettings, force) {
+_AssetTypeHandler2.default.register('image', function (tag, url, path, xhrSettings, force) {
 
-    this.addAsset(new ImageFile(tag, url, this.path, xhrSettings), force);
+    _AddAsset2.default.call(this, new ImageFile(tag, url, this.path, xhrSettings), force);
 
     return this;
 });
@@ -4414,9 +4238,19 @@ var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
 var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
 var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4446,7 +4280,7 @@ var JSONFile = function (_File) {
 
         if (_typeof(assetConfig.url) === 'object') {
             _this.data = assetConfig.url;
-            _this.state = _LoaderState.LOADER_STATE.DONE;
+            _this.state = _LoaderState2.default.DONE;
         }
 
         return _this;
@@ -4455,7 +4289,7 @@ var JSONFile = function (_File) {
     _createClass(JSONFile, [{
         key: "onProcessing",
         value: function onProcessing(processingCallback) {
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState2.default.PROCESSING;
             this.data = JSON.parse(this.xhrRequest.responseText);
             this.onDone();
             processingCallback(this);
@@ -4468,8 +4302,9 @@ var JSONFile = function (_File) {
 exports.default = JSONFile;
 
 
-_LoaderState.AssetTypeHandler.register('json', function (tag, url, path, xhrSettings) {
-    this.addAsset(new JSONFile(tag, url, this.path, xhrSettings));
+_AssetTypeHandler2.default.register('json', function (tag, url, path, xhrSettings) {
+    //this.addAsset(new JSONFile(tag, url, this.path, xhrSettings));
+    _AddAsset2.default.call(this, new JSONFile(tag, url, this.path, xhrSettings));
     return this;
 });
 
@@ -4509,6 +4344,16 @@ var _Path2 = _interopRequireDefault(_Path);
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4541,7 +4386,7 @@ var ScriptFile = function (_File) {
         _createClass(ScriptFile, [{
                 key: "onPostLoad",
                 value: function onPostLoad(loader, xhrLoader) {
-                        this.state = _LoaderState.LOADER_STATE.PROCESSING;
+                        this.state = _LoaderState2.default.PROCESSING;
 
                         // create the element
                         this.data = document.createElement('script');
@@ -4567,8 +4412,9 @@ var ScriptFile = function (_File) {
 exports.default = ScriptFile;
 
 
-_LoaderState.AssetTypeHandler.register('script', function (tag, url, path, xhrSettings) {
-        this.addAsset(new ScriptFile(tag, url, this.path, xhrSettings));
+_AssetTypeHandler2.default.register('script', function (tag, url, path, xhrSettings) {
+        //this.addAsset(new ScriptFile(tag, url, this.path, xhrSettings));
+        _AddAsset2.default.call(this, new ScriptFile(tag, url, this.path, xhrSettings));
         return this;
 });
 
@@ -4592,6 +4438,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
 var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
 var _File3 = _interopRequireDefault(_File2);
@@ -4607,6 +4455,14 @@ var _Path2 = _interopRequireDefault(_Path);
 var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
 var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4660,7 +4516,7 @@ var TextFile = function (_File) {
         {
             if (this.xhrRequest.readyState == 4)
             {
-                this.state = LOADER_STATE.PROCESSING;
+                this.state = LoaderState.PROCESSING;
                 //this.data = window.URL.createObjectURL(this.xhrRequest.response);
                 this.data = this.xhrRequest.responseText;
                 
@@ -4677,7 +4533,7 @@ var TextFile = function (_File) {
     _createClass(TextFile, [{
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState2.default.PROCESSING;
             //this.data = window.URL.createObjectURL(this.xhrRequest.response);
             this.data = this.xhrRequest.responseText;
             /*var style = document.createElement('style');
@@ -4696,7 +4552,7 @@ var TextFile = function (_File) {
 exports.default = TextFile;
 
 
-_LoaderState.AssetTypeHandler.register('text', function (tag, url, path, xhrSettings) {
+_AssetTypeHandler2.default.register('text', function (tag, url, path, xhrSettings) {
     var endPointPath = this.path;
 
     if (path !== undefined) {
@@ -4705,7 +4561,8 @@ _LoaderState.AssetTypeHandler.register('text', function (tag, url, path, xhrSett
             endPointPath = path;
     }
 
-    this.addAsset(new TextFile(tag, url, endPointPath, xhrSettings));
+    _AddAsset2.default.call(this, new TextFile(tag, url, endPointPath, xhrSettings));
+    //this.addAsset(new TextFile(tag, url, endPointPath, xhrSettings));
 
     return this;
 });
@@ -4740,6 +4597,8 @@ var _JSONFile3 = _interopRequireDefault(_JSONFile2);
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
 var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
 
 var _Path2 = _interopRequireDefault(_Path);
@@ -4747,6 +4606,14 @@ var _Path2 = _interopRequireDefault(_Path);
 var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
 var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4793,7 +4660,7 @@ var TilemapFileJSON = function (_JSONFile) {
         key: 'onPostLoad',
         value: function onPostLoad(loader, xhrLoader) {
 
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState2.default.PROCESSING;
             this.data = JSON.parse(xhrLoader.responseText);
 
             // check tileset images and pipe to the loader
@@ -4813,8 +4680,9 @@ var TilemapFileJSON = function (_JSONFile) {
 exports.default = TilemapFileJSON;
 
 
-_LoaderState.AssetTypeHandler.register('tilemapJSON', function (tag, url, path, xhrSettings) {
-    this.addAsset(new TilemapFileJSON(tag, url, this.path, xhrSettings));
+_AssetTypeHandler2.default.register('tilemapJSON', function (tag, url, path, xhrSettings) {
+    //this.addAsset(new TilemapFileJSON(tag, url, this.path, xhrSettings));
+    _AddAsset2.default.call(this, new TilemapFileJSON(tag, url, this.path, xhrSettings));
     return this;
 });
 
@@ -4846,9 +4714,23 @@ var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
 var _Validate = __webpack_require__(/*! ../../utils/Validate */ "./utils/Validate.js");
 
 var _Validate2 = _interopRequireDefault(_Validate);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
+
+var _NextAsset = __webpack_require__(/*! ../components/NextAsset */ "./loader/components/NextAsset.js");
+
+var _NextAsset2 = _interopRequireDefault(_NextAsset);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4882,11 +4764,11 @@ var WebFontFile = function (_File) {
         value: function load(gameLoader) {
             this.loader = gameLoader;
 
-            if (this.state === _LoaderState.LOADER_STATE.FINISHED) {
+            if (this.state === _LoaderState2.default.FINISHED) {
                 this.onDone();
 
-                this.loader.next(this);
-            } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === _LoaderState.LOADER_STATE.DONE) {
+                _NextAsset2.default.call(this.loader, this);
+            } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === _LoaderState2.default.DONE) {
                 if (this.fontLoad !== undefined) this.fontLoad();
             }
 
@@ -4898,7 +4780,7 @@ var WebFontFile = function (_File) {
 
             if (WebFont !== undefined) {
 
-                this.state = _LoaderState.LOADER_STATE.PROCESSING;
+                this.state = _LoaderState2.default.PROCESSING;
 
                 var provider = this.config['provider'];
 
@@ -4931,9 +4813,9 @@ var WebFontFile = function (_File) {
             this.data = {
                 family: familyName,
                 fvd: fvd
-            };
 
-            this.loader.next(this, true);
+                //this.loader.next(this, true);
+            };_NextAsset2.default.call(this.loader, this);
         }
     }]);
 
@@ -4943,8 +4825,9 @@ var WebFontFile = function (_File) {
 exports.default = WebFontFile;
 
 
-_LoaderState.AssetTypeHandler.register('webFont', function (tag, provider, fontFamily, timeout) {
-    this.addAsset(new WebFontFile(tag, provider, fontFamily, timeout));
+_AssetTypeHandler2.default.register('webFont', function (tag, provider, fontFamily, timeout) {
+    //this.addAsset(new WebFontFile(tag, provider, fontFamily, timeout));
+    _AddAsset2.default.call(this, new WebFontFile(tag, provider, fontFamily, timeout));
     return this;
 });
 
@@ -4961,6 +4844,7 @@ _LoaderState.AssetTypeHandler.register('webFont', function (tag, provider, fontF
 
 
 module.exports = {
+    AssetsTypeHandler: __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js"),
     ImageFile: __webpack_require__(/*! ./ImageFile */ "./loader/assets/ImageFile.js"),
     TextFile: __webpack_require__(/*! ./TextFile */ "./loader/assets/TextFile.js"),
     ScriptFile: __webpack_require__(/*! ./ScriptFile */ "./loader/assets/ScriptFile.js"),
@@ -4968,6 +4852,459 @@ module.exports = {
     TilemapJSON: __webpack_require__(/*! ./TilemapJSON */ "./loader/assets/TilemapJSON.js"),
     WebFontFile: __webpack_require__(/*! ./WebFontFile */ "./loader/assets/WebFontFile.js")
 };
+
+/***/ }),
+
+/***/ "./loader/components/AddAsset.js":
+/*!***************************************!*\
+  !*** ./loader/components/AddAsset.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = AddAsset;
+
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
+
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _ScriptFile = __webpack_require__(/*! ../assets/ScriptFile */ "./loader/assets/ScriptFile.js");
+
+var _ScriptFile2 = _interopRequireDefault(_ScriptFile);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function AddAsset(asset, check) {
+
+    if (check === undefined) check = true;
+
+    if (!this.isOK() && check) return -1;
+
+    // is if web font, we should load the WebFontLoader
+    if (asset.type === _AssetsType2.default.webFont && this.webFontLoader === undefined) {
+
+        this.webFontLoader = new _ScriptFile2.default('webFontLoader', "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
+        this._filesQueue.set(this.webFontLoader);
+        this._filesQueueCount++;
+
+        this.event.create('onpostload_webFontLoader').subscribe(function () {
+            asset.fontLoad();
+        });
+    }
+
+    asset.path = this.path;
+    this._filesQueue.set(asset);
+    this._filesQueueCount++;
+    return asset;
+}
+
+/***/ }),
+
+/***/ "./loader/components/AssetProcessingUpdate.js":
+/*!****************************************************!*\
+  !*** ./loader/components/AssetProcessingUpdate.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = AssetProcessingUpdate;
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+var _DeleteSucceedQueuedAsset = __webpack_require__(/*! ./DeleteSucceedQueuedAsset */ "./loader/components/DeleteSucceedQueuedAsset.js");
+
+var _DeleteSucceedQueuedAsset2 = _interopRequireDefault(_DeleteSucceedQueuedAsset);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function AssetProcessingUpdate(file) {
+
+    if (file.state === _LoaderState2.default.ERROR) {
+        this._failedFiles.set(file);
+
+        /*if (file.linkFile)
+        {
+            this.queue.delete(file.linkFile);
+        }*/
+
+        //return this.deleteFromSuccessQueue(file);
+        return _DeleteSucceedQueuedAsset2.default.call(this, file);
+    }
+
+    this._processedFiles.set(file);
+
+    return _DeleteSucceedQueuedAsset2.default.call(this, file); //this.deleteFromSuccessQueue(file);
+}
+
+/***/ }),
+
+/***/ "./loader/components/DeleteSucceedQueuedAsset.js":
+/*!*******************************************************!*\
+  !*** ./loader/components/DeleteSucceedQueuedAsset.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DeleteSucceedQueuedAsset;
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+var _ProcessDoneAssets = __webpack_require__(/*! ./ProcessDoneAssets */ "./loader/components/ProcessDoneAssets.js");
+
+var _ProcessDoneAssets2 = _interopRequireDefault(_ProcessDoneAssets);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DeleteSucceedQueuedAsset(file) {
+
+    this._successFiles.delete(file);
+
+    if (this._successFiles.size === 0 && this.state === _LoaderState2.default.PROCESSING) _ProcessDoneAssets2.default.call(this);
+}
+
+/***/ }),
+
+/***/ "./loader/components/LoaderFinished.js":
+/*!*********************************************!*\
+  !*** ./loader/components/LoaderFinished.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = LoaderFinished;
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+var _ProcessDoneAssets = __webpack_require__(/*! ./ProcessDoneAssets */ "./loader/components/ProcessDoneAssets.js");
+
+var _ProcessDoneAssets2 = _interopRequireDefault(_ProcessDoneAssets);
+
+var _AssetProcessingUpdate = __webpack_require__(/*! ./AssetProcessingUpdate */ "./loader/components/AssetProcessingUpdate.js");
+
+var _AssetProcessingUpdate2 = _interopRequireDefault(_AssetProcessingUpdate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function LoaderFinished() {
+
+    if (this.state === _LoaderState2.default.PROCESSING) return;
+
+    this.progress = 1;
+    this.isDownloading = false;
+    this.state = _LoaderState2.default.PROCESSING;
+
+    this._processedFiles.clear();
+
+    if (this._successFiles.size === 0) {
+        _ProcessDoneAssets2.default.call(this); // this.processingDone();
+    } else {
+
+        this._successFiles.each(function (file) {
+            file.onProcessing(_AssetProcessingUpdate2.default.bind(this));
+        }, this);
+    }
+}
+
+/***/ }),
+
+/***/ "./loader/components/NextAsset.js":
+/*!****************************************!*\
+  !*** ./loader/components/NextAsset.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = NextAsset;
+
+var _ProcessAssetsQueue = __webpack_require__(/*! ./ProcessAssetsQueue */ "./loader/components/ProcessAssetsQueue.js");
+
+var _ProcessAssetsQueue2 = _interopRequireDefault(_ProcessAssetsQueue);
+
+var _LoaderFinished = __webpack_require__(/*! ./LoaderFinished */ "./loader/components/LoaderFinished.js");
+
+var _LoaderFinished2 = _interopRequireDefault(_LoaderFinished);
+
+var _UpdateProgress = __webpack_require__(/*! ./UpdateProgress */ "./loader/components/UpdateProgress.js");
+
+var _UpdateProgress2 = _interopRequireDefault(_UpdateProgress);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function NextAsset(concludedFile, hasError) {
+
+    if (hasError) this._failedFiles.set(concludedFile);else this._successFiles.set(concludedFile);
+
+    this._filesLoading.delete(concludedFile);
+    this._loadedFilesCount++;
+
+    //this.updateProgress();
+    _UpdateProgress2.default.call(this);
+
+    if (this._filesQueue.size > 0) //(this._loadedFilesCount < this._filesQueueCount)
+        {
+            //this.processFileQueue();
+            _ProcessAssetsQueue2.default.call(this);
+        } else if (this._filesLoading.size === 0) {
+
+        //this.loadFinished();
+        _LoaderFinished2.default.call(this);
+    }
+}
+
+/***/ }),
+
+/***/ "./loader/components/ProcessAssetsQueue.js":
+/*!*************************************************!*\
+  !*** ./loader/components/ProcessAssetsQueue.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ProcessAssetsQueue;
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ProcessAssetsQueue() {
+
+    var self = this;
+
+    this._filesQueue.each(function (file) {
+
+        if (file.state === _LoaderState2.default.FINISHED || file.state === _LoaderState2.default.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
+            {
+
+                self._filesLoading.set(file);
+
+                self._filesQueue.delete(file);
+
+                self.loadAsset(file);
+            }
+    });
+}
+
+/***/ }),
+
+/***/ "./loader/components/ProcessDoneAssets.js":
+/*!************************************************!*\
+  !*** ./loader/components/ProcessDoneAssets.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = ProcessDoneAssets;
+
+var _PreloadSceneComplete = __webpack_require__(/*! ../../scene/components/PreloadSceneComplete */ "./scene/components/PreloadSceneComplete.js");
+
+var _PreloadSceneComplete2 = _interopRequireDefault(_PreloadSceneComplete);
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
+
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ProcessDoneAssets() {
+
+  this._successFiles.clear();
+  this._filesQueue.clear();
+
+  var cache = this.cache;
+
+  if (this._processedFiles.size > 0) {
+
+    // sort the assets by type priority 
+    this._processedFiles.sort(function (a, b) {
+      return a.type > b.type;
+    });
+
+    // add assets to cache
+    this._processedFiles.each(function (file) {
+
+      switch (file.type) {
+        default:
+          break;
+
+        case _AssetsType2.default.image:
+          {
+            cache.image.add(file.tag, file.data);
+            break;
+          }
+        case _AssetsType2.default.audio:
+          {
+
+            file.data = requestXHR.response;
+
+            cache.addSound(file.tag, file.url, file.data, true);
+
+            if (file.autoDecode) {
+              this.game.sound.decode(file.tag);
+            }
+
+            break;
+          }
+        case _AssetsType2.default.json:
+          {
+            cache.json.add(file.tag, file.data);
+            break;
+          }
+
+        case _AssetsType2.default.tilemapJSON:
+          {
+            cache.tilemap.add(file.tag, file.data);
+            break;
+          }
+      }
+    });
+
+    this._processedFiles.clear();
+  }
+
+  this.state = _LoaderState2.default.DONE;
+
+  //this.game.scene.preloadComplete();
+  _PreloadSceneComplete2.default.call(this.game.scene);
+}
+
+/***/ }),
+
+/***/ "./loader/components/StartLoadAssets.js":
+/*!**********************************************!*\
+  !*** ./loader/components/StartLoadAssets.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = StartLoadAssets;
+
+var _LoaderFinished = __webpack_require__(/*! ./LoaderFinished */ "./loader/components/LoaderFinished.js");
+
+var _LoaderFinished2 = _interopRequireDefault(_LoaderFinished);
+
+var _ProcessAssetsQueue = __webpack_require__(/*! ./ProcessAssetsQueue */ "./loader/components/ProcessAssetsQueue.js");
+
+var _ProcessAssetsQueue2 = _interopRequireDefault(_ProcessAssetsQueue);
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function StartLoadAssets() {
+
+    if (!this.isOK()) {
+        return -1;
+    }
+
+    this.progress = 0;
+    this._loadedFilesCount = 0;
+    this.state = _LoaderState2.default.LOADING;
+    this._filesQueueCount = this._filesQueue.size;
+
+    if (this._filesQueue.size === 0) {
+        //console.log(0);
+        //this.loadFinished();
+        _LoaderFinished2.default.call(this);
+    } else {
+        this.isDownloading = true;
+        this._successFiles.clear();
+        this._failedFiles.clear();
+        this._filesLoading.clear();
+
+        //this.processFileQueue();
+        _ProcessAssetsQueue2.default.call(this);
+    }
+}
+
+/***/ }),
+
+/***/ "./loader/components/UpdateProgress.js":
+/*!*********************************************!*\
+  !*** ./loader/components/UpdateProgress.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateProgress;
+function UpdateProgress() {
+
+    //var progress = 0;
+
+    if (this._filesQueueCount != 0) {
+        this.progress = 1 - this._loadedFilesCount / this._filesQueueCount;
+    }
+    //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
+
+    //this.progress = progress;
+}
 
 /***/ }),
 
@@ -4983,12 +5320,12 @@ module.exports = {
 
 module.exports = {
 
+    LoaderState: __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js"),
     File: __webpack_require__(/*! ./File */ "./loader/File.js"),
     XHR: __webpack_require__(/*! ./XHR */ "./loader/XHR.js"),
     URLObject: __webpack_require__(/*! ./URLObject */ "./loader/URLObject.js"),
     AssetsType: __webpack_require__(/*! ./AssetsType */ "./loader/AssetsType.js"),
     Assets: __webpack_require__(/*! ./assets */ "./loader/assets/index.js"),
-    LoaderState: __webpack_require__(/*! ./LoaderState */ "./loader/LoaderState.js"),
     LoaderManager: __webpack_require__(/*! ./LoaderManager */ "./loader/LoaderManager.js")
 
 };
@@ -10290,6 +10627,10 @@ var _ClearScene = __webpack_require__(/*! ./ClearScene */ "./scene/components/Cl
 
 var _ClearScene2 = _interopRequireDefault(_ClearScene);
 
+var _StartLoadAssets = __webpack_require__(/*! ../../loader/components/StartLoadAssets */ "./loader/components/StartLoadAssets.js");
+
+var _StartLoadAssets2 = _interopRequireDefault(_StartLoadAssets);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function PreUpdateScene(sceneManager) {
@@ -10315,7 +10656,8 @@ function PreUpdateScene(sceneManager) {
                   _PreloadSceneComplete2.default.call(sceneManager);
             } else {
 
-                  sceneManager.game.system.load.start();
+                  //sceneManager.game.system.load.start();
+                  _StartLoadAssets2.default.call(sceneManager.game.system.load);
             }
       } else {
 

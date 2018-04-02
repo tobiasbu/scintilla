@@ -1,5 +1,6 @@
 
 module.exports = {
+    AssetsTypeHandler : require('./AssetTypeHandler'),
     ImageFile : require('./ImageFile'),
     TextFile : require('./TextFile'),
     ScriptFile : require('./ScriptFile'),

@@ -1,7 +1,9 @@
 import File from "../File";
 import ObjectUtils from "../../utils/ObjectUtils";
-import { LOADER_STATE, AssetTypeHandler } from "../LoaderState";
+import LoaderState from "../LoaderState";
 import AssetsType from "../AssetsType";
+import AddAsset from "../components/AddAsset";
+import AssetTypeHandler from "./AssetTypeHandler";
 
 export default class JSONFile extends File {
 
@@ -21,13 +23,13 @@ export default class JSONFile extends File {
 
         if (typeof assetConfig.url === 'object') {
             this.data = assetConfig.url;
-            this.state = LOADER_STATE.DONE;
+            this.state = LoaderState.DONE;
         }
 
     }
 
     onProcessing(processingCallback) {
-        this.state = LOADER_STATE.PROCESSING;
+        this.state = LoaderState.PROCESSING;
         this.data = JSON.parse(this.xhrRequest.responseText);
         this.onDone();
         processingCallback(this);
@@ -36,6 +38,7 @@ export default class JSONFile extends File {
 }
 
 AssetTypeHandler.register('json', function (tag, url, path, xhrSettings) {
-    this.addAsset(new JSONFile(tag, url, this.path, xhrSettings));
+    //this.addAsset(new JSONFile(tag, url, this.path, xhrSettings));
+    AddAsset.call(this,new JSONFile(tag, url, this.path, xhrSettings));
     return this;
 });

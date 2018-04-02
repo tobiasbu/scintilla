@@ -1,9 +1,11 @@
 
-import { LOADER_STATE, AssetTypeHandler} from '../LoaderState'
+import LoaderState from '../LoaderState'
 import File from '../File'
 import ObjectUtils from '../../utils/ObjectUtils'
 import Path from '../../utils/Path'
 import AssetsType from '../AssetsType';
+import AddAsset from '../components/AddAsset';
+import AssetTypeHandler from './AssetTypeHandler';
 
 export default class TextFile extends File {
 
@@ -55,7 +57,7 @@ export default class TextFile extends File {
         {
             if (this.xhrRequest.readyState == 4)
             {
-                this.state = LOADER_STATE.PROCESSING;
+                this.state = LoaderState.PROCESSING;
                 //this.data = window.URL.createObjectURL(this.xhrRequest.response);
                 this.data = this.xhrRequest.responseText;
                 
@@ -72,7 +74,7 @@ export default class TextFile extends File {
 
     onProcessing(processingCallback)
     {
-        this.state = LOADER_STATE.PROCESSING;
+        this.state = LoaderState.PROCESSING;
             //this.data = window.URL.createObjectURL(this.xhrRequest.response);
             this.data = this.xhrRequest.responseText;
             /*var style = document.createElement('style');
@@ -98,7 +100,8 @@ AssetTypeHandler.register('text', function (tag, url, path, xhrSettings)
         
     }
 
-    this.addAsset(new TextFile(tag, url, endPointPath, xhrSettings));
+    AddAsset.call(this, new TextFile(tag, url, endPointPath, xhrSettings));
+    //this.addAsset(new TextFile(tag, url, endPointPath, xhrSettings));
 
     return this;
 

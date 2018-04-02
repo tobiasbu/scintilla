@@ -1,9 +1,5 @@
 
-import ListInjector from './ListInjector'
-
-export var AssetTypeHandler = new ListInjector();
-
-export const LOADER_STATE = {
+const LoaderState = {
     NONE : 0,
     IDLE : 1,
     PENDING : 2,
@@ -13,3 +9,5 @@ export const LOADER_STATE = {
     FINISHED : 6,
     DONE : 7, 
 };
+
+export default LoaderState;

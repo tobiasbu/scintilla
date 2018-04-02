@@ -3536,7 +3536,7 @@ var File = function () {
         }
 
         this.loader = null;
-        this.state = _LoaderState.LOADER_STATE.PENDING;
+        this.state = _LoaderState.LoaderState.PENDING;
         this.totalBytes = 0;
         this.loadedBytes = 0;
         this.progress = 0;
@@ -3554,7 +3554,7 @@ var File = function () {
         value: function load(gameLoader) {
             this.loader = gameLoader;
 
-            if (this.state === _LoaderState.LOADER_STATE.FINISHED) {
+            if (this.state === _LoaderState.LoaderState.FINISHED) {
                 this.onDone();
 
                 this.loader.next(this);
@@ -3606,14 +3606,14 @@ var File = function () {
     }, {
         key: 'onDone',
         value: function onDone() {
-            this.state = _LoaderState.LOADER_STATE.DONE;
+            this.state = _LoaderState.LoaderState.DONE;
 
             this.loader.event.dispatch('oncomplete_' + this.tag);
         }
     }, {
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LoaderState.PROCESSING;
 
             this.onDone();
 
@@ -3800,7 +3800,7 @@ var LoadManager = function () {
       this.progress = 0;
       this.path = '';
       this.baseURL = '';
-      this.state = _LoaderState.LOADER_STATE.IDLE;
+      this.state = _LoaderState.LoaderState.IDLE;
     }
   }, {
     key: 'setPath',
@@ -3867,7 +3867,7 @@ var LoadManager = function () {
       this._loadedFilesCount = 0;
 
       this.progress = 0;
-      this.state = _LoaderState.LOADER_STATE.IDLE;
+      this.state = _LoaderState.LoaderState.IDLE;
     }
   }, {
     key: 'start',
@@ -3879,7 +3879,7 @@ var LoadManager = function () {
 
       this.progress = 0;
       this._loadedFilesCount = 0;
-      this.state = _LoaderState.LOADER_STATE.LOADING;
+      this.state = _LoaderState.LoaderState.LOADING;
       this._filesQueueCount = this._filesQueue.size;
 
       if (this._filesQueue.size === 0) {
@@ -3896,19 +3896,19 @@ var LoadManager = function () {
     }
 
     /*end : function() {
-        if (this.state === LOADER_STATE.PROCESSING)
+        if (this.state === LoaderState.PROCESSING)
           return;
     
       this.progress = 1;
       this.isDownloading = false;
-      this.state = LOADER_STATE.PROCESSING;
+      this.state = LoaderState.PROCESSING;
         
       this._filesQueue.clear();
       this._failedFiles.length = 0;
       
       this.processFiles();
         this._successFiles.clear();
-        this.state = LOADER_STATE.DONE;
+        this.state = LoaderState.DONE;
       //this.game.scene.preloadComplete();
       },*/
 
@@ -3920,7 +3920,7 @@ var LoadManager = function () {
 
       this._filesQueue.each(function (file) {
 
-        if (file.state === _LoaderState.LOADER_STATE.FINISHED || file.state === _LoaderState.LOADER_STATE.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
+        if (file.state === _LoaderState.LoaderState.FINISHED || file.state === _LoaderState.LoaderState.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
           {
 
             self._filesLoading.set(file);
@@ -3964,11 +3964,11 @@ var LoadManager = function () {
     key: 'loadFinished',
     value: function loadFinished() {
 
-      if (this.state === _LoaderState.LOADER_STATE.PROCESSING) return;
+      if (this.state === _LoaderState.LoaderState.PROCESSING) return;
 
       this.progress = 1;
       this.isDownloading = false;
-      this.state = _LoaderState.LOADER_STATE.PROCESSING;
+      this.state = _LoaderState.LoaderState.PROCESSING;
 
       this._processedFiles.clear();
 
@@ -3985,7 +3985,7 @@ var LoadManager = function () {
     key: 'processingUpdate',
     value: function processingUpdate(file) {
 
-      if (file.state === _LoaderState.LOADER_STATE.ERROR) {
+      if (file.state === _LoaderState.LoaderState.ERROR) {
         this._failedFiles.set(file);
 
         /*if (file.linkFile)
@@ -4005,7 +4005,7 @@ var LoadManager = function () {
 
       this._successFiles.delete(file);
 
-      if (this._successFiles.size === 0 && this.state === _LoaderState.LOADER_STATE.PROCESSING) this.processingDone();
+      if (this._successFiles.size === 0 && this.state === _LoaderState.LoaderState.PROCESSING) this.processingDone();
     }
   }, {
     key: 'processingDone',
@@ -4063,7 +4063,7 @@ var LoadManager = function () {
         this._processedFiles.clear();
       }
 
-      this.state = _LoaderState.LOADER_STATE.DONE;
+      this.state = _LoaderState.LoaderState.DONE;
 
       //this.game.scene.preloadComplete();
       _PreloadSceneComplete2.default.call(this.game.scene);
@@ -4071,12 +4071,12 @@ var LoadManager = function () {
   }, {
     key: 'isLoading',
     value: function isLoading() {
-      return this.state === _LoaderState.LOADER_STATE.LOADING || this.state === _LoaderState.LOADER_STATE.PROCESSING;
+      return this.state === _LoaderState.LoaderState.LOADING || this.state === _LoaderState.LoaderState.PROCESSING;
     }
   }, {
     key: 'isOK',
     value: function isOK() {
-      return this.state === _LoaderState.LOADER_STATE.IDLE || this.state === _LoaderState.LOADER_STATE.DONE || this.state === _LoaderState.LOADER_STATE.ERROR;
+      return this.state === _LoaderState.LoaderState.IDLE || this.state === _LoaderState.LoaderState.DONE || this.state === _LoaderState.LoaderState.ERROR;
     }
   }, {
     key: 'downloadIsDone',
@@ -4126,7 +4126,7 @@ _GameSystemManager2.default.register('Loader', LoadManager, 'load');
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.LOADER_STATE = exports.AssetTypeHandler = undefined;
+exports.LoaderState = exports.AssetTypeHandler = undefined;
 
 var _ListInjector = __webpack_require__(/*! ./ListInjector */ "./loader/ListInjector.js");
 
@@ -4136,7 +4136,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var AssetTypeHandler = exports.AssetTypeHandler = new _ListInjector2.default();
 
-var LOADER_STATE = exports.LOADER_STATE = {
+var LoaderState = exports.LoaderState = {
     NONE: 0,
     IDLE: 1,
     PENDING: 2,
@@ -4339,7 +4339,7 @@ var ImageFile = function (_File) {
     _createClass(ImageFile, [{
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LoaderState.PROCESSING;
             this.data = new Image();
             this.data.crossOrigin = this.crossOrigin;
 
@@ -4360,7 +4360,7 @@ var ImageFile = function (_File) {
 
                 console.warn("Loader.ImageFile: Error on load file: " + self.url + ".");
 
-                self.state = _LoaderState.LOADER_STATE.ERROR;
+                self.state = _LoaderState.LoaderState.ERROR;
 
                 processingCallback(self);
             };
@@ -4446,7 +4446,7 @@ var JSONFile = function (_File) {
 
         if (_typeof(assetConfig.url) === 'object') {
             _this.data = assetConfig.url;
-            _this.state = _LoaderState.LOADER_STATE.DONE;
+            _this.state = _LoaderState.LoaderState.DONE;
         }
 
         return _this;
@@ -4455,7 +4455,7 @@ var JSONFile = function (_File) {
     _createClass(JSONFile, [{
         key: "onProcessing",
         value: function onProcessing(processingCallback) {
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LoaderState.PROCESSING;
             this.data = JSON.parse(this.xhrRequest.responseText);
             this.onDone();
             processingCallback(this);
@@ -4541,7 +4541,7 @@ var ScriptFile = function (_File) {
         _createClass(ScriptFile, [{
                 key: "onPostLoad",
                 value: function onPostLoad(loader, xhrLoader) {
-                        this.state = _LoaderState.LOADER_STATE.PROCESSING;
+                        this.state = _LoaderState.LoaderState.PROCESSING;
 
                         // create the element
                         this.data = document.createElement('script');
@@ -4660,7 +4660,7 @@ var TextFile = function (_File) {
         {
             if (this.xhrRequest.readyState == 4)
             {
-                this.state = LOADER_STATE.PROCESSING;
+                this.state = LoaderState.PROCESSING;
                 //this.data = window.URL.createObjectURL(this.xhrRequest.response);
                 this.data = this.xhrRequest.responseText;
                 
@@ -4677,7 +4677,7 @@ var TextFile = function (_File) {
     _createClass(TextFile, [{
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LoaderState.PROCESSING;
             //this.data = window.URL.createObjectURL(this.xhrRequest.response);
             this.data = this.xhrRequest.responseText;
             /*var style = document.createElement('style');
@@ -4793,7 +4793,7 @@ var TilemapFileJSON = function (_JSONFile) {
         key: 'onPostLoad',
         value: function onPostLoad(loader, xhrLoader) {
 
-            this.state = _LoaderState.LOADER_STATE.PROCESSING;
+            this.state = _LoaderState.LoaderState.PROCESSING;
             this.data = JSON.parse(xhrLoader.responseText);
 
             // check tileset images and pipe to the loader
@@ -4882,11 +4882,11 @@ var WebFontFile = function (_File) {
         value: function load(gameLoader) {
             this.loader = gameLoader;
 
-            if (this.state === _LoaderState.LOADER_STATE.FINISHED) {
+            if (this.state === _LoaderState.LoaderState.FINISHED) {
                 this.onDone();
 
                 this.loader.next(this);
-            } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === _LoaderState.LOADER_STATE.DONE) {
+            } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === _LoaderState.LoaderState.DONE) {
                 if (this.fontLoad !== undefined) this.fontLoad();
             }
 
@@ -4898,7 +4898,7 @@ var WebFontFile = function (_File) {
 
             if (WebFont !== undefined) {
 
-                this.state = _LoaderState.LOADER_STATE.PROCESSING;
+                this.state = _LoaderState.LoaderState.PROCESSING;
 
                 var provider = this.config['provider'];
 
