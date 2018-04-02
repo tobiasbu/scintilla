@@ -4,7 +4,6 @@ import SATResponse from './SATResponse'
 
 export default class Physics {
 
-  
 
   constructor(game) {
 

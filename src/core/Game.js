@@ -45,6 +45,7 @@ export default class Game {
   this.systems =  null;
   this.context = null;
   this.time = null;
+  this.events = null;
 
   this.parseConfiguration(this.config);
 
