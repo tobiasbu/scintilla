@@ -1,5 +1,5 @@
+import System from "./system/System";
 import RequestAnimationFrame from "../dom/RequestAnimationFrame";
-import GameSystemManager from "./GameSystemManager";
 import UpdateStep from "../time/UpdateStep";
 import UpdateCamera from "../camera/UpdateCamera";
 import BeginDrawRender from "../render/components/BeginDrawRender";
@@ -8,6 +8,7 @@ import EndDrawRender from "../render/components/EndDrawRender";
 import PreUpdateScene from "../scene/components/PreUpdateScene";
 import UpdateScene from "../scene/components/UpdateScene";
 import DrawUI from "../render/ui/DrawUI";
+
 
 
 /*
@@ -22,18 +23,11 @@ export default class GameLoop {
     constructor(game, system) {
         this.game = game;
         this.system = system;
-        this.updateStep = new UpdateStep(this.game, this.game.config);
+        this.updateStep = new UpdateStep(game, game.config);
         this.entityUpdateList = null;
         this.currentScene = null;
         this.camera = null;
         this.canvas = null;
-    }
-
-    init() {
-       this.updateStep.init(this);
-       this.entityUpdateList = this.game.system.entityList;
-       this.camera = this.system.camera;
-       this.canvas = this.system.render.canvas;
     }
 
     loop(deltaTime) {
@@ -99,4 +93,9 @@ export default class GameLoop {
 
 }
 
-GameSystemManager.register('GameLoop', GameLoop, 'loop');
+System.register('GameLoop', GameLoop, 'loop', function() {
+    this.updateStep.init(this);
+    this.entityUpdateList = this.game.system.entityList;
+    this.camera = this.system.camera;
+    this.canvas = this.system.render.canvas;
+});

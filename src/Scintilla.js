@@ -26,12 +26,12 @@ var scintilla = scintilla || {
   Core : require('./core'),
 
   // DATA STRUCTURES
-  Struct : require('./structures'),
+  Structures : require('./structures'),
   // RENDER
   Render : require('./render'),
   // INPUT
   KeyCode : require('./input/keyboard/KeyCode'),
-  MouseButton : require('./input/MouseButton'),
+  MouseButton : require('./input/mouse/MouseButton'),
   Input : require('./input'),
   // MATH
   MathUtils : require('./math/MathUtils'),

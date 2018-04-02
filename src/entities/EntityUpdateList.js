@@ -1,8 +1,9 @@
+import System from "../core/system/System";
 import DataList from "../structures/List";
-import GameSystemManager from "../core/GameSystemManager";
 import UpdateTransform from '../transform/UpdateTransform'
 import Matrix from '../math/Matrix'
 import ModulesUpdater from "../modules/components/ModulesUpdater";
+
 
 export default class EntityUpdateList {
 
@@ -16,14 +17,6 @@ export default class EntityUpdateList {
     }
 
     get length() {return this._instances.size;}
-
-    init()
-    {
-        this._instances = new DataList();
-        this._destroyInstances = new DataList();
-        this._pendingInstances = new DataList();
-        this._camera = this.game.system.camera;
-    }
 
     add(instance) {
         if (this._instances.indexOf(instance) === -1 && this._pendingInstances.indexOf(instance) === -1)
@@ -98,5 +91,11 @@ export default class EntityUpdateList {
 
 }
 
-GameSystemManager.register('EntityUpdateList', EntityUpdateList, 'entityList');
+System.register('EntityUpdateList', EntityUpdateList, 'entityList', 
+function() {
+    this._instances = new DataList();
+    this._destroyInstances = new DataList();
+    this._pendingInstances = new DataList();
+    this._camera = this.game.system.camera;
+});
 

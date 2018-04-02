@@ -1,12 +1,13 @@
 
 
-import DataSet from '../structures/Set'
-import XHR from './XHR'
+import System from '../core/system/System';
 import ObjectUtils from '../utils/ObjectUtils';
-import GameSystemManager from '../core/GameSystemManager';
-import LoaderState from './LoaderState'
-import EventManager from '../event/EventManager';
+import XHR from './XHR'
 import AssetTypeHandler from './assets/AssetTypeHandler';
+import LoaderState from './LoaderState'
+import InitializeLoader from './components/InitializeLoader';
+
+
 
 // Class LoaderManager
 export default class LoadManager {
@@ -55,24 +56,7 @@ export default class LoadManager {
     return this._filesQueueCount - this._loadedFilesCount;
   }
 
-  init() {
-    this.cache = this.game.system.cache;
 
-    this._filesQueue = new DataSet();
-    this._filesLoading = new DataSet();
-    this._successFiles = new DataSet();
-    this._failedFiles = new DataSet();
-    this._processedFiles = new DataSet();
-    this.event = new EventManager();
-
-    this._filesQueueCount = 0;
-    this._loadedFilesCount = 0;
-
-    this.progress = 0;
-    this.path = '';
-    this.baseURL = '';
-    this.state = LoaderState.IDLE;
-  }
 
 
   setPath(path) {
@@ -167,4 +151,4 @@ export default class LoadManager {
 
 };
 
-GameSystemManager.register('Loader',LoadManager,'load');
+System.register('Loader',LoadManager,'load', InitializeLoader);

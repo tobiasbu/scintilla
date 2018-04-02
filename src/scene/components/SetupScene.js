@@ -1,3 +1,4 @@
+import InjectSystems from "../../core/system/components/InjectSystems";
 
   export default function SetupScene(sceneName) {
 
@@ -28,7 +29,8 @@
     this.onPreloadCallback = this.currentScene['preload'] || null;    
     this.onDestroyCallback = this.currentScene['destroy'] || null;
   
-    this.game.system.inject(this.currentScene);
+    InjectSystems(this.game, this.currentScene);
+    //this.game.system.inject(this.currentScene);
   
     this._currentSceneName = sceneName;
   

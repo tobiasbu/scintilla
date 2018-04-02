@@ -1,5 +1,6 @@
-import GameSystemManager from "../core/GameSystemManager";
+import System from "../core/system/System";
 import SceneEntity from "./SceneEntity";
+
 
 export default class EntityFactory {
     
@@ -7,12 +8,6 @@ export default class EntityFactory {
         this.game = game;
         this.scene = null;
         this.entityList = null;
-    }
-
-    init()
-    {
-        this.entityList = this.game.system.entityList;
-        this.scene = this.game.scene;
     }
 
     entity(entityName) {
@@ -45,4 +40,8 @@ export default class EntityFactory {
 
 }
 
-GameSystemManager.register('EntityFactory', EntityFactory, 'create');
+System.register('EntityFactory', EntityFactory, 'create', 
+function() {
+    this.entityList = this.game.system.entityList;
+    this.scene = this.game.scene;
+});

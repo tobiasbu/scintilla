@@ -3,9 +3,9 @@ import Config from './Config';
 import Input from '../input/Input'
 import SceneManager from '../scene/SceneManager'
 import Physics from '../physics/physics'
-import Debug from '../render/ui/Debug'
-import GameSystemManager from './GameSystemManager';
 import GameTime from '../time/GameTime';
+import System from './system/System';
+import InitializeSystems from './system/components/InitializeSystems';
 
 /**
 * Main class of engine. Holds all main data.
@@ -81,7 +81,7 @@ export default class Game {
   /**
     * Initialize engine
     *
-    * @method tobiJS.Game#init()
+    * @method Game#init()
     * @protected
     */
   init() {
@@ -92,16 +92,13 @@ export default class Game {
     this.physics = new Physics(this);
     this.input = new Input(this);
     //this.scene = new SceneManager(this);
-    this.system = new GameSystemManager(this);
+    //new GameSystemManager(this);
     this.time = new GameTime(this);
 
-    this.system.init();
+    this.system = InitializeSystems(this);
+
     this.input.init();
     this.time.init(this.system.loop);
-
-    if (this.debugMode)
-      this.debug = new Debug(this);
-
     this.systemInited = true;
     this.isRunning = true;
 

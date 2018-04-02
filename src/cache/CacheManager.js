@@ -1,7 +1,8 @@
-import GameSystemManager from "../core/GameSystemManager";
+import System from "../core/system/System";
 import ImageResource from "../resources/ImageResource";
 import TilemapResource from "../resources/tilemap/TilemapResource";
 import Cache from "./Cache";
+
 
 const CacheTypes = [
   'image',
@@ -125,4 +126,4 @@ constructor(game) {
 
 }
 
-GameSystemManager.register('Cache', CacheManager, 'cache');
+System.register('Cache', CacheManager, 'cache');

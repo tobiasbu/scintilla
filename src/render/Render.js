@@ -1,12 +1,12 @@
-
+import System from '../core/system/System';
 import DataMap from '../structures/Map'
 import RenderLayer from './RenderLayer'
 import RenderLayerManagment from './RenderLayersManagement'
 import Canvas from './canvas/Canvas'
 import {RenderingType} from './Define'
-import GameSystemManager from '../core/GameSystemManager';
 import CanvasSmoothing from './canvas/Smoothing';
 import DrawRenderLayer from './components/DrawRenderLayer';
+
 
 
 export default class Render {
@@ -46,4 +46,4 @@ export default class Render {
     }
 }
 
-GameSystemManager.register('Render', Render, 'render');
+System.register('Render', Render, 'render');

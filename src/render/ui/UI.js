@@ -1,12 +1,14 @@
 
+import System from '../../core/system/System';
 import Rect from '../../math/Rect'
 import AspectRatio from './AspectRatio';
 import Matrix from '../../math/Matrix'
 import GUIResize from './UIResize';
-import GameSystemManager from '../../core/GameSystemManager';
 import Debug from './Debug';
 import MathUtils from '../../math/MathUtils';
 import UIDrawer from './UIDrawer';
+import InitializeUI from './InitializeUI';
+
 
 
 
@@ -34,14 +36,6 @@ export default class UI {
     get alpha() {return this._alpha; }
     set alpha(value) {this._alpha = value;}
 
-    init() {
-        this.canvas = this.game.system.render.canvas;
-        this.context = this.game.system.render.context;
-        this.draw.init();
-
-        if (this.game.config.debug)
-        this.debug = new Debug(this.game);
-    }
 
     setSize(width, height) {
         GUIResize(this, width, height);
@@ -119,4 +113,4 @@ export default class UI {
 
 }
 
-GameSystemManager.register('UserInterface', UI, 'ui')
+System.register('UserInterface', UI, 'ui', InitializeUI)

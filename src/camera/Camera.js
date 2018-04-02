@@ -1,11 +1,11 @@
-
+import System from '../core/system/System';
 import BoundingBox from '../math/BoundingBox';
 import Transform  from '../transform/Transform';
 import Color from '../utils/Color'
-import GameSystemManager from '../core/GameSystemManager';
 import MathUtils from '../math/MathUtils'
 import Vector from '../math/Vector'
 import ResizeCamera from './ResizeCamera';
+
 
 export default class Camera {
   
@@ -33,11 +33,6 @@ export default class Camera {
     this._backgroundColor = Color.rgbToHex(0,0,0);
     this._roundPixels = game.config.roundPixels;
 
-  }
-
-  init() {
-    this.canvas = this.game.system.render.canvas;
-    ResizeCamera(this, this.canvas, this.width, this.height);
   }
 
   get position() { 
@@ -152,4 +147,7 @@ export default class Camera {
 
 }
 
-GameSystemManager.register('Camera', Camera, 'camera');
+System.register('Camera', Camera, 'camera', function() {
+  this.canvas = this.game.system.render.canvas;
+  ResizeCamera(this, this.canvas, this.width, this.height);
+});

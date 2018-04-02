@@ -1,7 +1,7 @@
 
 module.exports = {
     Config : require('./Config'),
-    GameSystemManager : require('./GameSystemManager'),
-    SceneSystem : require('./SceneSystem'),
+    System : require('./system/System'),
+    SceneSystem : require('./system/SceneSystem'),
     GameLoop : require('./GameLoop')
 }

@@ -1,9 +1,11 @@
 
+import System from '../core/system/System';
 import DataMap from '../structures/Map'
 import Scene from './Scene'
-import GameSystemManager from '../core/GameSystemManager';
 import ScintillaLoadingScreen from './builtin/ScintillaLoadingScene';
 import SetScene from './components/SetScene';
+import InjectSystems from '../core/system/components/InjectSystems';
+
 
 export default class SceneManager {
   
@@ -32,10 +34,6 @@ export default class SceneManager {
     this.onDestroyCallback = null;
     this._loadingPlaceHolder = new ScintillaLoadingScreen(this.game);
 
-  }
-
-  init() {
-    this.game.system.inject(this._loadingPlaceHolder);
   }
 
   add(sceneName,scene) {
@@ -109,4 +107,7 @@ export default class SceneManager {
 
 }
 
-GameSystemManager.register('SceneManager', SceneManager, 'scene');
+System.register('SceneManager', SceneManager, 'scene', function()
+{
+  InjectSystems(this.game, this._loadingPlaceHolder);
+});

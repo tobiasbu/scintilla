@@ -1,21 +1,25 @@
+import { GameSystems } from "../System";
+import SceneSystem from "../SceneSystem";
 
-export default function InjectSystems(scene) {
+
+
+export default function InjectSystems(game, scene) {
         
-    scene.game = this._game;
+    scene.game = game;
 
     for (let property in SceneSystem)
     {
         
-        let sys = gameSystems[SceneSystem[property]];
+        let sys = GameSystems[SceneSystem[property]];
 
         if (sys !== undefined)
-            scene[sys.name] = this[sys.name];
+            scene[sys.name] = game.system[sys.name];
     }
 
     // Special injections, input and sound:
 
-    scene['key'] = this.game.input.keyboard;
-    scene['mouse'] = this.game.input.mouse;
+    scene['key'] = game.input.keyboard;
+    scene['mouse'] = game.input.mouse;
 
     /*for (let property in gameSystems) {
 
