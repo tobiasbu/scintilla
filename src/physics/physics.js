@@ -1,6 +1,6 @@
 
-import SAT from './sat'
-import SATResponse from './satresponse'
+import SAT from './SAT'
+import SATResponse from './SATResponse'
 
 export default class Physics {
 

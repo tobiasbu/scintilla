@@ -1,21 +1,23 @@
 
 // storage of animation state
-scintilla.Animation = function(sprite) {
+export default class Animation {
+  
+  
+  constructor(sprite) {
 
 this.source = sprite;
 this.frames = [];
 
 }
 
-scintilla.Animation.prototype = {
 
-addFrame : function(x,y,width,height) {
+addFrame(x,y,width,height) {
 
 this.frames.push(new scintilla.Rect(x,y,width,height));
 
-},
+}
 
-addStrip : function(xinit,yinit,frameWidth,frameHeight,numberOfFrames,imagesPerRow) {
+addStrip(xinit,yinit,frameWidth,frameHeight,numberOfFrames,imagesPerRow) {
 
   var y = 0;
   var x = 0;
@@ -36,9 +38,9 @@ addStrip : function(xinit,yinit,frameWidth,frameHeight,numberOfFrames,imagesPerR
 
 	}
 
-},
+}
 
-duplicateFrame : function(index,at) {
+duplicateFrame(index,at) {
 
   if (at === undefined)
     this.frames.push(this.frames[index]);
@@ -46,9 +48,9 @@ duplicateFrame : function(index,at) {
     this.frames.splice(at,0,this.frames[index]);
 
 
-},
+}
 
-getFrame : function(index) {
+getFrame(index) {
 
   return this.frames[index];
 

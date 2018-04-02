@@ -1,10 +1,11 @@
 
-import EntityHierarchy from './EntityHierarchy'
+//import EntityHierarchy from './EntityHierarchy'
 import BoundingBox from '../math/BoundingBox'
 import Transform from '../transform/Transform'
 import ModuleManager from '../modules/ModuleManager';
+import Entity from './Entity';
 
-export default class SceneEntity extends EntityHierarchy
+export default class SceneEntity extends Entity //Hierarchy
 {
     constructor(name, game)
     {

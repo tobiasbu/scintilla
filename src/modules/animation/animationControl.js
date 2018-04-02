@@ -1,5 +1,7 @@
 
-scintilla.AnimationControl = function(game) {
+export default class AnimationControl {
+
+constructor(game) {
 
 this.game = game;
 this.animations = {};
@@ -18,17 +20,15 @@ this.frameSpeed = 1; // frame rate 1 / 60
 
 }
 
-scintilla.AnimationControl.prototype = {
-
-  add : function(name, image) {
+  add(name, image) {
 
 
 
     return this.animations[name] = new scintilla.Animation(name,image);
 
-  },
+  }
 
-  addFromCache : function(container,name) {
+  addFromCache(container,name) {
 
     var anim = this.game.animationCache.get(container,name);
 
@@ -45,18 +45,18 @@ scintilla.AnimationControl.prototype = {
     return null;
 
 
-  },
+  }
 
 
-  remove : function(name) {
+  remove(name) {
 
     if (this.animations[name])
     delete this.animations[name];
 
 
-  },
+  }
 
-  setState : function(name) {
+  setState(name) {
 
     if (this.animations[name]) {
       this.currentAnimation = name;
@@ -66,9 +66,9 @@ scintilla.AnimationControl.prototype = {
 
 
 
-  },
+  }
 
-  setFrame : function(index,resetTimer) {
+  setFrame(index,resetTimer) {
 
       if (resetTimer === undefined) resetTimer = true;
 
@@ -88,38 +88,38 @@ scintilla.AnimationControl.prototype = {
       if (resetTimer)
         this._timer = 0;
 
-  },
+  }
 
-  setSpeed : function(time) {
+  setSpeed(time) {
 
     this.frameSpeed = time;
 
-  },
+  }
 
-  play : function(loop) {
+  play(loop) {
 
     this.loop = loop;
     this.isPlaying = true;
     this.isPaused = false;
 
 
-  },
+  }
 
-  pause : function() {
+  pause() {
 
     this.isPaused = true;
 
-  },
+  }
 
-  stop : function() {
+  stop() {
 
     this.isPaused = true;
 	  this.currentFrame = 0;
 	  this.setFrame(this.currentFrame);
 
-  },
+  }
 
-  update : function(time) {
+  update(time) {
 
     // if not paused and we have a valid animation
 	if (!this.isPaused && this._currentAnimObj != null)	{

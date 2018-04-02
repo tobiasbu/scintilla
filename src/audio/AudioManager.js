@@ -1,32 +1,29 @@
 
-scintilla.SoundManager = Class.extend(function() {
+export default class AudioManager {
 
-this.game = null;
-
-this.webAudio = false;
-this.context = false;
-this.noAudio = false;
-
-this.channels = 24;
-
-
-this.masterVolume = null;
-this.volume = 1;
-var _sounds = [];
-
-this.constructor = function(game) {
+constructor(game) {
 
   this.game = game;
 
+  this.webAudio = false;
+  this.context = false;
+  this.noAudio = false;
+  
+  this.channels = 24;
+  
+  
+  this.masterVolume = null;
+  this.volume = 1;
+  var _sounds = [];
 }
 
-this.getSounds = function() {
+getSounds = function() {
 
   return _sounds;
 
 }
 
-this.start = function() {
+start = function() {
 
     if (!!window['AudioContext'])
     {
@@ -73,7 +70,7 @@ this.start = function() {
 
 };
 
-this.stopAll = function() {
+stopAll = function() {
 
   if (this.noAudio)
   {
@@ -90,7 +87,7 @@ this.stopAll = function() {
 
 };
 
-this.pauseAll = function () {
+pauseAll = function () {
 
   if (this.noAudio)
   {
@@ -107,7 +104,7 @@ this.pauseAll = function () {
 
 };
 
-this.resumeAll = function () {
+resumeAll = function () {
 
   if (this.noAudio)
   {
@@ -124,7 +121,7 @@ this.resumeAll = function () {
 
 };
 
-this.decode = function(tag, sound) {
+decode = function(tag, sound) {
 
   sound = sound || null;
 
@@ -158,7 +155,7 @@ this.decode = function(tag, sound) {
 
 }
 
-this.add = function(tag, volume, loop, connect) {
+add = function(tag, volume, loop, connect) {
 
   if (volume === undefined) { volume = 1; }
   if (loop === undefined) { loop = false; }
@@ -172,7 +169,7 @@ this.add = function(tag, volume, loop, connect) {
 
 }
 
-this.play = function(tag, volume, loop) {
+play = function(tag, volume, loop) {
 
   var sound = this.add(tag, volume, loop);
 
@@ -182,7 +179,7 @@ this.play = function(tag, volume, loop) {
 
 }
 
-this.update = function() {
+update = function() {
 
   if (this.noAudio)
   {
@@ -196,7 +193,7 @@ this.update = function() {
 
 }
 
-this.remove = function(sound) {
+remove = function(sound) {
 
   var i = _sounds.length;
 
@@ -215,7 +212,7 @@ this.remove = function(sound) {
 }
 
 
-this.destroy = function () {
+destroy = function () {
 
         this.stopAll();
 
@@ -236,7 +233,7 @@ this.destroy = function () {
 
 
 
-});
+};
 
 Object.defineProperty(scintilla.SoundManager.prototype, "length", {
 

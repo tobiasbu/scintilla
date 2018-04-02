@@ -1,17 +1,16 @@
 
-scintilla.Pool = Class.extend(function() {
+export default class PoolManager {
 
-this.poolList = {};
-this.game = null;
+constructor(game) {
 
-this.constructor = function(game) {
-
-this.game = game;
+  this.poolList = {};
+  this.game = null;
+  this.game = game;
 
 }
 
 // add objects to pool
-this.add = function(container,gameObject,size) {
+add = function(container,gameObject,size) {
 
   if (gameObject === undefined || gameObject === null) return;
 
@@ -48,7 +47,7 @@ this.add = function(container,gameObject,size) {
 };
 
 // get a obj
-this.pull = function(container) {
+pull = function(container) {
 
   if (this.poolList[container]) {
 
@@ -80,7 +79,7 @@ this.pull = function(container) {
 
 }
 
-this.pushBack = function(obj) {
+pushBack = function(obj) {
 
   if (obj.pool != null) {
 
@@ -98,7 +97,7 @@ this.pushBack = function(obj) {
 
 }
 
-this.getContainer = function(container) {
+getContainer = function(container) {
 
   if (this.poolList[container]) {
     return this.poolList[container]
@@ -108,7 +107,7 @@ this.getContainer = function(container) {
 
 }
 
-this.clearAll = function() {
+clearAll = function() {
 
   for (var property in this.poolList) {
 
@@ -124,4 +123,4 @@ this.clearAll = function() {
 }
 
 
-});
+};

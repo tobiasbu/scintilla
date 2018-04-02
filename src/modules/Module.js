@@ -30,4 +30,4 @@ export default class Module
     }
 }
 
-module.exports = Module;
+//module.exports = Module;

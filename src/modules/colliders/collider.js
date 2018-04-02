@@ -1,33 +1,40 @@
+import Module from "../Module";
+import Vector from '../../math/Vector'
+import BoundingBox from '../../math/BoundingBox'
 
-scintilla.Collider = Class.extend( function() {
+export default class Collider extends Module {
+  
+  
+  constructor(moduleName, moduleManager) {
 
-  this.shape = null;
-  this.isTrigger = false;
-  this.bounds = null;
-  this.offset = null
-  this._gameObject = null;
-  this.position = null;
-  var _oldScale = new scintilla.Vector(1,1);
-  var _oldRotation = 0;
+    super('collider', moduleName || 'collider', moduleManager);
 
+    this.type = undefined;
+    
+    this.shape = null;
+    this.isTrigger = false;
+    //this.bounds = null;
+    //this.offset = null
+    //this._gameObject = null;
+    //this.position = null;
+    //var _oldScale = new scintilla.Vector(1,1);
+    //var _oldRotation = 0;
 
-  this.constructor = function(shape) {
-
-    this.position = new scintilla.Vector();
-    this.offset = new scintilla.Vector();
-    this.bounds = new scintilla.BoundingBox(0,0,1,1);
+    //this.position = new scintilla.Vector();
+    this._offset = new Vector();
+    this._bounds = new BoundingBox(0,0,1,1);
     this.setShape(shape);
-
   }
 
-  this.setShape = function(shape) {
+
+  setShape = function(shape) {
 
     this.shape = shape;
     this._updateBounds();
 
   }
 
-  this.setPosition = function(position) {
+  setPosition = function(position) {
 
     this.position.x = position.x - this.shape.centroid.x + this.offset.x;
     this.position.y = position.y - this.shape.centroid.y + this.offset.y;
@@ -36,7 +43,7 @@ scintilla.Collider = Class.extend( function() {
 
   }
 
-  this.scale = function(scale) {
+  scale = function(scale) {
 
     if (this.shape.getType() == "Polygon") {
 
@@ -54,7 +61,7 @@ scintilla.Collider = Class.extend( function() {
 
   }
 
-  this.rotate = function(radians) {
+  rotate = function(radians) {
 
     if (this.shape.getType() == "Polygon") {
 
@@ -77,7 +84,7 @@ scintilla.Collider = Class.extend( function() {
 
   }
 
-  this._updateBounds = function() {
+  _updateBounds = function() {
 
     this.bounds.setByShape(this.shape);
 
@@ -86,7 +93,7 @@ scintilla.Collider = Class.extend( function() {
 
   };
 
-  this.update = function() {
+  update = function() {
 
     var calc = false;
 
@@ -110,7 +117,7 @@ scintilla.Collider = Class.extend( function() {
 
   }
 
-this.debugDraw = function(context, color) {
+debugDraw = function(context, color) {
 
   if (color === undefined) color = 'red';
 
@@ -151,4 +158,4 @@ this.debugDraw = function(context, color) {
 }
 
 
-});
+};
