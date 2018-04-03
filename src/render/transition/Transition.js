@@ -6,18 +6,21 @@ export default class Transition {
         this.game = game;
 
         this.settings = new TransitionSettings(this);
+        this._behaviour = 0;
+        this._state = -1;
         this._alpha = 0;     
         this._color = '#000';
-
-        this.t = 0;
+        this._t = 0;
         this.running = false;
     }
+
+    configure() {}
 
     in() {}
 
     out() {}
 
-    inOut() {}
+    inout() {}
 
 
 }

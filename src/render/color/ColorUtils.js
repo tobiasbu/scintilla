@@ -1,5 +1,30 @@
 
-export const Color = {
+import MathUtils from '../math/MathUtils'
+
+const ColorUtils = {
+
+parse : function(value) {
+
+  let type = typeof value;
+
+  if (type === 'number') {
+
+    return this.intToColor(value);
+
+  } else if (type === 'string') {
+
+    if (value.substr(0, 3).toLowerCase() === 'rgb') {
+      return this.stringToColor(value);
+    } else {
+      return this.hexToColor(value);
+    }
+
+  } else if (type === 'object') {
+
+      return this.objectToColor(value);
+  }
+
+},
 
 rgba : function(r,g,b,a) {
 
@@ -78,15 +103,39 @@ rgbToHex : function(r,g,b) {
 Source code: http://jsfiddle.net/mushigh/myoskaos/
 */
 componentToHex : function(c) {
-    var hex = c.toString(16);
+  let hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
-}
+},
+
+packToInt(r,g,b,a) {
+  if (a === undefined) a = 1;
+  return ((a << 24) + (r << 16) + (g << 8) + b | 0);
+},
+
+lerpHexColor : function(from, to, t) {
+  let fhex = parseInt(from.replace(/#/g, ''), 16);
+  let fr = fhex >> 16;
+  let fg = fhex >> 8 & 0xff;
+  let fb = fhex & 0xff;
+  let thex = parseInt(to.replace(/#/g, ''), 16);
+  let tr = thex >> 16;
+  let tg = thex >> 8 & 0xff;
+  let tb = thex & 0xff;
+
+  fr = MathUtils.lerp(fr, tr, t);
+  fg = MathUtils.lerp(fb, tb, t);
+  fb = MathUtils.lerp(fg, tg, t);
+
+  //return this.rgbToHex(fr, fg, fb);
+  return '#' + this.packToInt(fr, fg, fb).toString(16).slice(1);
+  //((1 << 24) + (fr << 16) + (fg << 8) + fb | 0).toString(16).slice(1);
 
 }
 
+}
 
-Object.freeze(Color);
+Object.freeze(ColorUtils);
 
-export default Color;
+export default ColorUtils;
 
-module.exports = Color;
+module.exports = ColorUtils;
