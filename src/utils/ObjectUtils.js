@@ -63,4 +63,8 @@ class ObjectUtils {
 
 };
 
-export default new ObjectUtils();
+var ObjectUtils = new ObjectUtils();
+
+Object.freeze(ObjectUtils);
+
+export default ObjectUtils;

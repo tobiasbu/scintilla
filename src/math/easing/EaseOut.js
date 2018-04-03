@@ -110,6 +110,8 @@ class EaseOutFunction {
 
 var EaseOut = new EaseOutFunction();
 
+Object.freeze(EaseOut);
+
 export default EaseOut;
 
 module.exports = EaseOut;

@@ -84,4 +84,9 @@ componentToHex : function(c) {
 
 }
 
+
+Object.freeze(Color);
+
+export default Color;
+
 module.exports = Color;

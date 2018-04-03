@@ -27,6 +27,8 @@ const Ease = {
 
 }
 
+Object.freeze(Ease);
+
 module.exports = Ease;
 
 export default Ease;

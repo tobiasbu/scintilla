@@ -7036,6 +7036,8 @@ var Ease = {
 
 };
 
+Object.freeze(Ease);
+
 module.exports = Ease;
 
 exports.default = Ease;

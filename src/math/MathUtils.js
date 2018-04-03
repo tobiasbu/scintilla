@@ -121,7 +121,7 @@ const MathUtils = {
 
 }
 
-
+Object.freeze(MathUtils);
 
 module.exports = MathUtils;
 

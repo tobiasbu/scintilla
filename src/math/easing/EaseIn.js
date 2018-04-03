@@ -118,4 +118,6 @@ class EaseInFunctions {
 
 var EaseIn = new EaseInFunctions();
 
+Object.freeze(EaseIn);
+
 export default EaseIn;
