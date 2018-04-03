@@ -3,28 +3,7 @@ import MathUtils from '../math/MathUtils'
 
 const ColorUtils = {
 
-parse : function(value) {
 
-  let type = typeof value;
-
-  if (type === 'number') {
-
-    return this.intToColor(value);
-
-  } else if (type === 'string') {
-
-    if (value.substr(0, 3).toLowerCase() === 'rgb') {
-      return this.stringToColor(value);
-    } else {
-      return this.hexToColor(value);
-    }
-
-  } else if (type === 'object') {
-
-      return this.objectToColor(value);
-  }
-
-},
 
 rgba : function(r,g,b,a) {
 

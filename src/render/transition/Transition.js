@@ -14,8 +14,6 @@ export default class Transition {
         this.running = false;
     }
 
-    configure() {}
-
     in() {}
 
     out() {}
