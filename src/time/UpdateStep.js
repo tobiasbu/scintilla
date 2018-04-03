@@ -1,5 +1,5 @@
 import RequestAnimationFrame from "../dom/RequestAnimationFrame";
-import ObjectUtils from "../utils/ObjectUtils";
+import ObjectGet from "../utils/object/ObjectGet";
 import MathUtils from '../math/MathUtils'
 
 export default class UpdateStep {
@@ -21,7 +21,7 @@ export default class UpdateStep {
         this.deltaTime = 0; // delta time in miliseconds
         // FPS
         this.requireFpsUpdate = true;
-        this.fpsDesired = ObjectUtils.getValue(config, 'fps', 60);
+        this.fpsDesired = ObjectGet.value(config, 'fps', 60);
         this.fps = this.fpsDesired;
         this.currentFps = 0;
         this._nextFpsUpdate = 0;

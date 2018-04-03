@@ -40,6 +40,17 @@ const Path = {
         return dir[dir.length - 2];
   },
 
+  getURL(url, baseURL) {
+    if (!url)
+        return null;
+    
+        
+    if (url.match(/^(?:blob:|data:|http:\/\/|https:\/\/|\/\/)/))
+        return url;
+    else
+        return baseURL + url;
+  }
+
 }
 
 Object.freeze(Path);

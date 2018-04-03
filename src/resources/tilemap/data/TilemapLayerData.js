@@ -1,18 +1,18 @@
 
-import ObjectUtils from '../../../utils/ObjectUtils'
+import ObjectGet from '../../../utils/object/ObjectGet'
 
 export default class TilemapLayerData {
 
     constructor(config) {
-        this.width = ObjectUtils.getValue(config,'width', 0);
-        this.height = ObjectUtils.getValue(config,'height',0);
-        this.x = ObjectUtils.getValue(config,'x', 0);
-        this.y = ObjectUtils.getValue(config,'y', 0);
-        this.name = ObjectUtils.getValue(config,'name', 'tilemaplayer');
-        this.alpha = ObjectUtils.getValue(config,'alpha', 1);
+        this.width = ObjectGet.value(config,'width', 0);
+        this.height = ObjectGet.value(config,'height',0);
+        this.x = ObjectGet.value(config,'x', 0);
+        this.y = ObjectGet.value(config,'y', 0);
+        this.name = ObjectGet.value(config,'name', 'tilemaplayer');
+        this.alpha = ObjectGet.value(config,'alpha', 1);
         //this.type ="tilelayer";
-        this.visible = ObjectUtils.getValue(config,'visible', true);
-        this.tiles =  ObjectUtils.getValue(config,'tiles', []);
+        this.visible = ObjectGet.value(config,'visible', true);
+        this.tiles =  ObjectGet.value(config,'tiles', []);
         this.hasAnimatedTiles = false;
     }
 

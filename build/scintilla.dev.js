@@ -187,7 +187,7 @@ var _Define = __webpack_require__(/*! ./Define */ "./Define.js");
 
 var _Define2 = _interopRequireDefault(_Define);
 
-var _ObjectExtend = __webpack_require__(/*! ./utils/ObjectExtend */ "./utils/ObjectExtend.js");
+var _ObjectExtend = __webpack_require__(/*! ./utils/object/ObjectExtend */ "./utils/object/ObjectExtend.js");
 
 var _ObjectExtend2 = _interopRequireDefault(_ObjectExtend);
 
@@ -842,9 +842,9 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
-var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -855,8 +855,8 @@ var Config = function Config(config) {
 
         if (config === undefined) config = {};
 
-        var callback = _ObjectUtils2.default.getValue;
-        var callback_2 = _ObjectUtils2.default.getPropertyValue;
+        var callback = _ObjectGet2.default.value;
+        var callback_2 = _ObjectGet2.default.propertyValue;
 
         // view and canvas
         this.width = callback(config, 'width', 640);
@@ -3460,9 +3460,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
 
@@ -3480,6 +3480,10 @@ var _NextAsset = __webpack_require__(/*! ./components/NextAsset */ "./loader/com
 
 var _NextAsset2 = _interopRequireDefault(_NextAsset);
 
+var _Path = __webpack_require__(/*! ../utils/Path */ "./utils/Path.js");
+
+var _Path2 = _interopRequireDefault(_Path);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3488,27 +3492,27 @@ var File = function () {
     function File(config) {
         _classCallCheck(this, File);
 
-        this.type = _ObjectUtils2.default.getValue(config, 'type', null);
-        this.tag = _ObjectUtils2.default.getValue(config, 'tag', null);
-        this.useExternal = _ObjectUtils2.default.getValue(config, 'useExternal', false);
+        this.type = _ObjectGet2.default.value(config, 'type', null);
+        this.tag = _ObjectGet2.default.value(config, 'tag', null);
+        this.useExternal = _ObjectGet2.default.value(config, 'useExternal', false);
 
         if (this.type == null || this.tag == null) {
             throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
         }
 
-        this.url = _ObjectUtils2.default.getValue(config, 'url', undefined);
+        this.url = _ObjectGet2.default.value(config, 'url', undefined);
 
-        if (this.url === undefined) this.url = _ObjectUtils2.default.getValue(config, 'path', '') + this.tag + '.' + _ObjectUtils2.default.getValue(config, 'ext', '');else if (typeof this.url !== 'function') {
-            if (!this.useExternal || this.useExternal !== undefined) this.url = _ObjectUtils2.default.getValue(config, 'path', '').concat(this.url);
+        if (this.url === undefined) this.url = _ObjectGet2.default.value(config, 'path', '') + this.tag + '.' + _ObjectGet2.default.value(config, 'ext', '');else if (typeof this.url !== 'function') {
+            if (!this.useExternal || this.useExternal !== undefined) this.url = _ObjectGet2.default.value(config, 'path', '').concat(this.url);
         }
 
         // Web fonts is managed by WebFontLoader provided by google
         // There is no need to create XHR settings and request
         if (this.type !== _AssetsType2.default.webFont) {
 
-            this.xhrSettings = _XHR2.default.createSettings(_ObjectUtils2.default.getValue(config, 'responseType', undefined));
+            this.xhrSettings = _XHR2.default.createSettings(_ObjectGet2.default.value(config, 'responseType', undefined));
 
-            if (_ObjectUtils2.default.getValue(config, 'xhrSettings', false)) this.xhrSettings = _XHR2.default.merge(this.xhrSettings, _ObjectUtils2.default.getValue(config, 'xhrSettings', {}));
+            if (_ObjectGet2.default.value(config, 'xhrSettings', false)) this.xhrSettings = _XHR2.default.merge(this.xhrSettings, _ObjectGet2.default.value(config, 'xhrSettings', {}));
         }
 
         this.loader = null;
@@ -3519,7 +3523,7 @@ var File = function () {
         this.data = undefined;
         this.source = null;
         this.xhrRequest = null;
-        this.config = _ObjectUtils2.default.getValue(config, 'config', {});
+        this.config = _ObjectGet2.default.value(config, 'config', {});
         this.crossOrigin = undefined;
 
         this.onComplete = undefined;
@@ -3537,7 +3541,7 @@ var File = function () {
                 //this.loader.next(this);
             } else {
 
-                this.source = _ObjectUtils2.default.getURL(this.url, gameLoader.baseURL);
+                this.source = _Path2.default.getURL(this.url, gameLoader.baseURL);
 
                 if (this.source.indexOf('data:') === 0 || this.source == null) {
                     console.warn("Loader.File.load: unsupported URI.");
@@ -3690,9 +3694,9 @@ var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/Sy
 
 var _System2 = _interopRequireDefault(_System);
 
-var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
 
@@ -3744,10 +3748,10 @@ var LoadManager = function () {
 
     var gameConfig = game.config.loader;
 
-    this.xhr = _XHR2.default.createSettings(_ObjectUtils2.default.getValue(config, 'responseType', gameConfig.responseType), _ObjectUtils2.default.getValue(config, 'async', gameConfig.async),
-    //scintilla.ObjectUtils.getPropertyValue(config, 'user', gameConfig.loaderUser),
-    //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
-    _ObjectUtils2.default.getValue(config, 'timeout', gameConfig.timeout));
+    this.xhr = _XHR2.default.createSettings(_ObjectGet2.default.value(config, 'responseType', gameConfig.responseType), _ObjectGet2.default.value(config, 'async', gameConfig.async),
+    //scintilla.ObjectGet.propertyValue(config, 'user', gameConfig.loaderUser),
+    //scintilla.ObjectGet.propertyValue(config, 'password', gameConfig.loaderPassword),
+    _ObjectGet2.default.value(config, 'timeout', gameConfig.timeout));
 
     _AssetTypeHandler2.default.inject(this);
   }
@@ -4050,9 +4054,9 @@ var _URLObject = __webpack_require__(/*! ../URLObject */ "./loader/URLObject.js"
 
 var _URLObject2 = _interopRequireDefault(_URLObject);
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
 
@@ -4089,18 +4093,18 @@ var ImageFile = function (_File) {
         if (typeof tag === 'string') {
             assetTag = tag;
         } else {
-            assetTag = _ObjectUtils2.default.getValue(tag, 'tag', '');
+            assetTag = _ObjectGet2.default.value(tag, 'tag', '');
         }
 
         var fileConfig = {
             type: _AssetsType2.default.image,
             tag: assetTag,
-            ext: _ObjectUtils2.default.getValue(tag, 'ext', _Path2.default.getExtension(url)),
-            url: _ObjectUtils2.default.getValue(tag, 'file', url),
+            ext: _ObjectGet2.default.value(tag, 'ext', _Path2.default.getExtension(url)),
+            url: _ObjectGet2.default.value(tag, 'file', url),
             path: path,
             responseType: 'blob',
-            xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings),
-            config: _ObjectUtils2.default.getValue(tag, 'config', config)
+            xhrSettings: _ObjectGet2.default.value(tag, 'xhr', xhrSettings),
+            config: _ObjectGet2.default.value(tag, 'config', config)
         };
 
         return _possibleConstructorReturn(this, (ImageFile.__proto__ || Object.getPrototypeOf(ImageFile)).call(this, fileConfig));
@@ -4178,9 +4182,9 @@ var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
 var _File3 = _interopRequireDefault(_File2);
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
@@ -4214,12 +4218,12 @@ var JSONFile = function (_File) {
 
         var assetConfig = {
             type: _AssetsType2.default.json,
-            ext: _ObjectUtils2.default.getValue(tag, 'ext', 'json'),
+            ext: _ObjectGet2.default.value(tag, 'ext', 'json'),
             responseType: 'text',
             tag: tag,
-            url: _ObjectUtils2.default.getValue(tag, 'file', url),
+            url: _ObjectGet2.default.value(tag, 'file', url),
             path: path,
-            xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings)
+            xhrSettings: _ObjectGet2.default.value(tag, 'xhr', xhrSettings)
         };
 
         var _this = _possibleConstructorReturn(this, (JSONFile.__proto__ || Object.getPrototypeOf(JSONFile)).call(this, assetConfig));
@@ -4276,9 +4280,9 @@ var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
 var _File3 = _interopRequireDefault(_File2);
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
 
@@ -4314,16 +4318,16 @@ var ScriptFile = function (_File) {
         function ScriptFile(tag, url, path, xhrSettings, config) {
                 _classCallCheck(this, ScriptFile);
 
-                var tagFile = typeof tag === 'string' ? tag : _ObjectUtils2.default.getValue(tag, 'key', '');
+                var tagFile = typeof tag === 'string' ? tag : _ObjectGet2.default.value(tag, 'key', '');
 
                 var assetConfig = {
                         type: _AssetsType2.default.script,
-                        ext: _ObjectUtils2.default.getValue(tag, 'ext', _Path2.default.getExtension(url) || 'js'),
+                        ext: _ObjectGet2.default.value(tag, 'ext', _Path2.default.getExtension(url) || 'js'),
                         responseType: 'text',
                         tag: tagFile,
-                        url: _ObjectUtils2.default.getValue(tag, 'file', url),
+                        url: _ObjectGet2.default.value(tag, 'file', url),
                         path: path,
-                        xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings)
+                        xhrSettings: _ObjectGet2.default.value(tag, 'xhr', xhrSettings)
                 };
 
                 return _possibleConstructorReturn(this, (ScriptFile.__proto__ || Object.getPrototypeOf(ScriptFile)).call(this, assetConfig));
@@ -4390,9 +4394,9 @@ var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
 var _File3 = _interopRequireDefault(_File2);
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
 
@@ -4429,7 +4433,7 @@ var TextFile = function (_File) {
         if (typeof tag === 'string') {
             assetTag = tag;
         } else {
-            assetTag = _ObjectUtils2.default.getValue(tag, 'tag', '');
+            assetTag = _ObjectGet2.default.value(tag, 'tag', '');
         }
 
         var useExternal = false;
@@ -4441,12 +4445,12 @@ var TextFile = function (_File) {
         var assetConfig = {
             type: _AssetsType2.default.text,
             tag: assetTag,
-            ext: _ObjectUtils2.default.getValue(tag, 'ext', _Path2.default.getExtension(url)),
-            url: _ObjectUtils2.default.getValue(tag, 'file', url),
+            ext: _ObjectGet2.default.value(tag, 'ext', _Path2.default.getExtension(url)),
+            url: _ObjectGet2.default.value(tag, 'file', url),
             path: path,
             responseType: '',
-            xhrSettings: _ObjectUtils2.default.getValue(tag, 'xhr', xhrSettings),
-            config: _ObjectUtils2.default.getValue(tag, 'config', config),
+            xhrSettings: _ObjectGet2.default.value(tag, 'xhr', xhrSettings),
+            config: _ObjectGet2.default.value(tag, 'config', config),
             useExternal: useExternal
         };
 
@@ -5652,6 +5656,8 @@ var MathUtils = {
 
 };
 
+Object.freeze(MathUtils);
+
 module.exports = MathUtils;
 
 exports.default = MathUtils;
@@ -6596,6 +6602,8 @@ var EaseInFunctions = function () {
 
 var EaseIn = new EaseInFunctions();
 
+Object.freeze(EaseIn);
+
 exports.default = EaseIn;
 
 /***/ }),
@@ -6808,6 +6816,8 @@ var EaseInOutFunctions = function () {
 
 var EaseInOut = new EaseInOutFunctions();
 
+Object.freeze(EaseInOut);
+
 exports.default = EaseInOut;
 
 /***/ }),
@@ -6978,6 +6988,8 @@ var EaseOutFunction = function () {
 }();
 
 var EaseOut = new EaseOutFunction();
+
+Object.freeze(EaseOut);
 
 exports.default = EaseOut;
 
@@ -10398,9 +10410,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10409,15 +10421,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var TilemapLayerData = function TilemapLayerData(config) {
     _classCallCheck(this, TilemapLayerData);
 
-    this.width = _ObjectUtils2.default.getValue(config, 'width', 0);
-    this.height = _ObjectUtils2.default.getValue(config, 'height', 0);
-    this.x = _ObjectUtils2.default.getValue(config, 'x', 0);
-    this.y = _ObjectUtils2.default.getValue(config, 'y', 0);
-    this.name = _ObjectUtils2.default.getValue(config, 'name', 'tilemaplayer');
-    this.alpha = _ObjectUtils2.default.getValue(config, 'alpha', 1);
+    this.width = _ObjectGet2.default.value(config, 'width', 0);
+    this.height = _ObjectGet2.default.value(config, 'height', 0);
+    this.x = _ObjectGet2.default.value(config, 'x', 0);
+    this.y = _ObjectGet2.default.value(config, 'y', 0);
+    this.name = _ObjectGet2.default.value(config, 'name', 'tilemaplayer');
+    this.alpha = _ObjectGet2.default.value(config, 'alpha', 1);
     //this.type ="tilelayer";
-    this.visible = _ObjectUtils2.default.getValue(config, 'visible', true);
-    this.tiles = _ObjectUtils2.default.getValue(config, 'tiles', []);
+    this.visible = _ObjectGet2.default.value(config, 'visible', true);
+    this.tiles = _ObjectGet2.default.value(config, 'tiles', []);
     this.hasAnimatedTiles = false;
 };
 
@@ -10439,9 +10451,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10450,14 +10462,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var TilemapMetadata = function TilemapMetadata(config) {
     _classCallCheck(this, TilemapMetadata);
 
-    this.name = _ObjectUtils2.default.getValue(config, 'name', 'tilemap');
-    this.width = _ObjectUtils2.default.getValue(config, 'width', 0);
-    this.height = _ObjectUtils2.default.getValue(config, 'height', 0);
-    this.tileWidth = _ObjectUtils2.default.getValue(config, 'tileWidth', 16);
-    this.tileHeight = _ObjectUtils2.default.getValue(config, 'tileHeight', 16);
-    this.pixelsWidth = _ObjectUtils2.default.getValue(config, 'pixelsWidth', this.width * this.tileWidth);
-    this.pixelsHeight = _ObjectUtils2.default.getValue(config, 'pixelsHeight', this.height * this.tileHeight);
-    this.orientation = _ObjectUtils2.default.getValue(config, 'orientation', 'orthogonal');
+    this.name = _ObjectGet2.default.value(config, 'name', 'tilemap');
+    this.width = _ObjectGet2.default.value(config, 'width', 0);
+    this.height = _ObjectGet2.default.value(config, 'height', 0);
+    this.tileWidth = _ObjectGet2.default.value(config, 'tileWidth', 16);
+    this.tileHeight = _ObjectGet2.default.value(config, 'tileHeight', 16);
+    this.pixelsWidth = _ObjectGet2.default.value(config, 'pixelsWidth', this.width * this.tileWidth);
+    this.pixelsHeight = _ObjectGet2.default.value(config, 'pixelsHeight', this.height * this.tileHeight);
+    this.orientation = _ObjectGet2.default.value(config, 'orientation', 'orthogonal');
 };
 
 exports.default = TilemapMetadata;
@@ -10653,9 +10665,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = ParseLayers;
 
-var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 var _Base64Utils = __webpack_require__(/*! ../../../utils/Base64Utils */ "./utils/Base64Utils.js");
 
@@ -10706,8 +10718,8 @@ function ParseLayers(json, map) {
 
         var newLayer = new _TilemapLayerData2.default({
             name: jsonLayer.name,
-            x: _ObjectUtils2.default.getValue(jsonLayer, 'offsetx', 0) + jsonLayer.x,
-            y: _ObjectUtils2.default.getValue(jsonLayer, 'offsety', 0) + jsonLayer.y,
+            x: _ObjectGet2.default.value(jsonLayer, 'offsetx', 0) + jsonLayer.x,
+            y: _ObjectGet2.default.value(jsonLayer, 'offsety', 0) + jsonLayer.y,
             width: jsonLayer.width,
             height: jsonLayer.height,
             tileWidth: jsonLayer.tilewidth,
@@ -12373,9 +12385,9 @@ var _RequestAnimationFrame = __webpack_require__(/*! ../dom/RequestAnimationFram
 
 var _RequestAnimationFrame2 = _interopRequireDefault(_RequestAnimationFrame);
 
-var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectGet = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 var _MathUtils = __webpack_require__(/*! ../math/MathUtils */ "./math/MathUtils.js");
 
@@ -12405,7 +12417,7 @@ var UpdateStep = function () {
                 this.deltaTime = 0; // delta time in miliseconds
                 // FPS
                 this.requireFpsUpdate = true;
-                this.fpsDesired = _ObjectUtils2.default.getValue(config, 'fps', 60);
+                this.fpsDesired = _ObjectGet2.default.value(config, 'fps', 60);
                 this.fps = this.fpsDesired;
                 this.currentFps = 0;
                 this._nextFpsUpdate = 0;
@@ -13084,6 +13096,8 @@ var Base64Utils = {
     }
 };
 
+Object.freeze(Base64Utils);
+
 module.exports = Base64Utils;
 
 /***/ }),
@@ -13174,14 +13188,116 @@ var Color = exports.Color = {
 
 };
 
+Object.freeze(Color);
+
+exports.default = Color;
+
+
 module.exports = Color;
 
 /***/ }),
 
-/***/ "./utils/ObjectExtend.js":
-/*!*******************************!*\
-  !*** ./utils/ObjectExtend.js ***!
-  \*******************************/
+/***/ "./utils/Path.js":
+/*!***********************!*\
+  !*** ./utils/Path.js ***!
+  \***********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var Path = {
+  getExtension: function getExtension(filename) {
+    return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || "";
+  },
+  getFilename: function getFilename(path) {
+    return path.split('\\').pop().split('/').pop() || path;
+  },
+  getFilenameWithoutExtension: function getFilenameWithoutExtension(path) {
+    return this.removeExtension(this.getFilename(path));
+  },
+  removeExtension: function removeExtension(path) {
+    return path.substr(0, path.lastIndexOf('.')) || path;
+  },
+  getPath: function getPath(path) {
+    return path.substr(0, path.lastIndexOf("/") + 1) || "";
+  },
+  getRootPath: function getRootPath(path) {
+    return path.substr(0, path.indexOf("/") + 1) || path;
+  },
+  getPathWithoutRoot: function getPathWithoutRoot(path) {
+    var s = path.indexOf("/") + 1 || 0;
+    var l = path.lastIndexOf("/") - s + 1 || path.length;
+    return path.substr(s, l) || path;
+  },
+  getDirectoryName: function getDirectoryName(path) {
+    var dir = path.split('/');
+    var len = dir.length;
+    if (len <= 1) return dir[dir.length - 1];else return dir[dir.length - 2];
+  },
+  getURL: function getURL(url, baseURL) {
+    if (!url) return null;
+
+    if (url.match(/^(?:blob:|data:|http:\/\/|https:\/\/|\/\/)/)) return url;else return baseURL + url;
+  }
+};
+
+Object.freeze(Path);
+
+exports.default = Path;
+
+
+module.exports = Path;
+
+/***/ }),
+
+/***/ "./utils/Validate.js":
+/*!***************************!*\
+  !*** ./utils/Validate.js ***!
+  \***************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var Validate = {
+    isFunction: function isFunction(value) {
+        return value instanceof Function;
+    },
+    isClass: function isClass(value) {
+        return !!(value && value.constructor && value.call && value.apply);
+    },
+    isArray: function isArray(value) {
+        return Array.isArray(value);
+    },
+    isNumber: function isNumber(value) {
+        return !isNaN(value);
+    }
+};
+
+Object.freeze(Validate);
+
+exports.default = Validate;
+
+
+module.exports = Validate;
+
+/***/ }),
+
+/***/ "./utils/object/ObjectExtend.js":
+/*!**************************************!*\
+  !*** ./utils/object/ObjectExtend.js ***!
+  \**************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13224,10 +13340,10 @@ function ObjectExtend(source, target, deepCopy) {
 
 /***/ }),
 
-/***/ "./utils/ObjectUtils.js":
-/*!******************************!*\
-  !*** ./utils/ObjectUtils.js ***!
-  \******************************/
+/***/ "./utils/object/ObjectGet.js":
+/*!***********************************!*\
+  !*** ./utils/object/ObjectGet.js ***!
+  \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13244,14 +13360,14 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ObjectUtils = function () {
-    function ObjectUtils() {
-        _classCallCheck(this, ObjectUtils);
+var ObjectGettter = function () {
+    function ObjectGettter() {
+        _classCallCheck(this, ObjectGettter);
     }
 
-    _createClass(ObjectUtils, [{
-        key: 'getValue',
-        value: function getValue(obj, key, defaultValue) {
+    _createClass(ObjectGettter, [{
+        key: 'value',
+        value: function value(obj, key, defaultValue) {
             var type = typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
 
             if (!obj || type === 'number' || type === 'string') return defaultValue;else if (obj.hasOwnProperty(key) && obj[key] !== undefined) return obj[key];else return defaultValue;
@@ -13260,8 +13376,8 @@ var ObjectUtils = function () {
         // Get value in complex object
 
     }, {
-        key: 'getPropertyValue',
-        value: function getPropertyValue(source, key, defaultValue) {
+        key: 'propertyValue',
+        value: function propertyValue(source, key, defaultValue) {
             if (!source || typeof source === 'number') return defaultValue;else if (source.hasOwnProperty(key)) return source[key];else if (key.indexOf('.')) {
                 var keys = key.split('.');
                 var parent = source;
@@ -13282,95 +13398,18 @@ var ObjectUtils = function () {
                 return defaultValue;
             }
         }
-    }, {
-        key: 'getURL',
-        value: function getURL(url, baseURL) {
-            if (!url) return null;
-
-            if (url.match(/^(?:blob:|data:|http:\/\/|https:\/\/|\/\/)/)) return url;else return baseURL + url;
-        }
     }]);
 
-    return ObjectUtils;
+    return ObjectGettter;
 }();
 
 ;
 
-exports.default = new ObjectUtils();
+var ObjectGet = new ObjectGettter();
 
-/***/ }),
+Object.freeze(ObjectGet);
 
-/***/ "./utils/Path.js":
-/*!***********************!*\
-  !*** ./utils/Path.js ***!
-  \***********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Path = {
-  getExtension: function getExtension(filename) {
-    return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || "";
-  },
-  getFilename: function getFilename(path) {
-    return path.split('\\').pop().split('/').pop() || path;
-  },
-  getFilenameWithoutExtension: function getFilenameWithoutExtension(path) {
-    return this.removeExtension(this.getFilename(path));
-  },
-  removeExtension: function removeExtension(path) {
-    return path.substr(0, path.lastIndexOf('.')) || path;
-  },
-  getPath: function getPath(path) {
-    return path.substr(0, path.lastIndexOf("/") + 1) || "";
-  },
-  getRootPath: function getRootPath(path) {
-    return path.substr(0, path.indexOf("/") + 1) || path;
-  },
-  getPathWithoutRoot: function getPathWithoutRoot(path) {
-    var s = path.indexOf("/") + 1 || 0;
-    var l = path.lastIndexOf("/") - s + 1 || path.length;
-    return path.substr(s, l) || path;
-  },
-  getDirectoryName: function getDirectoryName(path) {
-    var dir = path.split('/');
-    var len = dir.length;
-    if (len <= 1) return dir[dir.length - 1];else return dir[dir.length - 2];
-  }
-};
-
-module.exports = Path;
-
-/***/ }),
-
-/***/ "./utils/Validate.js":
-/*!***************************!*\
-  !*** ./utils/Validate.js ***!
-  \***************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Validate = {
-    isFunction: function isFunction(value) {
-        return value instanceof Function;
-    },
-    isClass: function isClass(value) {
-        return !!(value && value.constructor && value.call && value.apply);
-    },
-    isArray: function isArray(value) {
-        return Array.isArray(value);
-    },
-    isNumber: function isNumber(value) {
-        return !isNaN(value);
-    }
-};
-
-module.exports = Validate;
+exports.default = ObjectGet;
 
 /***/ })
 

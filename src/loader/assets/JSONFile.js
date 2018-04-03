@@ -1,5 +1,5 @@
 import File from "../File";
-import ObjectUtils from "../../utils/ObjectUtils";
+import ObjectGet from "../../utils/object/ObjectGet";
 import LoaderState from "../LoaderState";
 import AssetsType from "../AssetsType";
 import AddAsset from "../components/AddAsset";
@@ -11,12 +11,12 @@ export default class JSONFile extends File {
 
         let assetConfig = {
             type: AssetsType.json,
-            ext: ObjectUtils.getValue(tag, 'ext', 'json'),
+            ext: ObjectGet.value(tag, 'ext', 'json'),
             responseType: 'text',
             tag: tag,
-            url: ObjectUtils.getValue(tag, 'file', url),
+            url: ObjectGet.value(tag, 'file', url),
             path: path,
-            xhrSettings: ObjectUtils.getValue(tag, 'xhr', xhrSettings)
+            xhrSettings: ObjectGet.value(tag, 'xhr', xhrSettings)
         };
 
         super(assetConfig);

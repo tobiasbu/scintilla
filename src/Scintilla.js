@@ -16,7 +16,7 @@
 */
 
 import Defines from './Define'
-import ObjectExtend from './utils/ObjectExtend';
+import ObjectExtend from './utils/object/ObjectExtend';
 
 /**
 * @namespace scintilla

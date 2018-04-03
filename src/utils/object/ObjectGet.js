@@ -1,7 +1,7 @@
 
-class ObjectUtils {
+class ObjectGettter {
 
-  getValue(obj, key, defaultValue)
+  value(obj, key, defaultValue)
   {
     var type = typeof(obj);
 
@@ -15,7 +15,7 @@ class ObjectUtils {
   }
 
   // Get value in complex object
-  getPropertyValue(source, key, defaultValue)
+  propertyValue(source, key, defaultValue)
     {
         if (!source || typeof source === 'number')
             return defaultValue;
@@ -49,22 +49,12 @@ class ObjectUtils {
         }
     }
 
-  getURL(url, baseURL)
-  {
-    if (!url)
-        return null;
-    
-        
-    if (url.match(/^(?:blob:|data:|http:\/\/|https:\/\/|\/\/)/))
-        return url;
-    else
-        return baseURL + url;
-  }
+  
 
 };
 
-var ObjectUtils = new ObjectUtils();
+var ObjectGet = new ObjectGettter();
 
-Object.freeze(ObjectUtils);
+Object.freeze(ObjectGet);
 
-export default ObjectUtils;
+export default ObjectGet;

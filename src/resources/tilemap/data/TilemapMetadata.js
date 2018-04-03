@@ -1,17 +1,17 @@
-import ObjectUtils from "../../../utils/ObjectUtils";
+import ObjectGet from "../../../utils/object/ObjectGet";
 
 export default class TilemapMetadata {
 
     constructor(config) {
 
-        this.name = ObjectUtils.getValue(config,'name','tilemap');
-        this.width =  ObjectUtils.getValue(config,'width',0);
-        this.height =  ObjectUtils.getValue(config,'height',0);
-        this.tileWidth =  ObjectUtils.getValue(config,'tileWidth',16);
-        this.tileHeight =  ObjectUtils.getValue(config,'tileHeight',16);
-        this.pixelsWidth = ObjectUtils.getValue(config,'pixelsWidth',this.width * this.tileWidth);
-        this.pixelsHeight = ObjectUtils.getValue(config,'pixelsHeight',this.height * this.tileHeight);
-        this.orientation = ObjectUtils.getValue(config, 'orientation', 'orthogonal');
+        this.name = ObjectGet.value(config,'name','tilemap');
+        this.width =  ObjectGet.value(config,'width',0);
+        this.height =  ObjectGet.value(config,'height',0);
+        this.tileWidth =  ObjectGet.value(config,'tileWidth',16);
+        this.tileHeight =  ObjectGet.value(config,'tileHeight',16);
+        this.pixelsWidth = ObjectGet.value(config,'pixelsWidth',this.width * this.tileWidth);
+        this.pixelsHeight = ObjectGet.value(config,'pixelsHeight',this.height * this.tileHeight);
+        this.orientation = ObjectGet.value(config, 'orientation', 'orthogonal');
     }
 
 

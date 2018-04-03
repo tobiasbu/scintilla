@@ -782,7 +782,7 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
-var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -3490,7 +3490,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -3716,7 +3716,7 @@ var _XHR = __webpack_require__(/*! ./XHR */ "./loader/XHR.js");
 
 var _XHR2 = _interopRequireDefault(_XHR);
 
-var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -3775,8 +3775,8 @@ var LoadManager = function () {
     var gameConfig = game.config.loader;
 
     this.xhr = _XHR2.default.createSettings(_ObjectUtils2.default.getValue(config, 'responseType', gameConfig.responseType), _ObjectUtils2.default.getValue(config, 'async', gameConfig.async),
-    //scintilla.ObjectUtils.getPropertyValue(config, 'user', gameConfig.loaderUser),
-    //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
+    //scintilla.ObjectGet.propertyValue(config, 'user', gameConfig.loaderUser),
+    //scintilla.ObjectGet.propertyValue(config, 'password', gameConfig.loaderPassword),
     _ObjectUtils2.default.getValue(config, 'timeout', gameConfig.timeout));
 
     _LoaderState.AssetTypeHandler.inject(this);
@@ -4288,7 +4288,7 @@ var _URLObject = __webpack_require__(/*! ../URLObject */ "./loader/URLObject.js"
 
 var _URLObject2 = _interopRequireDefault(_URLObject);
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -4408,7 +4408,7 @@ var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
 var _File3 = _interopRequireDefault(_File2);
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -4495,7 +4495,7 @@ var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
 var _File3 = _interopRequireDefault(_File2);
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -4596,7 +4596,7 @@ var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
 var _File3 = _interopRequireDefault(_File2);
 
-var _ObjectUtils = __webpack_require__(/*! ../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -9370,7 +9370,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -9411,7 +9411,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -9625,7 +9625,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = ParseLayers;
 
-var _ObjectUtils = __webpack_require__(/*! ../../../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -11239,7 +11239,7 @@ var _RequestAnimationFrame = __webpack_require__(/*! ../dom/RequestAnimationFram
 
 var _RequestAnimationFrame2 = _interopRequireDefault(_RequestAnimationFrame);
 
-var _ObjectUtils = __webpack_require__(/*! ../utils/ObjectUtils */ "./utils/ObjectUtils.js");
+var _ObjectUtils = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectUtils2 = _interopRequireDefault(_ObjectUtils);
 
@@ -12094,9 +12094,9 @@ function ObjectExtend(source, target, deepCopy) {
 
 /***/ }),
 
-/***/ "./utils/ObjectUtils.js":
+/***/ "./utils/object/ObjectGet.js":
 /*!******************************!*\
-  !*** ./utils/ObjectUtils.js ***!
+  !*** ./utils/object/ObjectGet.js ***!
   \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -12114,12 +12114,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ObjectUtils = function () {
-    function ObjectUtils() {
-        _classCallCheck(this, ObjectUtils);
+var ObjectGet = function () {
+    function ObjectGet() {
+        _classCallCheck(this, ObjectGet);
     }
 
-    _createClass(ObjectUtils, [{
+    _createClass(ObjectGet, [{
         key: 'getValue',
         value: function getValue(obj, key, defaultValue) {
             var type = typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
@@ -12161,12 +12161,12 @@ var ObjectUtils = function () {
         }
     }]);
 
-    return ObjectUtils;
+    return ObjectGet;
 }();
 
 ;
 
-exports.default = new ObjectUtils();
+exports.default = new ObjectGet();
 
 /***/ }),
 

@@ -1,5 +1,5 @@
 import File from "../File";
-import ObjectUtils from "../../utils/ObjectUtils";
+import ObjectGet from "../../utils/object/ObjectGet";
 import AssetsType from "../AssetsType";
 import Path from "../../utils/Path";
 import LoaderState from "../LoaderState";
@@ -10,16 +10,16 @@ export default class ScriptFile extends File {
 
     constructor(tag, url, path, xhrSettings, config) {
 
-        let tagFile = (typeof tag === 'string') ? tag : ObjectUtils.getValue(tag, 'key', '');
+        let tagFile = (typeof tag === 'string') ? tag : ObjectGet.value(tag, 'key', '');
 
         let assetConfig = {
             type: AssetsType.script,
-            ext: ObjectUtils.getValue(tag, 'ext', Path.getExtension(url) || 'js'),
+            ext: ObjectGet.value(tag, 'ext', Path.getExtension(url) || 'js'),
             responseType: 'text',
             tag: tagFile,
-            url: ObjectUtils.getValue(tag, 'file', url),
+            url: ObjectGet.value(tag, 'file', url),
             path: path,
-            xhrSettings: ObjectUtils.getValue(tag, 'xhr', xhrSettings)
+            xhrSettings: ObjectGet.value(tag, 'xhr', xhrSettings)
         };
 
         super(assetConfig);

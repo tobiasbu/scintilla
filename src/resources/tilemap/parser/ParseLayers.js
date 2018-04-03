@@ -1,5 +1,5 @@
 
-import ObjectUtils from '../../../utils/ObjectUtils'
+import ObjectGet from '../../../utils/object/ObjectGet'
 import Base64Utils from '../../../utils/Base64Utils';
 import DataSet from '../../../structures/Set';
 import DataList from '../../../structures/List';
@@ -32,8 +32,8 @@ export default function ParseLayers(json, map) {
 
         let newLayer = new TilemapLayerData({
             name: jsonLayer.name,
-            x: ObjectUtils.getValue(jsonLayer, 'offsetx', 0) + jsonLayer.x,
-            y: ObjectUtils.getValue(jsonLayer, 'offsety', 0) + jsonLayer.y,
+            x: ObjectGet.value(jsonLayer, 'offsetx', 0) + jsonLayer.x,
+            y: ObjectGet.value(jsonLayer, 'offsety', 0) + jsonLayer.y,
             width: jsonLayer.width,
             height: jsonLayer.height,
             tileWidth: jsonLayer.tilewidth,

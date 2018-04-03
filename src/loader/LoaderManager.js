@@ -1,7 +1,7 @@
 
 
 import System from '../core/system/System';
-import ObjectUtils from '../utils/ObjectUtils';
+import ObjectGet from '../utils/object/ObjectGet';
 import XHR from './XHR'
 import AssetTypeHandler from './assets/AssetTypeHandler';
 import LoaderState from './LoaderState'
@@ -40,11 +40,11 @@ export default class LoadManager {
     let gameConfig = game.config.loader;
 
     this.xhr = XHR.createSettings(
-      ObjectUtils.getValue(config, 'responseType', gameConfig.responseType),
-      ObjectUtils.getValue(config, 'async', gameConfig.async),
-      //scintilla.ObjectUtils.getPropertyValue(config, 'user', gameConfig.loaderUser),
-      //scintilla.ObjectUtils.getPropertyValue(config, 'password', gameConfig.loaderPassword),
-      ObjectUtils.getValue(config, 'timeout', gameConfig.timeout)
+      ObjectGet.value(config, 'responseType', gameConfig.responseType),
+      ObjectGet.value(config, 'async', gameConfig.async),
+      //scintilla.ObjectGet.propertyValue(config, 'user', gameConfig.loaderUser),
+      //scintilla.ObjectGet.propertyValue(config, 'password', gameConfig.loaderPassword),
+      ObjectGet.value(config, 'timeout', gameConfig.timeout)
   );
   
 

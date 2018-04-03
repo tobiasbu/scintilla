@@ -1,31 +1,32 @@
 
-import ObjectUtils from '../utils/ObjectUtils'
+import ObjectGet from '../utils/object/ObjectGet'
 import XHR from './XHR'
 import LoaderState from './LoaderState'
 import AssetsType from './AssetsType';
 import NextAsset from './components/NextAsset';
+import Path from '../utils/Path'
 
 export default class File {
 
     constructor(config) {
 
-        this.type = ObjectUtils.getValue(config, 'type', null);
-        this.tag = ObjectUtils.getValue(config, 'tag', null);
-        this.useExternal =  ObjectUtils.getValue(config, 'useExternal', false);
+        this.type = ObjectGet.value(config, 'type', null);
+        this.tag = ObjectGet.value(config, 'tag', null);
+        this.useExternal =  ObjectGet.value(config, 'useExternal', false);
 
         if (this.type == null || this.tag == null)
         {
             throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
         }
 
-        this.url = ObjectUtils.getValue(config, 'url', undefined);
+        this.url = ObjectGet.value(config, 'url', undefined);
 
         if (this.url === undefined)
-            this.url = ObjectUtils.getValue(config, 'path', '') + this.tag + '.' + ObjectUtils.getValue(config, 'ext', '');
+            this.url = ObjectGet.value(config, 'path', '') + this.tag + '.' + ObjectGet.value(config, 'ext', '');
         else if (typeof(this.url) !== 'function')
         {
             if (!this.useExternal || this.useExternal !== undefined)
-                this.url = ObjectUtils.getValue(config, 'path', '').concat(this.url);
+                this.url = ObjectGet.value(config, 'path', '').concat(this.url);
 
         }
 
@@ -33,10 +34,10 @@ export default class File {
         // There is no need to create XHR settings and request
         if (this.type !== AssetsType.webFont) {
 
-            this.xhrSettings = XHR.createSettings(ObjectUtils.getValue(config, 'responseType', undefined));
+            this.xhrSettings = XHR.createSettings(ObjectGet.value(config, 'responseType', undefined));
             
-            if (ObjectUtils.getValue(config, 'xhrSettings', false))
-                this.xhrSettings = XHR.merge(this.xhrSettings, ObjectUtils.getValue(config, 'xhrSettings', {}));
+            if (ObjectGet.value(config, 'xhrSettings', false))
+                this.xhrSettings = XHR.merge(this.xhrSettings, ObjectGet.value(config, 'xhrSettings', {}));
         }
 
 
@@ -48,7 +49,7 @@ export default class File {
         this.data = undefined;
         this.source = null;
         this.xhrRequest = null;
-        this.config = ObjectUtils.getValue(config,'config',{});
+        this.config = ObjectGet.value(config,'config',{});
         this.crossOrigin = undefined;
 
         this.onComplete = undefined;
@@ -68,7 +69,7 @@ export default class File {
         else
         {
 
-            this.source = ObjectUtils.getURL(this.url, gameLoader.baseURL);
+            this.source = Path.getURL(this.url, gameLoader.baseURL);
             
             if (this.source.indexOf('data:') === 0 || this.source == null)
             {

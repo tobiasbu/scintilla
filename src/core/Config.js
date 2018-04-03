@@ -1,5 +1,5 @@
 
-import ObjectUtils from '../utils/ObjectUtils';
+import ObjectGet from '../utils/object/ObjectGet';
 
 export default class Config {
 
@@ -8,8 +8,8 @@ export default class Config {
         if (config === undefined) 
             config = {};
 
-        var callback = ObjectUtils.getValue;
-        var callback_2 = ObjectUtils.getPropertyValue;
+        var callback = ObjectGet.value;
+        var callback_2 = ObjectGet.propertyValue;
 
         // view and canvas
         this.width = callback(config, 'width', 640);

@@ -1,7 +1,7 @@
 
 import LoaderState from '../LoaderState'
 import File from '../File'
-import ObjectUtils from '../../utils/ObjectUtils'
+import ObjectGet from '../../utils/object/ObjectGet'
 import Path from '../../utils/Path'
 import AssetsType from '../AssetsType';
 import AddAsset from '../components/AddAsset';
@@ -19,7 +19,7 @@ export default class TextFile extends File {
         }
         else
         {
-            assetTag = ObjectUtils.getValue(tag, 'tag', '');
+            assetTag = ObjectGet.value(tag, 'tag', '');
         }
 
         let useExternal = false;
@@ -35,12 +35,12 @@ export default class TextFile extends File {
         let assetConfig = {
             type: AssetsType.text,
             tag: assetTag,
-            ext: ObjectUtils.getValue(tag, 'ext', Path.getExtension(url)),
-            url: ObjectUtils.getValue(tag, 'file', url),
+            ext: ObjectGet.value(tag, 'ext', Path.getExtension(url)),
+            url: ObjectGet.value(tag, 'file', url),
             path: path,
             responseType: '',
-            xhrSettings: ObjectUtils.getValue(tag, 'xhr', xhrSettings),
-            config: ObjectUtils.getValue(tag, 'config', config),
+            xhrSettings: ObjectGet.value(tag, 'xhr', xhrSettings),
+            config: ObjectGet.value(tag, 'config', config),
             useExternal : useExternal
         };
 
