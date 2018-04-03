@@ -1,17 +1,10 @@
 import MathUtils from "../MathUtils";
-import EasingType, { EASE_BACK_CONST } from "./EasingType";
+import EaseIn from "./EaseIn";
+import { EASE_BACK_CONST } from "./EasingType";
 
 
-class EaseInFunctions {
-    
+class EaseInOutFunctions {
 
-    /**
-     * 
-     * @param {Number} from 
-     * @param {Number} to 
-     * @param {Number} t 
-     * @param {Number} [duration]
-     */
     linear(from, to, t) {
         return MathUtils.lerp(from, to, t);
     }
@@ -26,11 +19,17 @@ class EaseInFunctions {
     }
 
     sine(from, to, t) {
-        return to * (Math.sin(t  * MathUtils.HALFPI - MathUtils.HALFPI) + 1) + from;
+        return to * ((Math.sin(t * Math.PI - MathUtils.HALFPI) + 1) / 2) + from;
     }
 
     power(from, to, t, power) {
-        return to * Math.pow(t, power) + from;
+
+        t *= 2;
+        if (t < 1) 
+            return EaseIn.power(from, to, t, power) / 2;
+
+        let sign = (power % 2 == 0) ? -1 : 1;
+        return to * (sign / 2.0 * (Math.pow(s - 2, power) + sign * 2)) + from;
     }
 
     quadratic(from, to, t) {
@@ -50,11 +49,27 @@ class EaseInFunctions {
     }
 
     exponential(from, to, t) {
-        return (t == 0) ? from : to * Math.pow(2, 10 * (t - 1)) + from;
+
+        if (t == 0.0 || t == 1.0) 
+            return (to * t) + from;
+
+        if (t < 0.5)
+        {
+            return (to * 0.5 * Math.pow(2, (20 * t) - 10)) + from;
+        }
+        else
+        {
+            return (to * -0.5 * Math.pow(2, (-20 * t) + 10) + 1) + from;
+        }
     }
 
     circ(from, to, t) {
-        return -to * (Math.sqrt(1 - t * t) - 1) + from
+
+        if (t / 2 < 1) 
+            return -to / 2 * (Math.sqrt(1 - t * t) - 1) + from;
+
+        return to / 2 * (Math.sqrt(1 - t * (t -= 2)) + 1) + from;
+
     }
 
     elastic(from, to, t, duration) {
@@ -62,22 +77,52 @@ class EaseInFunctions {
 
         if (t == 0) 
             return from;
-        if ((t /= duration) == 1) 
+
+        if ((t /= duration / 2) == 2) 
             return from + to;
 
-        let p = duration * 0.3;
+        let p = duration * (0.3 * 1.5);
+
+
         let s = p / 4;
-        // this is a fix, again, with post-increment operators
-        let postFix = to * Math.pow(2, 10 * (t -= 1)); 
-        return -(postFix * Math.sin((t * duration - s) * (2 * Math.PI) / p)) + from;
+        let postFix = 0;
+
+
+        if (to >= Math.abs(to))
+        {
+            s = p/ (2 * Math.PI) * Math.asin (to/to);
+        }
+
+        if (t < 1)
+        {
+            postFix = to * Math.pow(2, 10 * (t -= 1));
+            return -0.5 * (postFix * Math.sin((t * duration - s) * (2 * Math.PI) / p)) + from;
+        }
+
+        // postIncrement is evil
+        postFix = to * Math.pow(2, -10 * (t -= 1)); 
+        return postFix * Math.sin((t * duration - s) * (2 * Math.PI) / p) * 0.5 + to + from;
     }
 
     back(from, to, t) {
-        return to * t * t * ((EASE_BACK_CONST + 1) * t - EASE_BACK_CONST) + from;
+
+        if (t == 0) 
+            return from;
+
+        if ((t/=0.5) == 2) 
+            return from + to;  
+        
+        let p = (.3*1.5);
+        let s = EASE_BACK_CONST;
+
+        if (t < 1) 
+            return to / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + from;
+        
+        return to / 2 * (( t -= 2 ) * t * (((s*=(1.525)) + 1) * t + s) + 2) + from;
     }
 
-     /**
-     * Ease-in by specific EasingType.
+    /**
+     * Ease-in and ease out by specific EasingType.
      * 
      * @param {EasingType} type The type of easing
      * @param {Number} from Start point
@@ -113,9 +158,8 @@ class EaseInFunctions {
         return t;
     }
 
+}
 
-};
+var EaseInOut = new EaseInOutFunctions();
 
-var EaseIn = new EaseInFunctions();
-
-export default EaseIn;
+export default EaseInOut;

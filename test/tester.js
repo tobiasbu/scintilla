@@ -77,13 +77,25 @@ scene.gui = function(draw) {
     
 }
 
+var time = 0.0;
+
+
 scene.update = function(dt) {
 
+    
 
+    time += dt;
+
+    if (time >= 1)
+    time = 1;
+
+   this.camera.x = scintilla.Ease.inout.cut(0,320,time, 3);
+   //scintilla.Ease.inBy(scintilla.EasingType.Cut, 0, 320, time, 2, 3);
+ 
     //console.log(this.camera.x);
     //t.position.x += 80 * dt;
 
-    if (game.input.keyboard.press(scintilla.KeyCode.Right)) 
+    /*if (game.input.keyboard.press(scintilla.KeyCode.Right)) 
     {
         this.camera.x += dt * camSpeed;
     }
@@ -99,7 +111,7 @@ scene.update = function(dt) {
     if (game.input.keyboard.press(scintilla.KeyCode.Down)) 
     {
         this.camera.y += dt * camSpeed;
-    }
+    }*/
 
 
 

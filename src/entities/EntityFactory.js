@@ -11,7 +11,7 @@ export default class EntityFactory {
     }
 
     entity(entityName) {
-        entityName = entityName || 'SceneEntity ' + this.entityList.size;
+        entityName = entityName || 'Scene Entity ' + this.entityList.length;
         return new SceneEntity(entityName, this.game);
     }
 

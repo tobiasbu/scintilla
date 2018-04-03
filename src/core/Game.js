@@ -1,11 +1,6 @@
 
 import Config from './Config';
-import Input from '../input/Input'
-import SceneManager from '../scene/SceneManager'
-import Physics from '../physics/physics'
-import GameTime from '../time/GameTime';
-import System from './system/System';
-import InitializeSystems from './system/components/InitializeSystems';
+import GameInitialize from './GameInitialize';
 
 /**
 * Main class of engine. Holds all main data.
@@ -18,8 +13,8 @@ export default class Game {
   * @property {string|HTMLElement} parent - The Games DOM parent.
   * @default
   */
- constructor()
- {
+ constructor() {
+   
   this.parent = 'body';
   this.width = 800;
   this.height = 600;
@@ -49,7 +44,7 @@ export default class Game {
 
   this.parseConfiguration(this.config);
 
-  this.init();
+  GameInitialize(this);
  }
 
   parseConfiguration(config) {
@@ -78,34 +73,7 @@ export default class Game {
     }
 
   }
-  /**
-    * Initialize engine
-    *
-    * @method Game#init()
-    * @protected
-    */
-  init() {
 
-    if (this.systemInited)
-        return;
-
-    this.physics = new Physics(this);
-    this.input = new Input(this);
-    //this.scene = new SceneManager(this);
-    //new GameSystemManager(this);
-    this.time = new GameTime(this);
-
-    this.system = InitializeSystems(this);
-
-    this.input.init();
-    this.time.init(this.system.loop);
-    this.systemInited = true;
-    this.isRunning = true;
-
-
-    console.log("scintilla started!");
-
-  }
 
   destroy() {
 

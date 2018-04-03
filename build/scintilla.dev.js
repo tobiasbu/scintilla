@@ -112,6 +112,39 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "../node_modules/webpack/buildin/module.js":
+/*!*************************************************!*\
+  !*** ../node_modules/webpack/buildin/module.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if (!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if (!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
+
 /***/ "./Define.js":
 /*!*******************!*\
   !*** ./Define.js ***!
@@ -193,8 +226,10 @@ var scintilla = scintilla || {
   MouseButton: __webpack_require__(/*! ./input/mouse/MouseButton */ "./input/mouse/MouseButton.js"),
   Input: __webpack_require__(/*! ./input */ "./input/index.js"),
   // MATH
-  MathUtils: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js"),
+  Math: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js"),
   Matrix: __webpack_require__(/*! ./math/Matrix */ "./math/Matrix.js"),
+  Ease: __webpack_require__(/*! ./math/easing/Easing */ "./math/easing/Easing.js"),
+  EasingType: __webpack_require__(/*! ./math/easing/EasingType */ "./math/easing/EasingType.js"),
   // ENTITIES
   SceneManager: __webpack_require__(/*! ./scene/SceneManager */ "./scene/SceneManager.js"),
   Camera: __webpack_require__(/*! ./camera/Camera */ "./camera/Camera.js"),
@@ -886,29 +921,9 @@ var _Config = __webpack_require__(/*! ./Config */ "./core/Config.js");
 
 var _Config2 = _interopRequireDefault(_Config);
 
-var _Input = __webpack_require__(/*! ../input/Input */ "./input/Input.js");
+var _GameInitialize = __webpack_require__(/*! ./GameInitialize */ "./core/GameInitialize.js");
 
-var _Input2 = _interopRequireDefault(_Input);
-
-var _SceneManager = __webpack_require__(/*! ../scene/SceneManager */ "./scene/SceneManager.js");
-
-var _SceneManager2 = _interopRequireDefault(_SceneManager);
-
-var _physics = __webpack_require__(/*! ../physics/physics */ "./physics/physics.js");
-
-var _physics2 = _interopRequireDefault(_physics);
-
-var _GameTime = __webpack_require__(/*! ../time/GameTime */ "./time/GameTime.js");
-
-var _GameTime2 = _interopRequireDefault(_GameTime);
-
-var _System = __webpack_require__(/*! ./system/System */ "./core/system/System.js");
-
-var _System2 = _interopRequireDefault(_System);
-
-var _InitializeSystems = __webpack_require__(/*! ./system/components/InitializeSystems */ "./core/system/components/InitializeSystems.js");
-
-var _InitializeSystems2 = _interopRequireDefault(_InitializeSystems);
+var _GameInitialize2 = _interopRequireDefault(_GameInitialize);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -956,7 +971,7 @@ var Game = function () {
 
         this.parseConfiguration(this.config);
 
-        this.init();
+        (0, _GameInitialize2.default)(this);
     }
 
     _createClass(Game, [{
@@ -980,34 +995,6 @@ var Game = function () {
             if (config['parent']) {
                 this.parent = config['parent'];
             }
-        }
-        /**
-          * Initialize engine
-          *
-          * @method Game#init()
-          * @protected
-          */
-
-    }, {
-        key: 'init',
-        value: function init() {
-
-            if (this.systemInited) return;
-
-            this.physics = new _physics2.default(this);
-            this.input = new _Input2.default(this);
-            //this.scene = new SceneManager(this);
-            //new GameSystemManager(this);
-            this.time = new _GameTime2.default(this);
-
-            this.system = (0, _InitializeSystems2.default)(this);
-
-            this.input.init();
-            this.time.init(this.system.loop);
-            this.systemInited = true;
-            this.isRunning = true;
-
-            console.log("scintilla started!");
         }
     }, {
         key: 'destroy',
@@ -1044,6 +1031,67 @@ var Game = function () {
 
 exports.default = Game;
 module.exports = Game;
+
+/***/ }),
+
+/***/ "./core/GameInitialize.js":
+/*!********************************!*\
+  !*** ./core/GameInitialize.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = GameInitialize;
+
+var _physics = __webpack_require__(/*! ../physics/physics */ "./physics/physics.js");
+
+var _physics2 = _interopRequireDefault(_physics);
+
+var _Input = __webpack_require__(/*! ../input/Input */ "./input/Input.js");
+
+var _Input2 = _interopRequireDefault(_Input);
+
+var _GameTime = __webpack_require__(/*! ../time/GameTime */ "./time/GameTime.js");
+
+var _GameTime2 = _interopRequireDefault(_GameTime);
+
+var _InitializeSystems = __webpack_require__(/*! ./system/components/InitializeSystems */ "./core/system/components/InitializeSystems.js");
+
+var _InitializeSystems2 = _interopRequireDefault(_InitializeSystems);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+  * Initialize engine
+  *
+  * @method Game#init()
+  * @protected
+  */
+function GameInitialize(game) {
+
+    if (game.systemInited) return;
+
+    game.physics = new _physics2.default(game);
+    game.input = new _Input2.default(game);
+    //this.scene = new SceneManager(this);
+    //new GameSystemManager(this);
+    game.time = new _GameTime2.default(game);
+
+    game.system = (0, _InitializeSystems2.default)(game);
+
+    game.input.init();
+    game.time.init(game.system.loop);
+    game.systemInited = true;
+    game.isRunning = true;
+
+    console.log("scintilla started!");
+}
 
 /***/ }),
 
@@ -1267,7 +1315,8 @@ var GameSystems = exports.GameSystems = {};
 
 var System = {
 
-    /** @inner Register a game system.
+    /** @inner 
+     * Register a game system.
      * 
      * @param {String} key Long description of system
      * @param {Class} system The system class
@@ -1642,7 +1691,7 @@ var EntityFactory = function () {
     _createClass(EntityFactory, [{
         key: "entity",
         value: function entity(entityName) {
-            entityName = entityName || 'SceneEntity ' + this.entityList.size;
+            entityName = entityName || 'Scene Entity ' + this.entityList.length;
             return new _SceneEntity2.default(entityName, this.game);
         }
     }, {
@@ -5603,6 +5652,8 @@ var MathUtils = {
 
 };
 
+module.exports = MathUtils;
+
 exports.default = MathUtils;
 
 /***/ }),
@@ -6363,6 +6414,673 @@ exports.default = Vector;
 
 
 module.exports = Vector;
+
+/***/ }),
+
+/***/ "./math/easing/EaseIn.js":
+/*!*******************************!*\
+  !*** ./math/easing/EaseIn.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _MathUtils = __webpack_require__(/*! ../MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _EasingType = __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js");
+
+var _EasingType2 = _interopRequireDefault(_EasingType);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EaseInFunctions = function () {
+    function EaseInFunctions() {
+        _classCallCheck(this, EaseInFunctions);
+    }
+
+    _createClass(EaseInFunctions, [{
+        key: "linear",
+
+
+        /**
+         * 
+         * @param {Number} from 
+         * @param {Number} to 
+         * @param {Number} t 
+         * @param {Number} [duration]
+         */
+        value: function linear(from, to, t) {
+            return _MathUtils2.default.lerp(from, to, t);
+        }
+    }, {
+        key: "stepped",
+        value: function stepped(from, to, t) {
+            return to * (t < 0.5 ? 0 : 1) + from;
+        }
+    }, {
+        key: "cut",
+        value: function cut(from, to, t, levels) {
+            if (levels === undefined) levels = 2;
+            return _MathUtils2.default.lerp(from, to, _MathUtils2.default.floor(t * levels) / levels);
+        }
+    }, {
+        key: "sine",
+        value: function sine(from, to, t) {
+            return to * (Math.sin(t * _MathUtils2.default.HALFPI - _MathUtils2.default.HALFPI) + 1) + from;
+        }
+    }, {
+        key: "power",
+        value: function power(from, to, t, _power) {
+            return to * Math.pow(t, _power) + from;
+        }
+    }, {
+        key: "quadratic",
+        value: function quadratic(from, to, t) {
+            return this.power(from, to, t, 2);
+        }
+    }, {
+        key: "cubic",
+        value: function cubic(from, to, t) {
+            return this.power(from, to, t, 3);
+        }
+    }, {
+        key: "quartic",
+        value: function quartic(from, to, t) {
+            return this.power(from, to, t, 4);
+        }
+    }, {
+        key: "quintic",
+        value: function quintic(from, to, t) {
+            return this.power(from, to, t, 5);
+        }
+    }, {
+        key: "exponential",
+        value: function exponential(from, to, t) {
+            return t == 0 ? from : to * Math.pow(2, 10 * (t - 1)) + from;
+        }
+    }, {
+        key: "circ",
+        value: function circ(from, to, t) {
+            return -to * (Math.sqrt(1 - t * t) - 1) + from;
+        }
+    }, {
+        key: "elastic",
+        value: function elastic(from, to, t, duration) {
+            if (duration === undefined) duration = 1;
+
+            if (t == 0) return from;
+            if ((t /= duration) == 1) return from + to;
+
+            var p = duration * 0.3;
+            var s = p / 4;
+            // this is a fix, again, with post-increment operators
+            var postFix = to * Math.pow(2, 10 * (t -= 1));
+            return -(postFix * Math.sin((t * duration - s) * (2 * Math.PI) / p)) + from;
+        }
+    }, {
+        key: "back",
+        value: function back(from, to, t) {
+            return to * t * t * ((_EasingType.EASE_BACK_CONST + 1) * t - _EasingType.EASE_BACK_CONST) + from;
+        }
+
+        /**
+        * Ease-in by specific EasingType.
+        * 
+        * @param {EasingType} type The type of easing
+        * @param {Number} from Start point
+        * @param {Number} to End point
+        * @param {Number} t Normalized time
+        * @param {Number} [arg] Additional argument for specific types:
+        * 
+        * @constant EasingType.CUT: The cell levels of the interpolation
+        * @constant EasintType.ELASTIC: The duration of the easing.
+        * @constant EasintType.POWER: The pow product.
+        */
+
+    }, {
+        key: "by",
+        value: function by(type, from, to, t, arg) {
+
+            if (arg === undefined) arg = 1;
+
+            switch (type) {
+
+                case _EasingType2.default.NONE:
+                    return t;
+                case _EasingType2.default.CUT:
+                    return this.cut(from, to, t, arg);
+                case _EasingType2.default.LINEAR:
+                    return this.linear(from, to, t);
+                case _EasingType2.default.SINE:
+                    return this.sine(from, to, t);
+                case _EasingType2.default.QUADRATIC:
+                    return this.power(from, to, t, 2);
+                case _EasingType2.default.CUBIC:
+                    return this.power(from, to, t, 3);
+                case _EasingType2.default.QUARTIC:
+                    return this.power(from, to, t, 4);
+                case _EasingType2.default.QUINTIC:
+                    return this.power(from, to, t, 5);
+                case _EasingType2.default.POWER:
+                    return this.power(from, to, t, arg);
+                case _EasingType2.default.EXPONENTIAL:
+                    return this.exponential(from, to, t);
+                case _EasingType2.default.CIRC:
+                    return this.circ(from, to, t);
+                case _EasingType2.default.BACK:
+                    return this.back(from, to, t);
+                case _EasingType2.default.ELASTIC:
+                    return this.elastic(from, to, t, arg);
+            }
+
+            return t;
+        }
+    }]);
+
+    return EaseInFunctions;
+}();
+
+;
+
+var EaseIn = new EaseInFunctions();
+
+exports.default = EaseIn;
+
+/***/ }),
+
+/***/ "./math/easing/EaseInOut.js":
+/*!**********************************!*\
+  !*** ./math/easing/EaseInOut.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _MathUtils = __webpack_require__(/*! ../MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _EaseIn = __webpack_require__(/*! ./EaseIn */ "./math/easing/EaseIn.js");
+
+var _EaseIn2 = _interopRequireDefault(_EaseIn);
+
+var _EasingType = __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EaseInOutFunctions = function () {
+    function EaseInOutFunctions() {
+        _classCallCheck(this, EaseInOutFunctions);
+    }
+
+    _createClass(EaseInOutFunctions, [{
+        key: "linear",
+        value: function linear(from, to, t) {
+            return _MathUtils2.default.lerp(from, to, t);
+        }
+    }, {
+        key: "stepped",
+        value: function stepped(from, to, t) {
+            return to * (t < 0.5 ? 0 : 1) + from;
+        }
+    }, {
+        key: "cut",
+        value: function cut(from, to, t, levels) {
+            if (levels === undefined) levels = 2;
+            return _MathUtils2.default.lerp(from, to, _MathUtils2.default.floor(t * levels) / levels);
+        }
+    }, {
+        key: "sine",
+        value: function sine(from, to, t) {
+            return to * ((Math.sin(t * Math.PI - _MathUtils2.default.HALFPI) + 1) / 2) + from;
+        }
+    }, {
+        key: "power",
+        value: function power(from, to, t, _power) {
+
+            t *= 2;
+            if (t < 1) return _EaseIn2.default.power(from, to, t, _power) / 2;
+
+            var sign = _power % 2 == 0 ? -1 : 1;
+            return to * (sign / 2.0 * (Math.pow(s - 2, _power) + sign * 2)) + from;
+        }
+    }, {
+        key: "quadratic",
+        value: function quadratic(from, to, t) {
+            return this.power(from, to, t, 2);
+        }
+    }, {
+        key: "cubic",
+        value: function cubic(from, to, t) {
+            return this.power(from, to, t, 3);
+        }
+    }, {
+        key: "quartic",
+        value: function quartic(from, to, t) {
+            return this.power(from, to, t, 4);
+        }
+    }, {
+        key: "quintic",
+        value: function quintic(from, to, t) {
+            return this.power(from, to, t, 5);
+        }
+    }, {
+        key: "exponential",
+        value: function exponential(from, to, t) {
+
+            if (t == 0.0 || t == 1.0) return to * t + from;
+
+            if (t < 0.5) {
+                return to * 0.5 * Math.pow(2, 20 * t - 10) + from;
+            } else {
+                return to * -0.5 * Math.pow(2, -20 * t + 10) + 1 + from;
+            }
+        }
+    }, {
+        key: "circ",
+        value: function circ(from, to, t) {
+
+            if (t / 2 < 1) return -to / 2 * (Math.sqrt(1 - t * t) - 1) + from;
+
+            return to / 2 * (Math.sqrt(1 - t * (t -= 2)) + 1) + from;
+        }
+    }, {
+        key: "elastic",
+        value: function elastic(from, to, t, duration) {
+            if (duration === undefined) duration = 1;
+
+            if (t == 0) return from;
+
+            if ((t /= duration / 2) == 2) return from + to;
+
+            var p = duration * (0.3 * 1.5);
+
+            var s = p / 4;
+            var postFix = 0;
+
+            if (to >= Math.abs(to)) {
+                s = p / (2 * Math.PI) * Math.asin(to / to);
+            }
+
+            if (t < 1) {
+                postFix = to * Math.pow(2, 10 * (t -= 1));
+                return -0.5 * (postFix * Math.sin((t * duration - s) * (2 * Math.PI) / p)) + from;
+            }
+
+            // postIncrement is evil
+            postFix = to * Math.pow(2, -10 * (t -= 1));
+            return postFix * Math.sin((t * duration - s) * (2 * Math.PI) / p) * 0.5 + to + from;
+        }
+    }, {
+        key: "back",
+        value: function back(from, to, t) {
+
+            if (t == 0) return from;
+
+            if ((t /= 0.5) == 2) return from + to;
+
+            var p = .3 * 1.5;
+            var s = _EasingType.EASE_BACK_CONST;
+
+            if (t < 1) return to / 2 * (t * t * (((s *= 1.525) + 1) * t - s)) + from;
+
+            return to / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + from;
+        }
+
+        /**
+         * Ease-in and ease out by specific EasingType.
+         * 
+         * @param {EasingType} type The type of easing
+         * @param {Number} from Start point
+         * @param {Number} to End point
+         * @param {Number} t Normalized time
+         * @param {Number} [arg] Additional argument for specific types:
+         * 
+         * @constant EasingType.CUT: The cell levels of the interpolation
+         * @constant EasintType.ELASTIC: The duration of the easing.
+         * @constant EasintType.POWER: The pow product.
+         */
+
+    }, {
+        key: "by",
+        value: function by(type, from, to, t, arg) {
+
+            if (arg === undefined) arg = 1;
+
+            switch (type) {
+
+                case EasingType.NONE:
+                    return t;
+                case EasingType.CUT:
+                    return this.cut(from, to, t, arg);
+                case EasingType.LINEAR:
+                    return this.linear(from, to, t);
+                case EasingType.SINE:
+                    return this.sine(from, to, t);
+                case EasingType.QUADRATIC:
+                    return this.power(from, to, t, 2);
+                case EasingType.CUBIC:
+                    return this.power(from, to, t, 3);
+                case EasingType.QUARTIC:
+                    return this.power(from, to, t, 4);
+                case EasingType.QUINTIC:
+                    return this.power(from, to, t, 5);
+                case EasingType.POWER:
+                    return this.power(from, to, t, arg);
+                case EasingType.EXPONENTIAL:
+                    return this.exponential(from, to, t);
+                case EasingType.CIRC:
+                    return this.circ(from, to, t);
+                case EasingType.BACK:
+                    return this.back(from, to, t);
+                case EasingType.ELASTIC:
+                    return this.elastic(from, to, t, arg);
+            }
+
+            return t;
+        }
+    }]);
+
+    return EaseInOutFunctions;
+}();
+
+var EaseInOut = new EaseInOutFunctions();
+
+exports.default = EaseInOut;
+
+/***/ }),
+
+/***/ "./math/easing/EaseOut.js":
+/*!********************************!*\
+  !*** ./math/easing/EaseOut.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _EasingType = __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EaseOutFunction = function () {
+    function EaseOutFunction() {
+        _classCallCheck(this, EaseOutFunction);
+    }
+
+    _createClass(EaseOutFunction, [{
+        key: 'linear',
+        value: function linear(from, to, t) {
+            return _MathUtils2.default.lerp(from, to, t);
+        }
+    }, {
+        key: 'stepped',
+        value: function stepped(from, to, t) {
+            return to * (t < 0.5 ? 0 : 1) + from;
+        }
+    }, {
+        key: 'cut',
+        value: function cut(from, to, t, levels) {
+            if (levels === undefined) levels = 2;
+            return _MathUtils2.default.lerp(from, to, _MathUtils2.default.floor(t * levels) / levels);
+        }
+    }, {
+        key: 'sine',
+        value: function sine(from, to, t) {
+            return -from * (Math.sin(t * _MathUtils2.default.HALFPI) + 1) + from + to;
+        }
+    }, {
+        key: 'power',
+        value: function power(from, to, t, _power) {
+            var sign = _power % 2 == 0 ? -1 : 1;
+            return to * (sign * Math.pow(t - 1, _power) + sign) + from;
+        }
+    }, {
+        key: 'quadratic',
+        value: function quadratic(from, to, t) {
+            return this.power(from, to, t, 2);
+        }
+    }, {
+        key: 'cubic',
+        value: function cubic(from, to, t) {
+            return this.power(from, to, t, 3);
+        }
+    }, {
+        key: 'quartic',
+        value: function quartic(from, to, t) {
+            return this.power(from, to, t, 4);
+        }
+    }, {
+        key: 'quintic',
+        value: function quintic(from, to, t) {
+            return this.power(from, to, t, 5);
+        }
+    }, {
+        key: 'exponential',
+        value: function exponential(from, to, t) {
+            return t == 1 ? from : to * (1 - Math.pow(2, 10 * t)) + from;
+        }
+    }, {
+        key: 'circ',
+        value: function circ(from, to, t) {
+            return to * Math.sqrt(1 - (t - 1) * t) + from;
+        }
+    }, {
+        key: 'elastic',
+        value: function elastic(from, to, t, duration) {
+            if (duration === undefined) duration = 1;
+
+            if (t == 0) return from;
+            if ((t /= duration) == 1) return from + to;
+
+            var p = duration * 0.3;
+            var s = p / 4;
+            return to * Mathf.pow(2, -10 * t) * Math.sin((t - s) * (2 * Math.PI) / p) + 1 + from;
+        }
+    }, {
+        key: 'back',
+        value: function back(from, to, t) {
+            //let f = (1 - t);
+            //return to * (1 - (f * f * f - f * Mathf.Sin(f * Math.PI))) + from;
+            return to * ((t - 1) * t * ((_EasingType.EASE_BACK_CONST + 1) * t + _EasingType.EASE_BACK_CONST) + 1) + from;
+        }
+
+        /**
+         * Ease-out by specific EasingType.
+         * 
+         * @param {EasingType} type The type of easing
+         * @param {Number} from Start point
+         * @param {Number} to End point
+         * @param {Number} t Normalized time
+         * @param {Number} [arg] Additional argument for specific types:
+         * 
+         * @constant EasingType.CUT: The cell levels of the interpolation
+         * @constant EasintType.ELASTIC: The duration of the easing.
+         * @constant EasintType.POWER: The pow product.
+         */
+
+    }, {
+        key: 'by',
+        value: function by(type, from, to, t, arg) {
+
+            if (arg === undefined) arg = 1;
+
+            switch (type) {
+
+                case EasingType.NONE:
+                    return t;
+                case EasingType.CUT:
+                    return this.cut(from, to, t, arg);
+                case EasingType.LINEAR:
+                    return this.linear(from, to, t);
+                case EasingType.SINE:
+                    return this.sine(from, to, t);
+                case EasingType.QUADRATIC:
+                    return this.power(from, to, t, 2);
+                case EasingType.CUBIC:
+                    return this.power(from, to, t, 3);
+                case EasingType.QUARTIC:
+                    return this.power(from, to, t, 4);
+                case EasingType.QUINTIC:
+                    return this.power(from, to, t, 5);
+                case EasingType.POWER:
+                    return this.power(from, to, t, arg);
+                case EasingType.EXPONENTIAL:
+                    return this.exponential(from, to, t);
+                case EasingType.CIRC:
+                    return this.circ(from, to, t);
+                case EasingType.BACK:
+                    return this.back(from, to, t);
+                case EasingType.ELASTIC:
+                    return this.elastic(from, to, t, arg);
+            }
+
+            return t;
+        }
+    }]);
+
+    return EaseOutFunction;
+}();
+
+var EaseOut = new EaseOutFunction();
+
+exports.default = EaseOut;
+
+
+module.exports = EaseOut;
+
+/***/ }),
+
+/***/ "./math/easing/Easing.js":
+/*!*******************************!*\
+  !*** ./math/easing/Easing.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _EaseIn = __webpack_require__(/*! ./EaseIn */ "./math/easing/EaseIn.js");
+
+var _EaseIn2 = _interopRequireDefault(_EaseIn);
+
+var _EaseOut = __webpack_require__(/*! ./EaseOut */ "./math/easing/EaseOut.js");
+
+var _EaseOut2 = _interopRequireDefault(_EaseOut);
+
+var _EaseInOut = __webpack_require__(/*! ./EaseInOut */ "./math/easing/EaseInOut.js");
+
+var _EaseInOut2 = _interopRequireDefault(_EaseInOut);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Easing functions
+ */
+var Ease = {
+
+  /**
+   * Ease-in functions
+   */
+  in: _EaseIn2.default,
+
+  /**
+   * Ease-out functions
+   */
+  out: _EaseOut2.default,
+
+  /**
+   * Ease-in-out functions
+   */
+  inout: _EaseInOut2.default
+
+};
+
+module.exports = Ease;
+
+exports.default = Ease;
+
+/***/ }),
+
+/***/ "./math/easing/EasingType.js":
+/*!***********************************!*\
+  !*** ./math/easing/EasingType.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var EasingType = {
+    NONE: -1,
+    STEPPED: 0,
+    LINEAR: 1,
+    SINE: 2,
+    QUADRATIC: 3,
+    CUBIC: 4,
+    QUARTIC: 5,
+    QUINTIC: 6,
+    EXPONENTIAL: 7,
+    CIRC: 8,
+    BACK: 9,
+    ELASTIC: 10,
+    BOUNCE: 11,
+    CUT: 12,
+    POWER: 13
+};
+
+var EASE_BACK_CONST = exports.EASE_BACK_CONST = 1.70158;
+
+exports.default = EasingType;
+
+
+module.export = EasingType;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/webpack/buildin/module.js */ "../node_modules/webpack/buildin/module.js")(module)))
 
 /***/ }),
 
@@ -11685,7 +12403,7 @@ var UpdateStep = function () {
                 this.deltaTime = 0; // delta time in miliseconds
                 // FPS
                 this.requireFpsUpdate = true;
-                this.fpsDesired = _ObjectUtils2.default.getValue(config, 'fps', config.fps);
+                this.fpsDesired = _ObjectUtils2.default.getValue(config, 'fps', 60);
                 this.fps = this.fpsDesired;
                 this.currentFps = 0;
                 this._nextFpsUpdate = 0;
@@ -11777,7 +12495,7 @@ var UpdateStep = function () {
                                         var updateStart = window.performance.now();
 
                                         // UPDATE GAME
-                                        this.loop(deltaUpdate / 1000);
+                                        this.loop(deltaUpdate / 1000.0);
 
                                         var updateLast = window.performance.now();
                                         this.updateAverageDelta = updateLast - updateStart;
@@ -12342,10 +13060,6 @@ setByShape(shape,position) {
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var Base64Utils = {
     decode: function decode(str) {
         return window.atob(str);
@@ -12368,7 +13082,7 @@ var Base64Utils = {
     }
 };
 
-exports.default = Base64Utils;
+module.exports = Base64Utils;
 
 /***/ }),
 
@@ -12594,10 +13308,6 @@ exports.default = new ObjectUtils();
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var Path = {
   getExtension: function getExtension(filename) {
     return filename.substring(filename.lastIndexOf('.') + 1, filename.length) || "";
@@ -12629,7 +13339,7 @@ var Path = {
   }
 };
 
-exports.default = Path;
+module.exports = Path;
 
 /***/ }),
 
@@ -12642,10 +13352,6 @@ exports.default = Path;
 
 "use strict";
 
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
 
 var Validate = {
     isFunction: function isFunction(value) {
@@ -12662,7 +13368,7 @@ var Validate = {
     }
 };
 
-exports.default = Validate;
+module.exports = Validate;
 
 /***/ })
 

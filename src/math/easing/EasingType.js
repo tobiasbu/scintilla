@@ -1,18 +1,24 @@
 
 const EasingType = {
     NONE : -1, 
-    LINEAR : 0,
-    SINE : 1,
-    QUADRATIC : 2,
-    CUBIC : 3,
-    QUARTIC : 4,
-    QUINTIC : 5,
-    EXPONENTIAL : 6,
-    CIRC : 7,
-    BACK : 8,
-    ELASTIC : 9,
-    BOUNCE : 10,
-    STEPPED : 11
+    STEPPED : 0,
+    LINEAR : 1,
+    SINE : 2,
+    QUADRATIC : 3,
+    CUBIC : 4,
+    QUARTIC : 5,
+    QUINTIC : 6,
+    EXPONENTIAL : 7,
+    CIRC : 8,
+    BACK : 9,
+    ELASTIC : 10,
+    BOUNCE : 11,
+    CUT : 12,
+    POWER : 13
 }
 
+export const EASE_BACK_CONST = 1.70158;
+
 export default EasingType;
+
+module.export = EasingType;

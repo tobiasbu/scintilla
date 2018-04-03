@@ -49,6 +49,8 @@ export default class GameLoop {
         //this.game.scene.preUpdate();
         
 
+        
+
         if (shouldUpdate)
         {
          

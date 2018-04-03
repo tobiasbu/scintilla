@@ -21,7 +21,7 @@ export default class UpdateStep {
         this.deltaTime = 0; // delta time in miliseconds
         // FPS
         this.requireFpsUpdate = true;
-        this.fpsDesired = ObjectUtils.getValue(config, 'fps', config.fps);
+        this.fpsDesired = ObjectUtils.getValue(config, 'fps', 60);
         this.fps = this.fpsDesired;
         this.currentFps = 0;
         this._nextFpsUpdate = 0;
@@ -116,7 +116,7 @@ export default class UpdateStep {
                 let updateStart = window.performance.now();
 
                 // UPDATE GAME
-                this.loop(deltaUpdate / 1000);
+                this.loop(deltaUpdate / 1000.0);
 
                 let updateLast = window.performance.now();
                 this.updateAverageDelta = updateLast - updateStart;

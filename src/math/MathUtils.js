@@ -45,9 +45,9 @@ const MathUtils = {
 
   },
 
-  lerp : function(fromValue,toValue,t) {
+  lerp : function(fromValue, toValue, t) {
 
-    return (1.0-t) * fromValue + t * toValue;
+    return (1.0 - t) * fromValue + t * toValue;
 
   },
 
@@ -121,6 +121,12 @@ const MathUtils = {
 
 }
 
+
+
+module.exports = MathUtils;
+
 export default MathUtils;
+
+
 
 

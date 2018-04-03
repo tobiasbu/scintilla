@@ -17,4 +17,4 @@ const Validate = {
     }
 }
 
-export default Validate;
+module.exports = Validate;

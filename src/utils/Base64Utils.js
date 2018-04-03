@@ -28,4 +28,4 @@ const Base64Utils = {
     }
 }
 
-export default Base64Utils;
+module.exports = Base64Utils;

@@ -34,8 +34,10 @@ var scintilla = scintilla || {
   MouseButton : require('./input/mouse/MouseButton'),
   Input : require('./input'),
   // MATH
-  MathUtils : require('./math/MathUtils'),
+  Math : require('./math/MathUtils'),
   Matrix : require('./math/Matrix'),
+  Ease : require('./math/easing/Easing'),
+  EasingType : require('./math/easing/EasingType'),
   // ENTITIES
   SceneManager : require('./scene/SceneManager'),
   Camera : require('./camera/Camera'),

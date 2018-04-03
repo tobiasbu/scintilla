@@ -42,4 +42,4 @@ const Path = {
 
 }
 
-export default Path;
+module.exports = Path;
