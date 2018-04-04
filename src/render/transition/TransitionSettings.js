@@ -11,14 +11,14 @@ export default class TransitionSettings {
         this.fromAlpha = 0;
         this.toAlpha = 0;
 
-        this.inColor = new Color();
-        this.outColor = new Color();
+        this.inColor = Color.black;
+        this.outColor = Color.black;
 
-        this.inDuration = 0.5;
+        this.inDuration = 1;
         this.outDuration = 0.5;
 
         this.pauseDuration = 0;
-        this.style = TranstionStyle.NONE;
+        this.style = TranstionStyle.FILL;
 
         this.timingInMethod = EasingType.LINEAR;
         this.timingOutMethod = EasingType.LINEAR;

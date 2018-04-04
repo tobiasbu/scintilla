@@ -23,7 +23,12 @@ export default function UpdateTransition(transition, deltaTime) {
                     changeState = true;
                 }
 
+                
+
+                // ease(to, t, easingType, easingMode, easingArg)
                 transition._color.ease(setg.outColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument);
+
+                console.log(transition._color.rgba);
                 break;
             }
 

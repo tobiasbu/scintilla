@@ -10,7 +10,7 @@ export default class DataList
 
         if (Array.isArray(elements))
         {
-            for (var i = 0; i < elements.length; i++)
+            for (let i = 0; i < elements.length; i++)
                 this.push(elements[i]);
         }
 

@@ -1210,18 +1210,18 @@ var GameLoop = function () {
 
                                 (0, _DrawRender2.default)(this.system.render, this.camera, deltaTime);
 
-                                (0, _EndDrawRender2.default)(this.system.render);
-
                                 // User Interface
 
                                 (0, _DrawUI2.default)(this.system.ui, this.game.scene);
+
+                                (0, _EndDrawRender2.default)(this.system.render);
                         }
 
                         // Transition and Debug
 
                         this.system.render.context.setTransform(1, 0, 0, 1, 0, 0);
 
-                        (0, _DrawTransition2.default)(this.system.transition, this.system.render.context);
+                        (0, _DrawTransition2.default)(this.system.transition, this.system.render.canvas, this.system.render.context);
 
                         if (this.system.debug !== undefined) {
 
@@ -9291,6 +9291,10 @@ var _EasingType = __webpack_require__(/*! ../../math/easing/EasingType */ "./mat
 
 var _EasingType2 = _interopRequireDefault(_EasingType);
 
+var _MakeImmutable = __webpack_require__(/*! ../../utils/object/MakeImmutable */ "./utils/object/MakeImmutable.js");
+
+var _MakeImmutable2 = _interopRequireDefault(_MakeImmutable);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9381,30 +9385,30 @@ var Color = function () {
         }
     }, {
         key: 'ease',
-        value: function ease(toColor, t, easingType, easingMode, easingArg) {
+        value: function ease(to, t, easingType, easingMode, easingArg) {
             if (easingType === undefined) easingType = _EasingType2.default.LINEAR;
             if (easingMode === undefined) easingMode = 0;
             if (easingArg === undefined) easingArg = 1;
 
-            var callback = _Ease2.default.in.by;
+            var easer = _Ease2.default.in;
 
             switch (easingMode) {
                 case 1:
                     {
-                        callback = _Ease2.default.out.by;
+                        easer = _Ease2.default.out;
                         break;
                     }
                 case 2:
                     {
-                        callback = _Ease2.default.inout.by;
+                        easer = _Ease2.default.inout;
                         break;
                     }
             }
 
-            this.r = callback(easingType, this.r, to.r, t, easingArg);
-            this.g = callback(easingType, this.g, to.g, t, easingArg);
-            this.b = callback(easingType, this.b, to.b, t, easingArg);
-            this.a = callback(easingType, this.a, to.a, t, easingArg);
+            this.r = easer.by(easingType, this.r, to.r, t, easingArg);
+            this.g = easer.by(easingType, this.g, to.g, t, easingArg);
+            this.b = easer.by(easingType, this.b, to.b, t, easingArg);
+            this.a = easer.by(easingType, this.a, to.a, t, easingArg);
 
             ColorUpdate(this);
             return this;
@@ -9426,9 +9430,22 @@ var Color = function () {
         }
     }, {
         key: 'toHex',
-        value: function toHex() {
-            /// TODO
-        }
+        value: function toHex() {}
+        /// TODO
+
+
+        // static functions
+        /*static red = new Color(255, 0, 0);
+        static green = new Color(0, 255, 0);
+        static blue = new Color(0, 0, 255);
+        static cyan = new Color(0, 255, 255);
+        static magenta = new Color(255, 0, 255);
+        static yellow = new Color(255, 255, 0);
+        static black = new Color(0);
+        static white = new Color(255);
+        static gray = new Color(255/2.0);
+        static transparent = new Color(0, 0, 0, 0);*/
+
     }, {
         key: 'rgba',
         get: function get() {
@@ -9455,6 +9472,19 @@ Color.black = new Color(0);
 Color.white = new Color(255);
 Color.gray = new Color(255 / 2.0);
 Color.transparent = new Color(0, 0, 0, 0);
+
+/*
+MakeImmutable([
+Color.red = new Color(255, 0, 0),
+Color.green = new Color(0, 255, 0),
+Color.blue = new Color(0, 0, 255),
+Color.cyan = new Color(0, 255, 255),
+Color.magenta = new Color(255, 0, 255),
+Color.yellow = new Color(255, 255, 0),
+Color.black = new Color(0),
+Color.white = new Color(255),
+Color.gray = new Color(255/2.0),
+Color.transparent = new Color(0, 0, 0, 0),], true);*/
 
 exports.default = Color;
 
@@ -9877,9 +9907,9 @@ var _TransitionState2 = _interopRequireDefault(_TransitionState);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function DrawTransition(transition, context) {
+function DrawTransition(transition, canvas, context) {
 
-    if (transition._state !== _TransitionState2.default.IDLE) return;
+    if (transition._state === _TransitionState2.default.IDLE) return;
 
     var settings = transition.settings;
 
@@ -9889,8 +9919,9 @@ function DrawTransition(transition, context) {
         case _TransitionStyle2.default.FILL:
             {
 
+                //let color = transition._color.rgba;
                 context.fillStyle = transition._color.rgba;
-                context.fillRect(0, 0, context.width, context.height);
+                context.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 
                 break;
             }
@@ -9948,14 +9979,28 @@ var Transition = function () {
         this.settings = new _TransitionSettings2.default(this);
         this._behaviour = _TranstionBehavior2.default.NONE;
         this._state = _TransitionState2.default.IDLE;
-        //this._alpha = 0;     
+        this._alpha = 0;
         this._color = new _Color2.default();
+        this._toColor = undefined;
         this._t = 0;
     }
 
     _createClass(Transition, [{
         key: "in",
-        value: function _in() {}
+        value: function _in() {
+
+            var old = this._behaviour;
+
+            if (old === _TransitionState2.default.IDLE || old === _TransitionState2.default.WAIT) {}
+
+            this._alpha = 0;
+            this._t = 0;
+            this._color.alpha = 0;
+            this.settings.inColor.a = 1;
+            //this._toColor = this.settings.inColor;
+            this._behaviour = _TranstionBehavior2.default.IN;
+            this._state = _TransitionState2.default.IN;
+        }
     }, {
         key: "out",
         value: function out() {}
@@ -10015,14 +10060,14 @@ var TransitionSettings = function () {
         this.fromAlpha = 0;
         this.toAlpha = 0;
 
-        this.inColor = new _Color2.default();
-        this.outColor = new _Color2.default();
+        this.inColor = _Color2.default.black;
+        this.outColor = _Color2.default.black;
 
-        this.inDuration = 0.5;
+        this.inDuration = 1;
         this.outDuration = 0.5;
 
         this.pauseDuration = 0;
-        this.style = _TransitionStyle2.default.NONE;
+        this.style = _TransitionStyle2.default.FILL;
 
         this.timingInMethod = _EasingType2.default.LINEAR;
         this.timingOutMethod = _EasingType2.default.LINEAR;
@@ -10228,7 +10273,10 @@ function UpdateTransition(transition, deltaTime) {
                     changeState = true;
                 }
 
+                // ease(to, t, easingType, easingMode, easingArg)
                 transition._color.ease(setg.outColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument);
+
+                console.log(transition._color.rgba);
                 break;
             }
 
@@ -14060,6 +14108,92 @@ exports.default = Validate;
 
 
 module.exports = Validate;
+
+/***/ }),
+
+/***/ "./utils/object/DeepFreeze.js":
+/*!************************************!*\
+  !*** ./utils/object/DeepFreeze.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.default = DeepFreeze;
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
+// To do so, we use this function.
+function DeepFreeze(obj) {
+
+    // Retrieve the property names defined on obj
+    var propNames = Object.getOwnPropertyNames(obj);
+
+    // Freeze properties before freezing self
+    propNames.forEach(function (name) {
+        var prop = obj[name];
+
+        // Freeze prop if it is an object
+        if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) == 'object' && prop !== null) deepFreeze(prop);
+    });
+
+    // Freeze self (no-op if already frozen)
+    return Object.freeze(obj);
+}
+
+/***/ }),
+
+/***/ "./utils/object/MakeImmutable.js":
+/*!***************************************!*\
+  !*** ./utils/object/MakeImmutable.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = MakeImmutable;
+
+var _DeepFreeze = __webpack_require__(/*! ./DeepFreeze */ "./utils/object/DeepFreeze.js");
+
+var _DeepFreeze2 = _interopRequireDefault(_DeepFreeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function MakeImmutable(value, deep) {
+
+    if (deep === undefined) deep = false;
+
+    if (Array.isArray(value)) {
+        for (var i = 0; i < value.length; i++) {
+            if (deep) {
+                (0, _DeepFreeze2.default)(value[i]);
+            } else {
+                Object.freeze(value[i]);
+            }
+        }
+    } else {
+
+        if (deep) {
+            (0, _DeepFreeze2.default)(value);
+        } else {
+            Object.freeze(value);
+        }
+    }
+
+    return value;
+}
 
 /***/ }),
 

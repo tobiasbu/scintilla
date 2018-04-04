@@ -3,6 +3,7 @@ import MathUtils from '../../math/MathUtils'
 import ParseColor from './components/ParseColor';
 import Ease from '../../math/easing/Ease';
 import EasingType from '../../math/easing/EasingType';
+import MakeImmutable from '../../utils/object/MakeImmutable';
 
 
 function ColorNormUpdate(color) {
@@ -102,28 +103,28 @@ class Color {
 
     }
 
-    ease(toColor, t, easingType, easingMode, easingArg) {
+    ease(to, t, easingType, easingMode, easingArg) {
          if (easingType === undefined) easingType = EasingType.LINEAR;
          if (easingMode === undefined) easingMode = 0;
          if (easingArg === undefined) easingArg = 1;
  
-        let callback = Ease.in.by;
+        let easer = Ease.in;
 
          switch (easingMode) {
              case 1: {
-                callback = Ease.out.by;
+                easer = Ease.out;
                 break;
              }
              case 2: {
-                callback = Ease.inout.by;
+                easer = Ease.inout;
                 break;
              }
          }
 
-         this.r = callback(easingType, this.r, to.r, t, easingArg);
-         this.g = callback(easingType, this.g, to.g, t, easingArg);
-         this.b = callback(easingType, this.b, to.b, t, easingArg);
-         this.a = callback(easingType, this.a, to.a, t, easingArg);
+         this.r = easer.by(easingType, this.r, to.r, t, easingArg);
+         this.g = easer.by(easingType, this.g, to.g, t, easingArg);
+         this.b = easer.by(easingType, this.b, to.b, t, easingArg);
+         this.a = easer.by(easingType, this.a, to.a, t, easingArg);
 
          ColorUpdate(this);
          return this;
@@ -145,10 +146,17 @@ class Color {
         /// TODO
     }
 
-
-
-
-
+    // static functions
+    /*static red = new Color(255, 0, 0);
+    static green = new Color(0, 255, 0);
+    static blue = new Color(0, 0, 255);
+    static cyan = new Color(0, 255, 255);
+    static magenta = new Color(255, 0, 255);
+    static yellow = new Color(255, 255, 0);
+    static black = new Color(0);
+    static white = new Color(255);
+    static gray = new Color(255/2.0);
+    static transparent = new Color(0, 0, 0, 0);*/
 }
 
 Color.red = new Color(255, 0, 0);
@@ -161,5 +169,18 @@ Color.black = new Color(0);
 Color.white = new Color(255);
 Color.gray = new Color(255/2.0);
 Color.transparent = new Color(0, 0, 0, 0);
+
+/*
+MakeImmutable([
+Color.red = new Color(255, 0, 0),
+Color.green = new Color(0, 255, 0),
+Color.blue = new Color(0, 0, 255),
+Color.cyan = new Color(0, 255, 255),
+Color.magenta = new Color(255, 0, 255),
+Color.yellow = new Color(255, 255, 0),
+Color.black = new Color(0),
+Color.white = new Color(255),
+Color.gray = new Color(255/2.0),
+Color.transparent = new Color(0, 0, 0, 0),], true);*/
 
 export default Color;
