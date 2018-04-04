@@ -21,4 +21,4 @@ export const EASE_BACK_CONST = 1.70158;
 
 export default EasingType;
 
-module.export = EasingType;
+//module.exports = EasingType;

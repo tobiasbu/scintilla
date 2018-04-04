@@ -11,19 +11,19 @@ const Ease = {
     /**
      * Ease-in functions
      */
-    in : EaseIn,
+    in: EaseIn,
 
     /**
      * Ease-out functions
      */
-    out : EaseOut,
+    out: EaseOut,
 
     /**
      * Ease-in-out functions
      */
-    inout : EaseInOut
+    inout: EaseInOut
 
- 
+
 
 }
 

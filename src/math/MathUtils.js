@@ -125,7 +125,7 @@ Object.freeze(MathUtils);
 
 module.exports = MathUtils;
 
-export default MathUtils;
+//export default MathUtils;
 
 
 

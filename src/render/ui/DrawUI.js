@@ -53,12 +53,7 @@ export default function DrawUI(gui, sceneManager) {
     if (clip)
         gui.context.restore();
 
-    if (gui.debug != null) {
 
-        gui.context.setTransform(1, 0, 0, 1, 0, 0);
-        gui.debug.test();
-    
-    }
        
 
 }

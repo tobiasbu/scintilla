@@ -8,6 +8,8 @@ import EndDrawRender from "../render/components/EndDrawRender";
 import PreUpdateScene from "../scene/components/PreUpdateScene";
 import UpdateScene from "../scene/components/UpdateScene";
 import DrawUI from "../render/ui/DrawUI";
+import DrawTransition from "../render/transition/DrawTransition";
+import UpdateTransition from "../render/transition/UpdateTransition";
 
 
 
@@ -35,14 +37,17 @@ export default class GameLoop {
          // Core Managers
 
          this.game.input.update();
-         
+        
+         UpdateTransition(this.game.system.transition, deltaTime);
 
          // Entities and Scene Update
 
-         this.currentScene = this.game.scene.currentScene;
+        this.currentScene = this.game.scene.currentScene;
 
         let shouldUpdate = (this.currentScene != null && this.currentScene !== undefined);
         //let changeScene = (this.game.scene._changeScene != null || this.game.scene._changeScene !== undefined)
+
+
 
         //if (changeScene)
         PreUpdateScene(this.game.scene);
@@ -80,16 +85,33 @@ export default class GameLoop {
 
     render(deltaTime) {
 
-        if (this.currentScene == null || this.currentScene === undefined)
-            return;
+        if (this.currentScene !== null || this.currentScene !== undefined)
+        {
 
-        BeginDrawRender(this.system.render);
+            // Scenes
+            BeginDrawRender(this.system.render);
 
-        DrawRender(this.system.render, this.camera, deltaTime);
+            DrawRender(this.system.render, this.camera, deltaTime);
 
-        EndDrawRender(this.system.render);
+            EndDrawRender(this.system.render);
 
-        DrawUI(this.system.ui, this.game.scene);
+            // User Interface
+
+            DrawUI(this.system.ui, this.game.scene);
+
+        }
+
+        // Transition and Debug
+
+        this.system.render.context.setTransform(1, 0, 0, 1, 0, 0);
+
+        DrawTransition(this.system.transition, this.system.render.context);
+
+        if (this.system.debug !== undefined) {
+
+            this.system.debug.test();
+        
+        }
 
     }
 

@@ -1,7 +1,7 @@
 import System from '../core/system/System';
 import BoundingBox from '../math/BoundingBox';
 import Transform  from '../transform/Transform';
-import Color from '../utils/Color'
+import Color from '../render/color/Color'
 import MathUtils from '../math/MathUtils'
 import Vector from '../math/Vector'
 import ResizeCamera from './ResizeCamera';
@@ -30,7 +30,7 @@ export default class Camera {
     this._pixelUnit = {x:1,y:1};    
     this._aspectRatio = 1;
 
-    this._backgroundColor = Color.rgbToHex(0,0,0);
+    this._backgroundColor = new Color(); //.rgbToHex(0,0,0);
     this._roundPixels = game.config.roundPixels;
 
   }

@@ -1,9 +1,11 @@
 import MathUtils from "../MathUtils";
-import EasingType, { EASE_BACK_CONST } from "./EasingType";
+import EasingType, {
+    EASE_BACK_CONST
+} from "./EasingType";
 
 
 class EaseInFunctions {
-    
+
 
     /**
      * 
@@ -26,7 +28,7 @@ class EaseInFunctions {
     }
 
     sine(from, to, t) {
-        return to * (Math.sin(t  * MathUtils.HALFPI - MathUtils.HALFPI) + 1) + from;
+        return to * (Math.sin(t * MathUtils.HALFPI - MathUtils.HALFPI) + 1) + from;
     }
 
     power(from, to, t, power) {
@@ -60,15 +62,15 @@ class EaseInFunctions {
     elastic(from, to, t, duration) {
         if (duration === undefined) duration = 1;
 
-        if (t == 0) 
+        if (t == 0)
             return from;
-        if ((t /= duration) == 1) 
+        if ((t /= duration) == 1)
             return from + to;
 
         let p = duration * 0.3;
         let s = p / 4;
         // this is a fix, again, with post-increment operators
-        let postFix = to * Math.pow(2, 10 * (t -= 1)); 
+        let postFix = to * Math.pow(2, 10 * (t -= 1));
         return -(postFix * Math.sin((t * duration - s) * (2 * Math.PI) / p)) + from;
     }
 
@@ -76,7 +78,7 @@ class EaseInFunctions {
         return to * t * t * ((EASE_BACK_CONST + 1) * t - EASE_BACK_CONST) + from;
     }
 
-     /**
+    /**
      * Ease-in by specific EasingType.
      * 
      * @param {EasingType} type The type of easing
@@ -93,21 +95,34 @@ class EaseInFunctions {
 
         if (arg === undefined) arg = 1;
 
-        switch(type) {
+        switch (type) {
 
-            case EasingType.NONE: return t;
-            case EasingType.CUT: return this.cut(from, to, t, arg);
-            case EasingType.LINEAR: return this.linear(from, to, t);
-            case EasingType.SINE: return this.sine(from, to, t);
-            case EasingType.QUADRATIC: return this.power(from, to, t, 2); 
-            case EasingType.CUBIC: return this.power(from, to, t, 3);
-            case EasingType.QUARTIC: return this.power(from, to, t, 4);
-            case EasingType.QUINTIC: return this.power(from, to, t, 5); 
-            case EasingType.POWER :  return this.power(from, to, t, arg); 
-            case EasingType.EXPONENTIAL: return this.exponential(from, to, t); 
-            case EasingType.CIRC: return this.circ(from, to, t); 
-            case EasingType.BACK: return this.back(from, to, t); 
-            case EasingType.ELASTIC: return this.elastic(from, to, t, arg);
+            case EasingType.NONE:
+                return t;
+            case EasingType.CUT:
+                return this.cut(from, to, t, arg);
+            case EasingType.LINEAR:
+                return this.linear(from, to, t);
+            case EasingType.SINE:
+                return this.sine(from, to, t);
+            case EasingType.QUADRATIC:
+                return this.power(from, to, t, 2);
+            case EasingType.CUBIC:
+                return this.power(from, to, t, 3);
+            case EasingType.QUARTIC:
+                return this.power(from, to, t, 4);
+            case EasingType.QUINTIC:
+                return this.power(from, to, t, 5);
+            case EasingType.POWER:
+                return this.power(from, to, t, arg);
+            case EasingType.EXPONENTIAL:
+                return this.exponential(from, to, t);
+            case EasingType.CIRC:
+                return this.circ(from, to, t);
+            case EasingType.BACK:
+                return this.back(from, to, t);
+            case EasingType.ELASTIC:
+                return this.elastic(from, to, t, arg);
         }
 
         return t;

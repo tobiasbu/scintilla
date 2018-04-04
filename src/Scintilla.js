@@ -29,6 +29,8 @@ var scintilla = scintilla || {
   Structures : require('./structures'),
   // RENDER
   Render : require('./render'),
+  Color : require('./render/color/Color'),
+  Transition : require('./render/transition'),
   // INPUT
   KeyCode : require('./input/keyboard/KeyCode'),
   MouseButton : require('./input/mouse/MouseButton'),
@@ -36,7 +38,7 @@ var scintilla = scintilla || {
   // MATH
   Math : require('./math/MathUtils'),
   Matrix : require('./math/Matrix'),
-  Ease : require('./math/easing/Easing'),
+  Ease : require('./math/easing/Ease'),
   EasingType : require('./math/easing/EasingType'),
   // ENTITIES
   SceneManager : require('./scene/SceneManager'),
@@ -51,7 +53,7 @@ var scintilla = scintilla || {
   Loader : require('./loader'),
   Game : require('./core/Game'),
   // UTILITIES
-  Color : require('./utils/Color')
+  Path : require('./utils/Path')
 };
 
 ObjectExtend(Defines, scintilla);

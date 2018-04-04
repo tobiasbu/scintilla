@@ -4,5 +4,5 @@ module.exports = {
     RenderLayerManagement : require('./RenderLayersManagement'),
     Render : require('./Render'),
     UI : require('./ui/UI'),
-   // Draw : require('./Draw')
+    Transition : require('./transition/Transition')
 }

@@ -7,7 +7,8 @@ const SceneSystem = [
     'EntityFactory',
     'Camera',
     'SceneManager',
-    'UserInterface'
+    'UserInterface',
+    'Transition'
 ]
 
 export default SceneSystem;

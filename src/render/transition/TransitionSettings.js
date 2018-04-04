@@ -1,10 +1,6 @@
-
-const TranstionStyle = {
-    NONE : 0,
-    FILL : 1,
-}
-
-
+import Color from "../color/Color";
+import EasingType from "../../math/easing/EasingType";
+import TranstionStyle from "./TransitionStyle";
 
 
 export default class TransitionSettings {
@@ -15,31 +11,29 @@ export default class TransitionSettings {
         this.fromAlpha = 0;
         this.toAlpha = 0;
 
-        this.fromColor = '#000';
-        this.toColor = '#000';
+        this.inColor = new Color();
+        this.outColor = new Color();
 
         this.inDuration = 0.5;
         this.outDuration = 0.5;
 
         this.pauseDuration = 0;
-        this.style = undefined;
+        this.style = TranstionStyle.NONE;
 
-        this.timingInMethod = undefined;
-        this.timingOutMethod = undefined;
+        this.timingInMethod = EasingType.LINEAR;
+        this.timingOutMethod = EasingType.LINEAR;
         this.timingInArgument = 3; // step
         this.timingOutArgument = 3;
     }
 
-    setSettings(config) {
-
-    }
-
     setInColor(color) {
-
+        this.fromColor.parse(color);
+        return this;
     }
 
     setOutColor(color) {
-
+        this.outColor.parse(color);
+        return this;
     }
 
     setDuration(duration) {

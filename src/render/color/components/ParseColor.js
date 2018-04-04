@@ -1,5 +1,5 @@
 import IntToColor from "./IntToColor";
-import CSSColorToColor from "./CSSColorToColor";
+import CSSToColor from "./CSSToColor";
 import HexToColor from "./HexToColor";
 import ObjectToColor from "./ObjectToColor";
 
@@ -14,7 +14,7 @@ export default function ParseColor(value) {
     } else if (type === 'string') {
   
       if (value.substr(0, 3).toLowerCase() === 'rgb') {
-        return CSSColorToColor(value);
+        return CSSToColor(value);
       } else {
         return HexToColor(value);
       }

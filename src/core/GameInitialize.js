@@ -20,13 +20,15 @@ export default function GameInitialize(game) {
     //new GameSystemManager(this);
     game.time = new GameTime(game);
 
-    game.system = InitializeSystems(game);
+    InitializeSystems(game);
 
     game.input.init();
     game.time.init(game.system.loop);
     game.systemInited = true;
     game.isRunning = true;
 
+    
+    Object.seal(game);
 
     console.log("scintilla started!");
 

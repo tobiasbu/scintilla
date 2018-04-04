@@ -112,39 +112,6 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "../node_modules/webpack/buildin/module.js":
-/*!*************************************************!*\
-  !*** ../node_modules/webpack/buildin/module.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = function(module) {
-	if (!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if (!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
-
 /***/ "./Define.js":
 /*!*******************!*\
   !*** ./Define.js ***!
@@ -221,6 +188,8 @@ var scintilla = scintilla || {
   Structures: __webpack_require__(/*! ./structures */ "./structures/index.js"),
   // RENDER
   Render: __webpack_require__(/*! ./render */ "./render/index.js"),
+  Color: __webpack_require__(/*! ./render/color/Color */ "./render/color/Color.js"),
+  Transition: __webpack_require__(/*! ./render/transition */ "./render/transition/index.js"),
   // INPUT
   KeyCode: __webpack_require__(/*! ./input/keyboard/KeyCode */ "./input/keyboard/KeyCode.js"),
   MouseButton: __webpack_require__(/*! ./input/mouse/MouseButton */ "./input/mouse/MouseButton.js"),
@@ -228,7 +197,7 @@ var scintilla = scintilla || {
   // MATH
   Math: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js"),
   Matrix: __webpack_require__(/*! ./math/Matrix */ "./math/Matrix.js"),
-  Ease: __webpack_require__(/*! ./math/easing/Easing */ "./math/easing/Easing.js"),
+  Ease: __webpack_require__(/*! ./math/easing/Ease */ "./math/easing/Ease.js"),
   EasingType: __webpack_require__(/*! ./math/easing/EasingType */ "./math/easing/EasingType.js"),
   // ENTITIES
   SceneManager: __webpack_require__(/*! ./scene/SceneManager */ "./scene/SceneManager.js"),
@@ -243,7 +212,7 @@ var scintilla = scintilla || {
   Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
   Game: __webpack_require__(/*! ./core/Game */ "./core/Game.js"),
   // UTILITIES
-  Color: __webpack_require__(/*! ./utils/Color */ "./utils/Color.js")
+  Path: __webpack_require__(/*! ./utils/Path */ "./utils/Path.js")
 };
 
 (0, _ObjectExtend2.default)(_Define2.default, scintilla);
@@ -518,7 +487,7 @@ var _Transform = __webpack_require__(/*! ../transform/Transform */ "./transform/
 
 var _Transform2 = _interopRequireDefault(_Transform);
 
-var _Color = __webpack_require__(/*! ../utils/Color */ "./utils/Color.js");
+var _Color = __webpack_require__(/*! ../render/color/Color */ "./render/color/Color.js");
 
 var _Color2 = _interopRequireDefault(_Color);
 
@@ -558,7 +527,7 @@ var Camera = function () {
     this._pixelUnit = { x: 1, y: 1 };
     this._aspectRatio = 1;
 
-    this._backgroundColor = _Color2.default.rgbToHex(0, 0, 0);
+    this._backgroundColor = new _Color2.default(); //.rgbToHex(0,0,0);
     this._roundPixels = game.config.roundPixels;
   }
 
@@ -1083,12 +1052,14 @@ function GameInitialize(game) {
     //new GameSystemManager(this);
     game.time = new _GameTime2.default(game);
 
-    game.system = (0, _InitializeSystems2.default)(game);
+    (0, _InitializeSystems2.default)(game);
 
     game.input.init();
     game.time.init(game.system.loop);
     game.systemInited = true;
     game.isRunning = true;
+
+    Object.seal(game);
 
     console.log("scintilla started!");
 }
@@ -1106,7 +1077,7 @@ function GameInitialize(game) {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1151,6 +1122,14 @@ var _DrawUI = __webpack_require__(/*! ../render/ui/DrawUI */ "./render/ui/DrawUI
 
 var _DrawUI2 = _interopRequireDefault(_DrawUI);
 
+var _DrawTransition = __webpack_require__(/*! ../render/transition/DrawTransition */ "./render/transition/DrawTransition.js");
+
+var _DrawTransition2 = _interopRequireDefault(_DrawTransition);
+
+var _UpdateTransition = __webpack_require__(/*! ../render/transition/UpdateTransition */ "./render/transition/UpdateTransition.js");
+
+var _UpdateTransition2 = _interopRequireDefault(_UpdateTransition);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1163,87 +1142,105 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * @protected
 */
 var GameLoop = function () {
-    function GameLoop(game, system) {
-        _classCallCheck(this, GameLoop);
+        function GameLoop(game, system) {
+                _classCallCheck(this, GameLoop);
 
-        this.game = game;
-        this.system = system;
-        this.updateStep = new _UpdateStep2.default(game, game.config);
-        this.entityUpdateList = null;
-        this.currentScene = null;
-        this.camera = null;
-        this.canvas = null;
-    }
-
-    _createClass(GameLoop, [{
-        key: "loop",
-        value: function loop(deltaTime) {
-
-            // Core Managers
-
-            this.game.input.update();
-
-            // Entities and Scene Update
-
-            this.currentScene = this.game.scene.currentScene;
-
-            var shouldUpdate = this.currentScene != null && this.currentScene !== undefined;
-            //let changeScene = (this.game.scene._changeScene != null || this.game.scene._changeScene !== undefined)
-
-            //if (changeScene)
-            (0, _PreUpdateScene2.default)(this.game.scene);
-            //this.game.scene.preUpdate();
-
-
-            if (shouldUpdate) {
-
-                (0, _UpdateScene2.default)(this.game.scene, deltaTime);
-                /*if (this.game.scene._setup)
-                {
-                    // global scene update
-                    if (this.currentScene.update !== undefined)
-                        this.currentScene.update(deltaTime);
-                } else {
-                    if (this.currentScene.loading !== undefined)
-                        this.currentScene.loading(deltaTime);
-                }*/
-
-                (0, _UpdateCamera2.default)(this.camera, this.canvas);
-
-                this.entityUpdateList.update(deltaTime);
-
-                this.entityUpdateList.lateUpdate(deltaTime);
-
-                if (this.camera.transform._isDirty) this.camera.transform._isDirty = false;
-            }
+                this.game = game;
+                this.system = system;
+                this.updateStep = new _UpdateStep2.default(game, game.config);
+                this.entityUpdateList = null;
+                this.currentScene = null;
+                this.camera = null;
+                this.canvas = null;
         }
-    }, {
-        key: "render",
-        value: function render(deltaTime) {
 
-            if (this.currentScene == null || this.currentScene === undefined) return;
+        _createClass(GameLoop, [{
+                key: "loop",
+                value: function loop(deltaTime) {
 
-            (0, _BeginDrawRender2.default)(this.system.render);
+                        // Core Managers
 
-            (0, _DrawRender2.default)(this.system.render, this.camera, deltaTime);
+                        this.game.input.update();
 
-            (0, _EndDrawRender2.default)(this.system.render);
+                        (0, _UpdateTransition2.default)(this.game.system.transition, deltaTime);
 
-            (0, _DrawUI2.default)(this.system.ui, this.game.scene);
-        }
-    }]);
+                        // Entities and Scene Update
 
-    return GameLoop;
+                        this.currentScene = this.game.scene.currentScene;
+
+                        var shouldUpdate = this.currentScene != null && this.currentScene !== undefined;
+                        //let changeScene = (this.game.scene._changeScene != null || this.game.scene._changeScene !== undefined)
+
+
+                        //if (changeScene)
+                        (0, _PreUpdateScene2.default)(this.game.scene);
+                        //this.game.scene.preUpdate();
+
+
+                        if (shouldUpdate) {
+
+                                (0, _UpdateScene2.default)(this.game.scene, deltaTime);
+                                /*if (this.game.scene._setup)
+                                {
+                                    // global scene update
+                                    if (this.currentScene.update !== undefined)
+                                        this.currentScene.update(deltaTime);
+                                } else {
+                                    if (this.currentScene.loading !== undefined)
+                                        this.currentScene.loading(deltaTime);
+                                }*/
+
+                                (0, _UpdateCamera2.default)(this.camera, this.canvas);
+
+                                this.entityUpdateList.update(deltaTime);
+
+                                this.entityUpdateList.lateUpdate(deltaTime);
+
+                                if (this.camera.transform._isDirty) this.camera.transform._isDirty = false;
+                        }
+                }
+        }, {
+                key: "render",
+                value: function render(deltaTime) {
+
+                        if (this.currentScene !== null || this.currentScene !== undefined) {
+
+                                // Scenes
+                                (0, _BeginDrawRender2.default)(this.system.render);
+
+                                (0, _DrawRender2.default)(this.system.render, this.camera, deltaTime);
+
+                                (0, _EndDrawRender2.default)(this.system.render);
+
+                                // User Interface
+
+                                (0, _DrawUI2.default)(this.system.ui, this.game.scene);
+                        }
+
+                        // Transition and Debug
+
+                        this.system.render.context.setTransform(1, 0, 0, 1, 0, 0);
+
+                        (0, _DrawTransition2.default)(this.system.transition, this.system.render.context);
+
+                        if (this.system.debug !== undefined) {
+
+                                this.system.debug.test();
+                        }
+                }
+        }]);
+
+        return GameLoop;
 }();
 
 exports.default = GameLoop;
 
 
 _System2.default.register('GameLoop', GameLoop, 'loop', function () {
-    this.updateStep.init(this);
-    this.entityUpdateList = this.game.system.entityList;
-    this.camera = this.system.camera;
-    this.canvas = this.system.render.canvas;
+        this.updateStep.init(this);
+        this.entityUpdateList = this.game.system.entityList;
+        this.camera = this.system.camera;
+        this.canvas = this.system.render.canvas;
 });
 
 /***/ }),
@@ -1284,7 +1281,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var SceneSystem = ['Cache',
 //'Draw',
-'Loader', 'EntityFactory', 'Camera', 'SceneManager', 'UserInterface'];
+'Loader', 'EntityFactory', 'Camera', 'SceneManager', 'UserInterface', 'Transition'];
 
 exports.default = SceneSystem;
 
@@ -5550,11 +5547,6 @@ exports.default = BoundingBox;
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-
 var MathUtils = {
 
   degToRad: Math.PI / 180,
@@ -5660,7 +5652,7 @@ Object.freeze(MathUtils);
 
 module.exports = MathUtils;
 
-exports.default = MathUtils;
+//export default MathUtils;
 
 /***/ }),
 
@@ -6423,6 +6415,64 @@ module.exports = Vector;
 
 /***/ }),
 
+/***/ "./math/easing/Ease.js":
+/*!*****************************!*\
+  !*** ./math/easing/Ease.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _EaseIn = __webpack_require__(/*! ./EaseIn */ "./math/easing/EaseIn.js");
+
+var _EaseIn2 = _interopRequireDefault(_EaseIn);
+
+var _EaseOut = __webpack_require__(/*! ./EaseOut */ "./math/easing/EaseOut.js");
+
+var _EaseOut2 = _interopRequireDefault(_EaseOut);
+
+var _EaseInOut = __webpack_require__(/*! ./EaseInOut */ "./math/easing/EaseInOut.js");
+
+var _EaseInOut2 = _interopRequireDefault(_EaseInOut);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Easing functions
+ */
+var Ease = {
+
+  /**
+   * Ease-in functions
+   */
+  in: _EaseIn2.default,
+
+  /**
+   * Ease-out functions
+   */
+  out: _EaseOut2.default,
+
+  /**
+   * Ease-in-out functions
+   */
+  inout: _EaseInOut2.default
+
+};
+
+Object.freeze(Ease);
+
+module.exports = Ease;
+
+exports.default = Ease;
+
+/***/ }),
+
 /***/ "./math/easing/EaseIn.js":
 /*!*******************************!*\
   !*** ./math/easing/EaseIn.js ***!
@@ -6542,18 +6592,18 @@ var EaseInFunctions = function () {
         }
 
         /**
-        * Ease-in by specific EasingType.
-        * 
-        * @param {EasingType} type The type of easing
-        * @param {Number} from Start point
-        * @param {Number} to End point
-        * @param {Number} t Normalized time
-        * @param {Number} [arg] Additional argument for specific types:
-        * 
-        * @constant EasingType.CUT: The cell levels of the interpolation
-        * @constant EasintType.ELASTIC: The duration of the easing.
-        * @constant EasintType.POWER: The pow product.
-        */
+         * Ease-in by specific EasingType.
+         * 
+         * @param {EasingType} type The type of easing
+         * @param {Number} from Start point
+         * @param {Number} to End point
+         * @param {Number} t Normalized time
+         * @param {Number} [arg] Additional argument for specific types:
+         * 
+         * @constant EasingType.CUT: The cell levels of the interpolation
+         * @constant EasintType.ELASTIC: The duration of the easing.
+         * @constant EasintType.POWER: The pow product.
+         */
 
     }, {
         key: "by",
@@ -6998,64 +7048,6 @@ module.exports = EaseOut;
 
 /***/ }),
 
-/***/ "./math/easing/Easing.js":
-/*!*******************************!*\
-  !*** ./math/easing/Easing.js ***!
-  \*******************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _EaseIn = __webpack_require__(/*! ./EaseIn */ "./math/easing/EaseIn.js");
-
-var _EaseIn2 = _interopRequireDefault(_EaseIn);
-
-var _EaseOut = __webpack_require__(/*! ./EaseOut */ "./math/easing/EaseOut.js");
-
-var _EaseOut2 = _interopRequireDefault(_EaseOut);
-
-var _EaseInOut = __webpack_require__(/*! ./EaseInOut */ "./math/easing/EaseInOut.js");
-
-var _EaseInOut2 = _interopRequireDefault(_EaseInOut);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Easing functions
- */
-var Ease = {
-
-  /**
-   * Ease-in functions
-   */
-  in: _EaseIn2.default,
-
-  /**
-   * Ease-out functions
-   */
-  out: _EaseOut2.default,
-
-  /**
-   * Ease-in-out functions
-   */
-  inout: _EaseInOut2.default
-
-};
-
-Object.freeze(Ease);
-
-module.exports = Ease;
-
-exports.default = Ease;
-
-/***/ }),
-
 /***/ "./math/easing/EasingType.js":
 /*!***********************************!*\
   !*** ./math/easing/EasingType.js ***!
@@ -7064,7 +7056,7 @@ exports.default = Ease;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(module) {
+
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -7092,9 +7084,7 @@ var EASE_BACK_CONST = exports.EASE_BACK_CONST = 1.70158;
 
 exports.default = EasingType;
 
-
-module.export = EasingType;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../node_modules/webpack/buildin/module.js */ "../node_modules/webpack/buildin/module.js")(module)))
+//module.exports = EasingType;
 
 /***/ }),
 
@@ -9269,6 +9259,423 @@ exports.default = CanvasSmoothing;
 
 /***/ }),
 
+/***/ "./render/color/Color.js":
+/*!*******************************!*\
+  !*** ./render/color/Color.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _ParseColor = __webpack_require__(/*! ./components/ParseColor */ "./render/color/components/ParseColor.js");
+
+var _ParseColor2 = _interopRequireDefault(_ParseColor);
+
+var _Ease = __webpack_require__(/*! ../../math/easing/Ease */ "./math/easing/Ease.js");
+
+var _Ease2 = _interopRequireDefault(_Ease);
+
+var _EasingType = __webpack_require__(/*! ../../math/easing/EasingType */ "./math/easing/EasingType.js");
+
+var _EasingType2 = _interopRequireDefault(_EasingType);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function ColorNormUpdate(color) {
+    color._css = 'rgba(' + _MathUtils2.default.floor(color.r * 255) + ',' + _MathUtils2.default.floor(color.g * 255) + ',' + _MathUtils2.default.floor(color.b * 255) + ',' + color.a + ')';
+}
+
+function ColorUpdate(color) {
+    color._css = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
+}
+
+var Color = function () {
+    function Color(r, g, b, a) {
+        _classCallCheck(this, Color);
+
+        this.r = r || 0;
+        this.g = g || r || 0;
+        this.b = b || r || 0;
+        this.a = a || 1;
+        this._css = null;
+
+        ColorUpdate(this);
+    }
+
+    _createClass(Color, [{
+        key: 'set',
+        value: function set(r, g, b, a) {
+
+            if (r === undefined) return this;
+
+            this.r = r;
+            this.b = b || r;
+            this.g = g || r;
+
+            if (a !== undefined) this.a = a;
+
+            ColorUpdate(this);
+
+            return this;
+        }
+    }, {
+        key: 'setRGBA',
+        value: function setRGBA(r, g, b, a) {
+            if (r === undefined) return;
+
+            this.r = Math.round(r / 255.0);
+            this.g = Math.round(g / 255.0);
+            this.b = Math.round(b / 255.0);
+
+            if (a !== undefined) this.a = Math.round(a / 255.0);
+
+            ColorUpdate(this);
+
+            return this;
+        }
+    }, {
+        key: 'setColor',
+        value: function setColor(color) {
+            this.r = color.r;
+            this.g = color.g;
+            this.b = color.b;
+            this.a = color.a;
+            ColorUpdate(this);
+            return this;
+        }
+    }, {
+        key: 'parse',
+        value: function parse(value) {
+            var parsedValue = (0, _ParseColor2.default)(value);
+            this.r = parsedValue.r;
+            this.g = parsedValue.g;
+            this.b = parsedValue.b;
+            this.a = parsedValue.a;
+            ColorUpdate(this);
+            return this;
+        }
+    }, {
+        key: 'lerp',
+        value: function lerp(toColor, t) {
+
+            this.r = _MathUtils2.default.lerp(this.r, toColor.r);
+            this.g = _MathUtils2.default.lerp(this.g, toColor.g);
+            this.b = _MathUtils2.default.lerp(this.b, toColor.b);
+            this.a = _MathUtils2.default.lerp(this.a, toColor.a);
+            ColorUpdate(this);
+            return this;
+        }
+    }, {
+        key: 'ease',
+        value: function ease(toColor, t, easingType, easingMode, easingArg) {
+            if (easingType === undefined) easingType = _EasingType2.default.LINEAR;
+            if (easingMode === undefined) easingMode = 0;
+            if (easingArg === undefined) easingArg = 1;
+
+            var callback = _Ease2.default.in.by;
+
+            switch (easingMode) {
+                case 1:
+                    {
+                        callback = _Ease2.default.out.by;
+                        break;
+                    }
+                case 2:
+                    {
+                        callback = _Ease2.default.inout.by;
+                        break;
+                    }
+            }
+
+            this.r = callback(easingType, this.r, to.r, t, easingArg);
+            this.g = callback(easingType, this.g, to.g, t, easingArg);
+            this.b = callback(easingType, this.b, to.b, t, easingArg);
+            this.a = callback(easingType, this.a, to.a, t, easingArg);
+
+            ColorUpdate(this);
+            return this;
+        }
+    }, {
+        key: 'to32',
+        value: function to32() {
+            /// TODO
+        }
+    }, {
+        key: 'toCSS',
+        value: function toCSS() {
+            /// TODO
+        }
+    }, {
+        key: 'toInt',
+        value: function toInt() {
+            /// TODO
+        }
+    }, {
+        key: 'toHex',
+        value: function toHex() {
+            /// TODO
+        }
+    }, {
+        key: 'rgba',
+        get: function get() {
+            return this._css;
+        }
+    }, {
+        key: 'alpha',
+        set: function set(value) {
+            this.a = value;
+            ColorUpdate(this);
+        }
+    }]);
+
+    return Color;
+}();
+
+Color.red = new Color(255, 0, 0);
+Color.green = new Color(0, 255, 0);
+Color.blue = new Color(0, 0, 255);
+Color.cyan = new Color(0, 255, 255);
+Color.magenta = new Color(255, 0, 255);
+Color.yellow = new Color(255, 255, 0);
+Color.black = new Color(0);
+Color.white = new Color(255);
+Color.gray = new Color(255 / 2.0);
+Color.transparent = new Color(0, 0, 0, 0);
+
+exports.default = Color;
+
+/***/ }),
+
+/***/ "./render/color/components/CSSToColor.js":
+/*!***********************************************!*\
+  !*** ./render/color/components/CSSToColor.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = CSSToColor;
+
+var _Color = __webpack_require__(/*! ../Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var CSS_REGEX_PATTERN = /^(?:\w*|rgba?)\(?\s*(\d+)\s*\,?(?:\s*(\d+)\s*)?\,?(?:\s*(\d+)\s*)?\,?(?:\s*(\d+(?:\.\d+)?))?\s*\)?$/;
+
+function CSSToColor(value) {
+
+    var color = new _Color2.default();
+
+    var regex = CSS_REGEX_PATTERN.exec(value.toLowerCase());
+
+    if (regex) {
+        var r = parseInt(regex[0], 10) || 0;
+        var g = parseInt(regex[1], 10) || 0;
+        var b = parseInt(regex[3], 10) || 0;
+        var a = 1;
+
+        if (regex[4] !== undefined) a = parseFloat(regex[4], 10) || 1;
+
+        color.set(r, g, b, a);
+    }
+
+    return color;
+}
+
+/***/ }),
+
+/***/ "./render/color/components/HexToColor.js":
+/*!***********************************************!*\
+  !*** ./render/color/components/HexToColor.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = HexToColor;
+
+var _Color = __webpack_require__(/*! ../Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var HEX_SHORTHAND_REGEX_PATTERN = /^#?([a-f\d])([a-f\d])([a-f\d])([a-f\d])?$/i;
+var HEX_REGEX_PATTERN = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i;
+
+// Source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+function HexToColor(value) {
+
+    var color = new _Color2.default();
+
+    // Hexadecimal can contains alpha in short '#f00e' or full '#F00eaecd'
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    hex = hex.replace(HEX_SHORTHAND_REGEX_PATTERN, function (m, r, g, b, a) {
+
+        if (a !== undefined) a = 'F';
+
+        return r + r + g + g + b + b + a + a;
+    });
+
+    var result = HEX_REGEX_PATTERN.exec(hex);
+
+    if (result) {
+        color.set(parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), result[4] === undefined ? 255 : parseInt(result[4], 16));
+    }
+
+    return color;
+}
+
+/***/ }),
+
+/***/ "./render/color/components/IntToColor.js":
+/*!***********************************************!*\
+  !*** ./render/color/components/IntToColor.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = IntToColor;
+
+var _Color = __webpack_require__(/*! ../Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function IntToColor(value) {
+
+    var color = new _Color2.default();
+    var r = void 0,
+        g = void 0,
+        b = void 0,
+        a = void 0;
+
+    if (value >= 16777216) // 256 ^ 3
+        a = color >>> 24;else a = 1;
+
+    r = color >> 16 & 0xFF;
+    g = color >> 8 & 0xFF;
+    b = color & 0xFF;
+
+    color.set(r, g, b, a);
+
+    return color;
+}
+
+/***/ }),
+
+/***/ "./render/color/components/ObjectToColor.js":
+/*!**************************************************!*\
+  !*** ./render/color/components/ObjectToColor.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ObjectToColor;
+function ObjectToColor(value) {
+
+    return new Color(value.r, value.g, value.b, value.a);
+}
+
+/***/ }),
+
+/***/ "./render/color/components/ParseColor.js":
+/*!***********************************************!*\
+  !*** ./render/color/components/ParseColor.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.default = ParseColor;
+
+var _IntToColor = __webpack_require__(/*! ./IntToColor */ "./render/color/components/IntToColor.js");
+
+var _IntToColor2 = _interopRequireDefault(_IntToColor);
+
+var _CSSToColor = __webpack_require__(/*! ./CSSToColor */ "./render/color/components/CSSToColor.js");
+
+var _CSSToColor2 = _interopRequireDefault(_CSSToColor);
+
+var _HexToColor = __webpack_require__(/*! ./HexToColor */ "./render/color/components/HexToColor.js");
+
+var _HexToColor2 = _interopRequireDefault(_HexToColor);
+
+var _ObjectToColor = __webpack_require__(/*! ./ObjectToColor */ "./render/color/components/ObjectToColor.js");
+
+var _ObjectToColor2 = _interopRequireDefault(_ObjectToColor);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ParseColor(value) {
+
+  var type = typeof value === "undefined" ? "undefined" : _typeof(value);
+
+  if (type === 'number') {
+
+    return (0, _IntToColor2.default)(value);
+  } else if (type === 'string') {
+
+    if (value.substr(0, 3).toLowerCase() === 'rgb') {
+      return (0, _CSSToColor2.default)(value);
+    } else {
+      return (0, _HexToColor2.default)(value);
+    }
+  } else if (type === 'object') {
+
+    return (0, _ObjectToColor2.default)(value);
+  }
+}
+
+/***/ }),
+
 /***/ "./render/components/BeginDrawRender.js":
 /*!**********************************************!*\
   !*** ./render/components/BeginDrawRender.js ***!
@@ -9439,8 +9846,471 @@ module.exports = {
     RenderLayer: __webpack_require__(/*! ./RenderLayer */ "./render/RenderLayer.js"),
     RenderLayerManagement: __webpack_require__(/*! ./RenderLayersManagement */ "./render/RenderLayersManagement.js"),
     Render: __webpack_require__(/*! ./Render */ "./render/Render.js"),
-    UI: __webpack_require__(/*! ./ui/UI */ "./render/ui/UI.js")
-    // Draw : require('./Draw')
+    UI: __webpack_require__(/*! ./ui/UI */ "./render/ui/UI.js"),
+    Transition: __webpack_require__(/*! ./transition/Transition */ "./render/transition/Transition.js")
+};
+
+/***/ }),
+
+/***/ "./render/transition/DrawTransition.js":
+/*!*********************************************!*\
+  !*** ./render/transition/DrawTransition.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DrawTransition;
+
+var _TransitionStyle = __webpack_require__(/*! ./TransitionStyle */ "./render/transition/TransitionStyle.js");
+
+var _TransitionStyle2 = _interopRequireDefault(_TransitionStyle);
+
+var _TransitionState = __webpack_require__(/*! ./TransitionState */ "./render/transition/TransitionState.js");
+
+var _TransitionState2 = _interopRequireDefault(_TransitionState);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DrawTransition(transition, context) {
+
+    if (transition._state !== _TransitionState2.default.IDLE) return;
+
+    var settings = transition.settings;
+
+    switch (settings.style) {
+        case _TransitionStyle2.default.NONE:
+            return;
+        case _TransitionStyle2.default.FILL:
+            {
+
+                context.fillStyle = transition._color.rgba;
+                context.fillRect(0, 0, context.width, context.height);
+
+                break;
+            }
+    }
+}
+
+/***/ }),
+
+/***/ "./render/transition/Transition.js":
+/*!*****************************************!*\
+  !*** ./render/transition/Transition.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _TransitionSettings = __webpack_require__(/*! ./TransitionSettings */ "./render/transition/TransitionSettings.js");
+
+var _TransitionSettings2 = _interopRequireDefault(_TransitionSettings);
+
+var _TransitionState = __webpack_require__(/*! ./TransitionState */ "./render/transition/TransitionState.js");
+
+var _TransitionState2 = _interopRequireDefault(_TransitionState);
+
+var _Color = __webpack_require__(/*! ../color/Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+var _TranstionBehavior = __webpack_require__(/*! ./TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+
+var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
+
+var _System = __webpack_require__(/*! ../../core/system/System */ "./core/system/System.js");
+
+var _System2 = _interopRequireDefault(_System);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Transition = function () {
+    function Transition(game) {
+        _classCallCheck(this, Transition);
+
+        this.game = game;
+
+        this.settings = new _TransitionSettings2.default(this);
+        this._behaviour = _TranstionBehavior2.default.NONE;
+        this._state = _TransitionState2.default.IDLE;
+        //this._alpha = 0;     
+        this._color = new _Color2.default();
+        this._t = 0;
+    }
+
+    _createClass(Transition, [{
+        key: "in",
+        value: function _in() {}
+    }, {
+        key: "out",
+        value: function out() {}
+    }, {
+        key: "inout",
+        value: function inout() {}
+    }]);
+
+    return Transition;
+}();
+
+exports.default = Transition;
+
+
+_System2.default.register('Transition', Transition, 'transition');
+
+/***/ }),
+
+/***/ "./render/transition/TransitionSettings.js":
+/*!*************************************************!*\
+  !*** ./render/transition/TransitionSettings.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Color = __webpack_require__(/*! ../color/Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+var _EasingType = __webpack_require__(/*! ../../math/easing/EasingType */ "./math/easing/EasingType.js");
+
+var _EasingType2 = _interopRequireDefault(_EasingType);
+
+var _TransitionStyle = __webpack_require__(/*! ./TransitionStyle */ "./render/transition/TransitionStyle.js");
+
+var _TransitionStyle2 = _interopRequireDefault(_TransitionStyle);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TransitionSettings = function () {
+    function TransitionSettings(parent) {
+        _classCallCheck(this, TransitionSettings);
+
+        this.transition = parent;
+
+        this.fromAlpha = 0;
+        this.toAlpha = 0;
+
+        this.inColor = new _Color2.default();
+        this.outColor = new _Color2.default();
+
+        this.inDuration = 0.5;
+        this.outDuration = 0.5;
+
+        this.pauseDuration = 0;
+        this.style = _TransitionStyle2.default.NONE;
+
+        this.timingInMethod = _EasingType2.default.LINEAR;
+        this.timingOutMethod = _EasingType2.default.LINEAR;
+        this.timingInArgument = 3; // step
+        this.timingOutArgument = 3;
+    }
+
+    _createClass(TransitionSettings, [{
+        key: "setInColor",
+        value: function setInColor(color) {
+            this.fromColor.parse(color);
+            return this;
+        }
+    }, {
+        key: "setOutColor",
+        value: function setOutColor(color) {
+            this.outColor.parse(color);
+            return this;
+        }
+    }, {
+        key: "setDuration",
+        value: function setDuration(duration) {
+            this.setInDuration(duration);
+            this.setOutDuration(duration);
+            return this;
+        }
+    }, {
+        key: "setInDuration",
+        value: function setInDuration(duration) {
+            this.inDuration = Math.abs(duration);
+            return this;
+        }
+    }, {
+        key: "setOutDuration",
+        value: function setOutDuration(duration) {
+            this.outDuration = Math.abs(duration);
+            return this;
+        }
+    }, {
+        key: "setPauseDuration",
+        value: function setPauseDuration(duration) {
+            this.pauseDuration = Math.abs(duration);
+            return this;
+        }
+    }, {
+        key: "setTiming",
+        value: function setTiming(easingType, parameter) {
+            this.setInTiming(easingType, parameter);
+            this.setOutTiming(easingType, parameter);
+            return this;
+        }
+    }, {
+        key: "setInTiming",
+        value: function setInTiming(easingType, parameter) {
+            this.timingInMethod = easingType;
+            this.timingInArgument = parameter || 1;
+            return this;
+        }
+    }, {
+        key: "setOutTiming",
+        value: function setOutTiming(easingType, parameter) {
+            this.timingOutMethod = easingType;
+            this.timingOutArgument = parameter || 1;
+            return this;
+        }
+    }]);
+
+    return TransitionSettings;
+}();
+
+exports.default = TransitionSettings;
+
+/***/ }),
+
+/***/ "./render/transition/TransitionState.js":
+/*!**********************************************!*\
+  !*** ./render/transition/TransitionState.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var TransitionState = {
+    IDLE: -1,
+    IN: 0,
+    OUT: 1,
+    WAIT: 2
+};
+
+Object.freeze(TransitionState);
+
+exports.default = TransitionState;
+
+/***/ }),
+
+/***/ "./render/transition/TransitionStyle.js":
+/*!**********************************************!*\
+  !*** ./render/transition/TransitionStyle.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var TranstionStyle = {
+    NONE: 0,
+    FILL: 1
+};
+
+Object.freeze(TranstionStyle);
+
+exports.default = TranstionStyle;
+
+/***/ }),
+
+/***/ "./render/transition/TranstionBehavior.js":
+/*!************************************************!*\
+  !*** ./render/transition/TranstionBehavior.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var TransitionBehavior = {
+    NONE: -1,
+    IN: 0,
+    OUT: 1,
+    INOUT: 2
+};
+
+Object.freeze(TransitionBehavior);
+
+exports.default = TransitionBehavior;
+
+/***/ }),
+
+/***/ "./render/transition/UpdateTransition.js":
+/*!***********************************************!*\
+  !*** ./render/transition/UpdateTransition.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateTransition;
+
+var _TranstionBehavior = __webpack_require__(/*! ./TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+
+var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
+
+var _TransitionState = __webpack_require__(/*! ./TransitionState */ "./render/transition/TransitionState.js");
+
+var _TransitionState2 = _interopRequireDefault(_TransitionState);
+
+var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+var _Ease = __webpack_require__(/*! ../../math/easing/Ease */ "./math/easing/Ease.js");
+
+var _Ease2 = _interopRequireDefault(_Ease);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function UpdateTransition(transition, deltaTime) {
+
+    if (transition._behaviour === _TranstionBehavior2.default.NONE) return;
+
+    var setg = transition.settings;
+    var changeState = void 0;
+
+    // UPDATE STATE
+    switch (transition._state) {
+
+        case _TransitionState2.default.IN:
+            {
+                transition._t += deltaTime / setg.inDuration;
+
+                if (transition._t >= 1) {
+                    transition._t = 1;
+                    changeState = true;
+                }
+
+                transition._color.ease(setg.outColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument);
+                break;
+            }
+
+        case _TransitionState2.default.WAIT:
+            {
+                transition._t += deltaTime / setg.pauseDuration;
+
+                if (transition._t >= 1) {
+                    transition._t = 1;
+                    changeState = true;
+                }
+                break;
+            }
+
+        case _TransitionState2.default.OUT:
+            {
+                transition._t += deltaTime / setg.outDuration;
+
+                if (transition._t >= 1) {
+                    transition._t = 1;
+                    changeState = true;
+                }
+
+                transition._color.alpha = _Ease2.default.out.by(setg.timingOutMethod, setg.outColor.a, 0, transition._t, setg.timingOutArgument);
+                break;
+            }
+    }
+
+    if (changeState === undefined) return;
+
+    transition._t = 0;
+
+    /// CHANGE TRANSITION STATE
+
+    switch (transition._behaviour) {
+        case _TranstionBehavior2.default.IN:
+        case _TranstionBehavior2.default.OUT:
+            // just fade in or out
+            {
+                transition._behaviour = _TranstionBehavior2.default.NONE;
+                transition._state = _TransitionState2.default.IDLE;
+                break;
+            }
+        case _TranstionBehavior2.default.INOUT:
+            // fade in and out
+            {
+                if (transition._state === _TransitionState2.default.IN) {
+                    // end fade in
+                    transition._color.setColor(setg.outColor);
+                    if (setg.pauseDuration > 0) {
+                        transition._state = _TransitionState2.default.WAIT;
+                    } else {
+                        transition._state = _TransitionState2.default.OUT;
+                    }
+                } else if (transition._state === _TransitionState2.default.WAIT) {
+                    // end pause beteween
+                    transition._state = _TransitionState2.default.OUT;
+                } else if (transition._state === _TransitionState2.default.OUT) {
+                    // end fade out
+                    transition._state = _TransitionState2.default.IDLE;
+                    transition._behaviour = _TranstionBehavior2.default.NONE;
+                }
+            }
+    }
+}
+
+/***/ }),
+
+/***/ "./render/transition/index.js":
+/*!************************************!*\
+  !*** ./render/transition/index.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    State: __webpack_require__(/*! ./TransitionState */ "./render/transition/TransitionState.js"),
+    Style: __webpack_require__(/*! ./TransitionStyle */ "./render/transition/TransitionStyle.js"),
+    Behavior: __webpack_require__(/*! ./TranstionBehavior */ "./render/transition/TranstionBehavior.js")
 };
 
 /***/ }),
@@ -9644,12 +10514,6 @@ function DrawUI(gui, sceneManager) {
     (0, _RenderScene2.default)(sceneManager, gui.draw);
 
     if (clip) gui.context.restore();
-
-    if (gui.debug != null) {
-
-        gui.context.setTransform(1, 0, 0, 1, 0, 0);
-        gui.debug.test();
-    }
 }
 
 /***/ }),
@@ -13099,101 +13963,6 @@ var Base64Utils = {
 Object.freeze(Base64Utils);
 
 module.exports = Base64Utils;
-
-/***/ }),
-
-/***/ "./utils/Color.js":
-/*!************************!*\
-  !*** ./utils/Color.js ***!
-  \************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var Color = exports.Color = {
-
-  rgba: function rgba(r, g, b, a) {
-
-    return 'rgba(' + r.toString() + ',' + g.toString() + ',' + b.toString() + ',' + (a / 255).toString() + ')';
-  },
-
-  /*
-  Source code: https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
-  */
-  HSLtoRGB: function HSLtoRGB(h, s, l, a) {
-
-    var alp = 255;
-
-    if (a !== undefined || a !== null) alp = a;
-
-    h = h / 255.0;
-    s = s / 255.0;
-    l = l / 255.0;
-
-    var result = { r: l, b: l, g: l };
-
-    if (s !== 0) {
-      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-      var p = 2 * l - q;
-      result.r = this.hueToColor(p, q, h + 1 / 3);
-      result.g = this.hueToColor(p, q, h);
-      result.b = this.hueToColor(p, q, h - 1 / 3);
-    }
-
-    result.r = Math.floor(result.r * 255);
-    result.g = Math.floor(result.g * 255);
-    result.b = Math.floor(result.b * 255);
-
-    return this.rgba(result.r, result.g, result.b, alp);
-  },
-
-  /*
-  Source code: https://github.com/mjackson/mjijackson.github.com/blob/master/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript.txt
-  */
-  hueToColor: function hueToColor(p, q, t) {
-
-    if (t < 0) t += 1;
-
-    if (t > 1) t -= 1;
-
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-
-    if (t < 1 / 2) return q;
-
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-
-    return p;
-  },
-
-  /*
-  Source code: http://jsfiddle.net/mushigh/myoskaos/
-  */
-  rgbToHex: function rgbToHex(r, g, b) {
-
-    return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
-  },
-
-  /*
-  Source code: http://jsfiddle.net/mushigh/myoskaos/
-  */
-  componentToHex: function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-  }
-
-};
-
-Object.freeze(Color);
-
-exports.default = Color;
-
-
-module.exports = Color;
 
 /***/ }),
 
