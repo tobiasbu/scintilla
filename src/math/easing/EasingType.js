@@ -1,20 +1,34 @@
 
+/**
+ * Describes the easing method type
+ */
 const EasingType = {
-    NONE : -1, 
-    STEPPED : 0,
-    LINEAR : 1,
-    SINE : 2,
-    QUADRATIC : 3,
-    CUBIC : 4,
-    QUARTIC : 5,
-    QUINTIC : 6,
-    EXPONENTIAL : 7,
-    CIRC : 8,
-    BACK : 9,
-    ELASTIC : 10,
-    BOUNCE : 11,
-    CUT : 12,
-    POWER : 13
+    /**
+     * No easing : 0
+     */
+    NONE : 0,
+    /**
+     * Clamped interpolation between tMin and tMax : 1
+     */
+    STEPPED : 1,
+    /**
+     * Linear interpolation : 2
+     */
+    LINEAR : 2,
+    CUT : 3,
+    SINE : 4,
+    QUADRATIC : 5,
+    CUBIC : 6,
+    QUARTIC : 7,
+    QUINTIC : 8,
+    POWER : 9,
+    EXPONENTIAL : 10,
+    CIRC : 11,
+    BACK : 12,
+    ELASTIC : 13,
+    BOUNCE : 14,
+    
+    
 }
 
 export const EASE_BACK_CONST = 1.70158;

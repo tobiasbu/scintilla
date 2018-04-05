@@ -16,41 +16,46 @@ function ColorNormUpdate(color) {
 
 function ColorUpdate(color) {
     color._css = 'rgba(' + 
-    color.r + ',' + 
-    color.g + ',' +
-    color.b + ',' +
-    color.a + ')';
+    color._r + ',' + 
+    color._g + ',' +
+    color._b + ',' +
+    color._a + ')';
 }
 
 class Color {
 
     constructor(r, g, b, a) {
-        this.r = r || 0;
-        this.g = g || r || 0;
-        this.b = b || r || 0;
-        this.a = a || 1;
+        this._r = r || 0;
+
+        this._g = g || 0;
+        this._b = b || 0;
+        this._a = a || 1;
         this._css = null;
 
         ColorUpdate(this);
     }
 
+
     get rgba() {return this._css;}
-    set alpha(value) {
-        this.a = value;
+    get r() {return this._r;}
+    get g() {return this._g;}
+    get b() {return this._b;}
+    get a() {return this._a;}
+
+        
+    set a(value) {
+        this._a = value;
         ColorUpdate(this);
     }
 
     set(r, g, b, a) {
 
-        if (r === undefined)
-            return this;
-
-        this.r = r;
-        this.b = b || r;
-        this.g = g || r;
+        this._r = r || 0;    
+        this._g = g || 0;
+        this._b = b || 0;
 
         if (a !== undefined)
-            this.a = a;
+            this._a = a;
 
         ColorUpdate(this);
 
@@ -61,49 +66,52 @@ class Color {
         if (r === undefined)
             return;
 
-        this.r = Math.round(r / 255.0);
-        this.g = Math.round(g / 255.0);
-        this.b = Math.round(b / 255.0);
+        this._r = Math.round(r / 255.0);
+        this._g = Math.round(g / 255.0);
+        this._b = Math.round(b / 255.0);
 
         if (a !== undefined)
-            this.a = Math.round(a / 255.0);
+            this._a = Math.round(a / 255.0);
 
         ColorUpdate(this);
 
         return this;
     }
 
-    setColor(color) {
-        this.r = color.r;
-        this.g = color.g;
-        this.b = color.b;
-        this.a = color.a;
+    setColor(color, a) {
+        this._r = color.r;
+        this._g = color.g;
+        this._b = color.b;
+        if (a !== undefined)
+            this._a = a;
+        else
+            this._a = color.a;
         ColorUpdate(this);
         return this;
     }
 
     parse(value) {
         let parsedValue = ParseColor(value);
-        this.r = parsedValue.r;
-        this.g = parsedValue.g;
-        this.b = parsedValue.b;
-        this.a = parsedValue.a;
+        this._r = parsedValue.r;
+        this._g = parsedValue.g;
+        this._b = parsedValue.b;
+        this._a = parsedValue.a;
         ColorUpdate(this);
         return this;
     }
 
     lerp(toColor, t) {
 
-        this.r = MathUtils.lerp(this.r, toColor.r);
-        this.g = MathUtils.lerp(this.g, toColor.g);
-        this.b = MathUtils.lerp(this.b, toColor.b);
-        this.a = MathUtils.lerp(this.a, toColor.a);
+        this._r = MathUtils.lerp(this._r, toColor.r);
+        this._g = MathUtils.lerp(this._g, toColor.g);
+        this._b = MathUtils.lerp(this._b, toColor.b);
+        this._a = MathUtils.lerp(this._a, toColor.a);
         ColorUpdate(this);
         return this;
 
     }
 
-    ease(to, t, easingType, easingMode, easingArg) {
+    /*ease(to, t, easingType, easingMode, easingArg) {
          if (easingType === undefined) easingType = EasingType.LINEAR;
          if (easingMode === undefined) easingMode = 0;
          if (easingArg === undefined) easingArg = 1;
@@ -121,14 +129,14 @@ class Color {
              }
          }
 
-         this.r = easer.by(easingType, this.r, to.r, t, easingArg);
-         this.g = easer.by(easingType, this.g, to.g, t, easingArg);
-         this.b = easer.by(easingType, this.b, to.b, t, easingArg);
-         this.a = easer.by(easingType, this.a, to.a, t, easingArg);
+         this._r = easer.by(easingType, this._r, to.r, t, easingArg);
+         this._g = easer.by(easingType, this._g, to.g, t, easingArg);
+         this._b = easer.by(easingType, this._b, to.b, t, easingArg);
+         this._a = easer.by(easingType, this._a, to.a, t, easingArg);
 
          ColorUpdate(this);
          return this;
-    }
+    }*/
 
     to32() {
         /// TODO
@@ -147,28 +155,66 @@ class Color {
     }
 
     // static functions
-    /*static red = new Color(255, 0, 0);
-    static green = new Color(0, 255, 0);
-    static blue = new Color(0, 0, 255);
-    static cyan = new Color(0, 255, 255);
-    static magenta = new Color(255, 0, 255);
-    static yellow = new Color(255, 255, 0);
-    static black = new Color(0);
-    static white = new Color(255);
-    static gray = new Color(255/2.0);
-    static transparent = new Color(0, 0, 0, 0);*/
+
+    static ease(from, to, t, easingType, easingMode, easingArg) {
+
+        if (easingType === undefined) easingType = EasingType.LINEAR;
+        if (easingMode === undefined) easingMode = 0;
+        if (easingArg === undefined) easingArg = 3;
+
+
+       let easer = Ease.in;
+
+        switch (easingMode) {
+            case 1: {
+               easer = Ease.out;
+               break;
+            }
+            case 2: {
+               easer = Ease.inout;
+               break;
+            }
+        }
+
+        let color = new Color();
+
+        color.set(
+            easer.by(easingType, from.r, to.r, t, easingArg),
+            easer.by(easingType, from.g, to.g, t, easingArg),
+            easer.by(easingType, from.b, to.b, t, easingArg),
+            easer.by(easingType, from.a, to.a, t, easingArg));
+
+        return color;
+    }
+
+    static get red() {return new Color(255, 0, 0);}
+    static get green() {return new Color(0, 255, 0);}
+    static get blue() {return new Color(0, 0, 255);}
+    static get cyan() {return new Color(0, 255, 255);}
+    static get magenta() {return new Color(255, 0, 255);}
+    static get yellow() {return new Color(255, 255, 0);}
+    static get black() {return new Color(0);}
+    static get white() {return new Color(255);}
+    static get gray() {return new Color(255/2.0);}
+    static get transparent() {return new Color(0, 0, 0, 0);}
+
+    
+
 }
 
-Color.red = new Color(255, 0, 0);
-Color.green = new Color(0, 255, 0);
-Color.blue = new Color(0, 0, 255);
-Color.cyan = new Color(0, 255, 255);
-Color.magenta = new Color(255, 0, 255);
-Color.yellow = new Color(255, 255, 0);
-Color.black = new Color(0);
-Color.white = new Color(255);
-Color.gray = new Color(255/2.0);
-Color.transparent = new Color(0, 0, 0, 0);
+export default Color;
+
+/*MakeImmutable([
+    Color.red,
+    Color.green,
+    Color.blue,
+    Color.cyan,
+    Color.magenta,
+    Color.yellow,
+    Color.black,
+    Color.white,
+    Color.gray,
+    Color.transparent], false);*/
 
 /*
 MakeImmutable([
@@ -183,4 +229,3 @@ Color.white = new Color(255),
 Color.gray = new Color(255/2.0),
 Color.transparent = new Color(0, 0, 0, 0),], true);*/
 
-export default Color;

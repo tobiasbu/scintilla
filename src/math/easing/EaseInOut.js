@@ -1,8 +1,6 @@
 import MathUtils from "../MathUtils";
 import EaseIn from "./EaseIn";
-import {
-    EASE_BACK_CONST
-} from "./EasingType";
+import EasingType, { EASE_BACK_CONST } from "./EasingType";
 
 
 class EaseInOutFunctions {

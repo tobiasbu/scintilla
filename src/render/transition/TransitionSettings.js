@@ -27,7 +27,7 @@ export default class TransitionSettings {
     }
 
     setInColor(color) {
-        this.fromColor.parse(color);
+        this.inColor.parse(color);
         return this;
     }
 

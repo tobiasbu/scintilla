@@ -1,9 +1,10 @@
 
 const TransitionBehavior = {
-    NONE : -1,
-    IN : 0,
-    OUT : 1,
-    INOUT : 2,
+    NONE : 0,
+    IN : 1,
+    OUT : 2,
+    INOUT : 3,
+    IDLE : 4,
 }
 
 Object.freeze(TransitionBehavior)

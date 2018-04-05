@@ -99,7 +99,7 @@ export default class GameLoop {
 
             DrawUI(this.system.ui, this.game.scene);
 
-            EndDrawRender(this.system.render);
+            
 
         }
 
@@ -114,6 +114,8 @@ export default class GameLoop {
             this.system.debug.test();
         
         }
+
+        EndDrawRender(this.system.render);
 
        
 

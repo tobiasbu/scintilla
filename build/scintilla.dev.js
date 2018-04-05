@@ -81,6 +81,2212 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "../node_modules/babel-runtime/core-js/object/create.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/object/create.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/create */ "../node_modules/core-js/library/fn/object/create.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/object/define-property.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/object/define-property.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/define-property */ "../node_modules/core-js/library/fn/object/define-property.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/object/freeze.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/object/freeze.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/freeze */ "../node_modules/core-js/library/fn/object/freeze.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/object/get-own-property-names.js":
+/*!******************************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/object/get-own-property-names.js ***!
+  \******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/get-own-property-names */ "../node_modules/core-js/library/fn/object/get-own-property-names.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/object/get-prototype-of.js ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/get-prototype-of */ "../node_modules/core-js/library/fn/object/get-prototype-of.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/object/keys.js":
+/*!************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/object/keys.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/keys */ "../node_modules/core-js/library/fn/object/keys.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/object/seal.js":
+/*!************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/object/seal.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/seal */ "../node_modules/core-js/library/fn/object/seal.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/object/set-prototype-of.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/object/set-prototype-of.js ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/object/set-prototype-of */ "../node_modules/core-js/library/fn/object/set-prototype-of.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/symbol.js":
+/*!*******************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/symbol.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/symbol */ "../node_modules/core-js/library/fn/symbol/index.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/core-js/symbol/iterator.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/babel-runtime/core-js/symbol/iterator.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(/*! core-js/library/fn/symbol/iterator */ "../node_modules/core-js/library/fn/symbol/iterator.js"), __esModule: true };
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/helpers/classCallCheck.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/babel-runtime/helpers/classCallCheck.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+exports.default = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/helpers/createClass.js":
+/*!************************************************************!*\
+  !*** ../node_modules/babel-runtime/helpers/createClass.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _defineProperty = __webpack_require__(/*! ../core-js/object/define-property */ "../node_modules/babel-runtime/core-js/object/define-property.js");
+
+var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      (0, _defineProperty2.default)(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/helpers/inherits.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/babel-runtime/helpers/inherits.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _setPrototypeOf = __webpack_require__(/*! ../core-js/object/set-prototype-of */ "../node_modules/babel-runtime/core-js/object/set-prototype-of.js");
+
+var _setPrototypeOf2 = _interopRequireDefault(_setPrototypeOf);
+
+var _create = __webpack_require__(/*! ../core-js/object/create */ "../node_modules/babel-runtime/core-js/object/create.js");
+
+var _create2 = _interopRequireDefault(_create);
+
+var _typeof2 = __webpack_require__(/*! ../helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : (0, _typeof3.default)(superClass)));
+  }
+
+  subClass.prototype = (0, _create2.default)(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) _setPrototypeOf2.default ? (0, _setPrototypeOf2.default)(subClass, superClass) : subClass.__proto__ = superClass;
+};
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js":
+/*!**************************************************************************!*\
+  !*** ../node_modules/babel-runtime/helpers/possibleConstructorReturn.js ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _typeof2 = __webpack_require__(/*! ../helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && ((typeof call === "undefined" ? "undefined" : (0, _typeof3.default)(call)) === "object" || typeof call === "function") ? call : self;
+};
+
+/***/ }),
+
+/***/ "../node_modules/babel-runtime/helpers/typeof.js":
+/*!*******************************************************!*\
+  !*** ../node_modules/babel-runtime/helpers/typeof.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = true;
+
+var _iterator = __webpack_require__(/*! ../core-js/symbol/iterator */ "../node_modules/babel-runtime/core-js/symbol/iterator.js");
+
+var _iterator2 = _interopRequireDefault(_iterator);
+
+var _symbol = __webpack_require__(/*! ../core-js/symbol */ "../node_modules/babel-runtime/core-js/symbol.js");
+
+var _symbol2 = _interopRequireDefault(_symbol);
+
+var _typeof = typeof _symbol2.default === "function" && typeof _iterator2.default === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj; };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.default) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
+} : function (obj) {
+  return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
+};
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/object/create.js":
+/*!***********************************************************!*\
+  !*** ../node_modules/core-js/library/fn/object/create.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.object.create */ "../node_modules/core-js/library/modules/es6.object.create.js");
+var $Object = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Object;
+module.exports = function create(P, D) {
+  return $Object.create(P, D);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/object/define-property.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/core-js/library/fn/object/define-property.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.object.define-property */ "../node_modules/core-js/library/modules/es6.object.define-property.js");
+var $Object = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Object;
+module.exports = function defineProperty(it, key, desc) {
+  return $Object.defineProperty(it, key, desc);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/object/freeze.js":
+/*!***********************************************************!*\
+  !*** ../node_modules/core-js/library/fn/object/freeze.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.object.freeze */ "../node_modules/core-js/library/modules/es6.object.freeze.js");
+module.exports = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Object.freeze;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/object/get-own-property-names.js":
+/*!***************************************************************************!*\
+  !*** ../node_modules/core-js/library/fn/object/get-own-property-names.js ***!
+  \***************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.object.get-own-property-names */ "../node_modules/core-js/library/modules/es6.object.get-own-property-names.js");
+var $Object = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Object;
+module.exports = function getOwnPropertyNames(it) {
+  return $Object.getOwnPropertyNames(it);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/object/get-prototype-of.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/core-js/library/fn/object/get-prototype-of.js ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.object.get-prototype-of */ "../node_modules/core-js/library/modules/es6.object.get-prototype-of.js");
+module.exports = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Object.getPrototypeOf;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/object/keys.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/core-js/library/fn/object/keys.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.object.keys */ "../node_modules/core-js/library/modules/es6.object.keys.js");
+module.exports = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Object.keys;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/object/seal.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/core-js/library/fn/object/seal.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.object.seal */ "../node_modules/core-js/library/modules/es6.object.seal.js");
+module.exports = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Object.seal;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/object/set-prototype-of.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/core-js/library/fn/object/set-prototype-of.js ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.object.set-prototype-of */ "../node_modules/core-js/library/modules/es6.object.set-prototype-of.js");
+module.exports = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Object.setPrototypeOf;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/symbol/index.js":
+/*!**********************************************************!*\
+  !*** ../node_modules/core-js/library/fn/symbol/index.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.symbol */ "../node_modules/core-js/library/modules/es6.symbol.js");
+__webpack_require__(/*! ../../modules/es6.object.to-string */ "../node_modules/core-js/library/modules/es6.object.to-string.js");
+__webpack_require__(/*! ../../modules/es7.symbol.async-iterator */ "../node_modules/core-js/library/modules/es7.symbol.async-iterator.js");
+__webpack_require__(/*! ../../modules/es7.symbol.observable */ "../node_modules/core-js/library/modules/es7.symbol.observable.js");
+module.exports = __webpack_require__(/*! ../../modules/_core */ "../node_modules/core-js/library/modules/_core.js").Symbol;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/fn/symbol/iterator.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/fn/symbol/iterator.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ../../modules/es6.string.iterator */ "../node_modules/core-js/library/modules/es6.string.iterator.js");
+__webpack_require__(/*! ../../modules/web.dom.iterable */ "../node_modules/core-js/library/modules/web.dom.iterable.js");
+module.exports = __webpack_require__(/*! ../../modules/_wks-ext */ "../node_modules/core-js/library/modules/_wks-ext.js").f('iterator');
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_a-function.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_a-function.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function (it) {
+  if (typeof it != 'function') throw TypeError(it + ' is not a function!');
+  return it;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_add-to-unscopables.js":
+/*!**********************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_add-to-unscopables.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function () { /* empty */ };
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_an-object.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_an-object.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/library/modules/_is-object.js");
+module.exports = function (it) {
+  if (!isObject(it)) throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_array-includes.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_array-includes.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// false -> Array#indexOf
+// true  -> Array#includes
+var toIObject = __webpack_require__(/*! ./_to-iobject */ "../node_modules/core-js/library/modules/_to-iobject.js");
+var toLength = __webpack_require__(/*! ./_to-length */ "../node_modules/core-js/library/modules/_to-length.js");
+var toAbsoluteIndex = __webpack_require__(/*! ./_to-absolute-index */ "../node_modules/core-js/library/modules/_to-absolute-index.js");
+module.exports = function (IS_INCLUDES) {
+  return function ($this, el, fromIndex) {
+    var O = toIObject($this);
+    var length = toLength(O.length);
+    var index = toAbsoluteIndex(fromIndex, length);
+    var value;
+    // Array#includes uses SameValueZero equality algorithm
+    // eslint-disable-next-line no-self-compare
+    if (IS_INCLUDES && el != el) while (length > index) {
+      value = O[index++];
+      // eslint-disable-next-line no-self-compare
+      if (value != value) return true;
+    // Array#indexOf ignores holes, Array#includes - not
+    } else for (;length > index; index++) if (IS_INCLUDES || index in O) {
+      if (O[index] === el) return IS_INCLUDES || index || 0;
+    } return !IS_INCLUDES && -1;
+  };
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_cof.js":
+/*!*******************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_cof.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var toString = {}.toString;
+
+module.exports = function (it) {
+  return toString.call(it).slice(8, -1);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_core.js":
+/*!********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_core.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var core = module.exports = { version: '2.5.4' };
+if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_ctx.js":
+/*!*******************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_ctx.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// optional / simple context binding
+var aFunction = __webpack_require__(/*! ./_a-function */ "../node_modules/core-js/library/modules/_a-function.js");
+module.exports = function (fn, that, length) {
+  aFunction(fn);
+  if (that === undefined) return fn;
+  switch (length) {
+    case 1: return function (a) {
+      return fn.call(that, a);
+    };
+    case 2: return function (a, b) {
+      return fn.call(that, a, b);
+    };
+    case 3: return function (a, b, c) {
+      return fn.call(that, a, b, c);
+    };
+  }
+  return function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_defined.js":
+/*!***********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_defined.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// 7.2.1 RequireObjectCoercible(argument)
+module.exports = function (it) {
+  if (it == undefined) throw TypeError("Can't call method on  " + it);
+  return it;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_descriptors.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_descriptors.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// Thank's IE8 for his funny defineProperty
+module.exports = !__webpack_require__(/*! ./_fails */ "../node_modules/core-js/library/modules/_fails.js")(function () {
+  return Object.defineProperty({}, 'a', { get: function () { return 7; } }).a != 7;
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_dom-create.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_dom-create.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/library/modules/_is-object.js");
+var document = __webpack_require__(/*! ./_global */ "../node_modules/core-js/library/modules/_global.js").document;
+// typeof document.createElement is 'object' in old IE
+var is = isObject(document) && isObject(document.createElement);
+module.exports = function (it) {
+  return is ? document.createElement(it) : {};
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_enum-bug-keys.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_enum-bug-keys.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// IE 8- don't enum bug keys
+module.exports = (
+  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+).split(',');
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_enum-keys.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_enum-keys.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// all enumerable object keys, includes symbols
+var getKeys = __webpack_require__(/*! ./_object-keys */ "../node_modules/core-js/library/modules/_object-keys.js");
+var gOPS = __webpack_require__(/*! ./_object-gops */ "../node_modules/core-js/library/modules/_object-gops.js");
+var pIE = __webpack_require__(/*! ./_object-pie */ "../node_modules/core-js/library/modules/_object-pie.js");
+module.exports = function (it) {
+  var result = getKeys(it);
+  var getSymbols = gOPS.f;
+  if (getSymbols) {
+    var symbols = getSymbols(it);
+    var isEnum = pIE.f;
+    var i = 0;
+    var key;
+    while (symbols.length > i) if (isEnum.call(it, key = symbols[i++])) result.push(key);
+  } return result;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_export.js":
+/*!**********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_export.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/library/modules/_global.js");
+var core = __webpack_require__(/*! ./_core */ "../node_modules/core-js/library/modules/_core.js");
+var ctx = __webpack_require__(/*! ./_ctx */ "../node_modules/core-js/library/modules/_ctx.js");
+var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
+var PROTOTYPE = 'prototype';
+
+var $export = function (type, name, source) {
+  var IS_FORCED = type & $export.F;
+  var IS_GLOBAL = type & $export.G;
+  var IS_STATIC = type & $export.S;
+  var IS_PROTO = type & $export.P;
+  var IS_BIND = type & $export.B;
+  var IS_WRAP = type & $export.W;
+  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
+  var expProto = exports[PROTOTYPE];
+  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE];
+  var key, own, out;
+  if (IS_GLOBAL) source = name;
+  for (key in source) {
+    // contains in native
+    own = !IS_FORCED && target && target[key] !== undefined;
+    if (own && has(exports, key)) continue;
+    // export native or passed
+    out = own ? target[key] : source[key];
+    // prevent global pollution for namespaces
+    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+    // bind timers to global for call from export context
+    : IS_BIND && own ? ctx(out, global)
+    // wrap global constructors for prevent change them in library
+    : IS_WRAP && target[key] == out ? (function (C) {
+      var F = function (a, b, c) {
+        if (this instanceof C) {
+          switch (arguments.length) {
+            case 0: return new C();
+            case 1: return new C(a);
+            case 2: return new C(a, b);
+          } return new C(a, b, c);
+        } return C.apply(this, arguments);
+      };
+      F[PROTOTYPE] = C[PROTOTYPE];
+      return F;
+    // make static versions for prototype methods
+    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+    if (IS_PROTO) {
+      (exports.virtual || (exports.virtual = {}))[key] = out;
+      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+      if (type & $export.R && expProto && !expProto[key]) hide(expProto, key, out);
+    }
+  }
+};
+// type bitmap
+$export.F = 1;   // forced
+$export.G = 2;   // global
+$export.S = 4;   // static
+$export.P = 8;   // proto
+$export.B = 16;  // bind
+$export.W = 32;  // wrap
+$export.U = 64;  // safe
+$export.R = 128; // real proto method for `library`
+module.exports = $export;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_fails.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_fails.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function (exec) {
+  try {
+    return !!exec();
+  } catch (e) {
+    return true;
+  }
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_global.js":
+/*!**********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_global.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self
+  // eslint-disable-next-line no-new-func
+  : Function('return this')();
+if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_has.js":
+/*!*******************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_has.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var hasOwnProperty = {}.hasOwnProperty;
+module.exports = function (it, key) {
+  return hasOwnProperty.call(it, key);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_hide.js":
+/*!********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_hide.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP = __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/library/modules/_object-dp.js");
+var createDesc = __webpack_require__(/*! ./_property-desc */ "../node_modules/core-js/library/modules/_property-desc.js");
+module.exports = __webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/library/modules/_descriptors.js") ? function (object, key, value) {
+  return dP.f(object, key, createDesc(1, value));
+} : function (object, key, value) {
+  object[key] = value;
+  return object;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_html.js":
+/*!********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_html.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var document = __webpack_require__(/*! ./_global */ "../node_modules/core-js/library/modules/_global.js").document;
+module.exports = document && document.documentElement;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_ie8-dom-define.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_ie8-dom-define.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = !__webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/library/modules/_descriptors.js") && !__webpack_require__(/*! ./_fails */ "../node_modules/core-js/library/modules/_fails.js")(function () {
+  return Object.defineProperty(__webpack_require__(/*! ./_dom-create */ "../node_modules/core-js/library/modules/_dom-create.js")('div'), 'a', { get: function () { return 7; } }).a != 7;
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_iobject.js":
+/*!***********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_iobject.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// fallback for non-array-like ES3 and non-enumerable old V8 strings
+var cof = __webpack_require__(/*! ./_cof */ "../node_modules/core-js/library/modules/_cof.js");
+// eslint-disable-next-line no-prototype-builtins
+module.exports = Object('z').propertyIsEnumerable(0) ? Object : function (it) {
+  return cof(it) == 'String' ? it.split('') : Object(it);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_is-array.js":
+/*!************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_is-array.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.2.2 IsArray(argument)
+var cof = __webpack_require__(/*! ./_cof */ "../node_modules/core-js/library/modules/_cof.js");
+module.exports = Array.isArray || function isArray(arg) {
+  return cof(arg) == 'Array';
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_is-object.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_is-object.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function (it) {
+  return typeof it === 'object' ? it !== null : typeof it === 'function';
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_iter-create.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_iter-create.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var create = __webpack_require__(/*! ./_object-create */ "../node_modules/core-js/library/modules/_object-create.js");
+var descriptor = __webpack_require__(/*! ./_property-desc */ "../node_modules/core-js/library/modules/_property-desc.js");
+var setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ "../node_modules/core-js/library/modules/_set-to-string-tag.js");
+var IteratorPrototype = {};
+
+// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+__webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js")(IteratorPrototype, __webpack_require__(/*! ./_wks */ "../node_modules/core-js/library/modules/_wks.js")('iterator'), function () { return this; });
+
+module.exports = function (Constructor, NAME, next) {
+  Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
+  setToStringTag(Constructor, NAME + ' Iterator');
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_iter-define.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_iter-define.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var LIBRARY = __webpack_require__(/*! ./_library */ "../node_modules/core-js/library/modules/_library.js");
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
+var redefine = __webpack_require__(/*! ./_redefine */ "../node_modules/core-js/library/modules/_redefine.js");
+var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
+var Iterators = __webpack_require__(/*! ./_iterators */ "../node_modules/core-js/library/modules/_iterators.js");
+var $iterCreate = __webpack_require__(/*! ./_iter-create */ "../node_modules/core-js/library/modules/_iter-create.js");
+var setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ "../node_modules/core-js/library/modules/_set-to-string-tag.js");
+var getPrototypeOf = __webpack_require__(/*! ./_object-gpo */ "../node_modules/core-js/library/modules/_object-gpo.js");
+var ITERATOR = __webpack_require__(/*! ./_wks */ "../node_modules/core-js/library/modules/_wks.js")('iterator');
+var BUGGY = !([].keys && 'next' in [].keys()); // Safari has buggy iterators w/o `next`
+var FF_ITERATOR = '@@iterator';
+var KEYS = 'keys';
+var VALUES = 'values';
+
+var returnThis = function () { return this; };
+
+module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED) {
+  $iterCreate(Constructor, NAME, next);
+  var getMethod = function (kind) {
+    if (!BUGGY && kind in proto) return proto[kind];
+    switch (kind) {
+      case KEYS: return function keys() { return new Constructor(this, kind); };
+      case VALUES: return function values() { return new Constructor(this, kind); };
+    } return function entries() { return new Constructor(this, kind); };
+  };
+  var TAG = NAME + ' Iterator';
+  var DEF_VALUES = DEFAULT == VALUES;
+  var VALUES_BUG = false;
+  var proto = Base.prototype;
+  var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
+  var $default = $native || getMethod(DEFAULT);
+  var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
+  var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
+  var methods, key, IteratorPrototype;
+  // Fix native
+  if ($anyNative) {
+    IteratorPrototype = getPrototypeOf($anyNative.call(new Base()));
+    if (IteratorPrototype !== Object.prototype && IteratorPrototype.next) {
+      // Set @@toStringTag to native iterators
+      setToStringTag(IteratorPrototype, TAG, true);
+      // fix for some old engines
+      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') hide(IteratorPrototype, ITERATOR, returnThis);
+    }
+  }
+  // fix Array#{values, @@iterator}.name in V8 / FF
+  if (DEF_VALUES && $native && $native.name !== VALUES) {
+    VALUES_BUG = true;
+    $default = function values() { return $native.call(this); };
+  }
+  // Define iterator
+  if ((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])) {
+    hide(proto, ITERATOR, $default);
+  }
+  // Plug for library
+  Iterators[NAME] = $default;
+  Iterators[TAG] = returnThis;
+  if (DEFAULT) {
+    methods = {
+      values: DEF_VALUES ? $default : getMethod(VALUES),
+      keys: IS_SET ? $default : getMethod(KEYS),
+      entries: $entries
+    };
+    if (FORCED) for (key in methods) {
+      if (!(key in proto)) redefine(proto, key, methods[key]);
+    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+  }
+  return methods;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_iter-step.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_iter-step.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function (done, value) {
+  return { value: value, done: !!done };
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_iterators.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_iterators.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = {};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_library.js":
+/*!***********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_library.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = true;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_meta.js":
+/*!********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_meta.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var META = __webpack_require__(/*! ./_uid */ "../node_modules/core-js/library/modules/_uid.js")('meta');
+var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/library/modules/_is-object.js");
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
+var setDesc = __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/library/modules/_object-dp.js").f;
+var id = 0;
+var isExtensible = Object.isExtensible || function () {
+  return true;
+};
+var FREEZE = !__webpack_require__(/*! ./_fails */ "../node_modules/core-js/library/modules/_fails.js")(function () {
+  return isExtensible(Object.preventExtensions({}));
+});
+var setMeta = function (it) {
+  setDesc(it, META, { value: {
+    i: 'O' + ++id, // object ID
+    w: {}          // weak collections IDs
+  } });
+};
+var fastKey = function (it, create) {
+  // return primitive with prefix
+  if (!isObject(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+  if (!has(it, META)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return 'F';
+    // not necessary to add metadata
+    if (!create) return 'E';
+    // add missing metadata
+    setMeta(it);
+  // return object ID
+  } return it[META].i;
+};
+var getWeak = function (it, create) {
+  if (!has(it, META)) {
+    // can't set metadata to uncaught frozen object
+    if (!isExtensible(it)) return true;
+    // not necessary to add metadata
+    if (!create) return false;
+    // add missing metadata
+    setMeta(it);
+  // return hash weak collections IDs
+  } return it[META].w;
+};
+// add metadata on freeze-family methods calling
+var onFreeze = function (it) {
+  if (FREEZE && meta.NEED && isExtensible(it) && !has(it, META)) setMeta(it);
+  return it;
+};
+var meta = module.exports = {
+  KEY: META,
+  NEED: false,
+  fastKey: fastKey,
+  getWeak: getWeak,
+  onFreeze: onFreeze
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-create.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-create.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+var anObject = __webpack_require__(/*! ./_an-object */ "../node_modules/core-js/library/modules/_an-object.js");
+var dPs = __webpack_require__(/*! ./_object-dps */ "../node_modules/core-js/library/modules/_object-dps.js");
+var enumBugKeys = __webpack_require__(/*! ./_enum-bug-keys */ "../node_modules/core-js/library/modules/_enum-bug-keys.js");
+var IE_PROTO = __webpack_require__(/*! ./_shared-key */ "../node_modules/core-js/library/modules/_shared-key.js")('IE_PROTO');
+var Empty = function () { /* empty */ };
+var PROTOTYPE = 'prototype';
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var createDict = function () {
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = __webpack_require__(/*! ./_dom-create */ "../node_modules/core-js/library/modules/_dom-create.js")('iframe');
+  var i = enumBugKeys.length;
+  var lt = '<';
+  var gt = '>';
+  var iframeDocument;
+  iframe.style.display = 'none';
+  __webpack_require__(/*! ./_html */ "../node_modules/core-js/library/modules/_html.js").appendChild(iframe);
+  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+  // createDict = iframe.contentWindow.Object;
+  // html.removeChild(iframe);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+  iframeDocument.close();
+  createDict = iframeDocument.F;
+  while (i--) delete createDict[PROTOTYPE][enumBugKeys[i]];
+  return createDict();
+};
+
+module.exports = Object.create || function create(O, Properties) {
+  var result;
+  if (O !== null) {
+    Empty[PROTOTYPE] = anObject(O);
+    result = new Empty();
+    Empty[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = createDict();
+  return Properties === undefined ? result : dPs(result, Properties);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-dp.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-dp.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(/*! ./_an-object */ "../node_modules/core-js/library/modules/_an-object.js");
+var IE8_DOM_DEFINE = __webpack_require__(/*! ./_ie8-dom-define */ "../node_modules/core-js/library/modules/_ie8-dom-define.js");
+var toPrimitive = __webpack_require__(/*! ./_to-primitive */ "../node_modules/core-js/library/modules/_to-primitive.js");
+var dP = Object.defineProperty;
+
+exports.f = __webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/library/modules/_descriptors.js") ? Object.defineProperty : function defineProperty(O, P, Attributes) {
+  anObject(O);
+  P = toPrimitive(P, true);
+  anObject(Attributes);
+  if (IE8_DOM_DEFINE) try {
+    return dP(O, P, Attributes);
+  } catch (e) { /* empty */ }
+  if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported!');
+  if ('value' in Attributes) O[P] = Attributes.value;
+  return O;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-dps.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-dps.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var dP = __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/library/modules/_object-dp.js");
+var anObject = __webpack_require__(/*! ./_an-object */ "../node_modules/core-js/library/modules/_an-object.js");
+var getKeys = __webpack_require__(/*! ./_object-keys */ "../node_modules/core-js/library/modules/_object-keys.js");
+
+module.exports = __webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/library/modules/_descriptors.js") ? Object.defineProperties : function defineProperties(O, Properties) {
+  anObject(O);
+  var keys = getKeys(Properties);
+  var length = keys.length;
+  var i = 0;
+  var P;
+  while (length > i) dP.f(O, P = keys[i++], Properties[P]);
+  return O;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-gopd.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-gopd.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var pIE = __webpack_require__(/*! ./_object-pie */ "../node_modules/core-js/library/modules/_object-pie.js");
+var createDesc = __webpack_require__(/*! ./_property-desc */ "../node_modules/core-js/library/modules/_property-desc.js");
+var toIObject = __webpack_require__(/*! ./_to-iobject */ "../node_modules/core-js/library/modules/_to-iobject.js");
+var toPrimitive = __webpack_require__(/*! ./_to-primitive */ "../node_modules/core-js/library/modules/_to-primitive.js");
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
+var IE8_DOM_DEFINE = __webpack_require__(/*! ./_ie8-dom-define */ "../node_modules/core-js/library/modules/_ie8-dom-define.js");
+var gOPD = Object.getOwnPropertyDescriptor;
+
+exports.f = __webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/library/modules/_descriptors.js") ? gOPD : function getOwnPropertyDescriptor(O, P) {
+  O = toIObject(O);
+  P = toPrimitive(P, true);
+  if (IE8_DOM_DEFINE) try {
+    return gOPD(O, P);
+  } catch (e) { /* empty */ }
+  if (has(O, P)) return createDesc(!pIE.f.call(O, P), O[P]);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-gopn-ext.js":
+/*!*******************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-gopn-ext.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
+var toIObject = __webpack_require__(/*! ./_to-iobject */ "../node_modules/core-js/library/modules/_to-iobject.js");
+var gOPN = __webpack_require__(/*! ./_object-gopn */ "../node_modules/core-js/library/modules/_object-gopn.js").f;
+var toString = {}.toString;
+
+var windowNames = typeof window == 'object' && window && Object.getOwnPropertyNames
+  ? Object.getOwnPropertyNames(window) : [];
+
+var getWindowNames = function (it) {
+  try {
+    return gOPN(it);
+  } catch (e) {
+    return windowNames.slice();
+  }
+};
+
+module.exports.f = function getOwnPropertyNames(it) {
+  return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-gopn.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-gopn.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
+var $keys = __webpack_require__(/*! ./_object-keys-internal */ "../node_modules/core-js/library/modules/_object-keys-internal.js");
+var hiddenKeys = __webpack_require__(/*! ./_enum-bug-keys */ "../node_modules/core-js/library/modules/_enum-bug-keys.js").concat('length', 'prototype');
+
+exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+  return $keys(O, hiddenKeys);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-gops.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-gops.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+exports.f = Object.getOwnPropertySymbols;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-gpo.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-gpo.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
+var toObject = __webpack_require__(/*! ./_to-object */ "../node_modules/core-js/library/modules/_to-object.js");
+var IE_PROTO = __webpack_require__(/*! ./_shared-key */ "../node_modules/core-js/library/modules/_shared-key.js")('IE_PROTO');
+var ObjectProto = Object.prototype;
+
+module.exports = Object.getPrototypeOf || function (O) {
+  O = toObject(O);
+  if (has(O, IE_PROTO)) return O[IE_PROTO];
+  if (typeof O.constructor == 'function' && O instanceof O.constructor) {
+    return O.constructor.prototype;
+  } return O instanceof Object ? ObjectProto : null;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-keys-internal.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-keys-internal.js ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
+var toIObject = __webpack_require__(/*! ./_to-iobject */ "../node_modules/core-js/library/modules/_to-iobject.js");
+var arrayIndexOf = __webpack_require__(/*! ./_array-includes */ "../node_modules/core-js/library/modules/_array-includes.js")(false);
+var IE_PROTO = __webpack_require__(/*! ./_shared-key */ "../node_modules/core-js/library/modules/_shared-key.js")('IE_PROTO');
+
+module.exports = function (object, names) {
+  var O = toIObject(object);
+  var i = 0;
+  var result = [];
+  var key;
+  for (key in O) if (key != IE_PROTO) has(O, key) && result.push(key);
+  // Don't enum bug & hidden keys
+  while (names.length > i) if (has(O, key = names[i++])) {
+    ~arrayIndexOf(result, key) || result.push(key);
+  }
+  return result;
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-keys.js":
+/*!***************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-keys.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+var $keys = __webpack_require__(/*! ./_object-keys-internal */ "../node_modules/core-js/library/modules/_object-keys-internal.js");
+var enumBugKeys = __webpack_require__(/*! ./_enum-bug-keys */ "../node_modules/core-js/library/modules/_enum-bug-keys.js");
+
+module.exports = Object.keys || function keys(O) {
+  return $keys(O, enumBugKeys);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-pie.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-pie.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+exports.f = {}.propertyIsEnumerable;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_object-sap.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_object-sap.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// most Object methods by ES6 should accept primitives
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
+var core = __webpack_require__(/*! ./_core */ "../node_modules/core-js/library/modules/_core.js");
+var fails = __webpack_require__(/*! ./_fails */ "../node_modules/core-js/library/modules/_fails.js");
+module.exports = function (KEY, exec) {
+  var fn = (core.Object || {})[KEY] || Object[KEY];
+  var exp = {};
+  exp[KEY] = exec(fn);
+  $export($export.S + $export.F * fails(function () { fn(1); }), 'Object', exp);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_property-desc.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_property-desc.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function (bitmap, value) {
+  return {
+    enumerable: !(bitmap & 1),
+    configurable: !(bitmap & 2),
+    writable: !(bitmap & 4),
+    value: value
+  };
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_redefine.js":
+/*!************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_redefine.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_set-proto.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_set-proto.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// Works with __proto__ only. Old v8 can't work with null proto objects.
+/* eslint-disable no-proto */
+var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/library/modules/_is-object.js");
+var anObject = __webpack_require__(/*! ./_an-object */ "../node_modules/core-js/library/modules/_an-object.js");
+var check = function (O, proto) {
+  anObject(O);
+  if (!isObject(proto) && proto !== null) throw TypeError(proto + ": can't set as prototype!");
+};
+module.exports = {
+  set: Object.setPrototypeOf || ('__proto__' in {} ? // eslint-disable-line
+    function (test, buggy, set) {
+      try {
+        set = __webpack_require__(/*! ./_ctx */ "../node_modules/core-js/library/modules/_ctx.js")(Function.call, __webpack_require__(/*! ./_object-gopd */ "../node_modules/core-js/library/modules/_object-gopd.js").f(Object.prototype, '__proto__').set, 2);
+        set(test, []);
+        buggy = !(test instanceof Array);
+      } catch (e) { buggy = true; }
+      return function setPrototypeOf(O, proto) {
+        check(O, proto);
+        if (buggy) O.__proto__ = proto;
+        else set(O, proto);
+        return O;
+      };
+    }({}, false) : undefined),
+  check: check
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_set-to-string-tag.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_set-to-string-tag.js ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var def = __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/library/modules/_object-dp.js").f;
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
+var TAG = __webpack_require__(/*! ./_wks */ "../node_modules/core-js/library/modules/_wks.js")('toStringTag');
+
+module.exports = function (it, tag, stat) {
+  if (it && !has(it = stat ? it : it.prototype, TAG)) def(it, TAG, { configurable: true, value: tag });
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_shared-key.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_shared-key.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var shared = __webpack_require__(/*! ./_shared */ "../node_modules/core-js/library/modules/_shared.js")('keys');
+var uid = __webpack_require__(/*! ./_uid */ "../node_modules/core-js/library/modules/_uid.js");
+module.exports = function (key) {
+  return shared[key] || (shared[key] = uid(key));
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_shared.js":
+/*!**********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_shared.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/library/modules/_global.js");
+var SHARED = '__core-js_shared__';
+var store = global[SHARED] || (global[SHARED] = {});
+module.exports = function (key) {
+  return store[key] || (store[key] = {});
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_string-at.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_string-at.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(/*! ./_to-integer */ "../node_modules/core-js/library/modules/_to-integer.js");
+var defined = __webpack_require__(/*! ./_defined */ "../node_modules/core-js/library/modules/_defined.js");
+// true  -> String#at
+// false -> String#codePointAt
+module.exports = function (TO_STRING) {
+  return function (that, pos) {
+    var s = String(defined(that));
+    var i = toInteger(pos);
+    var l = s.length;
+    var a, b;
+    if (i < 0 || i >= l) return TO_STRING ? '' : undefined;
+    a = s.charCodeAt(i);
+    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+      ? TO_STRING ? s.charAt(i) : a
+      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+  };
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_to-absolute-index.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_to-absolute-index.js ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var toInteger = __webpack_require__(/*! ./_to-integer */ "../node_modules/core-js/library/modules/_to-integer.js");
+var max = Math.max;
+var min = Math.min;
+module.exports = function (index, length) {
+  index = toInteger(index);
+  return index < 0 ? max(index + length, 0) : min(index, length);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_to-integer.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_to-integer.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// 7.1.4 ToInteger
+var ceil = Math.ceil;
+var floor = Math.floor;
+module.exports = function (it) {
+  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_to-iobject.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_to-iobject.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// to indexed object, toObject with fallback for non-array-like ES3 strings
+var IObject = __webpack_require__(/*! ./_iobject */ "../node_modules/core-js/library/modules/_iobject.js");
+var defined = __webpack_require__(/*! ./_defined */ "../node_modules/core-js/library/modules/_defined.js");
+module.exports = function (it) {
+  return IObject(defined(it));
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_to-length.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_to-length.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.15 ToLength
+var toInteger = __webpack_require__(/*! ./_to-integer */ "../node_modules/core-js/library/modules/_to-integer.js");
+var min = Math.min;
+module.exports = function (it) {
+  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_to-object.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_to-object.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.13 ToObject(argument)
+var defined = __webpack_require__(/*! ./_defined */ "../node_modules/core-js/library/modules/_defined.js");
+module.exports = function (it) {
+  return Object(defined(it));
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_to-primitive.js":
+/*!****************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_to-primitive.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 7.1.1 ToPrimitive(input [, PreferredType])
+var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/library/modules/_is-object.js");
+// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+// and the second argument - flag - preferred type is a string
+module.exports = function (it, S) {
+  if (!isObject(it)) return it;
+  var fn, val;
+  if (S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it))) return val;
+  if (!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it))) return val;
+  throw TypeError("Can't convert object to primitive value");
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_uid.js":
+/*!*******************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_uid.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var id = 0;
+var px = Math.random();
+module.exports = function (key) {
+  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_wks-define.js":
+/*!**************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_wks-define.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/library/modules/_global.js");
+var core = __webpack_require__(/*! ./_core */ "../node_modules/core-js/library/modules/_core.js");
+var LIBRARY = __webpack_require__(/*! ./_library */ "../node_modules/core-js/library/modules/_library.js");
+var wksExt = __webpack_require__(/*! ./_wks-ext */ "../node_modules/core-js/library/modules/_wks-ext.js");
+var defineProperty = __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/library/modules/_object-dp.js").f;
+module.exports = function (name) {
+  var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
+  if (name.charAt(0) != '_' && !(name in $Symbol)) defineProperty($Symbol, name, { value: wksExt.f(name) });
+};
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_wks-ext.js":
+/*!***********************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_wks-ext.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports.f = __webpack_require__(/*! ./_wks */ "../node_modules/core-js/library/modules/_wks.js");
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/_wks.js":
+/*!*******************************************************!*\
+  !*** ../node_modules/core-js/library/modules/_wks.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var store = __webpack_require__(/*! ./_shared */ "../node_modules/core-js/library/modules/_shared.js")('wks');
+var uid = __webpack_require__(/*! ./_uid */ "../node_modules/core-js/library/modules/_uid.js");
+var Symbol = __webpack_require__(/*! ./_global */ "../node_modules/core-js/library/modules/_global.js").Symbol;
+var USE_SYMBOL = typeof Symbol == 'function';
+
+var $exports = module.exports = function (name) {
+  return store[name] || (store[name] =
+    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+};
+
+$exports.store = store;
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.array.iterator.js":
+/*!*********************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.array.iterator.js ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var addToUnscopables = __webpack_require__(/*! ./_add-to-unscopables */ "../node_modules/core-js/library/modules/_add-to-unscopables.js");
+var step = __webpack_require__(/*! ./_iter-step */ "../node_modules/core-js/library/modules/_iter-step.js");
+var Iterators = __webpack_require__(/*! ./_iterators */ "../node_modules/core-js/library/modules/_iterators.js");
+var toIObject = __webpack_require__(/*! ./_to-iobject */ "../node_modules/core-js/library/modules/_to-iobject.js");
+
+// 22.1.3.4 Array.prototype.entries()
+// 22.1.3.13 Array.prototype.keys()
+// 22.1.3.29 Array.prototype.values()
+// 22.1.3.30 Array.prototype[@@iterator]()
+module.exports = __webpack_require__(/*! ./_iter-define */ "../node_modules/core-js/library/modules/_iter-define.js")(Array, 'Array', function (iterated, kind) {
+  this._t = toIObject(iterated); // target
+  this._i = 0;                   // next index
+  this._k = kind;                // kind
+// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+}, function () {
+  var O = this._t;
+  var kind = this._k;
+  var index = this._i++;
+  if (!O || index >= O.length) {
+    this._t = undefined;
+    return step(1);
+  }
+  if (kind == 'keys') return step(0, index);
+  if (kind == 'values') return step(0, O[index]);
+  return step(0, [index, O[index]]);
+}, 'values');
+
+// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+Iterators.Arguments = Iterators.Array;
+
+addToUnscopables('keys');
+addToUnscopables('values');
+addToUnscopables('entries');
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.create.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.create.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
+// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+$export($export.S, 'Object', { create: __webpack_require__(/*! ./_object-create */ "../node_modules/core-js/library/modules/_object-create.js") });
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.define-property.js":
+/*!*****************************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.define-property.js ***!
+  \*****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
+// 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
+$export($export.S + $export.F * !__webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/library/modules/_descriptors.js"), 'Object', { defineProperty: __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/library/modules/_object-dp.js").f });
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.freeze.js":
+/*!********************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.freeze.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.5 Object.freeze(O)
+var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/library/modules/_is-object.js");
+var meta = __webpack_require__(/*! ./_meta */ "../node_modules/core-js/library/modules/_meta.js").onFreeze;
+
+__webpack_require__(/*! ./_object-sap */ "../node_modules/core-js/library/modules/_object-sap.js")('freeze', function ($freeze) {
+  return function freeze(it) {
+    return $freeze && isObject(it) ? $freeze(meta(it)) : it;
+  };
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.get-own-property-names.js":
+/*!************************************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.get-own-property-names.js ***!
+  \************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.7 Object.getOwnPropertyNames(O)
+__webpack_require__(/*! ./_object-sap */ "../node_modules/core-js/library/modules/_object-sap.js")('getOwnPropertyNames', function () {
+  return __webpack_require__(/*! ./_object-gopn-ext */ "../node_modules/core-js/library/modules/_object-gopn-ext.js").f;
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.get-prototype-of.js":
+/*!******************************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.get-prototype-of.js ***!
+  \******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.9 Object.getPrototypeOf(O)
+var toObject = __webpack_require__(/*! ./_to-object */ "../node_modules/core-js/library/modules/_to-object.js");
+var $getPrototypeOf = __webpack_require__(/*! ./_object-gpo */ "../node_modules/core-js/library/modules/_object-gpo.js");
+
+__webpack_require__(/*! ./_object-sap */ "../node_modules/core-js/library/modules/_object-sap.js")('getPrototypeOf', function () {
+  return function getPrototypeOf(it) {
+    return $getPrototypeOf(toObject(it));
+  };
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.keys.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.keys.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.14 Object.keys(O)
+var toObject = __webpack_require__(/*! ./_to-object */ "../node_modules/core-js/library/modules/_to-object.js");
+var $keys = __webpack_require__(/*! ./_object-keys */ "../node_modules/core-js/library/modules/_object-keys.js");
+
+__webpack_require__(/*! ./_object-sap */ "../node_modules/core-js/library/modules/_object-sap.js")('keys', function () {
+  return function keys(it) {
+    return $keys(toObject(it));
+  };
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.seal.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.seal.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.2.17 Object.seal(O)
+var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/library/modules/_is-object.js");
+var meta = __webpack_require__(/*! ./_meta */ "../node_modules/core-js/library/modules/_meta.js").onFreeze;
+
+__webpack_require__(/*! ./_object-sap */ "../node_modules/core-js/library/modules/_object-sap.js")('seal', function ($seal) {
+  return function seal(it) {
+    return $seal && isObject(it) ? $seal(meta(it)) : it;
+  };
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.set-prototype-of.js":
+/*!******************************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.set-prototype-of.js ***!
+  \******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// 19.1.3.19 Object.setPrototypeOf(O, proto)
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
+$export($export.S, 'Object', { setPrototypeOf: __webpack_require__(/*! ./_set-proto */ "../node_modules/core-js/library/modules/_set-proto.js").set });
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.object.to-string.js":
+/*!***********************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.object.to-string.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.string.iterator.js":
+/*!**********************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.string.iterator.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $at = __webpack_require__(/*! ./_string-at */ "../node_modules/core-js/library/modules/_string-at.js")(true);
+
+// 21.1.3.27 String.prototype[@@iterator]()
+__webpack_require__(/*! ./_iter-define */ "../node_modules/core-js/library/modules/_iter-define.js")(String, 'String', function (iterated) {
+  this._t = String(iterated); // target
+  this._i = 0;                // next index
+// 21.1.5.2.1 %StringIteratorPrototype%.next()
+}, function () {
+  var O = this._t;
+  var index = this._i;
+  var point;
+  if (index >= O.length) return { value: undefined, done: true };
+  point = $at(O, index);
+  this._i += point.length;
+  return { value: point, done: false };
+});
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es6.symbol.js":
+/*!*************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es6.symbol.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+// ECMAScript 6 symbols shim
+var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/library/modules/_global.js");
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
+var DESCRIPTORS = __webpack_require__(/*! ./_descriptors */ "../node_modules/core-js/library/modules/_descriptors.js");
+var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
+var redefine = __webpack_require__(/*! ./_redefine */ "../node_modules/core-js/library/modules/_redefine.js");
+var META = __webpack_require__(/*! ./_meta */ "../node_modules/core-js/library/modules/_meta.js").KEY;
+var $fails = __webpack_require__(/*! ./_fails */ "../node_modules/core-js/library/modules/_fails.js");
+var shared = __webpack_require__(/*! ./_shared */ "../node_modules/core-js/library/modules/_shared.js");
+var setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ "../node_modules/core-js/library/modules/_set-to-string-tag.js");
+var uid = __webpack_require__(/*! ./_uid */ "../node_modules/core-js/library/modules/_uid.js");
+var wks = __webpack_require__(/*! ./_wks */ "../node_modules/core-js/library/modules/_wks.js");
+var wksExt = __webpack_require__(/*! ./_wks-ext */ "../node_modules/core-js/library/modules/_wks-ext.js");
+var wksDefine = __webpack_require__(/*! ./_wks-define */ "../node_modules/core-js/library/modules/_wks-define.js");
+var enumKeys = __webpack_require__(/*! ./_enum-keys */ "../node_modules/core-js/library/modules/_enum-keys.js");
+var isArray = __webpack_require__(/*! ./_is-array */ "../node_modules/core-js/library/modules/_is-array.js");
+var anObject = __webpack_require__(/*! ./_an-object */ "../node_modules/core-js/library/modules/_an-object.js");
+var isObject = __webpack_require__(/*! ./_is-object */ "../node_modules/core-js/library/modules/_is-object.js");
+var toIObject = __webpack_require__(/*! ./_to-iobject */ "../node_modules/core-js/library/modules/_to-iobject.js");
+var toPrimitive = __webpack_require__(/*! ./_to-primitive */ "../node_modules/core-js/library/modules/_to-primitive.js");
+var createDesc = __webpack_require__(/*! ./_property-desc */ "../node_modules/core-js/library/modules/_property-desc.js");
+var _create = __webpack_require__(/*! ./_object-create */ "../node_modules/core-js/library/modules/_object-create.js");
+var gOPNExt = __webpack_require__(/*! ./_object-gopn-ext */ "../node_modules/core-js/library/modules/_object-gopn-ext.js");
+var $GOPD = __webpack_require__(/*! ./_object-gopd */ "../node_modules/core-js/library/modules/_object-gopd.js");
+var $DP = __webpack_require__(/*! ./_object-dp */ "../node_modules/core-js/library/modules/_object-dp.js");
+var $keys = __webpack_require__(/*! ./_object-keys */ "../node_modules/core-js/library/modules/_object-keys.js");
+var gOPD = $GOPD.f;
+var dP = $DP.f;
+var gOPN = gOPNExt.f;
+var $Symbol = global.Symbol;
+var $JSON = global.JSON;
+var _stringify = $JSON && $JSON.stringify;
+var PROTOTYPE = 'prototype';
+var HIDDEN = wks('_hidden');
+var TO_PRIMITIVE = wks('toPrimitive');
+var isEnum = {}.propertyIsEnumerable;
+var SymbolRegistry = shared('symbol-registry');
+var AllSymbols = shared('symbols');
+var OPSymbols = shared('op-symbols');
+var ObjectProto = Object[PROTOTYPE];
+var USE_NATIVE = typeof $Symbol == 'function';
+var QObject = global.QObject;
+// Don't use setters in Qt Script, https://github.com/zloirock/core-js/issues/173
+var setter = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
+
+// fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
+var setSymbolDesc = DESCRIPTORS && $fails(function () {
+  return _create(dP({}, 'a', {
+    get: function () { return dP(this, 'a', { value: 7 }).a; }
+  })).a != 7;
+}) ? function (it, key, D) {
+  var protoDesc = gOPD(ObjectProto, key);
+  if (protoDesc) delete ObjectProto[key];
+  dP(it, key, D);
+  if (protoDesc && it !== ObjectProto) dP(ObjectProto, key, protoDesc);
+} : dP;
+
+var wrap = function (tag) {
+  var sym = AllSymbols[tag] = _create($Symbol[PROTOTYPE]);
+  sym._k = tag;
+  return sym;
+};
+
+var isSymbol = USE_NATIVE && typeof $Symbol.iterator == 'symbol' ? function (it) {
+  return typeof it == 'symbol';
+} : function (it) {
+  return it instanceof $Symbol;
+};
+
+var $defineProperty = function defineProperty(it, key, D) {
+  if (it === ObjectProto) $defineProperty(OPSymbols, key, D);
+  anObject(it);
+  key = toPrimitive(key, true);
+  anObject(D);
+  if (has(AllSymbols, key)) {
+    if (!D.enumerable) {
+      if (!has(it, HIDDEN)) dP(it, HIDDEN, createDesc(1, {}));
+      it[HIDDEN][key] = true;
+    } else {
+      if (has(it, HIDDEN) && it[HIDDEN][key]) it[HIDDEN][key] = false;
+      D = _create(D, { enumerable: createDesc(0, false) });
+    } return setSymbolDesc(it, key, D);
+  } return dP(it, key, D);
+};
+var $defineProperties = function defineProperties(it, P) {
+  anObject(it);
+  var keys = enumKeys(P = toIObject(P));
+  var i = 0;
+  var l = keys.length;
+  var key;
+  while (l > i) $defineProperty(it, key = keys[i++], P[key]);
+  return it;
+};
+var $create = function create(it, P) {
+  return P === undefined ? _create(it) : $defineProperties(_create(it), P);
+};
+var $propertyIsEnumerable = function propertyIsEnumerable(key) {
+  var E = isEnum.call(this, key = toPrimitive(key, true));
+  if (this === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key)) return false;
+  return E || !has(this, key) || !has(AllSymbols, key) || has(this, HIDDEN) && this[HIDDEN][key] ? E : true;
+};
+var $getOwnPropertyDescriptor = function getOwnPropertyDescriptor(it, key) {
+  it = toIObject(it);
+  key = toPrimitive(key, true);
+  if (it === ObjectProto && has(AllSymbols, key) && !has(OPSymbols, key)) return;
+  var D = gOPD(it, key);
+  if (D && has(AllSymbols, key) && !(has(it, HIDDEN) && it[HIDDEN][key])) D.enumerable = true;
+  return D;
+};
+var $getOwnPropertyNames = function getOwnPropertyNames(it) {
+  var names = gOPN(toIObject(it));
+  var result = [];
+  var i = 0;
+  var key;
+  while (names.length > i) {
+    if (!has(AllSymbols, key = names[i++]) && key != HIDDEN && key != META) result.push(key);
+  } return result;
+};
+var $getOwnPropertySymbols = function getOwnPropertySymbols(it) {
+  var IS_OP = it === ObjectProto;
+  var names = gOPN(IS_OP ? OPSymbols : toIObject(it));
+  var result = [];
+  var i = 0;
+  var key;
+  while (names.length > i) {
+    if (has(AllSymbols, key = names[i++]) && (IS_OP ? has(ObjectProto, key) : true)) result.push(AllSymbols[key]);
+  } return result;
+};
+
+// 19.4.1.1 Symbol([description])
+if (!USE_NATIVE) {
+  $Symbol = function Symbol() {
+    if (this instanceof $Symbol) throw TypeError('Symbol is not a constructor!');
+    var tag = uid(arguments.length > 0 ? arguments[0] : undefined);
+    var $set = function (value) {
+      if (this === ObjectProto) $set.call(OPSymbols, value);
+      if (has(this, HIDDEN) && has(this[HIDDEN], tag)) this[HIDDEN][tag] = false;
+      setSymbolDesc(this, tag, createDesc(1, value));
+    };
+    if (DESCRIPTORS && setter) setSymbolDesc(ObjectProto, tag, { configurable: true, set: $set });
+    return wrap(tag);
+  };
+  redefine($Symbol[PROTOTYPE], 'toString', function toString() {
+    return this._k;
+  });
+
+  $GOPD.f = $getOwnPropertyDescriptor;
+  $DP.f = $defineProperty;
+  __webpack_require__(/*! ./_object-gopn */ "../node_modules/core-js/library/modules/_object-gopn.js").f = gOPNExt.f = $getOwnPropertyNames;
+  __webpack_require__(/*! ./_object-pie */ "../node_modules/core-js/library/modules/_object-pie.js").f = $propertyIsEnumerable;
+  __webpack_require__(/*! ./_object-gops */ "../node_modules/core-js/library/modules/_object-gops.js").f = $getOwnPropertySymbols;
+
+  if (DESCRIPTORS && !__webpack_require__(/*! ./_library */ "../node_modules/core-js/library/modules/_library.js")) {
+    redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
+  }
+
+  wksExt.f = function (name) {
+    return wrap(wks(name));
+  };
+}
+
+$export($export.G + $export.W + $export.F * !USE_NATIVE, { Symbol: $Symbol });
+
+for (var es6Symbols = (
+  // 19.4.2.2, 19.4.2.3, 19.4.2.4, 19.4.2.6, 19.4.2.8, 19.4.2.9, 19.4.2.10, 19.4.2.11, 19.4.2.12, 19.4.2.13, 19.4.2.14
+  'hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables'
+).split(','), j = 0; es6Symbols.length > j;)wks(es6Symbols[j++]);
+
+for (var wellKnownSymbols = $keys(wks.store), k = 0; wellKnownSymbols.length > k;) wksDefine(wellKnownSymbols[k++]);
+
+$export($export.S + $export.F * !USE_NATIVE, 'Symbol', {
+  // 19.4.2.1 Symbol.for(key)
+  'for': function (key) {
+    return has(SymbolRegistry, key += '')
+      ? SymbolRegistry[key]
+      : SymbolRegistry[key] = $Symbol(key);
+  },
+  // 19.4.2.5 Symbol.keyFor(sym)
+  keyFor: function keyFor(sym) {
+    if (!isSymbol(sym)) throw TypeError(sym + ' is not a symbol!');
+    for (var key in SymbolRegistry) if (SymbolRegistry[key] === sym) return key;
+  },
+  useSetter: function () { setter = true; },
+  useSimple: function () { setter = false; }
+});
+
+$export($export.S + $export.F * !USE_NATIVE, 'Object', {
+  // 19.1.2.2 Object.create(O [, Properties])
+  create: $create,
+  // 19.1.2.4 Object.defineProperty(O, P, Attributes)
+  defineProperty: $defineProperty,
+  // 19.1.2.3 Object.defineProperties(O, Properties)
+  defineProperties: $defineProperties,
+  // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
+  getOwnPropertyDescriptor: $getOwnPropertyDescriptor,
+  // 19.1.2.7 Object.getOwnPropertyNames(O)
+  getOwnPropertyNames: $getOwnPropertyNames,
+  // 19.1.2.8 Object.getOwnPropertySymbols(O)
+  getOwnPropertySymbols: $getOwnPropertySymbols
+});
+
+// 24.3.2 JSON.stringify(value [, replacer [, space]])
+$JSON && $export($export.S + $export.F * (!USE_NATIVE || $fails(function () {
+  var S = $Symbol();
+  // MS Edge converts symbol values to JSON as {}
+  // WebKit converts symbol values to JSON as null
+  // V8 throws on boxed symbols
+  return _stringify([S]) != '[null]' || _stringify({ a: S }) != '{}' || _stringify(Object(S)) != '{}';
+})), 'JSON', {
+  stringify: function stringify(it) {
+    var args = [it];
+    var i = 1;
+    var replacer, $replacer;
+    while (arguments.length > i) args.push(arguments[i++]);
+    $replacer = replacer = args[1];
+    if (!isObject(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+    if (!isArray(replacer)) replacer = function (key, value) {
+      if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
+      if (!isSymbol(value)) return value;
+    };
+    args[1] = replacer;
+    return _stringify.apply($JSON, args);
+  }
+});
+
+// 19.4.3.4 Symbol.prototype[@@toPrimitive](hint)
+$Symbol[PROTOTYPE][TO_PRIMITIVE] || __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js")($Symbol[PROTOTYPE], TO_PRIMITIVE, $Symbol[PROTOTYPE].valueOf);
+// 19.4.3.5 Symbol.prototype[@@toStringTag]
+setToStringTag($Symbol, 'Symbol');
+// 20.2.1.9 Math[@@toStringTag]
+setToStringTag(Math, 'Math', true);
+// 24.3.3 JSON[@@toStringTag]
+setToStringTag(global.JSON, 'JSON', true);
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es7.symbol.async-iterator.js":
+/*!****************************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es7.symbol.async-iterator.js ***!
+  \****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ./_wks-define */ "../node_modules/core-js/library/modules/_wks-define.js")('asyncIterator');
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/es7.symbol.observable.js":
+/*!************************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/es7.symbol.observable.js ***!
+  \************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ./_wks-define */ "../node_modules/core-js/library/modules/_wks-define.js")('observable');
+
+
+/***/ }),
+
+/***/ "../node_modules/core-js/library/modules/web.dom.iterable.js":
+/*!*******************************************************************!*\
+  !*** ../node_modules/core-js/library/modules/web.dom.iterable.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(/*! ./es6.array.iterator */ "../node_modules/core-js/library/modules/es6.array.iterator.js");
+var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/library/modules/_global.js");
+var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
+var Iterators = __webpack_require__(/*! ./_iterators */ "../node_modules/core-js/library/modules/_iterators.js");
+var TO_STRING_TAG = __webpack_require__(/*! ./_wks */ "../node_modules/core-js/library/modules/_wks.js")('toStringTag');
+
+var DOMIterables = ('CSSRuleList,CSSStyleDeclaration,CSSValueList,ClientRectList,DOMRectList,DOMStringList,' +
+  'DOMTokenList,DataTransferItemList,FileList,HTMLAllCollection,HTMLCollection,HTMLFormElement,HTMLSelectElement,' +
+  'MediaList,MimeTypeArray,NamedNodeMap,NodeList,PaintRequestList,Plugin,PluginArray,SVGLengthList,SVGNumberList,' +
+  'SVGPathSegList,SVGPointList,SVGStringList,SVGTransformList,SourceBufferList,StyleSheetList,TextTrackCueList,' +
+  'TextTrackList,TouchList').split(',');
+
+for (var i = 0; i < DOMIterables.length; i++) {
+  var NAME = DOMIterables[i];
+  var Collection = global[NAME];
+  var proto = Collection && Collection.prototype;
+  if (proto && !proto[TO_STRING_TAG]) hide(proto, TO_STRING_TAG, NAME);
+  Iterators[NAME] = Iterators.Array;
+}
+
+
+/***/ }),
+
 /***/ "../node_modules/webpack/buildin/global.js":
 /*!*************************************************!*\
   !*** ../node_modules/webpack/buildin/global.js ***!
@@ -245,7 +2451,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
@@ -253,17 +2465,15 @@ var _Map2 = _interopRequireDefault(_Map);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Cache = function () {
     function Cache(wrapperFunction) {
-        _classCallCheck(this, Cache);
+        (0, _classCallCheck3.default)(this, Cache);
 
         this.resources = new _Map2.default();
         this.adderWrapper = wrapperFunction || undefined;
     }
 
-    _createClass(Cache, [{
+    (0, _createClass3.default)(Cache, [{
         key: "add",
         value: function add(tag, asset) {
 
@@ -301,7 +2511,6 @@ var Cache = function () {
             this.resources = null;
         }
     }]);
-
     return Cache;
 }();
 
@@ -323,9 +2532,17 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
 
@@ -345,8 +2562,6 @@ var _Cache2 = _interopRequireDefault(_Cache);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var CacheTypes = ['image', 'json', 'audio', 'text', 'tilemap'];
 
 /**
@@ -357,7 +2572,7 @@ var CacheTypes = ['image', 'json', 'audio', 'text', 'tilemap'];
 
 var CacheManager = function () {
   function CacheManager(game) {
-    _classCallCheck(this, CacheManager);
+    (0, _classCallCheck3.default)(this, CacheManager);
 
     this.game = game;
 
@@ -411,10 +2626,10 @@ var CacheManager = function () {
     sound.isDecoding = false;
     }*/
 
-  _createClass(CacheManager, [{
+  (0, _createClass3.default)(CacheManager, [{
     key: "hasCache",
     value: function hasCache(cacheType) {
-      return _typeof(CacheTypes[cacheType]) !== undefined;
+      return (0, _typeof3.default)(CacheTypes[cacheType]) !== undefined;
     }
   }, {
     key: "getAsset",
@@ -448,7 +2663,6 @@ var CacheManager = function () {
     // SOUND STUFF
 
   }]);
-
   return CacheManager;
 }();
 
@@ -473,7 +2687,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
 
@@ -505,11 +2725,10 @@ var _ResizeCamera2 = _interopRequireDefault(_ResizeCamera);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Camera = function () {
   function Camera(game) {
-    _classCallCheck(this, Camera);
+    (0, _classCallCheck3.default)(this, Camera);
+
 
     this.game = game;
     this.canvas = null;
@@ -531,7 +2750,7 @@ var Camera = function () {
     this._roundPixels = game.config.roundPixels;
   }
 
-  _createClass(Camera, [{
+  (0, _createClass3.default)(Camera, [{
     key: 'centerView',
     value: function centerView() {
       this.x = this.width * 0.5;
@@ -682,7 +2901,6 @@ var Camera = function () {
       return { x: this.width, y: this.height };
     }
   }]);
-
   return Camera;
 }();
 
@@ -811,16 +3029,18 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
 var _ObjectGet = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Config = function Config(config) {
-        _classCallCheck(this, Config);
+        (0, _classCallCheck3.default)(this, Config);
 
         if (config === undefined) config = {};
 
@@ -884,7 +3104,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Config = __webpack_require__(/*! ./Config */ "./core/Config.js");
 
@@ -895,8 +3121,6 @@ var _GameInitialize = __webpack_require__(/*! ./GameInitialize */ "./core/GameIn
 var _GameInitialize2 = _interopRequireDefault(_GameInitialize);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
 * Main class of engine. Holds all main data.
@@ -910,7 +3134,8 @@ var Game = function () {
     * @default
     */
     function Game() {
-        _classCallCheck(this, Game);
+        (0, _classCallCheck3.default)(this, Game);
+
 
         this.parent = 'body';
         this.width = 800;
@@ -943,7 +3168,7 @@ var Game = function () {
         (0, _GameInitialize2.default)(this);
     }
 
-    _createClass(Game, [{
+    (0, _createClass3.default)(Game, [{
         key: 'parseConfiguration',
         value: function parseConfiguration(config) {
 
@@ -991,7 +3216,6 @@ var Game = function () {
             this.updateGameMethod = null;
         }
     }]);
-
     return Game;
 }();
 
@@ -1016,6 +3240,11 @@ module.exports = Game;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _seal = __webpack_require__(/*! babel-runtime/core-js/object/seal */ "../node_modules/babel-runtime/core-js/object/seal.js");
+
+var _seal2 = _interopRequireDefault(_seal);
+
 exports.default = GameInitialize;
 
 var _physics = __webpack_require__(/*! ../physics/physics */ "./physics/physics.js");
@@ -1059,7 +3288,7 @@ function GameInitialize(game) {
     game.systemInited = true;
     game.isRunning = true;
 
-    Object.seal(game);
+    (0, _seal2.default)(game);
 
     console.log("scintilla started!");
 }
@@ -1080,7 +3309,13 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ./system/System */ "./core/system/System.js");
 
@@ -1132,8 +3367,6 @@ var _UpdateTransition2 = _interopRequireDefault(_UpdateTransition);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 /*
 *
 * core game loop system
@@ -1143,7 +3376,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 */
 var GameLoop = function () {
         function GameLoop(game, system) {
-                _classCallCheck(this, GameLoop);
+                (0, _classCallCheck3.default)(this, GameLoop);
 
                 this.game = game;
                 this.system = system;
@@ -1154,7 +3387,7 @@ var GameLoop = function () {
                 this.canvas = null;
         }
 
-        _createClass(GameLoop, [{
+        (0, _createClass3.default)(GameLoop, [{
                 key: "loop",
                 value: function loop(deltaTime) {
 
@@ -1213,8 +3446,6 @@ var GameLoop = function () {
                                 // User Interface
 
                                 (0, _DrawUI2.default)(this.system.ui, this.game.scene);
-
-                                (0, _EndDrawRender2.default)(this.system.render);
                         }
 
                         // Transition and Debug
@@ -1227,9 +3458,10 @@ var GameLoop = function () {
 
                                 this.system.debug.test();
                         }
+
+                        (0, _EndDrawRender2.default)(this.system.render);
                 }
         }]);
-
         return GameLoop;
 }();
 
@@ -1472,13 +3704,20 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var RequestAnimationFrame = function () {
         function RequestAnimationFrame(timeoutMode) {
-                _classCallCheck(this, RequestAnimationFrame);
+                (0, _classCallCheck3.default)(this, RequestAnimationFrame);
+
 
                 if (timeoutMode === undefined) {
                         timeoutMode = false;
@@ -1534,7 +3773,7 @@ var RequestAnimationFrame = function () {
                 };
         }
 
-        _createClass(RequestAnimationFrame, [{
+        (0, _createClass3.default)(RequestAnimationFrame, [{
                 key: "start",
                 value: function start(loopCallback) {
 
@@ -1571,7 +3810,6 @@ var RequestAnimationFrame = function () {
                         this.loopingCallback = null;
                 }
         }]);
-
         return RequestAnimationFrame;
 }();
 
@@ -1593,9 +3831,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /*
 *
@@ -1604,14 +3848,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 */
 var Entity = function () {
     function Entity(name, game) {
-        _classCallCheck(this, Entity);
+        (0, _classCallCheck3.default)(this, Entity);
 
         this._name = name || 'New Entity';
         this._active = true;
         this.game = game || undefined;
     }
 
-    _createClass(Entity, [{
+    (0, _createClass3.default)(Entity, [{
         key: 'destroy',
         value: function destroy() {}
     }, {
@@ -1639,7 +3883,6 @@ var Entity = function () {
             return this._name;
         }
     }]);
-
     return Entity;
 }();
 
@@ -1662,7 +3905,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
 
@@ -1674,18 +3923,16 @@ var _SceneEntity2 = _interopRequireDefault(_SceneEntity);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var EntityFactory = function () {
     function EntityFactory(game) {
-        _classCallCheck(this, EntityFactory);
+        (0, _classCallCheck3.default)(this, EntityFactory);
 
         this.game = game;
         this.scene = null;
         this.entityList = null;
     }
 
-    _createClass(EntityFactory, [{
+    (0, _createClass3.default)(EntityFactory, [{
         key: "entity",
         value: function entity(entityName) {
             entityName = entityName || 'Scene Entity ' + this.entityList.length;
@@ -1717,7 +3964,6 @@ var EntityFactory = function () {
             return entity;
         }
     }]);
-
     return EntityFactory;
 }();
 
@@ -1745,7 +3991,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
 
@@ -1769,11 +4021,9 @@ var _ModulesUpdater2 = _interopRequireDefault(_ModulesUpdater);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var EntityUpdateList = function () {
     function EntityUpdateList(game) {
-        _classCallCheck(this, EntityUpdateList);
+        (0, _classCallCheck3.default)(this, EntityUpdateList);
 
         this.game = game;
         this._instances = null;
@@ -1782,7 +4032,7 @@ var EntityUpdateList = function () {
         this._camera = null;
     }
 
-    _createClass(EntityUpdateList, [{
+    (0, _createClass3.default)(EntityUpdateList, [{
         key: "add",
         value: function add(instance) {
             if (this._instances.indexOf(instance) === -1 && this._pendingInstances.indexOf(instance) === -1) {
@@ -1841,7 +4091,6 @@ var EntityUpdateList = function () {
             return this._instances.size;
         }
     }]);
-
     return EntityUpdateList;
 }();
 
@@ -1871,7 +4120,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _BoundingBox = __webpack_require__(/*! ../math/BoundingBox */ "./math/BoundingBox.js");
 
@@ -1891,23 +4158,16 @@ var _Entity3 = _interopRequireDefault(_Entity2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 //import EntityHierarchy from './EntityHierarchy'
-
-
 var SceneEntity = function (_Entity) {
-    _inherits(SceneEntity, _Entity);
+    (0, _inherits3.default)(SceneEntity, _Entity);
 
     function SceneEntity(name, game) {
-        _classCallCheck(this, SceneEntity);
+        (0, _classCallCheck3.default)(this, SceneEntity);
 
         name = name || 'New SceneEntity';
 
-        var _this = _possibleConstructorReturn(this, (SceneEntity.__proto__ || Object.getPrototypeOf(SceneEntity)).call(this, name, game || null));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (SceneEntity.__proto__ || (0, _getPrototypeOf2.default)(SceneEntity)).call(this, name, game || null));
 
         _this.transform = new _Transform2.default();
         _this.type = null;
@@ -1921,7 +4181,7 @@ var SceneEntity = function (_Entity) {
         return _this;
     }
 
-    _createClass(SceneEntity, [{
+    (0, _createClass3.default)(SceneEntity, [{
         key: 'x',
         set: function set(value) {
             this.transform.position.x = value;
@@ -1992,7 +4252,6 @@ var SceneEntity = function (_Entity) {
             this.transform.angle = value;this.transform._isDirty = true;
         }
     }]);
-
     return SceneEntity;
 }(_Entity3.default //Hierarchy
 );
@@ -2034,7 +4293,13 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
@@ -2050,16 +4315,14 @@ var _Validate2 = _interopRequireDefault(_Validate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var EventManager = function () {
         function EventManager() {
-                _classCallCheck(this, EventManager);
+                (0, _classCallCheck3.default)(this, EventManager);
 
                 this._signalsMap = new _Map2.default();
         }
 
-        _createClass(EventManager, [{
+        (0, _createClass3.default)(EventManager, [{
                 key: 'create',
                 value: function create(eventName) {
 
@@ -2115,7 +4378,6 @@ var EventManager = function () {
                         return this;
                 }
         }]);
-
         return EventManager;
 }();
 
@@ -2137,12 +4399,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /** @license
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * JS Signals <http://millermedeiros.github.com/js-signals/>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Released under the MIT license
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Author: Miller Medeiros
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Version: ::VERSION_NUMBER:: - Build: ::BUILD_NUMBER:: (::BUILD_DATE::)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
 
@@ -2170,8 +4433,6 @@ var _Validate2 = _interopRequireDefault(_Validate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 // Based on https://github.com/millermedeiros/js-signals
 /**
 * Custom event broadcaster
@@ -2180,20 +4441,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * @author Miller Medeiros
 * @class
 */
+/** @license
+ * JS Signals <http://millermedeiros.github.com/js-signals/>
+ * Released under the MIT license
+ * Author: Miller Medeiros
+ * Version: ::VERSION_NUMBER:: - Build: ::BUILD_NUMBER:: (::BUILD_DATE::)
+*/
+
 var Signal = function () {
 
     /**
      * @constructor
      */
     function Signal() {
-        _classCallCheck(this, Signal);
+        (0, _classCallCheck3.default)(this, Signal);
 
         this._bindings = new _List2.default();
         this.active = true;
         this._shouldPropagate = true;
     }
 
-    _createClass(Signal, [{
+    (0, _createClass3.default)(Signal, [{
         key: 'has',
 
 
@@ -2293,7 +4561,6 @@ var Signal = function () {
             return this._bindings.size;
         }
     }]);
-
     return Signal;
 }();
 
@@ -2315,13 +4582,20 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SignalBinding = function () {
     function SignalBinding(signal, listener, listenerContext, priority) {
-        _classCallCheck(this, SignalBinding);
+        (0, _classCallCheck3.default)(this, SignalBinding);
+
 
         this._signal = signal;
         this._listener = listener;
@@ -2332,7 +4606,7 @@ var SignalBinding = function () {
         this._isOnce = false;
     }
 
-    _createClass(SignalBinding, [{
+    (0, _createClass3.default)(SignalBinding, [{
         key: "execute",
         value: function execute(argsArray) {
             var handlerReturn = void 0,
@@ -2387,7 +4661,6 @@ var SignalBinding = function () {
             return this._signal;
         }
     }]);
-
     return SignalBinding;
 }();
 
@@ -2547,7 +4820,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Keyboard = __webpack_require__(/*! ./keyboard/Keyboard */ "./input/keyboard/Keyboard.js");
 
@@ -2559,18 +4838,17 @@ var _Mouse2 = _interopRequireDefault(_Mouse);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Input = function () {
   function Input(game) {
-    _classCallCheck(this, Input);
+    (0, _classCallCheck3.default)(this, Input);
+
 
     this.game = game;
     this.mouse = null;
     this.keyboard = null;
   }
 
-  _createClass(Input, [{
+  (0, _createClass3.default)(Input, [{
     key: "init",
     value: function init() {
 
@@ -2594,7 +4872,6 @@ var Input = function () {
       this.mouse.reset();
     }
   }]);
-
   return Input;
 }();
 
@@ -2637,7 +4914,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/keyboard/KeyEvent.js");
 
@@ -2645,11 +4928,10 @@ var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Key = function () {
     function Key(keycode, game) {
-        _classCallCheck(this, Key);
+        (0, _classCallCheck3.default)(this, Key);
+
 
         this.game = game;
         this.keyCode = keycode;
@@ -2669,7 +4951,7 @@ var Key = function () {
         this.releaseDuration = -2500;
     }
 
-    _createClass(Key, [{
+    (0, _createClass3.default)(Key, [{
         key: 'isPressing',
 
 
@@ -2741,7 +5023,6 @@ var Key = function () {
             }
         }
     }]);
-
     return Key;
 }();
 
@@ -2904,7 +5185,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Map = __webpack_require__(/*! ../../structures/Map */ "./structures/Map.js");
 
@@ -2936,11 +5223,10 @@ var _ProcessKeyRelease2 = _interopRequireDefault(_ProcessKeyRelease);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Keyboard = function () {
   function Keyboard(game) {
-    _classCallCheck(this, Keyboard);
+    (0, _classCallCheck3.default)(this, Keyboard);
+
 
     this.game = game;
     this._enabled = true;
@@ -2953,7 +5239,7 @@ var Keyboard = function () {
     this.lastKey = null;
   }
 
-  _createClass(Keyboard, [{
+  (0, _createClass3.default)(Keyboard, [{
     key: 'reset',
     value: function reset() {
 
@@ -3068,7 +5354,6 @@ var Keyboard = function () {
       }
     }
   }]);
-
   return Keyboard;
 }();
 
@@ -3195,15 +5480,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.MouseEvent = undefined;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _MouseButton = __webpack_require__(/*! ./MouseButton */ "./input/mouse/MouseButton.js");
 
 var _MouseButton2 = _interopRequireDefault(_MouseButton);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var MouseEvent = exports.MouseEvent = {
     NONE: 0,
@@ -3214,7 +5503,8 @@ var MouseEvent = exports.MouseEvent = {
 
 var Mouse = function () {
     function Mouse(game) {
-        _classCallCheck(this, Mouse);
+        (0, _classCallCheck3.default)(this, Mouse);
+
 
         this.x = 0;
         this.y = 0;
@@ -3236,7 +5526,7 @@ var Mouse = function () {
         this.reset();
     }
 
-    _createClass(Mouse, [{
+    (0, _createClass3.default)(Mouse, [{
         key: 'reset',
         value: function reset() {
 
@@ -3381,7 +5671,6 @@ var Mouse = function () {
             return vec2;
         }
     }]);
-
     return Mouse;
 }();
 
@@ -3455,7 +5744,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _ObjectGet = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
@@ -3483,11 +5778,10 @@ var _Path2 = _interopRequireDefault(_Path);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var File = function () {
     function File(config) {
-        _classCallCheck(this, File);
+        (0, _classCallCheck3.default)(this, File);
+
 
         this.type = _ObjectGet2.default.value(config, 'type', null);
         this.tag = _ObjectGet2.default.value(config, 'tag', null);
@@ -3526,7 +5820,7 @@ var File = function () {
         this.onComplete = undefined;
     }
 
-    _createClass(File, [{
+    (0, _createClass3.default)(File, [{
         key: 'load',
         value: function load(gameLoader) {
             this.loader = gameLoader;
@@ -3611,7 +5905,6 @@ var File = function () {
             }
         }
     }]);
-
     return File;
 }();
 
@@ -3633,18 +5926,24 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ListInjector = function () {
     function ListInjector() {
-        _classCallCheck(this, ListInjector);
+        (0, _classCallCheck3.default)(this, ListInjector);
 
         this.list = {};
     }
 
-    _createClass(ListInjector, [{
+    (0, _createClass3.default)(ListInjector, [{
         key: "inject",
         value: function inject(toObj) {
             for (var key in this.list) {
@@ -3662,7 +5961,6 @@ var ListInjector = function () {
             this.list = {};
         }
     }]);
-
     return ListInjector;
 }();
 
@@ -3685,7 +5983,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
 
@@ -3713,12 +6017,11 @@ var _InitializeLoader2 = _interopRequireDefault(_InitializeLoader);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 // Class LoaderManager
 var LoadManager = function () {
   function LoadManager(game) {
-    _classCallCheck(this, LoadManager);
+    (0, _classCallCheck3.default)(this, LoadManager);
+
 
     this.game = game;
     this.cache = null;
@@ -3753,7 +6056,7 @@ var LoadManager = function () {
     _AssetTypeHandler2.default.inject(this);
   }
 
-  _createClass(LoadManager, [{
+  (0, _createClass3.default)(LoadManager, [{
     key: 'setPath',
     value: function setPath(path) {
       if (path !== '' && path.substr(-1) !== '/') path = path.concat('/');
@@ -3844,7 +6147,6 @@ var LoadManager = function () {
       return this._filesQueueCount - this._loadedFilesCount;
     }
   }]);
-
   return LoadManager;
 }();
 
@@ -4037,7 +6339,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
@@ -4073,17 +6393,11 @@ var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var ImageFile = function (_File) {
-    _inherits(ImageFile, _File);
+    (0, _inherits3.default)(ImageFile, _File);
 
     function ImageFile(tag, url, path, xhrSettings, config) {
-        _classCallCheck(this, ImageFile);
+        (0, _classCallCheck3.default)(this, ImageFile);
 
         var assetTag = null;
 
@@ -4104,10 +6418,10 @@ var ImageFile = function (_File) {
             config: _ObjectGet2.default.value(tag, 'config', config)
         };
 
-        return _possibleConstructorReturn(this, (ImageFile.__proto__ || Object.getPrototypeOf(ImageFile)).call(this, fileConfig));
+        return (0, _possibleConstructorReturn3.default)(this, (ImageFile.__proto__ || (0, _getPrototypeOf2.default)(ImageFile)).call(this, fileConfig));
     }
 
-    _createClass(ImageFile, [{
+    (0, _createClass3.default)(ImageFile, [{
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
             this.state = _LoaderState2.default.PROCESSING;
@@ -4139,7 +6453,6 @@ var ImageFile = function (_File) {
             _URLObject2.default.createFromResponse(this.data, this.xhrRequest.response, 'image/' + this.config.ext);
         }
     }]);
-
     return ImageFile;
 }(_File3.default);
 
@@ -4171,9 +6484,29 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
@@ -4201,17 +6534,12 @@ var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var JSONFile = function (_File) {
-    _inherits(JSONFile, _File);
+    (0, _inherits3.default)(JSONFile, _File);
 
     function JSONFile(tag, url, path, xhrSettings, config) {
-        _classCallCheck(this, JSONFile);
+        (0, _classCallCheck3.default)(this, JSONFile);
+
 
         var assetConfig = {
             type: _AssetsType2.default.json,
@@ -4223,9 +6551,9 @@ var JSONFile = function (_File) {
             xhrSettings: _ObjectGet2.default.value(tag, 'xhr', xhrSettings)
         };
 
-        var _this = _possibleConstructorReturn(this, (JSONFile.__proto__ || Object.getPrototypeOf(JSONFile)).call(this, assetConfig));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (JSONFile.__proto__ || (0, _getPrototypeOf2.default)(JSONFile)).call(this, assetConfig));
 
-        if (_typeof(assetConfig.url) === 'object') {
+        if ((0, _typeof3.default)(assetConfig.url) === 'object') {
             _this.data = assetConfig.url;
             _this.state = _LoaderState2.default.DONE;
         }
@@ -4233,7 +6561,7 @@ var JSONFile = function (_File) {
         return _this;
     }
 
-    _createClass(JSONFile, [{
+    (0, _createClass3.default)(JSONFile, [{
         key: "onProcessing",
         value: function onProcessing(processingCallback) {
             this.state = _LoaderState2.default.PROCESSING;
@@ -4242,7 +6570,6 @@ var JSONFile = function (_File) {
             processingCallback(this);
         }
     }]);
-
     return JSONFile;
 }(_File3.default);
 
@@ -4271,7 +6598,25 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
@@ -4303,17 +6648,12 @@ var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var ScriptFile = function (_File) {
-        _inherits(ScriptFile, _File);
+        (0, _inherits3.default)(ScriptFile, _File);
 
         function ScriptFile(tag, url, path, xhrSettings, config) {
-                _classCallCheck(this, ScriptFile);
+                (0, _classCallCheck3.default)(this, ScriptFile);
+
 
                 var tagFile = typeof tag === 'string' ? tag : _ObjectGet2.default.value(tag, 'key', '');
 
@@ -4327,10 +6667,10 @@ var ScriptFile = function (_File) {
                         xhrSettings: _ObjectGet2.default.value(tag, 'xhr', xhrSettings)
                 };
 
-                return _possibleConstructorReturn(this, (ScriptFile.__proto__ || Object.getPrototypeOf(ScriptFile)).call(this, assetConfig));
+                return (0, _possibleConstructorReturn3.default)(this, (ScriptFile.__proto__ || (0, _getPrototypeOf2.default)(ScriptFile)).call(this, assetConfig));
         }
 
-        _createClass(ScriptFile, [{
+        (0, _createClass3.default)(ScriptFile, [{
                 key: "onPostLoad",
                 value: function onPostLoad(loader, xhrLoader) {
                         this.state = _LoaderState2.default.PROCESSING;
@@ -4352,7 +6692,6 @@ var ScriptFile = function (_File) {
                         //processingCallback(this);
                 }
         }]);
-
         return ScriptFile;
 }(_File3.default);
 
@@ -4381,7 +6720,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
 
@@ -4413,17 +6770,11 @@ var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var TextFile = function (_File) {
-    _inherits(TextFile, _File);
+    (0, _inherits3.default)(TextFile, _File);
 
     function TextFile(tag, url, path, xhrSettings, config) {
-        _classCallCheck(this, TextFile);
+        (0, _classCallCheck3.default)(this, TextFile);
 
         var assetTag = null;
 
@@ -4451,7 +6802,7 @@ var TextFile = function (_File) {
             useExternal: useExternal
         };
 
-        return _possibleConstructorReturn(this, (TextFile.__proto__ || Object.getPrototypeOf(TextFile)).call(this, assetConfig));
+        return (0, _possibleConstructorReturn3.default)(this, (TextFile.__proto__ || (0, _getPrototypeOf2.default)(TextFile)).call(this, assetConfig));
     }
 
     //onLoad(event) {}
@@ -4477,7 +6828,7 @@ var TextFile = function (_File) {
         }
     }*/
 
-    _createClass(TextFile, [{
+    (0, _createClass3.default)(TextFile, [{
         key: 'onProcessing',
         value: function onProcessing(processingCallback) {
             this.state = _LoaderState2.default.PROCESSING;
@@ -4492,7 +6843,6 @@ var TextFile = function (_File) {
             processingCallback(this);
         }
     }]);
-
     return TextFile;
 }(_File3.default);
 
@@ -4532,7 +6882,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _File = __webpack_require__(/*! ../File */ "./loader/File.js");
 
@@ -4564,12 +6932,6 @@ var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 function CheckImagesSources(loader, source, fullPath) {
 
     if (source === undefined) return;
@@ -4591,19 +6953,19 @@ function CheckImagesSources(loader, source, fullPath) {
 }
 
 var TilemapFileJSON = function (_JSONFile) {
-    _inherits(TilemapFileJSON, _JSONFile);
+    (0, _inherits3.default)(TilemapFileJSON, _JSONFile);
 
     function TilemapFileJSON(tag, url, path, xhrSettings) {
-        _classCallCheck(this, TilemapFileJSON);
+        (0, _classCallCheck3.default)(this, TilemapFileJSON);
 
-        var _this = _possibleConstructorReturn(this, (TilemapFileJSON.__proto__ || Object.getPrototypeOf(TilemapFileJSON)).call(this, tag, url, path, xhrSettings));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (TilemapFileJSON.__proto__ || (0, _getPrototypeOf2.default)(TilemapFileJSON)).call(this, tag, url, path, xhrSettings));
 
         _this.type = _AssetsType2.default.tilemapJSON;
 
         return _this;
     }
 
-    _createClass(TilemapFileJSON, [{
+    (0, _createClass3.default)(TilemapFileJSON, [{
         key: 'onPostLoad',
         value: function onPostLoad(loader, xhrLoader) {
 
@@ -4620,7 +6982,6 @@ var TilemapFileJSON = function (_JSONFile) {
             processingCallback(this);
         }
     }]);
-
     return TilemapFileJSON;
 }(_JSONFile3.default);
 
@@ -4649,7 +7010,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
 
@@ -4681,17 +7060,12 @@ var _NextAsset2 = _interopRequireDefault(_NextAsset);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var WebFontFile = function (_File) {
-    _inherits(WebFontFile, _File);
+    (0, _inherits3.default)(WebFontFile, _File);
 
     function WebFontFile(tag, provider, fontFamily, timeout) {
-        _classCallCheck(this, WebFontFile);
+        (0, _classCallCheck3.default)(this, WebFontFile);
+
 
         var assetConfig = {
             type: _AssetsType2.default.webFont,
@@ -4703,10 +7077,10 @@ var WebFontFile = function (_File) {
             }
         };
 
-        return _possibleConstructorReturn(this, (WebFontFile.__proto__ || Object.getPrototypeOf(WebFontFile)).call(this, assetConfig));
+        return (0, _possibleConstructorReturn3.default)(this, (WebFontFile.__proto__ || (0, _getPrototypeOf2.default)(WebFontFile)).call(this, assetConfig));
     }
 
-    _createClass(WebFontFile, [{
+    (0, _createClass3.default)(WebFontFile, [{
         key: "load",
         value: function load(gameLoader) {
             this.loader = gameLoader;
@@ -4765,7 +7139,6 @@ var WebFontFile = function (_File) {
             };_NextAsset2.default.call(this.loader, this);
         }
     }]);
-
     return WebFontFile;
 }(_File3.default);
 
@@ -5344,7 +7717,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Vector = __webpack_require__(/*! ./Vector */ "./math/Vector.js");
 
@@ -5356,11 +7735,10 @@ var _Rect2 = _interopRequireDefault(_Rect);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var BoundingBox = function () {
   function BoundingBox(x, y, width, height) {
-    _classCallCheck(this, BoundingBox);
+    (0, _classCallCheck3.default)(this, BoundingBox);
+
 
     x = x || Infinity;
     y = y || Infinity;
@@ -5371,7 +7749,7 @@ var BoundingBox = function () {
     //this.box = new Rect(xx,yy,w,h);
   }
 
-  _createClass(BoundingBox, [{
+  (0, _createClass3.default)(BoundingBox, [{
     key: 'set',
     value: function set(minX, minY, maxX, maxY) {
 
@@ -5529,7 +7907,6 @@ var BoundingBox = function () {
       return new _Vector2.default(this.max.x - this.min.x, this.max.y - this.min.y);
     }
   }]);
-
   return BoundingBox;
 }();
 
@@ -5546,6 +7923,12 @@ exports.default = BoundingBox;
 
 "use strict";
 
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var MathUtils = {
 
@@ -5587,8 +7970,18 @@ var MathUtils = {
   },
 
   lerp: function lerp(fromValue, toValue, t) {
-
     return (1.0 - t) * fromValue + t * toValue;
+  },
+
+  clampedLerp: function clampedLerp(fromValue, toValue, t) {
+
+    t = MathUtils.clamp(t, 0.0, 1.0);
+
+    return MathUtils.lerp(fromValue, toValue, t);
+  },
+
+  impreciseLerp: function impreciseLerp(fromValue, toValue, t) {
+    return fromValue + t * (toValue - fromValue);
   },
 
   lerpAngle: function lerpAngle(fromValue, toValue, t) {
@@ -5648,7 +8041,7 @@ var MathUtils = {
 
 };
 
-Object.freeze(MathUtils);
+(0, _freeze2.default)(MathUtils);
 
 module.exports = MathUtils;
 
@@ -5666,9 +8059,15 @@ module.exports = MathUtils;
 "use strict";
 
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /*
 
@@ -5699,7 +8098,8 @@ var Matrix = function () {
   * Constructor is identity only
   */
   function Matrix(a, b) {
-    _classCallCheck(this, Matrix);
+    (0, _classCallCheck3.default)(this, Matrix);
+
 
     /*a = a || i;
     b = b || 0;
@@ -5728,7 +8128,7 @@ var Matrix = function () {
     //this.at = null;
   }
 
-  _createClass(Matrix, [{
+  (0, _createClass3.default)(Matrix, [{
     key: "at",
     value: function at(i, j) {
       return this.a[i + j * 3];
@@ -5970,7 +8370,6 @@ var Matrix = function () {
       return mat;
     }
   }]);
-
   return Matrix;
 }();
 
@@ -5992,9 +8391,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
 * Simple class for rectangle. Usage for collision.
@@ -6004,7 +8409,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Rect = function () {
   function Rect(x, y, width, height) {
-    _classCallCheck(this, Rect);
+    (0, _classCallCheck3.default)(this, Rect);
 
     this.x = x || 0;
     this.y = y || 0;
@@ -6012,7 +8417,7 @@ var Rect = function () {
     this.height = height || 0;
   }
 
-  _createClass(Rect, [{
+  (0, _createClass3.default)(Rect, [{
     key: "set",
     value: function set(x, y, width, height) {
       this.x = x;
@@ -6095,7 +8500,6 @@ var Rect = function () {
       return out;
     }
   }]);
-
   return Rect;
 }();
 
@@ -6117,15 +8521,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _MathUtils = __webpack_require__(/*! ./MathUtils */ "./math/MathUtils.js");
 
 var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
 * Class for points and vectors.
@@ -6134,7 +8542,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 */
 var Vector = function () {
   function Vector(x, y, managed) {
-    _classCallCheck(this, Vector);
+    (0, _classCallCheck3.default)(this, Vector);
+
 
     this.x = x || 0;
     this.y = y || 0;
@@ -6153,7 +8562,7 @@ var Vector = function () {
   }
   get y() {return this.y;}*/
 
-  _createClass(Vector, [{
+  (0, _createClass3.default)(Vector, [{
     key: "set",
     value: function set(x, y) {
 
@@ -6404,7 +8813,6 @@ var Vector = function () {
       return vec;
     }
   }]);
-
   return Vector;
 }();
 
@@ -6428,6 +8836,10 @@ module.exports = Vector;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
 
 var _EaseIn = __webpack_require__(/*! ./EaseIn */ "./math/easing/EaseIn.js");
 
@@ -6465,7 +8877,7 @@ var Ease = {
 
 };
 
-Object.freeze(Ease);
+(0, _freeze2.default)(Ease);
 
 module.exports = Ease;
 
@@ -6487,7 +8899,17 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _MathUtils = __webpack_require__(/*! ../MathUtils */ "./math/MathUtils.js");
 
@@ -6499,14 +8921,12 @@ var _EasingType2 = _interopRequireDefault(_EasingType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var EaseInFunctions = function () {
     function EaseInFunctions() {
-        _classCallCheck(this, EaseInFunctions);
+        (0, _classCallCheck3.default)(this, EaseInFunctions);
     }
 
-    _createClass(EaseInFunctions, [{
+    (0, _createClass3.default)(EaseInFunctions, [{
         key: "linear",
 
 
@@ -6523,7 +8943,10 @@ var EaseInFunctions = function () {
     }, {
         key: "stepped",
         value: function stepped(from, to, t) {
-            return to * (t < 0.5 ? 0 : 1) + from;
+
+            if (t < 0.5) return from;
+
+            return from + to;
         }
     }, {
         key: "cut",
@@ -6609,12 +9032,14 @@ var EaseInFunctions = function () {
         key: "by",
         value: function by(type, from, to, t, arg) {
 
-            if (arg === undefined) arg = 1;
+            if (arg === undefined) arg = 3;
 
             switch (type) {
 
                 case _EasingType2.default.NONE:
                     return t;
+                case _EasingType2.default.STEPPED:
+                    return this.stepped(from, to, t);
                 case _EasingType2.default.CUT:
                     return this.cut(from, to, t, arg);
                 case _EasingType2.default.LINEAR:
@@ -6644,7 +9069,6 @@ var EaseInFunctions = function () {
             return t;
         }
     }]);
-
     return EaseInFunctions;
 }();
 
@@ -6652,7 +9076,7 @@ var EaseInFunctions = function () {
 
 var EaseIn = new EaseInFunctions();
 
-Object.freeze(EaseIn);
+(0, _freeze2.default)(EaseIn);
 
 exports.default = EaseIn;
 
@@ -6672,7 +9096,17 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _MathUtils = __webpack_require__(/*! ../MathUtils */ "./math/MathUtils.js");
 
@@ -6684,16 +9118,16 @@ var _EaseIn2 = _interopRequireDefault(_EaseIn);
 
 var _EasingType = __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _EasingType2 = _interopRequireDefault(_EasingType);
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EaseInOutFunctions = function () {
     function EaseInOutFunctions() {
-        _classCallCheck(this, EaseInOutFunctions);
+        (0, _classCallCheck3.default)(this, EaseInOutFunctions);
     }
 
-    _createClass(EaseInOutFunctions, [{
+    (0, _createClass3.default)(EaseInOutFunctions, [{
         key: "linear",
         value: function linear(from, to, t) {
             return _MathUtils2.default.lerp(from, to, t);
@@ -6829,44 +9263,43 @@ var EaseInOutFunctions = function () {
 
             switch (type) {
 
-                case EasingType.NONE:
+                case _EasingType2.default.NONE:
                     return t;
-                case EasingType.CUT:
+                case _EasingType2.default.CUT:
                     return this.cut(from, to, t, arg);
-                case EasingType.LINEAR:
+                case _EasingType2.default.LINEAR:
                     return this.linear(from, to, t);
-                case EasingType.SINE:
+                case _EasingType2.default.SINE:
                     return this.sine(from, to, t);
-                case EasingType.QUADRATIC:
+                case _EasingType2.default.QUADRATIC:
                     return this.power(from, to, t, 2);
-                case EasingType.CUBIC:
+                case _EasingType2.default.CUBIC:
                     return this.power(from, to, t, 3);
-                case EasingType.QUARTIC:
+                case _EasingType2.default.QUARTIC:
                     return this.power(from, to, t, 4);
-                case EasingType.QUINTIC:
+                case _EasingType2.default.QUINTIC:
                     return this.power(from, to, t, 5);
-                case EasingType.POWER:
+                case _EasingType2.default.POWER:
                     return this.power(from, to, t, arg);
-                case EasingType.EXPONENTIAL:
+                case _EasingType2.default.EXPONENTIAL:
                     return this.exponential(from, to, t);
-                case EasingType.CIRC:
+                case _EasingType2.default.CIRC:
                     return this.circ(from, to, t);
-                case EasingType.BACK:
+                case _EasingType2.default.BACK:
                     return this.back(from, to, t);
-                case EasingType.ELASTIC:
+                case _EasingType2.default.ELASTIC:
                     return this.elastic(from, to, t, arg);
             }
 
             return t;
         }
     }]);
-
     return EaseInOutFunctions;
 }();
 
 var EaseInOut = new EaseInOutFunctions();
 
-Object.freeze(EaseInOut);
+(0, _freeze2.default)(EaseInOut);
 
 exports.default = EaseInOut;
 
@@ -6886,7 +9319,17 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
 
@@ -6894,16 +9337,16 @@ var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
 var _EasingType = __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _EasingType2 = _interopRequireDefault(_EasingType);
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EaseOutFunction = function () {
     function EaseOutFunction() {
-        _classCallCheck(this, EaseOutFunction);
+        (0, _classCallCheck3.default)(this, EaseOutFunction);
     }
 
-    _createClass(EaseOutFunction, [{
+    (0, _createClass3.default)(EaseOutFunction, [{
         key: 'linear',
         value: function linear(from, to, t) {
             return _MathUtils2.default.lerp(from, to, t);
@@ -7002,44 +9445,45 @@ var EaseOutFunction = function () {
 
             switch (type) {
 
-                case EasingType.NONE:
+                case _EasingType2.default.NONE:
                     return t;
-                case EasingType.CUT:
+                case _EasingType2.default.STEPPED:
+                    return this.stepped(from, to, t);
+                case _EasingType2.default.CUT:
                     return this.cut(from, to, t, arg);
-                case EasingType.LINEAR:
+                case _EasingType2.default.LINEAR:
                     return this.linear(from, to, t);
-                case EasingType.SINE:
+                case _EasingType2.default.SINE:
                     return this.sine(from, to, t);
-                case EasingType.QUADRATIC:
+                case _EasingType2.default.QUADRATIC:
                     return this.power(from, to, t, 2);
-                case EasingType.CUBIC:
+                case _EasingType2.default.CUBIC:
                     return this.power(from, to, t, 3);
-                case EasingType.QUARTIC:
+                case _EasingType2.default.QUARTIC:
                     return this.power(from, to, t, 4);
-                case EasingType.QUINTIC:
+                case _EasingType2.default.QUINTIC:
                     return this.power(from, to, t, 5);
-                case EasingType.POWER:
+                case _EasingType2.default.POWER:
                     return this.power(from, to, t, arg);
-                case EasingType.EXPONENTIAL:
+                case _EasingType2.default.EXPONENTIAL:
                     return this.exponential(from, to, t);
-                case EasingType.CIRC:
+                case _EasingType2.default.CIRC:
                     return this.circ(from, to, t);
-                case EasingType.BACK:
+                case _EasingType2.default.BACK:
                     return this.back(from, to, t);
-                case EasingType.ELASTIC:
+                case _EasingType2.default.ELASTIC:
                     return this.elastic(from, to, t, arg);
             }
 
             return t;
         }
     }]);
-
     return EaseOutFunction;
 }();
 
 var EaseOut = new EaseOutFunction();
 
-Object.freeze(EaseOut);
+(0, _freeze2.default)(EaseOut);
 
 exports.default = EaseOut;
 
@@ -7059,25 +9503,38 @@ module.exports = EaseOut;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
+/**
+ * Describes the easing method type
+ */
 var EasingType = {
-    NONE: -1,
-    STEPPED: 0,
-    LINEAR: 1,
-    SINE: 2,
-    QUADRATIC: 3,
-    CUBIC: 4,
-    QUARTIC: 5,
-    QUINTIC: 6,
-    EXPONENTIAL: 7,
-    CIRC: 8,
-    BACK: 9,
-    ELASTIC: 10,
-    BOUNCE: 11,
-    CUT: 12,
-    POWER: 13
+  /**
+   * No easing : 0
+   */
+  NONE: 0,
+  /**
+   * Clamped interpolation between tMin and tMax : 1
+   */
+  STEPPED: 1,
+  /**
+   * Linear interpolation : 2
+   */
+  LINEAR: 2,
+  CUT: 3,
+  SINE: 4,
+  QUADRATIC: 5,
+  CUBIC: 6,
+  QUARTIC: 7,
+  QUINTIC: 8,
+  POWER: 9,
+  EXPONENTIAL: 10,
+  CIRC: 11,
+  BACK: 12,
+  ELASTIC: 13,
+  BOUNCE: 14
+
 };
 
 var EASE_BACK_CONST = exports.EASE_BACK_CONST = 1.70158;
@@ -7102,13 +9559,19 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Module = function () {
     function Module(moduleType, moduleName, moduleManager) {
-        _classCallCheck(this, Module);
+        (0, _classCallCheck3.default)(this, Module);
 
         this._moduleType = moduleType || "none";
         this._moduleName = moduleName || "noName";
@@ -7122,7 +9585,7 @@ var Module = function () {
         //this.game = moduleManager.game || null;
     }
 
-    _createClass(Module, [{
+    (0, _createClass3.default)(Module, [{
         key: "type",
         get: function get() {
             return this._moduleType;
@@ -7145,7 +9608,6 @@ var Module = function () {
             }
         }
     }]);
-
     return Module;
 }();
 
@@ -7170,7 +9632,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _ModuleProvider = __webpack_require__(/*! ./ModuleProvider */ "./modules/ModuleProvider.js");
 
@@ -7178,16 +9646,14 @@ var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var ModuleAttacher = function () {
     function ModuleAttacher(moduleManager) {
-        _classCallCheck(this, ModuleAttacher);
+        (0, _classCallCheck3.default)(this, ModuleAttacher);
 
         this.moduleManager = moduleManager;
     }
 
-    _createClass(ModuleAttacher, [{
+    (0, _createClass3.default)(ModuleAttacher, [{
         key: "sprite",
         value: function sprite(tag) {
             return _ModuleProvider2.default.attach(this.moduleManager, 'sprite', tag);
@@ -7201,7 +9667,6 @@ var ModuleAttacher = function () {
             return _ModuleProvider2.default.attach(this.moduleManager, 'tilemap', tag);
         }
     }]);
-
     return ModuleAttacher;
 }();
 
@@ -7223,7 +9688,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
@@ -7239,11 +9710,9 @@ var _ModuleAttacher2 = _interopRequireDefault(_ModuleAttacher);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var ModuleManager = function () {
     function ModuleManager(entity) {
-        _classCallCheck(this, ModuleManager);
+        (0, _classCallCheck3.default)(this, ModuleManager);
 
         this.entity = entity || null;
         this.attached = new _Map2.default();
@@ -7251,7 +9720,7 @@ var ModuleManager = function () {
         this.attach = new _ModuleAttacher2.default(this);
     }
 
-    _createClass(ModuleManager, [{
+    (0, _createClass3.default)(ModuleManager, [{
         key: 'detach',
         value: function detach(moduleName, index) {}
     }, {
@@ -7265,7 +9734,6 @@ var ModuleManager = function () {
             return this.attached.get(moduleName);
         }
     }]);
-
     return ModuleManager;
 }();
 
@@ -7287,7 +9755,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
@@ -7299,16 +9773,14 @@ var _InitializeModuleBase2 = _interopRequireDefault(_InitializeModuleBase);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var ModuleProviderManager = function () {
     function ModuleProviderManager() {
-        _classCallCheck(this, ModuleProviderManager);
+        (0, _classCallCheck3.default)(this, ModuleProviderManager);
 
         this.proxyModules = new _Map2.default();
     }
 
-    _createClass(ModuleProviderManager, [{
+    (0, _createClass3.default)(ModuleProviderManager, [{
         key: 'attach',
         value: function attach(modulesManager, moduleName, args) {
             var attached = modulesManager.attached;
@@ -7337,7 +9809,6 @@ var ModuleProviderManager = function () {
             if (!ModuleProvider.proxyModules.has(moduleName)) ModuleProvider.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
         }
     }]);
-
     return ModuleProviderManager;
 }();
 
@@ -7495,7 +9966,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _BoundingBox = __webpack_require__(/*! ../../math/BoundingBox */ "./math/BoundingBox.js");
 
@@ -7511,19 +10000,13 @@ var _Module3 = _interopRequireDefault(_Module2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var Renderable = function (_Module) {
-    _inherits(Renderable, _Module);
+    (0, _inherits3.default)(Renderable, _Module);
 
     function Renderable(moduleName, moduleManager) {
-        _classCallCheck(this, Renderable);
+        (0, _classCallCheck3.default)(this, Renderable);
 
-        var _this = _possibleConstructorReturn(this, (Renderable.__proto__ || Object.getPrototypeOf(Renderable)).call(this, 'render', moduleName || 'renderable', moduleManager));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (Renderable.__proto__ || (0, _getPrototypeOf2.default)(Renderable)).call(this, 'render', moduleName || 'renderable', moduleManager));
 
         _this._layerID = 0;
         _this._depth = 0;
@@ -7535,7 +10018,7 @@ var Renderable = function (_Module) {
         return _this;
     }
 
-    _createClass(Renderable, [{
+    (0, _createClass3.default)(Renderable, [{
         key: 'bounds',
         get: function get() {
             return this._bounds;
@@ -7577,7 +10060,6 @@ var Renderable = function (_Module) {
             return this;
         }
     }]);
-
     return Renderable;
 }(_Module3.default);
 
@@ -7599,7 +10081,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _Renderable2 = __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js");
 
@@ -7623,20 +10123,14 @@ var _UpdateTransformBounds2 = _interopRequireDefault(_UpdateTransformBounds);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var Sprite = function (_Renderable) {
-    _inherits(Sprite, _Renderable);
+    (0, _inherits3.default)(Sprite, _Renderable);
 
     function Sprite(moduleManager) {
-        _classCallCheck(this, Sprite);
+        (0, _classCallCheck3.default)(this, Sprite);
 
         //this._type = "sprite";
-        var _this = _possibleConstructorReturn(this, (Sprite.__proto__ || Object.getPrototypeOf(Sprite)).call(this, 'sprite', moduleManager));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (Sprite.__proto__ || (0, _getPrototypeOf2.default)(Sprite)).call(this, 'sprite', moduleManager));
 
         _this.source = null;
         _this.frame = new _Rect2.default();
@@ -7644,7 +10138,7 @@ var Sprite = function (_Renderable) {
         return _this;
     }
 
-    _createClass(Sprite, [{
+    (0, _createClass3.default)(Sprite, [{
         key: "setFrame",
         value: function setFrame(x, y, width, height) {
             this.frame.set(x, y, width, height);
@@ -7698,7 +10192,6 @@ var Sprite = function (_Renderable) {
             return this.frame.height;
         }
     }]);
-
     return Sprite;
 }(_Renderable3.default);
 
@@ -8133,6 +10626,22 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
 var _Renderable2 = __webpack_require__(/*! ../Renderable */ "./modules/renderables/Renderable.js");
 
 var _Renderable3 = _interopRequireDefault(_Renderable2);
@@ -8151,20 +10660,14 @@ var _TilemapAnimator2 = _interopRequireDefault(_TilemapAnimator);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var Tilemap = function (_Renderable) {
-    _inherits(Tilemap, _Renderable);
+    (0, _inherits3.default)(Tilemap, _Renderable);
 
     function Tilemap(moduleManager, resource) {
-        _classCallCheck(this, Tilemap);
+        (0, _classCallCheck3.default)(this, Tilemap);
 
         //this._type = "tilemap";
-        var _this = _possibleConstructorReturn(this, (Tilemap.__proto__ || Object.getPrototypeOf(Tilemap)).call(this, 'tilemap', moduleManager));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (Tilemap.__proto__ || (0, _getPrototypeOf2.default)(Tilemap)).call(this, 'tilemap', moduleManager));
 
         _this.resource = resource;
         _this.tileWidth = resource.metaData.tileWidth;
@@ -8238,7 +10741,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
 
@@ -8246,13 +10755,12 @@ var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var TilemapAnimator = function () {
     function TilemapAnimator(tilemap, layers) {
         var _this = this;
 
-        _classCallCheck(this, TilemapAnimator);
+        (0, _classCallCheck3.default)(this, TilemapAnimator);
+
 
         this.tilemap = tilemap;
         this.animatedTiles = new _List2.default();
@@ -8290,11 +10798,10 @@ var TilemapAnimator = function () {
         }
     }
 
-    _createClass(TilemapAnimator, [{
+    (0, _createClass3.default)(TilemapAnimator, [{
         key: "update",
         value: function update() {}
     }]);
-
     return TilemapAnimator;
 }();
 
@@ -8316,7 +10823,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _Renderable2 = __webpack_require__(/*! ../Renderable */ "./modules/renderables/Renderable.js");
 
@@ -8328,26 +10853,20 @@ var _DrawTilemapLayer2 = _interopRequireDefault(_DrawTilemapLayer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var TilemapLayer = function (_Renderable) {
-    _inherits(TilemapLayer, _Renderable);
+    (0, _inherits3.default)(TilemapLayer, _Renderable);
 
     function TilemapLayer(tilemap, layerData) {
-        _classCallCheck(this, TilemapLayer);
+        (0, _classCallCheck3.default)(this, TilemapLayer);
 
-        var _this = _possibleConstructorReturn(this, (TilemapLayer.__proto__ || Object.getPrototypeOf(TilemapLayer)).call(this, 'tilemapLayer', tilemap.moduleManager));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (TilemapLayer.__proto__ || (0, _getPrototypeOf2.default)(TilemapLayer)).call(this, 'tilemapLayer', tilemap.moduleManager));
 
         _this.tilemap = tilemap;
         _this.layerData = layerData;
         return _this;
     }
 
-    _createClass(TilemapLayer, [{
+    (0, _createClass3.default)(TilemapLayer, [{
         key: "render",
         value: function render(context) {
 
@@ -8366,7 +10885,6 @@ var TilemapLayer = function (_Renderable) {
             return this.layerData.height * this.tilemap.tileHeight;
         }
     }]);
-
     return TilemapLayer;
 }(_Renderable3.default);
 
@@ -8388,7 +10906,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _SAT = __webpack_require__(/*! ./xat/SAT */ "./physics/xat/SAT.js");
 
@@ -8400,11 +10924,10 @@ var _SATResponse2 = _interopRequireDefault(_SATResponse);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Physics = function () {
   function Physics(game) {
-    _classCallCheck(this, Physics);
+    (0, _classCallCheck3.default)(this, Physics);
+
 
     this.game = null;
     this.sat = null;
@@ -8414,7 +10937,7 @@ var Physics = function () {
     this.colliadables = [];
   }
 
-  _createClass(Physics, [{
+  (0, _createClass3.default)(Physics, [{
     key: 'init',
     value: function init() {
 
@@ -8498,7 +11021,6 @@ var Physics = function () {
       return this.colliadables.length;
     }
   }]);
-
   return Physics;
 }();
 
@@ -8520,7 +11042,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Vector = __webpack_require__(/*! ../../math/Vector */ "./math/Vector.js");
 
@@ -8528,11 +11056,10 @@ var _Vector2 = _interopRequireDefault(_Vector);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var SAT = function () {
     function SAT() {
-        _classCallCheck(this, SAT);
+        (0, _classCallCheck3.default)(this, SAT);
+
 
         this.VECTORS = [];
         for (var v = 0; v < 10; v++) {
@@ -8545,7 +11072,7 @@ var SAT = function () {
         }
     }
 
-    _createClass(SAT, [{
+    (0, _createClass3.default)(SAT, [{
         key: 'flattenPointsOn',
         value: function flattenPointsOn(points, normal, result) {
             var min = Number.MAX_VALUE;
@@ -8689,7 +11216,6 @@ var SAT = function () {
             return true;
         }
     }]);
-
     return SAT;
 }();
 
@@ -8711,13 +11237,19 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SATResponse = function () {
     function SATResponse() {
-        _classCallCheck(this, SATResponse);
+        (0, _classCallCheck3.default)(this, SATResponse);
 
         this.a = null;
         this.b = null;
@@ -8731,7 +11263,7 @@ var SATResponse = function () {
         this.clear();
     }
 
-    _createClass(SATResponse, [{
+    (0, _createClass3.default)(SATResponse, [{
         key: "clear",
         value: function clear() {
             this.aInB = true;
@@ -8742,7 +11274,6 @@ var SATResponse = function () {
             return this;
         }
     }]);
-
     return SATResponse;
 }();
 
@@ -8784,7 +11315,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
 
@@ -8818,11 +11355,10 @@ var _DrawRenderLayer2 = _interopRequireDefault(_DrawRenderLayer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Render = function () {
     function Render(game) {
-        _classCallCheck(this, Render);
+        (0, _classCallCheck3.default)(this, Render);
+
 
         this.game = game;
         this.layer = new _RenderLayersManagement2.default(this.game);
@@ -8839,7 +11375,7 @@ var Render = function () {
         this.drawCalls = 0;
     }
 
-    _createClass(Render, [{
+    (0, _createClass3.default)(Render, [{
         key: 'backgroundColor',
         get: function get() {
             return this._backgroundColor;
@@ -8862,7 +11398,6 @@ var Render = function () {
             return this._alpha;
         }
     }]);
-
     return Render;
 }();
 
@@ -8887,7 +11422,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
 
@@ -8895,11 +11436,10 @@ var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var RenderLayer = function () {
     function RenderLayer(game, layerName) {
-        _classCallCheck(this, RenderLayer);
+        (0, _classCallCheck3.default)(this, RenderLayer);
+
 
         this._name = layerName;
         this.game = game;
@@ -8909,7 +11449,7 @@ var RenderLayer = function () {
         this.__isDirty = false;
     }
 
-    _createClass(RenderLayer, [{
+    (0, _createClass3.default)(RenderLayer, [{
         key: 'add',
 
 
@@ -8992,7 +11532,6 @@ var RenderLayer = function () {
             }
         }
     }]);
-
     return RenderLayer;
 }();
 
@@ -9014,7 +11553,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
 
@@ -9030,11 +11575,9 @@ var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var RenderLayersManagement = function () {
     function RenderLayersManagement(game) {
-        _classCallCheck(this, RenderLayersManagement);
+        (0, _classCallCheck3.default)(this, RenderLayersManagement);
 
         this.game = game;
         this.renderLayers = new _List2.default();
@@ -9042,7 +11585,7 @@ var RenderLayersManagement = function () {
         this.add('default');
     }
 
-    _createClass(RenderLayersManagement, [{
+    (0, _createClass3.default)(RenderLayersManagement, [{
         key: 'add',
         value: function add(name) {
 
@@ -9081,7 +11624,6 @@ var RenderLayersManagement = function () {
             return val || false;
         }
     }]);
-
     return RenderLayersManagement;
 }();
 
@@ -9103,11 +11645,19 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _typeof3 = _interopRequireDefault(_typeof2);
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * Create a Canvas object.
@@ -9115,10 +11665,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 exports.default = function () {
     function Canvas() {
-        _classCallCheck(this, Canvas);
+        (0, _classCallCheck3.default)(this, Canvas);
     }
 
-    _createClass(Canvas, null, [{
+    (0, _createClass3.default)(Canvas, null, [{
         key: "create",
         value: function create(parent, width, height) {
 
@@ -9165,7 +11715,7 @@ exports.default = function () {
                 if (typeof parent === 'string') {
                     // hopefully an element ID
                     target = document.getElementById(parent);
-                } else if ((typeof parent === "undefined" ? "undefined" : _typeof(parent)) === 'object' && parent.nodeType === 1) {
+                } else if ((typeof parent === "undefined" ? "undefined" : (0, _typeof3.default)(parent)) === 'object' && parent.nodeType === 1) {
                     // quick test for a HTMLelement
                     target = parent;
                 }
@@ -9186,7 +11736,6 @@ exports.default = function () {
             return canvas;
         }
     }]);
-
     return Canvas;
 }();
 
@@ -9206,21 +11755,27 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Define = __webpack_require__(/*! ../Define */ "./render/Define.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CanvasSmoothing = function () {
     function CanvasSmoothing(context) {
-        _classCallCheck(this, CanvasSmoothing);
+        (0, _classCallCheck3.default)(this, CanvasSmoothing);
 
         this.context = context;
         this.prefix = this.getPrefix(context);
     }
 
-    _createClass(CanvasSmoothing, [{
+    (0, _createClass3.default)(CanvasSmoothing, [{
         key: 'getPrefix',
         value: function getPrefix(context) {
 
@@ -9251,7 +11806,6 @@ var CanvasSmoothing = function () {
             if (renderType == _Define.RenderingType.NEAREST) this.setEnable(false);else this.setEnable(true);
         }
     }]);
-
     return CanvasSmoothing;
 }();
 
@@ -9273,7 +11827,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
 
@@ -9297,40 +11857,37 @@ var _MakeImmutable2 = _interopRequireDefault(_MakeImmutable);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function ColorNormUpdate(color) {
     color._css = 'rgba(' + _MathUtils2.default.floor(color.r * 255) + ',' + _MathUtils2.default.floor(color.g * 255) + ',' + _MathUtils2.default.floor(color.b * 255) + ',' + color.a + ')';
 }
 
 function ColorUpdate(color) {
-    color._css = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
+    color._css = 'rgba(' + color._r + ',' + color._g + ',' + color._b + ',' + color._a + ')';
 }
 
 var Color = function () {
     function Color(r, g, b, a) {
-        _classCallCheck(this, Color);
+        (0, _classCallCheck3.default)(this, Color);
 
-        this.r = r || 0;
-        this.g = g || r || 0;
-        this.b = b || r || 0;
-        this.a = a || 1;
+        this._r = r || 0;
+
+        this._g = g || 0;
+        this._b = b || 0;
+        this._a = a || 1;
         this._css = null;
 
         ColorUpdate(this);
     }
 
-    _createClass(Color, [{
+    (0, _createClass3.default)(Color, [{
         key: 'set',
         value: function set(r, g, b, a) {
 
-            if (r === undefined) return this;
+            this._r = r || 0;
+            this._g = g || 0;
+            this._b = b || 0;
 
-            this.r = r;
-            this.b = b || r;
-            this.g = g || r;
-
-            if (a !== undefined) this.a = a;
+            if (a !== undefined) this._a = a;
 
             ColorUpdate(this);
 
@@ -9341,11 +11898,11 @@ var Color = function () {
         value: function setRGBA(r, g, b, a) {
             if (r === undefined) return;
 
-            this.r = Math.round(r / 255.0);
-            this.g = Math.round(g / 255.0);
-            this.b = Math.round(b / 255.0);
+            this._r = Math.round(r / 255.0);
+            this._g = Math.round(g / 255.0);
+            this._b = Math.round(b / 255.0);
 
-            if (a !== undefined) this.a = Math.round(a / 255.0);
+            if (a !== undefined) this._a = Math.round(a / 255.0);
 
             ColorUpdate(this);
 
@@ -9353,11 +11910,11 @@ var Color = function () {
         }
     }, {
         key: 'setColor',
-        value: function setColor(color) {
-            this.r = color.r;
-            this.g = color.g;
-            this.b = color.b;
-            this.a = color.a;
+        value: function setColor(color, a) {
+            this._r = color.r;
+            this._g = color.g;
+            this._b = color.b;
+            if (a !== undefined) this._a = a;else this._a = color.a;
             ColorUpdate(this);
             return this;
         }
@@ -9365,10 +11922,10 @@ var Color = function () {
         key: 'parse',
         value: function parse(value) {
             var parsedValue = (0, _ParseColor2.default)(value);
-            this.r = parsedValue.r;
-            this.g = parsedValue.g;
-            this.b = parsedValue.b;
-            this.a = parsedValue.a;
+            this._r = parsedValue.r;
+            this._g = parsedValue.g;
+            this._b = parsedValue.b;
+            this._a = parsedValue.a;
             ColorUpdate(this);
             return this;
         }
@@ -9376,43 +11933,37 @@ var Color = function () {
         key: 'lerp',
         value: function lerp(toColor, t) {
 
-            this.r = _MathUtils2.default.lerp(this.r, toColor.r);
-            this.g = _MathUtils2.default.lerp(this.g, toColor.g);
-            this.b = _MathUtils2.default.lerp(this.b, toColor.b);
-            this.a = _MathUtils2.default.lerp(this.a, toColor.a);
+            this._r = _MathUtils2.default.lerp(this._r, toColor.r);
+            this._g = _MathUtils2.default.lerp(this._g, toColor.g);
+            this._b = _MathUtils2.default.lerp(this._b, toColor.b);
+            this._a = _MathUtils2.default.lerp(this._a, toColor.a);
             ColorUpdate(this);
             return this;
         }
-    }, {
-        key: 'ease',
-        value: function ease(to, t, easingType, easingMode, easingArg) {
-            if (easingType === undefined) easingType = _EasingType2.default.LINEAR;
-            if (easingMode === undefined) easingMode = 0;
-            if (easingArg === undefined) easingArg = 1;
 
-            var easer = _Ease2.default.in;
+        /*ease(to, t, easingType, easingMode, easingArg) {
+             if (easingType === undefined) easingType = EasingType.LINEAR;
+             if (easingMode === undefined) easingMode = 0;
+             if (easingArg === undefined) easingArg = 1;
+               let easer = Ease.in;
+               switch (easingMode) {
+                 case 1: {
+                    easer = Ease.out;
+                    break;
+                 }
+                 case 2: {
+                    easer = Ease.inout;
+                    break;
+                 }
+             }
+               this._r = easer.by(easingType, this._r, to.r, t, easingArg);
+             this._g = easer.by(easingType, this._g, to.g, t, easingArg);
+             this._b = easer.by(easingType, this._b, to.b, t, easingArg);
+             this._a = easer.by(easingType, this._a, to.a, t, easingArg);
+               ColorUpdate(this);
+             return this;
+        }*/
 
-            switch (easingMode) {
-                case 1:
-                    {
-                        easer = _Ease2.default.out;
-                        break;
-                    }
-                case 2:
-                    {
-                        easer = _Ease2.default.inout;
-                        break;
-                    }
-            }
-
-            this.r = easer.by(easingType, this.r, to.r, t, easingArg);
-            this.g = easer.by(easingType, this.g, to.g, t, easingArg);
-            this.b = easer.by(easingType, this.b, to.b, t, easingArg);
-            this.a = easer.by(easingType, this.a, to.a, t, easingArg);
-
-            ColorUpdate(this);
-            return this;
-        }
     }, {
         key: 'to32',
         value: function to32() {
@@ -9435,16 +11986,6 @@ var Color = function () {
 
 
         // static functions
-        /*static red = new Color(255, 0, 0);
-        static green = new Color(0, 255, 0);
-        static blue = new Color(0, 0, 255);
-        static cyan = new Color(0, 255, 255);
-        static magenta = new Color(255, 0, 255);
-        static yellow = new Color(255, 255, 0);
-        static black = new Color(0);
-        static white = new Color(255);
-        static gray = new Color(255/2.0);
-        static transparent = new Color(0, 0, 0, 0);*/
 
     }, {
         key: 'rgba',
@@ -9452,26 +11993,125 @@ var Color = function () {
             return this._css;
         }
     }, {
-        key: 'alpha',
+        key: 'r',
+        get: function get() {
+            return this._r;
+        }
+    }, {
+        key: 'g',
+        get: function get() {
+            return this._g;
+        }
+    }, {
+        key: 'b',
+        get: function get() {
+            return this._b;
+        }
+    }, {
+        key: 'a',
+        get: function get() {
+            return this._a;
+        },
         set: function set(value) {
-            this.a = value;
+            this._a = value;
             ColorUpdate(this);
         }
-    }]);
+    }], [{
+        key: 'ease',
+        value: function ease(from, to, t, easingType, easingMode, easingArg) {
 
+            if (easingType === undefined) easingType = _EasingType2.default.LINEAR;
+            if (easingMode === undefined) easingMode = 0;
+            if (easingArg === undefined) easingArg = 3;
+
+            var easer = _Ease2.default.in;
+
+            switch (easingMode) {
+                case 1:
+                    {
+                        easer = _Ease2.default.out;
+                        break;
+                    }
+                case 2:
+                    {
+                        easer = _Ease2.default.inout;
+                        break;
+                    }
+            }
+
+            var color = new Color();
+
+            color.set(easer.by(easingType, from.r, to.r, t, easingArg), easer.by(easingType, from.g, to.g, t, easingArg), easer.by(easingType, from.b, to.b, t, easingArg), easer.by(easingType, from.a, to.a, t, easingArg));
+
+            return color;
+        }
+    }, {
+        key: 'red',
+        get: function get() {
+            return new Color(255, 0, 0);
+        }
+    }, {
+        key: 'green',
+        get: function get() {
+            return new Color(0, 255, 0);
+        }
+    }, {
+        key: 'blue',
+        get: function get() {
+            return new Color(0, 0, 255);
+        }
+    }, {
+        key: 'cyan',
+        get: function get() {
+            return new Color(0, 255, 255);
+        }
+    }, {
+        key: 'magenta',
+        get: function get() {
+            return new Color(255, 0, 255);
+        }
+    }, {
+        key: 'yellow',
+        get: function get() {
+            return new Color(255, 255, 0);
+        }
+    }, {
+        key: 'black',
+        get: function get() {
+            return new Color(0);
+        }
+    }, {
+        key: 'white',
+        get: function get() {
+            return new Color(255);
+        }
+    }, {
+        key: 'gray',
+        get: function get() {
+            return new Color(255 / 2.0);
+        }
+    }, {
+        key: 'transparent',
+        get: function get() {
+            return new Color(0, 0, 0, 0);
+        }
+    }]);
     return Color;
 }();
 
-Color.red = new Color(255, 0, 0);
-Color.green = new Color(0, 255, 0);
-Color.blue = new Color(0, 0, 255);
-Color.cyan = new Color(0, 255, 255);
-Color.magenta = new Color(255, 0, 255);
-Color.yellow = new Color(255, 255, 0);
-Color.black = new Color(0);
-Color.white = new Color(255);
-Color.gray = new Color(255 / 2.0);
-Color.transparent = new Color(0, 0, 0, 0);
+exports.default = Color;
+
+/*MakeImmutable([
+    Color.red,
+    Color.green,
+    Color.blue,
+    Color.cyan,
+    Color.magenta,
+    Color.yellow,
+    Color.black,
+    Color.white,
+    Color.gray,
+    Color.transparent], false);*/
 
 /*
 MakeImmutable([
@@ -9485,8 +12125,6 @@ Color.black = new Color(0),
 Color.white = new Color(255),
 Color.gray = new Color(255/2.0),
 Color.transparent = new Color(0, 0, 0, 0),], true);*/
-
-exports.default = Color;
 
 /***/ }),
 
@@ -9662,7 +12300,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
 
 exports.default = ParseColor;
 
@@ -9686,7 +12326,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function ParseColor(value) {
 
-  var type = typeof value === "undefined" ? "undefined" : _typeof(value);
+  var type = typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value);
 
   if (type === 'number') {
 
@@ -9909,7 +12549,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function DrawTransition(transition, canvas, context) {
 
-    if (transition._state === _TransitionState2.default.IDLE) return;
+    if (transition._state === _TransitionState2.default.NONE) return;
 
     var settings = transition.settings;
 
@@ -9919,8 +12559,7 @@ function DrawTransition(transition, canvas, context) {
         case _TransitionStyle2.default.FILL:
             {
 
-                //let color = transition._color.rgba;
-                context.fillStyle = transition._color.rgba;
+                context.fillStyle = transition._tColor.rgba;
                 context.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 
                 break;
@@ -9944,7 +12583,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _TransitionSettings = __webpack_require__(/*! ./TransitionSettings */ "./render/transition/TransitionSettings.js");
 
@@ -9968,36 +12613,35 @@ var _System2 = _interopRequireDefault(_System);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Transition = function () {
     function Transition(game) {
-        _classCallCheck(this, Transition);
+        (0, _classCallCheck3.default)(this, Transition);
 
         this.game = game;
 
         this.settings = new _TransitionSettings2.default(this);
         this._behaviour = _TranstionBehavior2.default.NONE;
-        this._state = _TransitionState2.default.IDLE;
+        this._state = _TransitionState2.default.NONE;
         this._alpha = 0;
-        this._color = new _Color2.default();
-        this._toColor = undefined;
+        this._tColor = _Color2.default.transparent;
+        this._startColor = new _Color2.default();
         this._t = 0;
     }
 
-    _createClass(Transition, [{
+    (0, _createClass3.default)(Transition, [{
         key: "in",
         value: function _in() {
 
             var old = this._behaviour;
 
-            if (old === _TransitionState2.default.IDLE || old === _TransitionState2.default.WAIT) {}
+            if (old === _TransitionState2.default.IN) return;
 
             this._alpha = 0;
             this._t = 0;
-            this._color.alpha = 0;
+            var oldAlpha = 0; //this._color.a;
+            this._startColor.setColor(this.settings.inColor, 0);
+            this._tColor.setColor(this._startColor, 0);
             this.settings.inColor.a = 1;
-            //this._toColor = this.settings.inColor;
             this._behaviour = _TranstionBehavior2.default.IN;
             this._state = _TransitionState2.default.IN;
         }
@@ -10008,7 +12652,6 @@ var Transition = function () {
         key: "inout",
         value: function inout() {}
     }]);
-
     return Transition;
 }();
 
@@ -10033,7 +12676,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Color = __webpack_require__(/*! ../color/Color */ "./render/color/Color.js");
 
@@ -10049,11 +12698,9 @@ var _TransitionStyle2 = _interopRequireDefault(_TransitionStyle);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var TransitionSettings = function () {
     function TransitionSettings(parent) {
-        _classCallCheck(this, TransitionSettings);
+        (0, _classCallCheck3.default)(this, TransitionSettings);
 
         this.transition = parent;
 
@@ -10075,10 +12722,10 @@ var TransitionSettings = function () {
         this.timingOutArgument = 3;
     }
 
-    _createClass(TransitionSettings, [{
+    (0, _createClass3.default)(TransitionSettings, [{
         key: "setInColor",
         value: function setInColor(color) {
-            this.fromColor.parse(color);
+            this.inColor.parse(color);
             return this;
         }
     }, {
@@ -10134,7 +12781,6 @@ var TransitionSettings = function () {
             return this;
         }
     }]);
-
     return TransitionSettings;
 }();
 
@@ -10156,14 +12802,21 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var TransitionState = {
-    IDLE: -1,
-    IN: 0,
-    OUT: 1,
-    WAIT: 2
+    NONE: 0,
+    IN: 1,
+    OUT: 2,
+    WAIT: 3,
+    IDLE: 4
 };
 
-Object.freeze(TransitionState);
+(0, _freeze2.default)(TransitionState);
 
 exports.default = TransitionState;
 
@@ -10183,12 +12836,18 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var TranstionStyle = {
     NONE: 0,
     FILL: 1
 };
 
-Object.freeze(TranstionStyle);
+(0, _freeze2.default)(TranstionStyle);
 
 exports.default = TranstionStyle;
 
@@ -10208,14 +12867,21 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var TransitionBehavior = {
-    NONE: -1,
-    IN: 0,
-    OUT: 1,
-    INOUT: 2
+    NONE: 0,
+    IN: 1,
+    OUT: 2,
+    INOUT: 3,
+    IDLE: 4
 };
 
-Object.freeze(TransitionBehavior);
+(0, _freeze2.default)(TransitionBehavior);
 
 exports.default = TransitionBehavior;
 
@@ -10252,6 +12918,10 @@ var _Ease = __webpack_require__(/*! ../../math/easing/Ease */ "./math/easing/Eas
 
 var _Ease2 = _interopRequireDefault(_Ease);
 
+var _Color = __webpack_require__(/*! ../color/Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function UpdateTransition(transition, deltaTime) {
@@ -10259,7 +12929,7 @@ function UpdateTransition(transition, deltaTime) {
     if (transition._behaviour === _TranstionBehavior2.default.NONE) return;
 
     var setg = transition.settings;
-    var changeState = void 0;
+    var changeState = undefined;
 
     // UPDATE STATE
     switch (transition._state) {
@@ -10274,9 +12944,8 @@ function UpdateTransition(transition, deltaTime) {
                 }
 
                 // ease(to, t, easingType, easingMode, easingArg)
-                transition._color.ease(setg.outColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument);
+                transition._tColor = _Color2.default.ease(transition._startColor, setg.inColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument);
 
-                console.log(transition._color.rgba);
                 break;
             }
 
@@ -10307,9 +12976,9 @@ function UpdateTransition(transition, deltaTime) {
 
     if (changeState === undefined) return;
 
-    transition._t = 0;
-
     /// CHANGE TRANSITION STATE
+
+    transition._t = 0;
 
     switch (transition._behaviour) {
         case _TranstionBehavior2.default.IN:
@@ -10339,6 +13008,7 @@ function UpdateTransition(transition, deltaTime) {
                     transition._state = _TransitionState2.default.IDLE;
                     transition._behaviour = _TranstionBehavior2.default.NONE;
                 }
+                break;
             }
     }
 }
@@ -10439,13 +13109,20 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Debug = function () {
   function Debug(game) {
-    _classCallCheck(this, Debug);
+    (0, _classCallCheck3.default)(this, Debug);
+
 
     this.game = game;
     this.draw = game.system.draw;
@@ -10460,7 +13137,7 @@ var Debug = function () {
     this.textShadow = 'black';
   }
 
-  _createClass(Debug, [{
+  (0, _createClass3.default)(Debug, [{
     key: 'test',
     value: function test() {
 
@@ -10495,7 +13172,6 @@ var Debug = function () {
       this.y += this.lineHeight;
     }
   }]);
-
   return Debug;
 }();
 
@@ -10604,7 +13280,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ../../core/system/System */ "./core/system/System.js");
 
@@ -10644,11 +13326,9 @@ var _InitializeUI2 = _interopRequireDefault(_InitializeUI);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var UI = function () {
     function UI(game) {
-        _classCallCheck(this, UI);
+        (0, _classCallCheck3.default)(this, UI);
 
         this.game = game;
         this.canvas = null;
@@ -10668,7 +13348,7 @@ var UI = function () {
         this.draw = new _UIDrawer2.default(game, this);
     }
 
-    _createClass(UI, [{
+    (0, _createClass3.default)(UI, [{
         key: 'setSize',
         value: function setSize(width, height) {
             (0, _UIResize2.default)(this, width, height);
@@ -10745,7 +13425,6 @@ var UI = function () {
             this._alpha = value;
         }
     }]);
-
     return UI;
 }();
 
@@ -10770,8 +13449,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); //import GameSystemManager from "../core/GameSystemManager";
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Validate = __webpack_require__(/*! ../../utils/Validate */ "./utils/Validate.js");
 
@@ -10779,11 +13463,9 @@ var _Validate2 = _interopRequireDefault(_Validate);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var UIDrawer = function () {
   function UIDrawer(game, ui) {
-    _classCallCheck(this, UIDrawer);
+    (0, _classCallCheck3.default)(this, UIDrawer);
 
     this.game = game;
     this.cache = null;
@@ -10795,7 +13477,7 @@ var UIDrawer = function () {
     this.currentTextAlign = 'center';
   }
 
-  _createClass(UIDrawer, [{
+  (0, _createClass3.default)(UIDrawer, [{
     key: 'init',
     value: function init() {
 
@@ -10933,11 +13615,11 @@ var UIDrawer = function () {
       this.currentTextAlign = this.context.textAlign;
     }
   }]);
-
   return UIDrawer;
 }();
 
 //GameSystemManager.register('UIDrawer',UIDraw,'draw');
+//import GameSystemManager from "../core/GameSystemManager";
 
 
 exports.default = UIDrawer;
@@ -11010,6 +13692,22 @@ Object.defineProperty(exports, "__esModule", {
       value: true
 });
 
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
 var _Resource2 = __webpack_require__(/*! ./Resource */ "./resources/Resource.js");
 
 var _Resource3 = _interopRequireDefault(_Resource2);
@@ -11020,24 +13718,18 @@ var _ResourceType2 = _interopRequireDefault(_ResourceType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 /**
 * Image that holds image data.
 * @class Image
 * @constructor
 */
 var ImageResource = function (_Resource) {
-      _inherits(ImageResource, _Resource);
+      (0, _inherits3.default)(ImageResource, _Resource);
 
       function ImageResource(name, data) {
-            _classCallCheck(this, ImageResource);
+            (0, _classCallCheck3.default)(this, ImageResource);
 
-            var _this = _possibleConstructorReturn(this, (ImageResource.__proto__ || Object.getPrototypeOf(ImageResource)).call(this, name));
+            var _this = (0, _possibleConstructorReturn3.default)(this, (ImageResource.__proto__ || (0, _getPrototypeOf2.default)(ImageResource)).call(this, name));
 
             _this.data = data;
             _this.width = 0;
@@ -11074,16 +13766,18 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
 var _ResourceType = __webpack_require__(/*! ./ResourceType */ "./resources/ResourceType.js");
 
 var _ResourceType2 = _interopRequireDefault(_ResourceType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Resource = function Resource(name, data) {
-    _classCallCheck(this, Resource);
+    (0, _classCallCheck3.default)(this, Resource);
 
     //this.data = data || undefined;
     this.name = name || 'Resource';
@@ -11150,7 +13844,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _Resource2 = __webpack_require__(/*! ../Resource */ "./resources/Resource.js");
 
@@ -11174,19 +13886,13 @@ var _ResourceType2 = _interopRequireDefault(_ResourceType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var TilemapResource = function (_Resource) {
-    _inherits(TilemapResource, _Resource);
+    (0, _inherits3.default)(TilemapResource, _Resource);
 
     function TilemapResource(name, source, cache) {
-        _classCallCheck(this, TilemapResource);
+        (0, _classCallCheck3.default)(this, TilemapResource);
 
-        var _this = _possibleConstructorReturn(this, (TilemapResource.__proto__ || Object.getPrototypeOf(TilemapResource)).call(this, name));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (TilemapResource.__proto__ || (0, _getPrototypeOf2.default)(TilemapResource)).call(this, name));
 
         _this.metaData = new _TilemapMetadata2.default({
             name: source.name,
@@ -11205,7 +13911,7 @@ var TilemapResource = function (_Resource) {
         return _this;
     }
 
-    _createClass(TilemapResource, [{
+    (0, _createClass3.default)(TilemapResource, [{
         key: "getTilesetByGID",
         value: function getTilesetByGID(gid) {
 
@@ -11228,7 +13934,6 @@ var TilemapResource = function (_Resource) {
             }) || null;
         }
     }]);
-
     return TilemapResource;
 }(_Resource3.default);
 
@@ -11250,10 +13955,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Tile = function Tile(layer, tileData, tileX, tileY, id) {
-    _classCallCheck(this, Tile);
+    (0, _classCallCheck3.default)(this, Tile);
 
     this.layer = layer;
     this.data = tileData;
@@ -11284,16 +13993,18 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
 var _Rect = __webpack_require__(/*! ../../../math/Rect */ "./math/Rect.js");
 
 var _Rect2 = _interopRequireDefault(_Rect);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var TileGID = function TileGID(tileset, gid, tileID, u, v, umax, vmax) {
-    _classCallCheck(this, TileGID);
+    (0, _classCallCheck3.default)(this, TileGID);
 
     this.id = tileID;
     this.gid = gid;
@@ -11322,16 +14033,18 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
 var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var TilemapLayerData = function TilemapLayerData(config) {
-    _classCallCheck(this, TilemapLayerData);
+    (0, _classCallCheck3.default)(this, TilemapLayerData);
 
     this.width = _ObjectGet2.default.value(config, 'width', 0);
     this.height = _ObjectGet2.default.value(config, 'height', 0);
@@ -11363,16 +14076,19 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
 var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var TilemapMetadata = function TilemapMetadata(config) {
-    _classCallCheck(this, TilemapMetadata);
+    (0, _classCallCheck3.default)(this, TilemapMetadata);
+
 
     this.name = _ObjectGet2.default.value(config, 'name', 'tilemap');
     this.width = _ObjectGet2.default.value(config, 'width', 0);
@@ -11402,7 +14118,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
 
@@ -11414,11 +14136,10 @@ var _TileGID2 = _interopRequireDefault(_TileGID);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Tileset = function () {
     function Tileset(name, firstgid, tileWidth, tileHeight, margin, spacing) {
-        _classCallCheck(this, Tileset);
+        (0, _classCallCheck3.default)(this, Tileset);
+
 
         this.name = name;
         this.firstgid = firstgid || 1;
@@ -11433,7 +14154,7 @@ var Tileset = function () {
         this.gidCount = 0;
     }
 
-    _createClass(Tileset, [{
+    (0, _createClass3.default)(Tileset, [{
         key: 'getTileGID',
         value: function getTileGID(gid) {
 
@@ -11494,7 +14215,6 @@ var Tileset = function () {
             }
         }
     }]);
-
     return Tileset;
 }();
 
@@ -11821,7 +14541,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _PostPreloadingScene = __webpack_require__(/*! ./components/PostPreloadingScene */ "./scene/components/PostPreloadingScene.js");
 
@@ -11829,11 +14555,10 @@ var _PostPreloadingScene2 = _interopRequireDefault(_PostPreloadingScene);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Scene = function () {
   function Scene(name) {
-    _classCallCheck(this, Scene);
+    (0, _classCallCheck3.default)(this, Scene);
+
 
     this.name = name || 'New Scene';
     //this.childs = new EntityHierarchy("SceneHierarchy", this.game);
@@ -11850,7 +14575,7 @@ var Scene = function () {
     }*/
   }
 
-  _createClass(Scene, [{
+  (0, _createClass3.default)(Scene, [{
     key: 'preloadDone',
     value: function preloadDone() {
 
@@ -11901,7 +14626,6 @@ var Scene = function () {
       this.height = height;
     }
   }]);
-
   return Scene;
 }();
 
@@ -11923,7 +14647,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
 
@@ -11951,11 +14681,10 @@ var _InjectSystems2 = _interopRequireDefault(_InjectSystems);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var SceneManager = function () {
   function SceneManager(game) {
-    _classCallCheck(this, SceneManager);
+    (0, _classCallCheck3.default)(this, SceneManager);
+
 
     this.game = game;
     this._scenes = new _Map2.default();
@@ -11981,7 +14710,7 @@ var SceneManager = function () {
     this._loadingPlaceHolder = new _ScintillaLoadingScene2.default(this.game);
   }
 
-  _createClass(SceneManager, [{
+  (0, _createClass3.default)(SceneManager, [{
     key: 'add',
     value: function add(sceneName, scene) {
 
@@ -12044,7 +14773,6 @@ var SceneManager = function () {
       delete this.scenes[sceneName];
     }
   }]);
-
   return SceneManager;
 }();
 
@@ -12071,7 +14799,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _Scene2 = __webpack_require__(/*! ../Scene */ "./scene/Scene.js");
 
@@ -12087,19 +14833,13 @@ var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 var ScintillaLoadingScreen = function (_Scene) {
-    _inherits(ScintillaLoadingScreen, _Scene);
+    (0, _inherits3.default)(ScintillaLoadingScreen, _Scene);
 
     function ScintillaLoadingScreen(game) {
-        _classCallCheck(this, ScintillaLoadingScreen);
+        (0, _classCallCheck3.default)(this, ScintillaLoadingScreen);
 
-        var _this = _possibleConstructorReturn(this, (ScintillaLoadingScreen.__proto__ || Object.getPrototypeOf(ScintillaLoadingScreen)).call(this, 'Scintilla Loading Scene'));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (ScintillaLoadingScreen.__proto__ || (0, _getPrototypeOf2.default)(ScintillaLoadingScreen)).call(this, 'Scintilla Loading Scene'));
 
         _this.scintillaLogo = new Image();
         var logoData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAA0CAQAAABxuOPTAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiBAEENCBdKapvAAABjklEQVRYw+2YSxKDIAyGA6seyiXH8mgsORS7dAFpUMNDJ9CNmakFAnz8MVIswCPbkT8L7IqS4REVgSO2HKiGvQOMa+7yGbhY5XKdhFPV2ZpMLaz3gqeIPd5PeeJaWBX3qiNYqqnn7VVrPayqu/JZl3ISSWstEb2wPtDaHjLhbo4nUwunrHQUOyWN2kBFpRJ26iMjp49qgHuPTDvQKkpbW5+i1n1wa5fAijp7P21/OP+wT0Hnws3uefDUdP7pNLtY5ULgPexE4Ohr4tR31H11er322muPdqXrealWYrPrkQNQgI8ZXVDqGbt/GRh20eSp/jERz7jUQn7qe10Ut5Z+HmdTM08WsaxJx02GUMvIgabsYwMA+AIcsuqQO3vk75CRoQhnyCN5LPu5nKQUYz1G5KmPq5V9tbaWn+aKCGABnAmFonAIijPXVUtKSHXd79H9lNqIAM4AbBm7/fDJNqF8biM1W3WMx9JnA3hkRaXqdD1GQW6j1AqdMVS3zgB49FkvXT16dIaDPFaq+5kC4MwX1X+rgjIvVdUAAAAASUVORK5CYII=";
@@ -12156,7 +14896,7 @@ var ScintillaLoadingScreen = function (_Scene) {
         return _this;
     }
 
-    _createClass(ScintillaLoadingScreen, [{
+    (0, _createClass3.default)(ScintillaLoadingScreen, [{
         key: "init",
         value: function init(next) {
             this.nextScene = next;
@@ -12173,7 +14913,6 @@ var ScintillaLoadingScreen = function (_Scene) {
             //this.progress = 1;
         }
     }]);
-
     return ScintillaLoadingScreen;
 }(_Scene3.default);
 
@@ -12519,7 +15258,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _MergeSort = __webpack_require__(/*! ./useful/MergeSort */ "./structures/useful/MergeSort.js");
 
@@ -12527,11 +15272,9 @@ var _MergeSort2 = _interopRequireDefault(_MergeSort);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var DataList = function () {
     function DataList(elements, unique) {
-        _classCallCheck(this, DataList);
+        (0, _classCallCheck3.default)(this, DataList);
 
         this.unique = unique || true;
         this.childs = [];
@@ -12543,7 +15286,7 @@ var DataList = function () {
         }
     }
 
-    _createClass(DataList, [{
+    (0, _createClass3.default)(DataList, [{
         key: 'push',
         value: function push(child) {
 
@@ -12779,7 +15522,6 @@ var DataList = function () {
             } else return null;
         }
     }]);
-
     return DataList;
 }();
 
@@ -12801,20 +15543,30 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _keys = __webpack_require__(/*! babel-runtime/core-js/object/keys */ "../node_modules/babel-runtime/core-js/object/keys.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _keys2 = _interopRequireDefault(_keys);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // DataMap simple class
 var DataMap = function () {
   function DataMap() {
-    _classCallCheck(this, DataMap);
+    (0, _classCallCheck3.default)(this, DataMap);
 
     this._content = {};
     this._size = 0;
   }
 
-  _createClass(DataMap, [{
+  (0, _createClass3.default)(DataMap, [{
     key: "set",
 
 
@@ -12861,7 +15613,7 @@ var DataMap = function () {
   }, {
     key: "keys",
     value: function keys() {
-      return Object.keys(this._content);
+      return (0, _keys2.default)(this._content);
     }
   }, {
     key: "values",
@@ -12923,7 +15675,7 @@ var DataMap = function () {
   }, {
     key: "slowSize",
     value: function slowSize() {
-      return Object.keys(_contents).length;
+      return (0, _keys2.default)(_contents).length;
     }
   }, {
     key: "each",
@@ -12943,7 +15695,6 @@ var DataMap = function () {
       return this._size;
     }
   }]);
-
   return DataMap;
 }();
 
@@ -12965,7 +15716,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _MergeSort = __webpack_require__(/*! ./useful/MergeSort */ "./structures/useful/MergeSort.js");
 
@@ -12973,11 +15730,9 @@ var _MergeSort2 = _interopRequireDefault(_MergeSort);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var DataSet = function () {
     function DataSet(elements) {
-        _classCallCheck(this, DataSet);
+        (0, _classCallCheck3.default)(this, DataSet);
 
         this._content = [];
         this._size = 0;
@@ -12989,7 +15744,7 @@ var DataSet = function () {
         }
     }
 
-    _createClass(DataSet, [{
+    (0, _createClass3.default)(DataSet, [{
         key: "set",
         value: function set(value) {
             if (this._content.indexOf(value) === -1) this._content.push(value);
@@ -13072,7 +15827,6 @@ var DataSet = function () {
             return this._content.length;
         }
     }]);
-
     return DataSet;
 }();
 
@@ -13220,20 +15974,26 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Wrapper class for game time
 
 var GameTime = function () {
     function GameTime(game) {
-        _classCallCheck(this, GameTime);
+        (0, _classCallCheck3.default)(this, GameTime);
 
         this.game = game;
     }
 
-    _createClass(GameTime, [{
+    (0, _createClass3.default)(GameTime, [{
         key: "init",
         value: function init(gameLoop) {
             this._updateStep = gameLoop.updateStep;
@@ -13269,7 +16029,6 @@ var GameTime = function () {
             return this._updateStep.hiDeltaTime;
         }
     }]);
-
     return GameTime;
 }();
 
@@ -13291,7 +16050,13 @@ Object.defineProperty(exports, "__esModule", {
         value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _RequestAnimationFrame = __webpack_require__(/*! ../dom/RequestAnimationFrame */ "./dom/RequestAnimationFrame.js");
 
@@ -13307,11 +16072,9 @@ var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var UpdateStep = function () {
         function UpdateStep(game, config) {
-                _classCallCheck(this, UpdateStep);
+                (0, _classCallCheck3.default)(this, UpdateStep);
 
                 // CORE
                 this.game = game;
@@ -13346,7 +16109,7 @@ var UpdateStep = function () {
                 this.frameCounter = 0;
         }
 
-        _createClass(UpdateStep, [{
+        (0, _createClass3.default)(UpdateStep, [{
                 key: "init",
                 value: function init(gameLoop) {
 
@@ -13458,7 +16221,6 @@ var UpdateStep = function () {
                         this.accumalatorReset();
                 }
         }]);
-
         return UpdateStep;
 }();
 
@@ -13605,7 +16367,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Vector = __webpack_require__(/*! ../math/Vector */ "./math/Vector.js");
 
@@ -13621,11 +16389,10 @@ var _BoundingBox2 = _interopRequireDefault(_BoundingBox);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 var Transform = function () {
   function Transform() {
-    _classCallCheck(this, Transform);
+    (0, _classCallCheck3.default)(this, Transform);
+
 
     this.matrix = new _Matrix2.default(1);
     this.position = new _Vector2.default(0, 0, this);
@@ -13643,7 +16410,7 @@ var Transform = function () {
     //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
   }
 
-  _createClass(Transform, [{
+  (0, _createClass3.default)(Transform, [{
     key: 'markDirty',
     value: function markDirty() {
       this._isDirty = true;
@@ -13677,7 +16444,6 @@ var Transform = function () {
       this.scale.set(0, 0);
     }
   }]);
-
   return Transform;
 }();
 
@@ -13986,6 +16752,12 @@ setByShape(shape,position) {
 "use strict";
 
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var Base64Utils = {
     decode: function decode(str) {
         return window.atob(str);
@@ -14008,7 +16780,7 @@ var Base64Utils = {
     }
 };
 
-Object.freeze(Base64Utils);
+(0, _freeze2.default)(Base64Utils);
 
 module.exports = Base64Utils;
 
@@ -14027,6 +16799,12 @@ module.exports = Base64Utils;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Path = {
   getExtension: function getExtension(filename) {
@@ -14064,7 +16842,7 @@ var Path = {
   }
 };
 
-Object.freeze(Path);
+(0, _freeze2.default)(Path);
 
 exports.default = Path;
 
@@ -14087,6 +16865,12 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var Validate = {
     isFunction: function isFunction(value) {
         return value instanceof Function;
@@ -14102,7 +16886,7 @@ var Validate = {
     }
 };
 
-Object.freeze(Validate);
+(0, _freeze2.default)(Validate);
 
 exports.default = Validate;
 
@@ -14125,27 +16909,39 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _getOwnPropertyNames = __webpack_require__(/*! babel-runtime/core-js/object/get-own-property-names */ "../node_modules/babel-runtime/core-js/object/get-own-property-names.js");
+
+var _getOwnPropertyNames2 = _interopRequireDefault(_getOwnPropertyNames);
 
 exports.default = DeepFreeze;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
 // To do so, we use this function.
 function DeepFreeze(obj) {
 
     // Retrieve the property names defined on obj
-    var propNames = Object.getOwnPropertyNames(obj);
+    var propNames = (0, _getOwnPropertyNames2.default)(obj);
 
     // Freeze properties before freezing self
     propNames.forEach(function (name) {
         var prop = obj[name];
 
         // Freeze prop if it is an object
-        if ((typeof prop === 'undefined' ? 'undefined' : _typeof(prop)) == 'object' && prop !== null) deepFreeze(prop);
+        if ((typeof prop === 'undefined' ? 'undefined' : (0, _typeof3.default)(prop)) == 'object' && prop !== null) deepFreeze(prop);
     });
 
     // Freeze self (no-op if already frozen)
-    return Object.freeze(obj);
+    return (0, _freeze2.default)(obj);
 }
 
 /***/ }),
@@ -14163,6 +16959,11 @@ function DeepFreeze(obj) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
 exports.default = MakeImmutable;
 
 var _DeepFreeze = __webpack_require__(/*! ./DeepFreeze */ "./utils/object/DeepFreeze.js");
@@ -14180,7 +16981,7 @@ function MakeImmutable(value, deep) {
             if (deep) {
                 (0, _DeepFreeze2.default)(value[i]);
             } else {
-                Object.freeze(value[i]);
+                (0, _freeze2.default)(value[i]);
             }
         }
     } else {
@@ -14188,7 +16989,7 @@ function MakeImmutable(value, deep) {
         if (deep) {
             (0, _DeepFreeze2.default)(value);
         } else {
-            Object.freeze(value);
+            (0, _freeze2.default)(value);
         }
     }
 
@@ -14257,21 +17058,33 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _freeze2 = _interopRequireDefault(_freeze);
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ObjectGettter = function () {
     function ObjectGettter() {
-        _classCallCheck(this, ObjectGettter);
+        (0, _classCallCheck3.default)(this, ObjectGettter);
     }
 
-    _createClass(ObjectGettter, [{
+    (0, _createClass3.default)(ObjectGettter, [{
         key: 'value',
         value: function value(obj, key, defaultValue) {
-            var type = typeof obj === 'undefined' ? 'undefined' : _typeof(obj);
+            var type = typeof obj === 'undefined' ? 'undefined' : (0, _typeof3.default)(obj);
 
             if (!obj || type === 'number' || type === 'string') return defaultValue;else if (obj.hasOwnProperty(key) && obj[key] !== undefined) return obj[key];else return defaultValue;
         }
@@ -14302,7 +17115,6 @@ var ObjectGettter = function () {
             }
         }
     }]);
-
     return ObjectGettter;
 }();
 
@@ -14310,7 +17122,7 @@ var ObjectGettter = function () {
 
 var ObjectGet = new ObjectGettter();
 
-Object.freeze(ObjectGet);
+(0, _freeze2.default)(ObjectGet);
 
 exports.default = ObjectGet;
 

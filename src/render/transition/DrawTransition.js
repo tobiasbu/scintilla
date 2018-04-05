@@ -4,7 +4,7 @@ import TransitionState from "./TransitionState";
 
 export default function DrawTransition(transition, canvas, context) {
 
-    if (transition._state === TransitionState.IDLE)
+    if (transition._state === TransitionState.NONE)
         return;
 
     let settings = transition.settings;
@@ -13,8 +13,7 @@ export default function DrawTransition(transition, canvas, context) {
         case TranstionStyle.NONE: return;
         case TranstionStyle.FILL: {
 
-            //let color = transition._color.rgba;
-            context.fillStyle = transition._color.rgba;  
+            context.fillStyle = transition._tColor.rgba;  
             context.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 
             break;

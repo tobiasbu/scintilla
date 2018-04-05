@@ -1,7 +1,5 @@
 import MathUtils from "../MathUtils";
-import EasingType, {
-    EASE_BACK_CONST
-} from "./EasingType";
+import EasingType, { EASE_BACK_CONST } from "./EasingType";
 
 
 class EaseInFunctions {
@@ -19,7 +17,11 @@ class EaseInFunctions {
     }
 
     stepped(from, to, t) {
-        return to * ((t < 0.5) ? 0 : 1) + from;
+
+        if (t < 0.5)
+            return from;
+
+        return from + to;
     }
 
     cut(from, to, t, levels) {
@@ -93,12 +95,14 @@ class EaseInFunctions {
      */
     by(type, from, to, t, arg) {
 
-        if (arg === undefined) arg = 1;
+        if (arg === undefined) arg = 3;
 
         switch (type) {
 
             case EasingType.NONE:
                 return t;
+            case EasingType.STEPPED:
+                return this.stepped(from, to, t);
             case EasingType.CUT:
                 return this.cut(from, to, t, arg);
             case EasingType.LINEAR:

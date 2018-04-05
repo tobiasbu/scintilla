@@ -2,6 +2,10 @@
 
 const webpack = require('webpack');
 
+const privatePlugin = require('babel-plugin-transform-private');
+//privatePlugin.pattern = "^_";
+
+
 module.exports = {
 
     context: `${__dirname}/src/`,
@@ -27,15 +31,17 @@ module.exports = {
         rules: [
           // rules for modules (configure loaders, parser options, etc.)
           {
-            test: /\.jsx?$/,
+            test: /\.js?$/,
             exclude: /(node_modules|bower_components)/,
             loader: "babel-loader",
-            options: {
-                presets: ["es2015"]
-            }
+            /*options: {
+                presets: ['env'],
+                plugins: ['transform-runtime']
+            }*/
           }
         ]
     },
+    
 
     devtool: 'source-map'
 

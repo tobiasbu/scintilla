@@ -12,10 +12,10 @@ export default class Transition {
 
         this.settings = new TransitionSettings(this);
         this._behaviour = TransitionBehavior.NONE;
-        this._state = TransitionState.IDLE;
+        this._state = TransitionState.NONE;
         this._alpha = 0;     
-        this._color = new Color();
-        this._toColor = undefined;
+        this._tColor = Color.transparent;
+        this._startColor = new Color();
         this._t = 0;
     }
 
@@ -23,16 +23,15 @@ export default class Transition {
 
         let old = this._behaviour;
 
-        if (old === TransitionState.IDLE || old === TransitionState.WAIT)
-        {
-
-        }
+        if (old === TransitionState.IN)
+            return;
 
         this._alpha = 0;
         this._t = 0;
-        this._color.alpha = 0;
+        let oldAlpha = 0;//this._color.a;
+        this._startColor.setColor(this.settings.inColor, 0);
+        this._tColor.setColor(this._startColor, 0);
         this.settings.inColor.a = 1;
-        //this._toColor = this.settings.inColor;
         this._behaviour = TransitionBehavior.IN;
         this._state = TransitionState.IN;
 

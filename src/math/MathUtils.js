@@ -46,9 +46,18 @@ const MathUtils = {
   },
 
   lerp : function(fromValue, toValue, t) {
-
     return (1.0 - t) * fromValue + t * toValue;
+  },
 
+  clampedLerp : function(fromValue, toValue, t) {
+
+    t = MathUtils.clamp(t, 0.0, 1.0);
+
+    return MathUtils.lerp(fromValue, toValue, t);
+  },
+
+  impreciseLerp : function(fromValue, toValue, t) {
+    return fromValue + t * (toValue - fromValue);
   },
 
   lerpAngle : function(fromValue,toValue,t) {

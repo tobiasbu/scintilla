@@ -2,6 +2,7 @@ import TransitionBehavior from "./TranstionBehavior";
 import TransitionState from "./TransitionState";
 import MathUtils from '../../math/MathUtils'
 import Ease from "../../math/easing/Ease";
+import Color from "../color/Color";
 
 export default function UpdateTransition(transition, deltaTime) {
 
@@ -9,26 +10,27 @@ export default function UpdateTransition(transition, deltaTime) {
         return;
 
     let setg = transition.settings;
-    let changeState;
+    let changeState = undefined;
 
     // UPDATE STATE
     switch (transition._state) {
 
         case TransitionState.IN:
             {
-                transition._t += deltaTime / setg.inDuration;
+                transition._t += (deltaTime / setg.inDuration);
 
                 if (transition._t >= 1) {
                     transition._t = 1;
                     changeState = true;
                 }
 
+                // ease(to, t, easingType, easingMode, easingArg)
+                transition._tColor = Color.ease(
+                    transition._startColor, setg.inColor, transition._t,
+                    setg.timingInMethod, 0, setg.timingInArgument);
+
                 
 
-                // ease(to, t, easingType, easingMode, easingArg)
-                transition._color.ease(setg.outColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument);
-
-                console.log(transition._color.rgba);
                 break;
             }
 
@@ -60,9 +62,10 @@ export default function UpdateTransition(transition, deltaTime) {
     if (changeState === undefined)
         return;
 
-    transition._t = 0;
 
     /// CHANGE TRANSITION STATE
+
+    transition._t = 0;
 
     switch (transition._behaviour) {
         case TransitionBehavior.IN:
@@ -87,6 +90,7 @@ export default function UpdateTransition(transition, deltaTime) {
                     transition._state = TransitionState.IDLE;
                     transition._behaviour = TransitionBehavior.NONE;
                 }
+                break;
             }
     }
 }

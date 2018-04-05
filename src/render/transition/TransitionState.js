@@ -1,9 +1,10 @@
 
 const TransitionState = {
-    IDLE : -1,
-    IN : 0,
-    OUT : 1,
-    WAIT : 2,
+    NONE : 0,
+    IN : 1,
+    OUT : 2,
+    WAIT : 3,
+    IDLE : 4
 }
 
 Object.freeze(TransitionState);
