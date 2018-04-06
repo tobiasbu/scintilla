@@ -4,12 +4,9 @@ const URLObject = {
     createFromResponse : function(asset, response, type)
     {
 
-        if (typeof URL === 'function')
-        {
+        if (typeof URL === 'function') {
             asset.src = URL.createObjectURL(response);
-        }
-        else
-        {
+        } else  {
             let reader = new FileReader();
 
             reader.onload = function ()

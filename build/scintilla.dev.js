@@ -2588,6 +2588,7 @@ var CacheManager = function () {
 
     this.json = new _Cache2.default();
     this.text = new _Cache2.default();
+    this.svg = new _Cache2.default();
   }
 
   /*addTilemap(tag, dataFormat) {
@@ -5720,10 +5721,11 @@ var AssetsType = {
     'image': 1,
     'audio': 2,
     'text': 3,
-    'script': 4,
-    'json': 5,
-    'webFont': 6,
-    'tilemapJSON': 7
+    'svg': 4,
+    'script': 5,
+    'json': 6,
+    'webFont': 7,
+    'tilemapJSON': 8
 };
 
 exports.default = AssetsType;
@@ -6584,6 +6586,152 @@ _AssetTypeHandler2.default.register('json', function (tag, url, path, xhrSetting
 
 /***/ }),
 
+/***/ "./loader/assets/SVGFile.js":
+/*!**********************************!*\
+  !*** ./loader/assets/SVGFile.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
+
+var _File3 = _interopRequireDefault(_File2);
+
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
+
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
+
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
+
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _Path = __webpack_require__(/*! ../../utils/Path */ "./utils/Path.js");
+
+var _Path2 = _interopRequireDefault(_Path);
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
+
+var _URLObject = __webpack_require__(/*! ../URLObject */ "./loader/URLObject.js");
+
+var _URLObject2 = _interopRequireDefault(_URLObject);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SVGFile = function (_File) {
+        (0, _inherits3.default)(SVGFile, _File);
+
+        function SVGFile(tag, url, path, xhrSettings) {
+                (0, _classCallCheck3.default)(this, SVGFile);
+
+
+                var tag = typeof tag === 'string' ? tag : _ObjectGet2.default.value(tag, 'key', '');
+
+                var assetConfig = {
+                        type: _AssetsType2.default.svg,
+                        ext: _ObjectGet2.default.value(tag, 'ext', _Path2.default.getExtension(url) || 'svg'),
+                        responseType: 'text',
+                        tag: tagFile,
+                        url: _ObjectGet2.default.value(tag, 'file', url),
+                        path: path,
+                        xhrSettings: _ObjectGet2.default.value(tag, 'xhr', xhrSettings)
+                };
+
+                return (0, _possibleConstructorReturn3.default)(this, (SVGFile.__proto__ || (0, _getPrototypeOf2.default)(SVGFile)).call(this, assetConfig));
+        }
+
+        (0, _createClass3.default)(SVGFile, [{
+                key: "onProcessing",
+                value: function onProcessing(processingCallback) {
+                        this.state = _LoaderState2.default.PROCESSING;
+
+                        var self = this;
+                        var svg = [this.xhrLoader.responseText];
+                        var blob = void 0;
+
+                        try {
+                                blob = new window.Blob(svg, { type: 'image/svg+xml;charset=utf-8' });
+                        } catch (e) {
+                                self.state = _LoaderState2.default.ERROR;
+                                processingCallback(self);
+                                return;
+                        }
+
+                        this.data = new Image();
+                        this.data.crossOrigin = this.crossOrigin;
+
+                        this.data.onload = function () {
+
+                                _URLObject2.default.revoke(self.data);
+
+                                self.onDone();
+
+                                processingCallback(self);
+                        };
+
+                        this.data.onerror = function () {
+
+                                _URLObject2.default.revoke(self.data);
+
+                                console.warn("Loader.SVGFile: Error on load file: " + self.url + ".");
+
+                                self.state = _LoaderState2.default.ERROR;
+
+                                processingCallback(self);
+                        };
+
+                        _URLObject2.default.createFromResponse(this.data, blob, 'image/svg+xml');
+                }
+        }]);
+        return SVGFile;
+}(_File3.default);
+
+exports.default = SVGFile;
+
+
+_AssetTypeHandler2.default.register('svg', function (tag, url, path, xhrSettings) {
+        _AddAsset2.default.call(this, new SVGFile(tag, url, this.path, xhrSettings));
+        return this;
+});
+
+/***/ }),
+
 /***/ "./loader/assets/ScriptFile.js":
 /*!*************************************!*\
   !*** ./loader/assets/ScriptFile.js ***!
@@ -7166,6 +7314,7 @@ _AssetTypeHandler2.default.register('webFont', function (tag, provider, fontFami
 module.exports = {
     AssetsTypeHandler: __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js"),
     ImageFile: __webpack_require__(/*! ./ImageFile */ "./loader/assets/ImageFile.js"),
+    SVGFile: __webpack_require__(/*! ./SVGFile */ "./loader/assets/SVGFile.js"),
     TextFile: __webpack_require__(/*! ./TextFile */ "./loader/assets/TextFile.js"),
     ScriptFile: __webpack_require__(/*! ./ScriptFile */ "./loader/assets/ScriptFile.js"),
     JSONFile: __webpack_require__(/*! ./JSONFile */ "./loader/assets/JSONFile.js"),
@@ -7554,6 +7703,11 @@ function ProcessDoneAssets() {
         case _AssetsType2.default.image:
           {
             cache.image.add(file.tag, file.data);
+            break;
+          }
+        case _AssetsType2.default.svg:
+          {
+            cache.svg.add(file.tag, file.data);
             break;
           }
         case _AssetsType2.default.audio:
@@ -12214,7 +12368,7 @@ function HexToColor(value) {
     var result = HEX_REGEX_PATTERN.exec(hex);
 
     if (result) {
-        color.set(parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), result[4] === undefined ? 255 : parseInt(result[4], 16));
+        color.set(parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), result[4] === undefined ? 1 : parseInt(result[4], 16));
     }
 
     return color;
@@ -13520,9 +13674,7 @@ var UIDrawer = function () {
     }
   }, {
     key: 'image',
-    value: function image(source, x, y) {
-
-      if (source === undefined || source === null) return;
+    value: function image(source, x, y, scalex, scaley) {
 
       //this.context.save();
 
@@ -13532,6 +13684,34 @@ var UIDrawer = function () {
 
       this.context.drawImage(source, 0, 0, source.width, source.height, pos.x, pos.y, source.width, source.height);
       //this.context.restore();
+    }
+  }, {
+    key: 'imageExtra',
+    value: function imageExtra(source, x, y, scalex, scaley, halign, valign) {
+      if (source === undefined || source === null) return;
+      if (scalex === undefined) scalex = 1;
+      if (scaley === undefined) scaley = 1;
+      if (halign === undefined) halign = 0;
+      if (valign === undefined) valign = 0;
+
+      var pos = this.transformPosition(x, y);
+      var dx = source.width * halign;
+      var dy = source.height * valign;
+
+      this.context.save();
+      this.context.translate(pos.x, pos.y);
+      this.context.scale(scalex, scaley);
+      //this.context.rotate(scalex, scaley);
+
+      this.context.drawImage(source, 0, // sx - pos crop x 
+      0, // sy - pos crop y
+      source.width, // sWidth - crop width
+      source.height, // sHeight - crop height
+      -dx, // destination x
+      -dy, // destination y
+      source.width, source.height);
+
+      this.context.restore();
     }
   }, {
     key: 'sprite',
@@ -14841,9 +15021,22 @@ var ScintillaLoadingScreen = function (_Scene) {
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (ScintillaLoadingScreen.__proto__ || (0, _getPrototypeOf2.default)(ScintillaLoadingScreen)).call(this, 'Scintilla Loading Scene'));
 
+        var blob = void 0;
+        var logoData = ["%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M224%20387.814V512L32 320l192-192v126.912C447.375 260.152 437.794 103.016 380.93 0 521.287 151.707 491.48 394.785 224 387.814z'/%3E%3C/svg%3E"];
+
+        try {
+            blob = new window.Blob(logoData, { type: 'data:image/svg+xml;charset=utf-8' });
+        } catch (e) {
+            console.error(e);
+        }
+
         _this.scintillaLogo = new Image();
-        var logoData = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAA0CAQAAABxuOPTAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiBAEENCBdKapvAAABjklEQVRYw+2YSxKDIAyGA6seyiXH8mgsORS7dAFpUMNDJ9CNmakFAnz8MVIswCPbkT8L7IqS4REVgSO2HKiGvQOMa+7yGbhY5XKdhFPV2ZpMLaz3gqeIPd5PeeJaWBX3qiNYqqnn7VVrPayqu/JZl3ISSWstEb2wPtDaHjLhbo4nUwunrHQUOyWN2kBFpRJ26iMjp49qgHuPTDvQKkpbW5+i1n1wa5fAijp7P21/OP+wT0Hnws3uefDUdP7pNLtY5ULgPexE4Ohr4tR31H11er322muPdqXrealWYrPrkQNQgI8ZXVDqGbt/GRh20eSp/jERz7jUQn7qe10Ut5Z+HmdTM08WsaxJx02GUMvIgabsYwMA+AIcsuqQO3vk75CRoQhnyCN5LPu5nKQUYz1G5KmPq5V9tbaWn+aKCGABnAmFonAIijPXVUtKSHXd79H9lNqIAM4AbBm7/fDJNqF8biM1W3WMx9JnA3hkRaXqdD1GQW6j1AqdMVS3zgB49FkvXT16dIaDPFaq+5kC4MwX1X+rgjIvVdUAAAAASUVORK5CYII=";
-        _this.scintillaLogo.src = logoData;
+        _this.scintillaLogo.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI2MC45OCIgdmlld0JveD0iMCAwIDYzLjUgNjkuMDUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0iI2RjMzBhOSI+PHBhdGggZD0iTTQzLjQ5IDM2Ljg1NmwtMTQuMTgtNi40MzRMNi45NTYgNDkuNzg0bDE5LjM2Mi0yNy4yNC02LjU3Ni05LjU2OCAxNC40NTUgNi41NzVMNTYuNTUxLjE5IDM3LjE5IDI3LjQzeiIgcGFpbnQtb3JkZXI9InN0cm9rZSBtYXJrZXJzIGZpbGwiLz48cGF0aCBkPSJNMTEuMTIgMzYuOTA4bC0uNTQzLTEuMDQxLTEuMDM2LjU0My41MzggMS4wMzZ6bS0xLjg4OC00LjE3NmwtLjM2LTEuMTE2LTEuMTE2LjM2MS4zNjYgMS4xMTV6bS0xLjA2NC00LjQ1NmwtLjA5Ny0uNjM1di0uMDNsLS4wMDYtLjAzLS4wMy0uNDI5LTEuMTY2LjA4LjAzNC40OC4wMDYuMDQ3LjEwMy42ODZ6bS0uMTAzLTUuNjk4bC0xLjE2Ny0uMTA4LS4xMDggMS4xNjcgMS4xNjcuMTA4em0uODY0LTQuNDMzbC4wMDYtLjAzLjAwNi0uMDMtLjMwMy0uMDgtLjgxMi0uMjgxLS4wMDYuMDMtLjAxMi4wNDYtLjI4NiAxLjExNSAxLjEzMi4yOTN6bTEuNDE5LTMuNjMzbC4zMzctLjYyMy0xLjAzLS41NTUtLjM2LjY2My0uMDE4LjA0Mi0uMTcxLjM4MyAxLjA3NS40N3ptMi44NTQtNC40NWwtLjkyNi0uNzIxLS43MjEuOTI3LjkyNy43MTV6bTMuMTg3LTMuMjlsLS43OS0uODYzLS44NjQuNzk1Ljc5Ni44NTh6bTMuMTgtMi4yNjVsLjAzLS4wM2guMDExbC41MjEtLjI4LS41Ni0xLjAzLS41NjEuMzAyLS4wNC4wMy0uNDQ3LjI5My42NDEuOTg0ek00Mi42NDUgMi41bC0uMjUxLS4xMzItLjA0Ni0uMDMtLjgxOC0uMzQzLS40NTIgMS4wNzUuNzcyLjMyNi4yNTIuMTMyem0tMTguMzIzLS4xMzJsLS4zODMtMS4xMS0xLjEwNC4zODQuMzgzIDEuMTA0ek0zOC4xMi44MjhMMzYuOTgyLjU1M2wtLjI2OSAxLjE0NCAxLjEzOC4yN3ptLTkuNTA3LjUzOGguMTMzTDI4LjY0My4xOTloLS4xODNsLTEuMDE4LjE3OC4yIDEuMTU2em00LjgtMS4zMDRMMzIuNTIgMGgtLjMyNmwuMDEyIDEuMTY3aC4yMzVsLjg4Ni4wNjJ6TTUyLjM4IDEzLjA2NWwuNTM4IDEuMDQgMS4wNC0uNTQyLS41NDMtMS4wMzZ6bTEuODgyIDQuMTc2bC4zNjYgMS4xMTUgMS4xMS0uMzYtLjM2LTEuMTE2em0xLjA2NCA0LjQ1NmwuMTAzLjY0di4wM2wuMDA2LjAzLjAyOS40MyAxLjE2Ny0uMDc4LS4wMzQtLjQ4LS4wMDYtLjA0Ny0uMTAzLS42ODZ6bS4xMDkgNS42OThsMS4xNjcuMTA4LjEwMy0xLjE2Ny0xLjE2Ny0uMTA4em0tLjg2NCA0LjQzM2wtLjAwNi4wMy0uMDA2LjAzLjI5Mi4wOC44MTguMjgxLjAxMi0uMDMuMDEyLS4wNDguMjg1LTEuMTEtMS4xMzItLjI5MnptLTEuNDAyIDMuNTkzbC0uMDEyLjAzLS4wMTIuMDMtLjMzNy42MTcgMS4wMzUuNTU1LjM1NS0uNjYzLjAyMy0uMDQyLjE2Ni0uMzg0LTEuMDctLjQ2OXptLTIuODcxIDQuNDlsLjkyNi43MjEuNzE1LS45MjctLjkyNi0uNzE1em0tMy4xOTIgMy4yOWwuNzk1Ljg2My44NjMtLjc5NS0uNzk1LS44NTh6bS0zLjE3NSAyLjI2NWwtLjAzLjAzaC0uMDEybC0uNTIuMjguNTU1IDEuMDMuNTYtLjMwMy4wNDYtLjAzLjQ0Ni0uMjkzLS42NC0uOTg0em0tMjMuMDc2IDIuMDA4bC4yNTEuMTMyLjA0LjAzLjgxOS4zNDMuNDU3LTEuMDc2LS43NzgtLjMyNmgtLjAwNmwtLjAzNC0uMDMtLjIxMi0uMTE0em0xOC4zMTcuMTM4bC4zODMgMS4xMDQgMS4xMS0uMzg0LS4zODQtMS4xMDR6bS0xMy43OTggMS41MzNsMS4xNDQuMjc1LjI2OS0xLjE0NC0xLjE0NC0uMjd6bTkuNTEzLS41MzhoLS4xMzhsLjEwOCAxLjE2N2guMTgzbDEuMDE5LS4xNzgtLjItMS4xNTZ6bS00LjggMS4zMDRsLjg5My4wNjRoLjMybC0uMDEyLTEuMTY3aC0uMjI5bC0uODkyLS4wNjR6IiBjb2xvcj0iIzAwMCIgc29saWQtY29sb3I9IiMwMDAwMDAiIHN0eWxlPSJmb250LWZlYXR1cmUtc2V0dGluZ3M6bm9ybWFsO2ZvbnQtdmFyaWFudC1hbHRlcm5hdGVzOm5vcm1hbDtmb250LXZhcmlhbnQtY2Fwczpub3JtYWw7Zm9udC12YXJpYW50LWxpZ2F0dXJlczpub3JtYWw7Zm9udC12YXJpYW50LW51bWVyaWM6bm9ybWFsO2ZvbnQtdmFyaWFudC1wb3NpdGlvbjpub3JtYWw7aXNvbGF0aW9uOmF1dG87bWl4LWJsZW5kLW1vZGU6bm9ybWFsO3NoYXBlLXBhZGRpbmc6MDt0ZXh0LWRlY29yYXRpb24tY29sb3I6IzAwMDt0ZXh0LWRlY29yYXRpb24tbGluZTpub25lO3RleHQtZGVjb3JhdGlvbi1zdHlsZTpzb2xpZDt0ZXh0LWluZGVudDowO3RleHQtb3JpZW50YXRpb246bWl4ZWQ7dGV4dC10cmFuc2Zvcm06bm9uZSIgcGFpbnQtb3JkZXI9InN0cm9rZSBtYXJrZXJzIGZpbGwiIHdoaXRlLXNwYWNlPSJub3JtYWwiLz48cGF0aCBkPSJNNi4zMiA2NS43MjhxLS4xMDcgMS4zMzMtLjkxIDIuMjc2LS41MjguNjQyLTEuNDA1LjktLjQ3NS4xNDctMS4wODIuMTQ3LTEuMTMxIDAtMS44MTgtLjU1OS0uNTctLjQ2LS44NTgtMS4yNDMtLjI4OC0uNzg5LS4yNDUtMS44MTVsMS44MzQtLjEyNnEuMDIgMS4xMS40NCAxLjYwNi4zMDYuMzc3Ljc1NS4zNTYuNjMtLjAzIDEuMDY0LS42MTQuMjI0LS4zLjI3Ni0uODQ1LjA3Ny0uODAzLS41NjctMS41ODUtLjUyMS0uNTM4LTEuNTU2LTEuNjEzLS44NjktLjkyMi0xLjE5LTEuNjU1LS4zNDYtLjgyMy0uMjU0LTEuNzg3LjE2Ni0xLjczOCAxLjQxOC0yLjYzMlEyLjk5MiA1NiA0LjA2IDU2cTEuMDI2IDAgMS43MTUuNDYxLjUzMS4zNTYuODE5Ljk5OS4yODguNjM1LjI4NSAxLjQ2NmwtMS44NzUuMzM1cS0uMDAyLS43ODItLjMzLTEuMjE1LS4yMzUtLjMyMS0uNzMtLjMyMS0uNTI0IDAtLjg0OC40NjgtLjI2LjM3Ny0uMzEzLjkzNS0uMDg0Ljg3My41ODMgMS43OC4yNTQuMzQzLjc3NC44MS42MTcuNTU5LjgxMi43ODIuNjM3LjcxMi45NjIgMS40MDQuMTUuMzIuMjM2LjYuMjA3LjY3Ny4xNjkgMS4yMjJ6bTQuOTYgMy4zMnEtMS4yNyAwLTIuMDcyLS44ODctLjgwMi0uODg2LS42ODEtMi4xNWwuNjY3LTYuOTc1cS4xMjEtMS4yNjMgMS4xLTIuMTUuOTgtLjg5NCAyLjIzNi0uODk0IDEuMjcgMCAyLjA2NS44OTQuOC44OTMuNjggMi4xNWwtLjEzOSAxLjQ1MmgtMS45OWwuMTQzLTEuNDg3cS4wNDQtLjQ2LS4yNTMtLjc4Mi0uMjktLjMyOC0uNzUtLjMyOC0uNDU1IDAtLjgwNy4zMjgtLjM1Mi4zMjItLjM5Ni43ODJsLS42NyA2Ljk4OXEtLjA0My40Ni4yNDcuNzgyLjI5LjMyMS43NDQuMzIxLjQ2MSAwIC44MTMtLjMyMS4zNTktLjMyMS40MDMtLjc4MmwuMTY4LTEuNzUyaDEuOTlsLS4xNyAxLjc3M3EtLjEyMiAxLjI3LTEuMSAyLjE1Ny0uOTc4Ljg4LTIuMjI4Ljg4em03LjE5LS4xNmgtMS45MTNsMS4yMi0xMi43MzVoMS45MTJ6bTUuNzQtMTIuNzM0bDEuNzIzIDguNTUzLjgxOC04LjU1M2gxLjkybC0xLjIxOSAxMi43MzVoLTIuMDZsLTEuODY1LTguMTU1LS43OCA4LjE1NWgtMS45MTRsMS4yMi0xMi43MzV6bTguNTMgMS45MjFoLTIuMDM5bC4xODQtMS45Mmg1Ljk5bC0uMTgzIDEuOTJIMzQuNjZMMzMuNjI1IDY4Ljg5aC0xLjkyem03LjAzIDEwLjgxM2gtMS45MTNsMS4yMi0xMi43MzVoMS45MTJ6bTcuNiAwaC01LjIzbDEuMjItMTIuNzM1aDEuOTEzbC0xLjAzNyAxMC44MjloMy4zMTZ6bTcuMjEgMGgtNS4yM2wxLjIyLTEyLjczNWgxLjkxM2wtMS4wMzcgMTAuODI5aDMuMzE2em00LjczLTIuOTJsLS43NDggMi45MjVoLTEuOTk3bDMuMzc3LTEyLjczNWgyLjY0NmwuOTEgMTIuNzM1aC0yLjAxbC0uMTc0LTIuOTI1em0xLjY2NS02Ljg5MWwtMS4xOTMgNS4wMmgxLjQyNXoiLz48L2c+PC9zdmc+";
+        _this._loaded = true;
+        var self = _this;
+
+        //"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAA0CAQAAABxuOPTAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiBAEENCBdKapvAAABjklEQVRYw+2YSxKDIAyGA6seyiXH8mgsORS7dAFpUMNDJ9CNmakFAnz8MVIswCPbkT8L7IqS4REVgSO2HKiGvQOMa+7yGbhY5XKdhFPV2ZpMLaz3gqeIPd5PeeJaWBX3qiNYqqnn7VVrPayqu/JZl3ISSWstEb2wPtDaHjLhbo4nUwunrHQUOyWN2kBFpRJ26iMjp49qgHuPTDvQKkpbW5+i1n1wa5fAijp7P21/OP+wT0Hnws3uefDUdP7pNLtY5ULgPexE4Ohr4tR31H11er322muPdqXrealWYrPrkQNQgI8ZXVDqGbt/GRh20eSp/jERz7jUQn7qe10Ut5Z+HmdTM08WsaxJx02GUMvIgabsYwMA+AIcsuqQO3vk75CRoQhnyCN5LPu5nKQUYz1G5KmPq5V9tbaWn+aKCGABnAmFonAIijPXVUtKSHXd79H9lNqIAM4AbBm7/fDJNqF8biM1W3WMx9JnA3hkRaXqdD1GQW6j1AqdMVS3zgB49FkvXT16dIaDPFaq+5kC4MwX1X+rgjIvVdUAAAAASUVORK5CYII=";
+        //this.scintillaLogo.src = blob;
 
         _this.progress = 0;
         _this.fromProgress = 0;
@@ -14852,14 +15045,19 @@ var ScintillaLoadingScreen = function (_Scene) {
         _this.game = game;
         _this.nextScene = null;
         _this.preloadingDone = false;
+        _this._midPos = { x: 320 / 2, y: 240 / 2 };
+        _this._barColor = '#dc30a9';
+        _this._barPosX = 160 - _this.scintillaLogo.width * 0.3 * 0.5;
+        _this._barPosY = 120 - 16 + _this.scintillaLogo.height * 0.3 * 0.5 + 8;
+        _this._barPosW = _this.scintillaLogo.width * 0.3;
 
         var drawFunc = function drawFunc(draw) {
-            draw.image(this.scintillaLogo, 131, 73);
-            draw.color = '#bcbcbc';
-            draw.outlineRect(131, 132, 58, 7);
-            draw.rect(133, 134, 54 * this.progress, 3);
+            draw.imageExtra(this.scintillaLogo, 160, 120 - 16, 0.3, 0.3, 0.5, 0.5); //131,73);
+            draw.color = this._barColor;
+            draw.outlineRect(this._barPosX, this._barPosY, this._barPosW, 7);
+            draw.rect(this._barPosX + 2, this._barPosY + 2, (this._barPosW - 4) * this.progress, 3);
             draw.font('Verdana', 6);
-            draw.text('WIP - ' + _Define2.default.VERSION, 320 - 4, 240 - 4, '#787878', 'right');
+            draw.text('WIP - ' + _Define2.default.VERSION, 320 - 4, 240 - 4, '#490c37', 'right');
         };
 
         var loadingFunc = function loadingFunc(dt) {

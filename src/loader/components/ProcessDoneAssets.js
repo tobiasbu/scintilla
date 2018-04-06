@@ -29,6 +29,10 @@ export default function ProcessDoneAssets() {
             cache.image.add(file.tag,file.data);
             break;
           }
+          case AssetsType.svg: {
+            cache.svg.add(file.tag, file.data);
+            break;
+          }
           case AssetsType.audio: {
 
             file.data = requestXHR.response;
@@ -46,6 +50,7 @@ export default function ProcessDoneAssets() {
             cache.json.add(file.tag, file.data);
             break;
           }
+          
 
           case AssetsType.tilemapJSON: {
             cache.tilemap.add(file.tag, file.data);

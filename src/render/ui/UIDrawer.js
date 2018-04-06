@@ -74,9 +74,10 @@ export default class UIDrawer {
 
   }
 
-  image(source, x, y) {
+  image(source, x, y, scalex, scaley) {
 
-    if (source === undefined || source === null) return;
+   
+    
 
     //this.context.save();
 
@@ -91,6 +92,36 @@ export default class UIDrawer {
         source.width, source.height,
       );
     //this.context.restore();
+  }
+
+  imageExtra(source, x, y, scalex, scaley, halign, valign) {
+    if (source === undefined || source === null) return;
+    if (scalex === undefined) scalex = 1;
+    if (scaley === undefined) scaley = 1;
+    if (halign === undefined) halign = 0;
+    if (valign === undefined) valign = 0;
+
+    let pos = this.transformPosition(x,y);
+    let dx = source.width * halign;
+    let dy = source.height * valign;
+
+    this.context.save();
+    this.context.translate(pos.x, pos.y);
+    this.context.scale(scalex, scaley);
+    //this.context.rotate(scalex, scaley);
+
+    this.context.drawImage(
+      source,
+      0, // sx - pos crop x 
+      0, // sy - pos crop y
+      source.width, // sWidth - crop width
+      source.height,  // sHeight - crop height
+      -dx, // destination x
+      -dy, // destination y
+      source.width, source.height,
+      );
+
+    this.context.restore();
   }
 
   sprite(tag, x, y, anchor) {

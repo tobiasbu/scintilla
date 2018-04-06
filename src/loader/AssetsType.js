@@ -4,10 +4,11 @@ const AssetsType = {
     'image' : 1,
     'audio' : 2,
     'text' : 3,
-    'script' : 4,
-    'json' : 5,
-    'webFont' : 6,
-    'tilemapJSON' : 7,
+    'svg' : 4,
+    'script' : 5,
+    'json' : 6,
+    'webFont' : 7,
+    'tilemapJSON' : 8,
 }
 
 export default AssetsType;

@@ -1,7 +1,7 @@
 # Scintilla - HTML5 Game Engine
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/tobiasbu/scintilla/master/resources/scintilla_logo_official.png"/>
+<img src="https://raw.githubusercontent.com/tobiasbu/scintilla/master/resources/scintilla_logo_official.png" style="margin:1.5em 0"/>
 </div>
 
 
@@ -17,7 +17,6 @@ Comming soon...
 
 ## Building Scintilla
 
-
 Comming soon...
 
 ## Change-Log
@@ -28,13 +27,13 @@ _Work in progress._
 
 ## About
 
-Scintilla was started when I was learning Javascript on 2015. The result was _tobiJS_ written in pure ECMA5. After two years, I returned to work with much enthusiasm refactoring the entire engine with modern Javscript (ECMA6) and improved architeture and design.
+Scintilla was started when I was learning Javascript on 2016. The result was _tobiJS_ written in pure ECMA5. After two years, I returned to work with much enthusiasm refactoring the entire engine with modern Javscript (ECMA6) and improved architeture and design.
 
 The focus of the engine is the game developers community, from  beginners to advanced. Scintilla provides a entire systems to create prototypes, experiment ideas, art-games, retro games and so on.  
 
 ## License
 
-Created by [Tobias Ulrich](mailto:tobiasbulrich@gmail.com) &copy; 2015 - 2018 
+Created by [Tobias Ulrich](mailto:tobiasbulrich@gmail.com) &copy; 2016 - 2018 
 
 [MIT License](https://github.com/tobiasbu/scintilla/blob/master/LICENSE.md) 
 
