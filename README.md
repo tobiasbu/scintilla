@@ -1,12 +1,11 @@
 # Scintilla - HTML5 Game Engine
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/tobiasbu/scintilla/master/resources/scintilla_logo.png"/>
+<img src="https://raw.githubusercontent.com/tobiasbu/scintilla/master/resources/scintilla_logo_official.png"/>
 </div>
 
-### _Small and Open-Source HTML5 Game Engine._
 
-Scintilla is a 2D game engine for HTML5 canvas based. Inspired by [melonJS](http://melonjs.org/), [Phaser](https://phaser.io/) and [PixiJS](http://www.pixijs.com/) allows you to create fast games from small and big projects.
+Scintilla is a small and Open-Source HTML5 Game Engine canvas based. Inspired by [melonJS](http://melonjs.org/), [Phaser](https://phaser.io/) and [PixiJS](http://www.pixijs.com/) allows you to create fast games from small and big projects.
 
 ## Getting Started
 
@@ -17,6 +16,7 @@ Comming soon...
 Comming soon...
 
 ## Building Scintilla
+
 
 Comming soon...
 
