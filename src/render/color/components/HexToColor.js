@@ -26,7 +26,7 @@ export default function HexToColor(value) {
             parseInt(result[1], 16),
             parseInt(result[2], 16),
             parseInt(result[3], 16),
-            (result[4] === undefined) ? 255 : parseInt(result[4], 16)
+            (result[4] === undefined) ? 1 : parseInt(result[4], 16)
         );
     }
 
