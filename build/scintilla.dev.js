@@ -596,7 +596,7 @@ module.exports = function (it) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.5.4' };
+var core = module.exports = { version: '2.5.3' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -734,7 +734,6 @@ var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/libra
 var core = __webpack_require__(/*! ./_core */ "../node_modules/core-js/library/modules/_core.js");
 var ctx = __webpack_require__(/*! ./_ctx */ "../node_modules/core-js/library/modules/_ctx.js");
 var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
-var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
 var PROTOTYPE = 'prototype';
 
 var $export = function (type, name, source) {
@@ -752,7 +751,7 @@ var $export = function (type, name, source) {
   for (key in source) {
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && has(exports, key)) continue;
+    if (own && key in exports) continue;
     // export native or passed
     out = own ? target[key] : source[key];
     // prevent global pollution for namespaces
@@ -977,6 +976,7 @@ var LIBRARY = __webpack_require__(/*! ./_library */ "../node_modules/core-js/lib
 var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
 var redefine = __webpack_require__(/*! ./_redefine */ "../node_modules/core-js/library/modules/_redefine.js");
 var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
 var Iterators = __webpack_require__(/*! ./_iterators */ "../node_modules/core-js/library/modules/_iterators.js");
 var $iterCreate = __webpack_require__(/*! ./_iter-create */ "../node_modules/core-js/library/modules/_iter-create.js");
 var setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ "../node_modules/core-js/library/modules/_set-to-string-tag.js");
@@ -1003,7 +1003,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
   var VALUES_BUG = false;
   var proto = Base.prototype;
   var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = $native || getMethod(DEFAULT);
+  var $default = (!BUGGY && $native) || getMethod(DEFAULT);
   var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
   var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
   var methods, key, IteratorPrototype;
@@ -1014,7 +1014,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
       // Set @@toStringTag to native iterators
       setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') hide(IteratorPrototype, ITERATOR, returnThis);
+      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -2287,6 +2287,201 @@ for (var i = 0; i < DOMIterables.length; i++) {
 
 /***/ }),
 
+/***/ "../node_modules/process/browser.js":
+/*!******************************************!*\
+  !*** ../node_modules/process/browser.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+
 /***/ "../node_modules/webpack/buildin/global.js":
 /*!*************************************************!*\
   !*** ../node_modules/webpack/buildin/global.js ***!
@@ -2388,6 +2583,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var scintilla = scintilla || {
 
+  Platform: __webpack_require__(/*! ./system/PlatformEnvironment */ "./system/PlatformEnvironment.js"),
   Core: __webpack_require__(/*! ./core */ "./core/index.js"),
 
   // DATA STRUCTURES
@@ -2589,6 +2785,7 @@ var CacheManager = function () {
     this.json = new _Cache2.default();
     this.text = new _Cache2.default();
     this.svg = new _Cache2.default();
+    this.sound = new _Cache2.default();
   }
 
   /*addTilemap(tag, dataFormat) {
@@ -2660,9 +2857,6 @@ var CacheManager = function () {
 
       this.game = null;
     }
-
-    // SOUND STUFF
-
   }]);
   return CacheManager;
 }();
@@ -3853,6 +4047,7 @@ var Entity = function () {
 
         this._name = name || 'New Entity';
         this._active = true;
+        this._pool = null;
         this.game = game || undefined;
     }
 
@@ -5850,24 +6045,21 @@ var File = function () {
             this.XHRreset();
 
             if (event.target && event.target.status !== 200) {
-                //this.loader.next(this, true);
                 _NextAsset2.default.call(this.loader, this);
             } else {
 
                 if (this.onPostLoad !== undefined) this.onPostLoad(this.loader, this.xhrRequest);
 
-                //this.loader.next(this, false);
                 _NextAsset2.default.call(this.loader, this);
             }
         }
     }, {
         key: 'onError',
         value: function onError(event) {
-            console.error("Loader.File: Error on load file: " + this.url + ".");
+            console.error("Loader.File: Error on load file: \"" + this.url + "\".");
 
             this.XHRreset();
 
-            //this.loader.next(this, true);
             _NextAsset2.default.call(this.loader, this);
         }
     }, {
@@ -11068,11 +11260,11 @@ var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _SAT = __webpack_require__(/*! ./xat/SAT */ "./physics/xat/SAT.js");
+var _SAT = __webpack_require__(/*! ./sat/SAT */ "./physics/sat/SAT.js");
 
 var _SAT2 = _interopRequireDefault(_SAT);
 
-var _SATResponse = __webpack_require__(/*! ./xat/SATResponse */ "./physics/xat/SATResponse.js");
+var _SATResponse = __webpack_require__(/*! ./sat/SATResponse */ "./physics/sat/SATResponse.js");
 
 var _SATResponse2 = _interopRequireDefault(_SATResponse);
 
@@ -11126,50 +11318,6 @@ var Physics = function () {
       this.colliadables.length = 0;
     }
   }, {
-    key: 'update',
-    value: function update(time) {
-
-      var size = this.colliadables.length;
-
-      // CHECK COLLISION
-      if (size < 2) // at least we must have 2 objects
-        return;
-
-      //var collision = 0;
-
-      for (var i = 0; i < size; i++) {
-
-        var objA = this.colliadables[i];
-        var shapeA = objA.shape;
-
-        if (objA._gameObject._selfDestroy || !objA._gameObject.active) continue;
-
-        var jit = i + 1;
-
-        if (jit >= size) break;
-
-        for (var j = jit; j < size; j++) {
-
-          var objB = this.colliadables[j];
-          var shapeB = objB.shape;
-
-          if (objB._gameObject._selfDestroy || !objB._gameObject.active) continue;
-
-          // AABB check of the shapes
-          if (objB.bounds.box.intersects(objA.bounds.box)) {
-
-            // check SAT
-            if (this.sat["test" + shapeA.getType() + shapeB.getType()].call(this, objA, objB, this.response.clear()) === true) {
-
-              if (objA._gameObject['onCollision']) if (objA._gameObject.onCollision(objB._gameObject, this.response) !== false) {}
-
-              if (objB._gameObject['onCollision']) if (objB._gameObject.onCollision(objA._gameObject, this.response) !== false) {}
-            } else continue;
-          } else continue;
-        }
-      }
-    }
-  }, {
     key: 'length',
     get: function get() {
       return this.colliadables.length;
@@ -11182,9 +11330,9 @@ exports.default = Physics;
 
 /***/ }),
 
-/***/ "./physics/xat/SAT.js":
+/***/ "./physics/sat/SAT.js":
 /*!****************************!*\
-  !*** ./physics/xat/SAT.js ***!
+  !*** ./physics/sat/SAT.js ***!
   \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -11377,9 +11525,9 @@ exports.default = SAT;
 
 /***/ }),
 
-/***/ "./physics/xat/SATResponse.js":
+/***/ "./physics/sat/SATResponse.js":
 /*!************************************!*\
-  !*** ./physics/xat/SATResponse.js ***!
+  !*** ./physics/sat/SATResponse.js ***!
   \************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -15571,6 +15719,16 @@ var DataList = function () {
             }
         }
     }, {
+        key: 'pop',
+        value: function pop() {
+            /// TODO
+        }
+    }, {
+        key: 'popFront',
+        value: function popFront() {
+            /// TODO
+        }
+    }, {
         key: 'has',
         value: function has(child) {
             return this.childs.indexOf(child) > -1;
@@ -16155,6 +16313,287 @@ function MergeSort(array, predicate) {
 module.exports = {
     MergeSort: __webpack_require__(/*! ./MergeSort */ "./structures/useful/MergeSort.js")
 };
+
+/***/ }),
+
+/***/ "./system/DetectBrowser.js":
+/*!*********************************!*\
+  !*** ./system/DetectBrowser.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DetectBrowser;
+function DetectBrowser(userAgent) {
+
+    var browser = {
+        name: undefined,
+        version: 0,
+        manufacturer: {
+            firefox: false,
+            opera: false,
+            ie: false,
+            edge: false,
+            chrome: false,
+            blink: false,
+            safari: false,
+            silk: false
+        }
+
+        /// MAYBE IS BETTER TODO WITH REGEX
+
+        // Opera 8.0+
+    };browser.manufacturer.opera = !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+
+    // Firefox 1.0+
+    browser.manufacturer.firefox = typeof InstallTrigger !== 'undefined';
+
+    // Safari 3.0+ "[object HTMLElementConstructor]" 
+    browser.manufacturer.safari = /constructor/i.test(window.HTMLElement) || function (p) {
+        return p.toString() === "[object SafariRemoteNotification]";
+    }(!window['safari'] || safari.pushNotification);
+
+    // Internet Explorer 6-11
+    browser.manufacturer.ie = /*@cc_on!@*/false || !!document.documentMode;
+
+    // Edge 20+
+    browser.manufacturer.edge = !browser.manufacturer.edge && !!window.StyleMedia;
+
+    // Chrome 1+
+    browser.manufacturer.chrome = !!window.chrome && !!window.chrome.webstore;
+
+    // Blink engine detection
+    browser.manufacturer.blink = (browser.manufacturer.chrome || browser.manufacturer.opera) && !!window.CSS;
+
+    /// GET VERSION
+
+    var pattern = /(\w+)(?:\D+|\/)?((\d+)?\.?(\d+)?)?;?/;
+    var match = pattern.exec(userAgent);
+    var version = 0;
+
+    browser.name = match[0];
+
+    if (match[1] !== undefined) version = parseInt(match[1], 10);
+
+    browser.version = version;
+
+    return browser;
+}
+
+/***/ }),
+
+/***/ "./system/DetectOS.js":
+/*!****************************!*\
+  !*** ./system/DetectOS.js ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = DetectOS;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DetectOS(userAgent) {
+
+    var silk = /Silk/.test(userAgent);
+
+    // name, deviceType
+    var info = {
+        name: undefined, // pretty name
+        mobile: false, // is mobile
+        desktop: false, // is desktop
+        os: { // operational system
+            windows: false,
+            windowsPhone: false,
+            macOS: false,
+            linux: false,
+            android: false,
+            iOS: false,
+            chromeOS: false,
+            kindle: false
+        },
+        environment: { // environment
+            node: false,
+            electron: false,
+            cordova: false,
+            nodewebkit: false,
+            cocoonJS: false,
+            cocoonApp: false,
+            ejecta: false
+        }
+    };
+
+    if (/Windows/.test(userAgent)) {
+        info.name = 'Windows';
+        info.os.windows = true;
+    } else if (/Mac OS/.test(userAgent)) {
+        info.name = 'MacOS';
+        info.os.macOS = true;
+    } else if (/Linux/.test(userAgent)) {
+        info.name = 'Linux';
+        info.os.linux = true;
+    } else if (/Android/.test(userAgent)) {
+        info.name = 'Android';
+        info.os.android = true;
+    } else if (/iP[ao]d|iPhone/i.test(userAgent)) {
+        info.name = 'iOS';
+        info.os.iOS = true;
+    } else if (/Kindle/.test(userAgent) || /\bKF[A-Z][A-Z]+/.test(userAgent) || /Silk.*Mobile Safari/.test(userAgent)) {
+        info.name = "Kindle";
+        info.os.kindle = true;
+    } else if (/CrOS/.test(userAgent)) {
+        info.name = 'ChromeOS';
+        info.os.chromeOS = true;
+    }
+
+    if (/Windows Phone/i.test(userAgent) || /IEMobile/i.test(userAgent)) {
+        info.name = 'Windows Phone';
+        info.os.android = false;
+        info.os.iOS = false;
+        info.os.macOS = false;
+        info.os.windows = true;
+        info.os.windowsPhone = true;
+    }
+
+    if (info.os.windows || info.os.macOS || info.os.linux && !silk || info.os.chromeOS) {
+        info.desktop = true;
+        info.mobile = false;
+    }
+
+    if (info.os.windowsPhone || /Windows NT/i.test(userAgent) && /Touch/i.test(userAgent)) {
+        info.os.desktop = false;
+        info.mobile = true;
+    }
+
+    if (window.cordova !== undefined) {
+        info.environment.cordova = true;
+    }
+
+    if (typeof process !== 'undefined' && typeof process.versions.node !== 'undefined') {
+        info.environment.node = true;
+    }
+
+    if (info.environment.node && (0, _typeof3.default)(process.versions) === 'object') {
+        info.environment.nodeWebkit = !!process.versions['node-webkit'];
+        info.environment.electron = !!process.versions.electron;
+    }
+
+    if (navigator.isCocoonJS) {
+        info.environment.cocoonJS = true;
+
+        try {
+            info.environment.cocoonApp = typeof CocoonJS !== 'undefined';
+        } catch (error) {
+            info.environment.cocoonApp = false;
+        }
+    }
+
+    if (window.ejecta !== undefined) {
+        info.environment.ejecta = true;
+    }
+
+    return info;
+}
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../node_modules/process/browser.js */ "../node_modules/process/browser.js")))
+
+/***/ }),
+
+/***/ "./system/PlatformEnvironment.js":
+/*!***************************************!*\
+  !*** ./system/PlatformEnvironment.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _DetectOS = __webpack_require__(/*! ./DetectOS */ "./system/DetectOS.js");
+
+var _DetectOS2 = _interopRequireDefault(_DetectOS);
+
+var _DetectBrowser = __webpack_require__(/*! ./DetectBrowser */ "./system/DetectBrowser.js");
+
+var _DetectBrowser2 = _interopRequireDefault(_DetectBrowser);
+
+var _DeepFreeze = __webpack_require__(/*! ../utils/object/DeepFreeze */ "./utils/object/DeepFreeze.js");
+
+var _DeepFreeze2 = _interopRequireDefault(_DeepFreeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var PlatformEnvironment = function () {
+    function PlatformEnvironment() {
+        (0, _classCallCheck3.default)(this, PlatformEnvironment);
+
+
+        this._userAgent = navigator.userAgent;
+        this._osInfo = (0, _DetectOS2.default)(this._userAgent);
+        this._browser = (0, _DetectBrowser2.default)(this._userAgent);
+    }
+
+    (0, _createClass3.default)(PlatformEnvironment, [{
+        key: "supportSVG",
+        value: function supportSVG() {
+            return (typeof SVGRect === "undefined" ? "undefined" : (0, _typeof3.default)(SVGRect)) !== undefined && document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#Image', '1.1');
+        }
+    }, {
+        key: "info",
+        get: function get() {
+            return this._userAgent;
+        }
+    }, {
+        key: "browser",
+        get: function get() {
+            return this._browser.name;
+        }
+    }, {
+        key: "OS",
+        get: function get() {
+            return this._osInfo.name;
+        }
+    }]);
+    return PlatformEnvironment;
+}();
+
+var Platform = new PlatformEnvironment();
+
+(0, _DeepFreeze2.default)(Platform);
+
+exports.default = Platform;
 
 /***/ }),
 
@@ -17135,7 +17574,7 @@ function DeepFreeze(obj) {
         var prop = obj[name];
 
         // Freeze prop if it is an object
-        if ((typeof prop === 'undefined' ? 'undefined' : (0, _typeof3.default)(prop)) == 'object' && prop !== null) deepFreeze(prop);
+        if ((typeof prop === 'undefined' ? 'undefined' : (0, _typeof3.default)(prop)) == 'object' && prop !== null) DeepFreeze(prop);
     });
 
     // Freeze self (no-op if already frozen)

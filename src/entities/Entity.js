@@ -11,6 +11,7 @@ export default class Entity {
     {
         this._name = name || 'New Entity';
         this._active = true;
+        this._pool = null;
         this.game = game || undefined; 
     }
 

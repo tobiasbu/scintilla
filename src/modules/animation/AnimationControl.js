@@ -1,31 +1,29 @@
+import Module from "../Module";
 
-export default class AnimationControl {
+export default class AnimationControl extends Module {
 
 constructor(game) {
 
-this.game = game;
-this.animations = {};
+  this.game = game;
+  this.animations = {};
 
-this.currentAnimation = null;
+  this.currentAnimation = null;
 
-this.loop = false;
-this.isPlaying = false;
-this.isPaused = true;
+  this.loop = false;
+  this.isPlaying = false;
+  this.isPaused = true;
 
-this.currentFrame = 0;
-this._gameObject = null;
-this._currentAnimObj = null;
+  this.currentFrame = 0;
+  this._gameObject = null;
+  this._currentAnimObj = null;
 
-this.frameSpeed = 1; // frame rate 1 / 60
-
+  this.frameSpeed = 1; // frame rate 1 / 60
+    
 }
 
   add(name, image) {
 
-
-
     return this.animations[name] = new scintilla.Animation(name,image);
-
   }
 
   addFromCache(container,name) {

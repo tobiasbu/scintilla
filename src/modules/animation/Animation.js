@@ -1,14 +1,15 @@
+import DataList from "../../structures/List";
 
 // storage of animation state
 export default class Animation {
   
   
-  constructor(sprite) {
+  constructor() {
 
-this.source = sprite;
-this.frames = [];
+    this.source = sprite;
+    this._keyFrames = new DataList();
 
-}
+  }
 
 
 addFrame(x,y,width,height) {

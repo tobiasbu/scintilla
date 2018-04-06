@@ -36,6 +36,7 @@ constructor(game) {
   this.json = new Cache();
   this.text = new Cache();
   this.svg = new Cache();
+  this.sound = new Cache();
 
 
 }
@@ -122,8 +123,6 @@ constructor(game) {
 
     this.game = null;
   }
-
-  // SOUND STUFF
 
 }
 

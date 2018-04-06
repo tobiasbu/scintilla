@@ -89,7 +89,6 @@ export default class File {
 
         if (event.target && event.target.status !== 200)
         {
-            //this.loader.next(this, true);
             NextAsset.call(this.loader, this);
 
         } else {
@@ -97,7 +96,6 @@ export default class File {
             if (this.onPostLoad !== undefined)
                 this.onPostLoad(this.loader, this.xhrRequest);
 
-            //this.loader.next(this, false);
             NextAsset.call(this.loader, this);
         }
       
@@ -105,11 +103,10 @@ export default class File {
 
     onError(event)
     {
-        console.error("Loader.File: Error on load file: " + this.url + ".")
+        console.error("Loader.File: Error on load file: \"" + this.url + "\".")
 
         this.XHRreset();
 
-        //this.loader.next(this, true);
         NextAsset.call(this.loader, this);
     }
 

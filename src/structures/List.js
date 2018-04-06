@@ -125,11 +125,17 @@ export default class DataList
         }
     }
 
+    pop() {
+        /// TODO
+    }
+
+    popFront() {
+        /// TODO
+    }
+
     has(child) {
         return (this.childs.indexOf(child) > -1);
     }
-
-
 
     empty() {
         return (this.childs.length == 0)

@@ -12,7 +12,7 @@ export default function DeepFreeze(obj) {
 
     // Freeze prop if it is an object
     if (typeof prop == 'object' && prop !== null)
-        deepFreeze(prop);
+        DeepFreeze(prop);
     });
 
     // Freeze self (no-op if already frozen)
