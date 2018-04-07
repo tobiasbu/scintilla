@@ -1,5 +1,5 @@
 
-import DrawRenderLayer from './DrawRenderLayer'
+import DrawRenderLayer from './DrawRenderLayer';
 import RenderScene from '../../scene/components/RenderScene';
 
 export default function DrawRender(render, camera, delta) {

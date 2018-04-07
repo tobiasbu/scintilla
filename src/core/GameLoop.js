@@ -30,6 +30,7 @@ export default class GameLoop {
         this.currentScene = null;
         this.camera = null;
         this.canvas = null;
+        this.renderer = null;
     }
 
     loop(deltaTime) {
@@ -85,39 +86,37 @@ export default class GameLoop {
 
     render(deltaTime) {
 
+
+
+        BeginDrawRender(this.renderer);
+
         if (this.currentScene !== null || this.currentScene !== undefined)
         {
 
             // Scenes
-            BeginDrawRender(this.system.render);
-
-            DrawRender(this.system.render, this.camera, deltaTime);
-
-           
+            DrawRender(this.renderer, this.camera, deltaTime);
 
             // User Interface
-
             DrawUI(this.system.ui, this.game.scene);
 
-            
-
-        }
-
-        // Transition and Debug
-
-        this.system.render.context.setTransform(1, 0, 0, 1, 0, 0);
-
-        DrawTransition(this.system.transition, this.system.render.canvas, this.system.render.context);
-
-        if (this.system.debug !== undefined) {
-
-            this.system.debug.test();
-        
         }
 
         EndDrawRender(this.system.render);
 
-       
+
+        // Transition
+        this.renderer.context.setTransform(1, 0, 0, 1, 0, 0);
+
+        DrawTransition(this.system.transition, this.renderer.canvas, this.renderer.context);
+
+        // Debug
+        if (this.system.ui.debug !== null && this.system.ui.debug !== undefined) {
+            this.system.ui.debug.test();
+        }
+
+        if (this.renderer.doubleBuffer) {
+            this.renderer._domContext.drawImage(this.renderer.canvas, 0, 0); 
+        }
 
     }
 
@@ -128,4 +127,5 @@ System.register('GameLoop', GameLoop, 'loop', function() {
     this.entityUpdateList = this.game.system.entityList;
     this.camera = this.system.camera;
     this.canvas = this.system.render.canvas;
+    this.renderer = this.system.render;
 });

@@ -10,7 +10,7 @@ export default function UpdateTransition(transition, deltaTime) {
         return;
 
     let setg = transition.settings;
-    let changeState = undefined;
+    let changeState;
 
     // UPDATE STATE
     switch (transition._state) {
@@ -25,11 +25,11 @@ export default function UpdateTransition(transition, deltaTime) {
                 }
 
                 // ease(to, t, easingType, easingMode, easingArg)
-                transition._tColor = Color.ease(
+                Color.ease(
                     transition._startColor, setg.inColor, transition._t,
-                    setg.timingInMethod, 0, setg.timingInArgument);
+                    setg.timingInMethod, 0, setg.timingInArgument, transition._tColor);
 
-                
+                console.log(transition._tColor.rgba);
 
                 break;
             }

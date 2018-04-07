@@ -5,7 +5,7 @@ const TransitionState = {
     OUT : 2,
     WAIT : 3,
     IDLE : 4
-}
+};
 
 Object.freeze(TransitionState);
 

@@ -56,8 +56,7 @@ export default class SceneManager {
 
     if (this._scenes.has(sceneName))
     {
-      throw "Could not create new Scene. The scene name \"" + name + "\" already exists."; 
-      return null;
+      throw new Error("Could not create new Scene. The scene name \"" + name + "\" already exists."); 
     }
 
     var newScene = new Scene(this.game, sceneName);
@@ -69,6 +68,10 @@ export default class SceneManager {
 
   set(sceneName, clearCache) {
     return SetScene(this, sceneName, clearCache, false);
+  }
+
+  transition(sceneName) {
+
   }
 
   restart(clearCache) {

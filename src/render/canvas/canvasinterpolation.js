@@ -1,6 +1,6 @@
 
 
-scintilla.CanvasInterpolation = {
+const CanvasInterpolation = {
 
     crisp : function(canvas)
     {
@@ -19,4 +19,8 @@ scintilla.CanvasInterpolation = {
         canvas.style.msInterpolationMode = 'bicubic';
         return canvas;
     }
-}
+};
+
+Object.freeze(CanvasInterpolation);
+
+export default CanvasInterpolation;

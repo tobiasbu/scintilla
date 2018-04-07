@@ -16,6 +16,8 @@ export default class Config {
         this.height = callback(config, 'height', 480);
         this.parent = callback(config, 'parent', null);
         this.debug =  callback(config, 'debug', false);
+        this.pixelated = callback(config, 'pixelated', false);
+        this.doubleBuffer = callback(config, 'doubleBuffer', true);
 
         this.roundPixels = callback(config, 'roundPixels', false);
         this.floorTiles = callback(config, 'floorTiles', false),
@@ -26,23 +28,19 @@ export default class Config {
             path : callback_2(config, 'loader.path', ''),
             responseType : callback_2(config, 'loader.responseType', ''),
             async : callback_2(config, 'loader.async', true),
-        }
-
-
+        };
 
         this.fps = callback(config, 'fps', 60);
-
         this.time = {
             timeoutMode : callback_2(config, 'time.timeOutMode', false),
-           
-        }
+        };
 
         this.camera = {
             width : callback_2(config, 'camera.width', this.width),
             height : callback_2(config, 'camera.height', this.height)
-        }
+        };
 
-        this.pixelated = callback(config, 'pixelated', false);
+       
         /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
             this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
             this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);

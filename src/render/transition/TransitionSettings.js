@@ -14,7 +14,7 @@ export default class TransitionSettings {
         this.inColor = Color.black;
         this.outColor = Color.black;
 
-        this.inDuration = 1;
+        this.inDuration = 0.5;
         this.outDuration = 0.5;
 
         this.pauseDuration = 0;

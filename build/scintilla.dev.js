@@ -596,7 +596,7 @@ module.exports = function (it) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.5.3' };
+var core = module.exports = { version: '2.5.4' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -734,6 +734,7 @@ var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/libra
 var core = __webpack_require__(/*! ./_core */ "../node_modules/core-js/library/modules/_core.js");
 var ctx = __webpack_require__(/*! ./_ctx */ "../node_modules/core-js/library/modules/_ctx.js");
 var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
 var PROTOTYPE = 'prototype';
 
 var $export = function (type, name, source) {
@@ -751,7 +752,7 @@ var $export = function (type, name, source) {
   for (key in source) {
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && key in exports) continue;
+    if (own && has(exports, key)) continue;
     // export native or passed
     out = own ? target[key] : source[key];
     // prevent global pollution for namespaces
@@ -976,7 +977,6 @@ var LIBRARY = __webpack_require__(/*! ./_library */ "../node_modules/core-js/lib
 var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
 var redefine = __webpack_require__(/*! ./_redefine */ "../node_modules/core-js/library/modules/_redefine.js");
 var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
-var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
 var Iterators = __webpack_require__(/*! ./_iterators */ "../node_modules/core-js/library/modules/_iterators.js");
 var $iterCreate = __webpack_require__(/*! ./_iter-create */ "../node_modules/core-js/library/modules/_iter-create.js");
 var setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ "../node_modules/core-js/library/modules/_set-to-string-tag.js");
@@ -1003,7 +1003,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
   var VALUES_BUG = false;
   var proto = Base.prototype;
   var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = (!BUGGY && $native) || getMethod(DEFAULT);
+  var $default = $native || getMethod(DEFAULT);
   var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
   var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
   var methods, key, IteratorPrototype;
@@ -1014,7 +1014,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
       // Set @@toStringTag to native iterators
       setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
+      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -3247,6 +3247,8 @@ var Config = function Config(config) {
         this.height = callback(config, 'height', 480);
         this.parent = callback(config, 'parent', null);
         this.debug = callback(config, 'debug', false);
+        this.pixelated = callback(config, 'pixelated', false);
+        this.doubleBuffer = callback(config, 'doubleBuffer', true);
 
         this.roundPixels = callback(config, 'roundPixels', false);
         this.floorTiles = callback(config, 'floorTiles', false),
@@ -3260,10 +3262,8 @@ var Config = function Config(config) {
         };
 
         this.fps = callback(config, 'fps', 60);
-
         this.time = {
                 timeoutMode: callback_2(config, 'time.timeOutMode', false)
-
         };
 
         this.camera = {
@@ -3271,7 +3271,6 @@ var Config = function Config(config) {
                 height: callback_2(config, 'camera.height', this.height)
         };
 
-        this.pixelated = callback(config, 'pixelated', false);
         /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
             this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
             this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
@@ -3282,6 +3281,93 @@ var Config = function Config(config) {
 };
 
 exports.default = Config;
+
+/***/ }),
+
+/***/ "./core/CreateRender.js":
+/*!******************************!*\
+  !*** ./core/CreateRender.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = CreateRender;
+
+var _CanvasListManager = __webpack_require__(/*! ../render/canvas/CanvasListManager */ "./render/canvas/CanvasListManager.js");
+
+var _CanvasListManager2 = _interopRequireDefault(_CanvasListManager);
+
+var _CanvasInterpolation = __webpack_require__(/*! ../render/canvas/CanvasInterpolation */ "./render/canvas/CanvasInterpolation.js");
+
+var _CanvasInterpolation2 = _interopRequireDefault(_CanvasInterpolation);
+
+var _CanvasSmoothing = __webpack_require__(/*! ../render/canvas/CanvasSmoothing */ "./render/canvas/CanvasSmoothing.js");
+
+var _CanvasSmoothing2 = _interopRequireDefault(_CanvasSmoothing);
+
+var _Define = __webpack_require__(/*! ../render/Define */ "./render/Define.js");
+
+var _Render = __webpack_require__(/*! ../render/Render */ "./render/Render.js");
+
+var _Render2 = _interopRequireDefault(_Render);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateRender(game, config) {
+
+  var render = new _Render2.default(game);
+
+  render.imageRendering = config.pixelated ? _Define.RenderingType.NEAREST : _Define.RenderingType.LINEAR;
+
+  if (config.canvas) {
+    render.canvas = config.canvas;
+  } else {
+    render.canvas = _CanvasListManager2.default.create(game, config.width, config.height);
+  }
+
+  // create context
+  render.context = render.canvas.getContext("2d", { alpha: false });
+  render.smoothing = new _CanvasSmoothing2.default(render.context);
+
+  if (config.pixelated) {
+
+    _CanvasInterpolation2.default.crisp(render.canvas);
+    render.smoothing.set(render.imageRendering);
+  }
+
+  if (config.doubleBuffer) {
+    render.doubleBuffer = true;
+    render._domCanvas = _CanvasListManager2.default.create(game, config.width, config.height);
+    render._domContext = render._domCanvas.getContext("2d", { alpha: false });
+  }
+
+  return render;
+
+  // default definition
+  /*let defaultDef = {
+    tabindex: '1',
+    width: width,
+    height: height,
+    id: Math.random().toString(36).substr(2, 9),
+    class: "",
+    container: "body",
+    style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
+  };
+      let CO = defaultDef;
+  let canvas;
+    canvas = document.createElement('canvas');
+  //canvas.parent = parent;
+  canvas.setAttribute("id", CO.id);
+  canvas.setAttribute("width", CO.width);
+  canvas.setAttribute("height", CO.height);
+  canvas.setAttribute("style", CO.style);*/
+}
 
 /***/ }),
 
@@ -3458,6 +3544,14 @@ var _InitializeSystems = __webpack_require__(/*! ./system/components/InitializeS
 
 var _InitializeSystems2 = _interopRequireDefault(_InitializeSystems);
 
+var _CreateRender = __webpack_require__(/*! ./CreateRender */ "./core/CreateRender.js");
+
+var _CreateRender2 = _interopRequireDefault(_CreateRender);
+
+var _AppendDOM = __webpack_require__(/*! ../dom/AppendDOM */ "./dom/AppendDOM.js");
+
+var _AppendDOM2 = _interopRequireDefault(_AppendDOM);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -3470,13 +3564,22 @@ function GameInitialize(game) {
 
     if (game.systemInited) return;
 
+    var render = (0, _CreateRender2.default)(game, game.config);
+
+    var canvas = render.canvas;
+
+    if (render.doubleBuffer) {
+        canvas = render._domCanvas;
+    }
+
+    (0, _AppendDOM2.default)(canvas, game.config.parent);
+
+    // Core system
     game.physics = new _physics2.default(game);
     game.input = new _Input2.default(game);
-    //this.scene = new SceneManager(this);
-    //new GameSystemManager(this);
     game.time = new _GameTime2.default(game);
 
-    (0, _InitializeSystems2.default)(game);
+    (0, _InitializeSystems2.default)(game, render);
 
     game.input.init();
     game.time.init(game.system.loop);
@@ -3580,6 +3683,7 @@ var GameLoop = function () {
                 this.currentScene = null;
                 this.camera = null;
                 this.canvas = null;
+                this.renderer = null;
         }
 
         (0, _createClass3.default)(GameLoop, [{
@@ -3631,30 +3735,32 @@ var GameLoop = function () {
                 key: "render",
                 value: function render(deltaTime) {
 
+                        (0, _BeginDrawRender2.default)(this.renderer);
+
                         if (this.currentScene !== null || this.currentScene !== undefined) {
 
                                 // Scenes
-                                (0, _BeginDrawRender2.default)(this.system.render);
-
-                                (0, _DrawRender2.default)(this.system.render, this.camera, deltaTime);
+                                (0, _DrawRender2.default)(this.renderer, this.camera, deltaTime);
 
                                 // User Interface
-
                                 (0, _DrawUI2.default)(this.system.ui, this.game.scene);
                         }
 
-                        // Transition and Debug
+                        (0, _EndDrawRender2.default)(this.system.render);
 
-                        this.system.render.context.setTransform(1, 0, 0, 1, 0, 0);
+                        // Transition
+                        this.renderer.context.setTransform(1, 0, 0, 1, 0, 0);
 
-                        (0, _DrawTransition2.default)(this.system.transition, this.system.render.canvas, this.system.render.context);
+                        (0, _DrawTransition2.default)(this.system.transition, this.renderer.canvas, this.renderer.context);
 
-                        if (this.system.debug !== undefined) {
-
-                                this.system.debug.test();
+                        // Debug
+                        if (this.system.ui.debug !== null && this.system.ui.debug !== undefined) {
+                                this.system.ui.debug.test();
                         }
 
-                        (0, _EndDrawRender2.default)(this.system.render);
+                        if (this.renderer.doubleBuffer) {
+                                this.renderer._domContext.drawImage(this.renderer.canvas, 0, 0);
+                        }
                 }
         }]);
         return GameLoop;
@@ -3668,6 +3774,7 @@ _System2.default.register('GameLoop', GameLoop, 'loop', function () {
         this.entityUpdateList = this.game.system.entityList;
         this.camera = this.system.camera;
         this.canvas = this.system.render.canvas;
+        this.renderer = this.system.render;
 });
 
 /***/ }),
@@ -3777,7 +3884,7 @@ exports.default = InitializeSystems;
 
 var _System = __webpack_require__(/*! ../System */ "./core/system/System.js");
 
-function InitializeSystems(game) {
+function InitializeSystems(game, render) {
 
     var systems = {};
 
@@ -3790,18 +3897,19 @@ function InitializeSystems(game) {
 
     // set core system to game class
     game.system = systems;
-    game.scene = systems['scene'];
+    game.scene = systems.scene;
+    game.render = render;
+    systems.render = render;
 
     // initialize systems
     for (var _property in _System.GameSystems) {
 
         var _registered = _System.GameSystems[_property];
-        var InitializeSystemFunction = _registered.init; //this[GameSystems[property].name];
+        var InitializeSystemFunction = _registered.init;
 
         if (InitializeSystemFunction === undefined) continue;
 
         InitializeSystemFunction.call(systems[_registered.name]);
-        //sys.init();
     }
 
     return systems;
@@ -3881,6 +3989,59 @@ function UnjectSystems(scene) {
             delete scene[sys.name]; // = undefined;
         }
     }
+}
+
+/***/ }),
+
+/***/ "./dom/AppendDOM.js":
+/*!**************************!*\
+  !*** ./dom/AppendDOM.js ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = AppendDOM;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function AppendDOM(element, parent, overflowHidden) {
+
+    if (overflowHidden === undefined) overflowHidden = true;
+
+    var appendTo = void 0;
+    var target = null;
+
+    if (parent) {
+        if (typeof parent === 'string') {
+            target = document.getElementById(parent);
+        } else if ((typeof parent === 'undefined' ? 'undefined' : (0, _typeof3.default)(parent)) === 'object' && parent.nodeType === 1) {
+            target = parent;
+        }
+    }
+
+    // Fallback, covers an invalid ID and a non HTMLelement object
+    if (!target) {
+        target = document.body;
+    }
+
+    if (overflowHidden && target.style) {
+        target.style.overflow = 'hidden';
+    }
+
+    target.appendChild(element);
+
+    return element;
 }
 
 /***/ }),
@@ -4509,6 +4670,14 @@ var _Validate = __webpack_require__(/*! ../utils/Validate */ "./utils/Validate.j
 
 var _Validate2 = _interopRequireDefault(_Validate);
 
+var _GameEvents = __webpack_require__(/*! ./GameEvents */ "./event/GameEvents.js");
+
+var _GameEvents2 = _interopRequireDefault(_GameEvents);
+
+var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
+
+var _System2 = _interopRequireDefault(_System);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventManager = function () {
@@ -4578,6 +4747,47 @@ var EventManager = function () {
 }();
 
 exports.default = EventManager;
+
+
+function BulkEventCreation(manager, events) {
+
+        for (var i = 0; i < events.length; i++) {
+                manager.create(events[i]);
+        }
+}
+
+_System2.default.register('EventManager', EventManager, 'event', function () {
+        BulkEventCreation(this, _GameEvents2.default);
+});
+
+/***/ }),
+
+/***/ "./event/GameEvents.js":
+/*!*****************************!*\
+  !*** ./event/GameEvents.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// list of events
+var GameEvents = ['__render_layerdepthsort', '__render_layersort', 'transition_between_inout'];
+
+(0, _freeze2.default)(GameEvents);
+
+exports.default = GameEvents;
 
 /***/ }),
 
@@ -11625,35 +11835,9 @@ var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
-
-var _System2 = _interopRequireDefault(_System);
-
-var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
-
-var _Map2 = _interopRequireDefault(_Map);
-
-var _RenderLayer = __webpack_require__(/*! ./RenderLayer */ "./render/RenderLayer.js");
-
-var _RenderLayer2 = _interopRequireDefault(_RenderLayer);
-
-var _RenderLayersManagement = __webpack_require__(/*! ./RenderLayersManagement */ "./render/RenderLayersManagement.js");
+var _RenderLayersManagement = __webpack_require__(/*! ./layer/RenderLayersManagement */ "./render/layer/RenderLayersManagement.js");
 
 var _RenderLayersManagement2 = _interopRequireDefault(_RenderLayersManagement);
-
-var _Canvas = __webpack_require__(/*! ./canvas/Canvas */ "./render/canvas/Canvas.js");
-
-var _Canvas2 = _interopRequireDefault(_Canvas);
-
-var _Define = __webpack_require__(/*! ./Define */ "./render/Define.js");
-
-var _Smoothing = __webpack_require__(/*! ./canvas/Smoothing */ "./render/canvas/Smoothing.js");
-
-var _Smoothing2 = _interopRequireDefault(_Smoothing);
-
-var _DrawRenderLayer = __webpack_require__(/*! ./components/DrawRenderLayer */ "./render/components/DrawRenderLayer.js");
-
-var _DrawRenderLayer2 = _interopRequireDefault(_DrawRenderLayer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11663,12 +11847,20 @@ var Render = function () {
 
 
         this.game = game;
+        this.doubleBuffer = false;
+        this.smoothing = undefined;
+        this.imageRendering = undefined;
+        this.canvas = undefined;
+        this.context = undefined;
         this.layer = new _RenderLayersManagement2.default(this.game);
-        this.canvas = _Canvas2.default.create(this.game.parent, this.game.width, this.game.height);
-        this.context = this.canvas.getContext("2d", { alpha: false });
-        this.imageRendering = game.config.pixelated ? _Define.RenderingType.NEAREST : _Define.RenderingType.LINEAR;
-        this.smooth = new _Smoothing2.default(this.context);
-        this.smooth.set(this.imageRendering);
+        // dom canvas
+        //this._domCanvas = Canvas.create(this.game.parent,this.game.width,this.game.height);
+        //this._donContext = this.canvas.getContext("2d", { alpha: false });  
+        // off screen canvas
+        //this._canvas = Canvas.create();
+        //this.imageRendering = (game.config.pixelated) ? RenderingType.NEAREST : RenderingType.LINEAR;
+        //this.smooth = new CanvasSmoothing(this.context);
+        //this.smooth.set(this.imageRendering);
 
         this._backgroundColor = '#000';
         this._alpha = 1;
@@ -11703,17 +11895,17 @@ var Render = function () {
     return Render;
 }();
 
+//System.register('Render', Render, 'render');
+
+
 exports.default = Render;
 
-
-_System2.default.register('Render', Render, 'render');
-
 /***/ }),
 
-/***/ "./render/RenderLayer.js":
-/*!*******************************!*\
-  !*** ./render/RenderLayer.js ***!
-  \*******************************/
+/***/ "./render/canvas/CanvasInterpolation.js":
+/*!**********************************************!*\
+  !*** ./render/canvas/CanvasInterpolation.js ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11724,127 +11916,40 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
 
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
-
-var _List2 = _interopRequireDefault(_List);
+var _freeze2 = _interopRequireDefault(_freeze);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var RenderLayer = function () {
-    function RenderLayer(game, layerName) {
-        (0, _classCallCheck3.default)(this, RenderLayer);
+var CanvasInterpolation = {
 
+    crisp: function crisp(canvas) {
+        var types = ['optimizeSpeed', 'crisp-edges', '-moz-crisp-edges', '-webkit-optimize-contrast', 'optimize-contrast', 'pixelated'];
+        types.forEach(function (type) {
+            canvas.style['image-rendering'] = type;
+        });
+        canvas.style.msInterpolationMode = 'nearest-neighbor';
+        return canvas;
+    },
 
-        this._name = layerName;
-        this.game = game;
-        this.renderList = new _List2.default(true);
-        this.__drawCalls = 0;
-        this.__enable = true;
-        this.__isDirty = false;
+    bicubic: function bicubic(canvas) {
+        canvas.style['image-rendering'] = 'auto';
+        canvas.style.msInterpolationMode = 'bicubic';
+        return canvas;
     }
+};
 
-    (0, _createClass3.default)(RenderLayer, [{
-        key: 'add',
+(0, _freeze2.default)(CanvasInterpolation);
 
-
-        // Add renderable components
-        value: function add(renderer) {
-
-            if (renderer === undefined) return;
-
-            this.renderList.push(renderer);
-            // this.renderer.__renderLayer = this;
-            this.__isDirty = true;
-        }
-    }, {
-        key: 'remove',
-        value: function remove(renderer) {
-            return this.renderList.remove(renderer);
-        }
-    }, {
-        key: 'removeAt',
-        value: function removeAt(index) {}
-    }, {
-        key: 'at',
-        value: function at(index) {
-            if (index < 0 || index >= this.__renderers.size) {
-                throw new Error('RenderLayer.at: Renderer at ' + index + ' does not exist in the render layer list: \"' + name + "\".");
-            }
-            return this.renderList.at(index);
-        }
-    }, {
-        key: 'sortDepth',
-        value: function sortDepth(a, b) {
-            // sort ascending
-
-            return a._depthSorting - b._depthSorting;
-
-            /*this.__renderers.sort(
-                function(a, b) {
-                        if (a.depth > b.depth) {
-                          return 1;
-                        } else if (a.depth < b.depth) {
-                          return -1;
-                        } else {
-                          if (a.z > b.z) {
-                    return 1;
-                  } else {
-                    return -1;
-                  }
-                  
-                }
-              });*/
-        }
-    }, {
-        key: 'drawCalls',
-        get: function get() {
-            return this.__drawCalls;
-        }
-    }, {
-        key: 'length',
-        get: function get() {
-            return this.__renderers.length;
-        }
-    }, {
-        key: 'name',
-        get: function get() {
-            return this._name;
-        }
-    }, {
-        key: 'enable',
-        get: function get() {
-            return this.__enable;
-        },
-        set: function set(value) {
-            value = !!value;
-
-            if (value !== this._enabled) {
-                //if (!value)
-                //    this.reset();
-
-                this._enabled = value;
-            }
-        }
-    }]);
-    return RenderLayer;
-}();
-
-exports.default = RenderLayer;
+exports.default = CanvasInterpolation;
 
 /***/ }),
 
-/***/ "./render/RenderLayersManagement.js":
-/*!******************************************!*\
-  !*** ./render/RenderLayersManagement.js ***!
-  \******************************************/
+/***/ "./render/canvas/CanvasListManager.js":
+/*!********************************************!*\
+  !*** ./render/canvas/CanvasListManager.js ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11855,6 +11960,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _seal = __webpack_require__(/*! babel-runtime/core-js/object/seal */ "../node_modules/babel-runtime/core-js/object/seal.js");
+
+var _seal2 = _interopRequireDefault(_seal);
+
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -11863,190 +11972,104 @@ var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
-
-var _Map2 = _interopRequireDefault(_Map);
-
-var _RenderLayer = __webpack_require__(/*! ./RenderLayer */ "./render/RenderLayer.js");
-
-var _RenderLayer2 = _interopRequireDefault(_RenderLayer);
-
-var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
+var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
 
 var _List2 = _interopRequireDefault(_List);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var RenderLayersManagement = function () {
-    function RenderLayersManagement(game) {
-        (0, _classCallCheck3.default)(this, RenderLayersManagement);
+// based in pixi
+var CanvasListManager = function () {
+    function CanvasListManager() {
+        (0, _classCallCheck3.default)(this, CanvasListManager);
 
-        this.game = game;
-        this.renderLayers = new _List2.default();
-        //this.__renderLayersMap = new DataMap();
-        this.add('default');
+        this.list = new _List2.default();
     }
 
-    (0, _createClass3.default)(RenderLayersManagement, [{
-        key: 'add',
-        value: function add(name) {
+    (0, _createClass3.default)(CanvasListManager, [{
+        key: 'create',
+        value: function create(gameParent, width, height) {
 
-            if (this.contains(name)) {
-                throw new Error("Render.add: There is already a RenderLayer called: \"" + name + "\".");
+            var canvasContainer = this.firstFree();
+            var canvas = void 0;
+
+            // no parent found
+            if (canvasContainer === null) {
+
+                canvasContainer = {
+                    parent: gameParent,
+                    canvas: document.createElement('canvas')
+                };
+
+                this.list.push(canvasContainer);
+
+                canvas = canvasContainer.canvas;
+            } else {
+
+                canvasContainer.parent = gameParent;
+                canvas = canvasContainer.canvas;
             }
 
-            //this.__renderLayersMap.set(name, this.__renderLayers.length);
-            this.renderLayers.push(new _RenderLayer2.default(this.game, name));
+            canvas.width = width;
+            canvas.height = height;
+
+            return canvas;
         }
     }, {
-        key: 'remove',
-        value: function remove(name) {
-            if (typeof name !== 'string') throw new Error("Render.remove: The value name is not a string.");
+        key: 'filter',
+        value: function filter(gameParent) {
+            // functional programming
 
-            if (name === "default") throw new Error("Render.remove: You can not remove the \"default\" layer.");
+            var list = scintilla.CanvasList.list;
 
-            if (!this.__renderLayersMap.has(name)) throw new Error("Render.remove: Could not remove layer. There is no layer named \"" + name + "\".");
-
-            var index = this.__renderLayersMap.get(name);
-
-            this.renderLayers.erase(name);
+            return list.parent === gameParent;
         }
     }, {
-        key: 'contains',
-        value: function contains(layerName) {
-            if (typeof layerName !== 'string') throw new Error("Render.contains: The value name is not a string.");
+        key: 'firstFree',
+        value: function firstFree() {
 
-            var val = this.renderLayers.each(function (layer) {
+            this.list.each(function (canvas) {
 
-                if (layer.name == layerName) {
-                    return true;
+                if (!canvas.parent) {
+                    return canvas;
                 }
             });
 
-            return val || false;
-        }
-    }]);
-    return RenderLayersManagement;
-}();
-
-exports.default = RenderLayersManagement;
-
-/***/ }),
-
-/***/ "./render/canvas/Canvas.js":
-/*!*********************************!*\
-  !*** ./render/canvas/Canvas.js ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
-var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Create a Canvas object.
- * @class Canvas
- */
-exports.default = function () {
-    function Canvas() {
-        (0, _classCallCheck3.default)(this, Canvas);
-    }
-
-    (0, _createClass3.default)(Canvas, null, [{
-        key: "create",
-        value: function create(parent, width, height) {
-
-            // default definition
-            var defaultDef = {
-                tabindex: '1',
-                width: width,
-                height: height,
-                id: Math.random().toString(36).substr(2, 9),
-                class: "",
-                container: "body",
-                style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
-            };
-
-            //var CO = Object.assign(defaultDef, options);
-            var CO = defaultDef;
-            var canvas = void 0;
-
-            canvas = document.createElement('canvas');
-            //canvas.parent = parent;
-            canvas.setAttribute("id", CO.id);
-            canvas.setAttribute("width", CO.width);
-            canvas.setAttribute("height", CO.height);
-            canvas.setAttribute("style", CO.style);
-            //canvas.style.position = 'absolute';
-
-
-            Canvas.appendDOM(canvas, parent);
-            //document.body.appendChild(canvas);
-
-            return canvas;
+            return null;
         }
     }, {
-        key: "appendDOM",
-        value: function appendDOM(canvas, parent) {
+        key: 'remove',
+        value: function remove(parent) {
 
-            var appendTo = void 0;
-            var overflowHidden = true;
-            var target = null;
+            var list = this.list;
 
-            //if (overflowHidden === undefined) { overflowHidden = true; }
-
-            if (parent) {
-                if (typeof parent === 'string') {
-                    // hopefully an element ID
-                    target = document.getElementById(parent);
-                } else if ((typeof parent === "undefined" ? "undefined" : (0, _typeof3.default)(parent)) === 'object' && parent.nodeType === 1) {
-                    // quick test for a HTMLelement
-                    target = parent;
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].parent === parent) {
+                    list[i].parent = null;
                 }
             }
-
-            // Fallback, covers an invalid ID and a non HTMLelement object
-            if (!target) {
-                target = document.body;
-            }
-
-            /*if (overflowHidden && target.style)
-            {
-                target.style.overflow = 'hidden';
-            }*/
-
-            target.appendChild(canvas);
-
-            return canvas;
+        }
+    }, {
+        key: 'clear',
+        value: function clear() {
+            /// TODO
         }
     }]);
-    return Canvas;
+    return CanvasListManager;
 }();
+
+var CanvasManager = new CanvasListManager();
+
+(0, _seal2.default)(CanvasManager);
+
+exports.default = CanvasManager;
 
 /***/ }),
 
-/***/ "./render/canvas/Smoothing.js":
-/*!************************************!*\
-  !*** ./render/canvas/Smoothing.js ***!
-  \************************************/
+/***/ "./render/canvas/CanvasSmoothing.js":
+/*!******************************************!*\
+  !*** ./render/canvas/CanvasSmoothing.js ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12112,6 +12135,24 @@ var CanvasSmoothing = function () {
 }();
 
 exports.default = CanvasSmoothing;
+
+/***/ }),
+
+/***/ "./render/canvas/index.js":
+/*!********************************!*\
+  !*** ./render/canvas/index.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Smoothing: __webpack_require__(/*! ./CanvasSmoothing */ "./render/canvas/CanvasSmoothing.js"),
+    Manager: __webpack_require__(/*! ./CanvasListManager */ "./render/canvas/CanvasListManager.js"),
+    Interpolation: __webpack_require__(/*! ./CanvasInterpolation */ "./render/canvas/CanvasInterpolation.js")
+};
 
 /***/ }),
 
@@ -12320,7 +12361,7 @@ var Color = function () {
         }
     }], [{
         key: 'ease',
-        value: function ease(from, to, t, easingType, easingMode, easingArg) {
+        value: function ease(from, to, t, easingType, easingMode, easingArg, destinationColor) {
 
             if (easingType === undefined) easingType = _EasingType2.default.LINEAR;
             if (easingMode === undefined) easingMode = 0;
@@ -12341,11 +12382,11 @@ var Color = function () {
                     }
             }
 
-            var color = new Color();
+            if (destinationColor === undefined) destinationColor = new Color();
 
-            color.set(easer.by(easingType, from.r, to.r, t, easingArg), easer.by(easingType, from.g, to.g, t, easingArg), easer.by(easingType, from.b, to.b, t, easingArg), easer.by(easingType, from.a, to.a, t, easingArg));
+            destinationColor.set(easer.by(easingType, from.r, to.r, t, easingArg), easer.by(easingType, from.g, to.g, t, easingArg), easer.by(easingType, from.b, to.b, t, easingArg), easer.by(easingType, from.a, to.a, t, easingArg));
 
-            return color;
+            return destinationColor;
         }
     }, {
         key: 'red',
@@ -12815,12 +12856,236 @@ function EndDrawRender(render) {
 
 
 module.exports = {
-    RenderLayer: __webpack_require__(/*! ./RenderLayer */ "./render/RenderLayer.js"),
-    RenderLayerManagement: __webpack_require__(/*! ./RenderLayersManagement */ "./render/RenderLayersManagement.js"),
+    Canvas: __webpack_require__(/*! ./canvas */ "./render/canvas/index.js"),
+    RenderLayer: __webpack_require__(/*! ./layer/RenderLayer */ "./render/layer/RenderLayer.js"),
+    RenderLayerManagement: __webpack_require__(/*! ./layer/RenderLayersManagement */ "./render/layer/RenderLayersManagement.js"),
     Render: __webpack_require__(/*! ./Render */ "./render/Render.js"),
     UI: __webpack_require__(/*! ./ui/UI */ "./render/ui/UI.js"),
     Transition: __webpack_require__(/*! ./transition/Transition */ "./render/transition/Transition.js")
 };
+
+/***/ }),
+
+/***/ "./render/layer/RenderLayer.js":
+/*!*************************************!*\
+  !*** ./render/layer/RenderLayer.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var RenderLayer = function () {
+    function RenderLayer(game, layerName) {
+        (0, _classCallCheck3.default)(this, RenderLayer);
+
+
+        this._name = layerName;
+        this.game = game;
+        this.renderList = new _List2.default(true);
+        this.__drawCalls = 0;
+        this.__enable = true;
+        this.__isDirty = false;
+    }
+
+    (0, _createClass3.default)(RenderLayer, [{
+        key: 'add',
+
+
+        // Add renderable components
+        value: function add(renderer) {
+
+            if (renderer === undefined) return;
+
+            this.renderList.push(renderer);
+            // this.renderer.__renderLayer = this;
+            this.__isDirty = true;
+        }
+    }, {
+        key: 'remove',
+        value: function remove(renderer) {
+            return this.renderList.remove(renderer);
+        }
+    }, {
+        key: 'removeAt',
+        value: function removeAt(index) {}
+    }, {
+        key: 'at',
+        value: function at(index) {
+            if (index < 0 || index >= this.__renderers.size) {
+                throw new Error('RenderLayer.at: Renderer at ' + index + ' does not exist in the render layer list: \"' + name + "\".");
+            }
+            return this.renderList.at(index);
+        }
+    }, {
+        key: 'sortDepth',
+        value: function sortDepth(a, b) {
+            // sort ascending
+
+            return a._depthSorting - b._depthSorting;
+
+            /*this.__renderers.sort(
+                function(a, b) {
+                        if (a.depth > b.depth) {
+                          return 1;
+                        } else if (a.depth < b.depth) {
+                          return -1;
+                        } else {
+                          if (a.z > b.z) {
+                    return 1;
+                  } else {
+                    return -1;
+                  }
+                  
+                }
+              });*/
+        }
+    }, {
+        key: 'drawCalls',
+        get: function get() {
+            return this.__drawCalls;
+        }
+    }, {
+        key: 'length',
+        get: function get() {
+            return this.__renderers.length;
+        }
+    }, {
+        key: 'name',
+        get: function get() {
+            return this._name;
+        }
+    }, {
+        key: 'enable',
+        get: function get() {
+            return this.__enable;
+        },
+        set: function set(value) {
+            value = !!value;
+
+            if (value !== this._enabled) {
+                //if (!value)
+                //    this.reset();
+
+                this._enabled = value;
+            }
+        }
+    }]);
+    return RenderLayer;
+}();
+
+exports.default = RenderLayer;
+
+/***/ }),
+
+/***/ "./render/layer/RenderLayersManagement.js":
+/*!************************************************!*\
+  !*** ./render/layer/RenderLayersManagement.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Map = __webpack_require__(/*! ../../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+var _RenderLayer = __webpack_require__(/*! ./RenderLayer */ "./render/layer/RenderLayer.js");
+
+var _RenderLayer2 = _interopRequireDefault(_RenderLayer);
+
+var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var RenderLayersManagement = function () {
+    function RenderLayersManagement(game) {
+        (0, _classCallCheck3.default)(this, RenderLayersManagement);
+
+        this.game = game;
+        this.renderLayers = new _List2.default();
+        //this.__renderLayersMap = new DataMap();
+        this.add('default');
+    }
+
+    (0, _createClass3.default)(RenderLayersManagement, [{
+        key: 'add',
+        value: function add(name) {
+
+            if (this.contains(name)) {
+                throw new Error("Render.add: There is already a RenderLayer called: \"" + name + "\".");
+            }
+
+            //this.__renderLayersMap.set(name, this.__renderLayers.length);
+            this.renderLayers.push(new _RenderLayer2.default(this.game, name));
+        }
+    }, {
+        key: 'remove',
+        value: function remove(name) {
+            if (typeof name !== 'string') throw new Error("Render.remove: The value name is not a string.");
+
+            if (name === "default") throw new Error("Render.remove: You can not remove the \"default\" layer.");
+
+            if (!this.__renderLayersMap.has(name)) throw new Error("Render.remove: Could not remove layer. There is no layer named \"" + name + "\".");
+
+            var index = this.__renderLayersMap.get(name);
+
+            this.renderLayers.erase(name);
+        }
+    }, {
+        key: 'contains',
+        value: function contains(layerName) {
+            if (typeof layerName !== 'string') throw new Error("Render.contains: The value name is not a string.");
+
+            var val = this.renderLayers.each(function (layer) {
+
+                if (layer.name == layerName) {
+                    return true;
+                }
+            });
+
+            return val || false;
+        }
+    }]);
+    return RenderLayersManagement;
+}();
+
+exports.default = RenderLayersManagement;
 
 /***/ }),
 
@@ -12862,7 +13127,7 @@ function DrawTransition(transition, canvas, context) {
             {
 
                 context.fillStyle = transition._tColor.rgba;
-                context.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+                context.fillRect(0, 0, canvas.width, canvas.height);
 
                 break;
             }
@@ -13012,7 +13277,7 @@ var TransitionSettings = function () {
         this.inColor = _Color2.default.black;
         this.outColor = _Color2.default.black;
 
-        this.inDuration = 1;
+        this.inDuration = 0.5;
         this.outDuration = 0.5;
 
         this.pauseDuration = 0;
@@ -13231,7 +13496,7 @@ function UpdateTransition(transition, deltaTime) {
     if (transition._behaviour === _TranstionBehavior2.default.NONE) return;
 
     var setg = transition.settings;
-    var changeState = undefined;
+    var changeState = void 0;
 
     // UPDATE STATE
     switch (transition._state) {
@@ -13246,7 +13511,9 @@ function UpdateTransition(transition, deltaTime) {
                 }
 
                 // ease(to, t, easingType, easingMode, easingArg)
-                transition._tColor = _Color2.default.ease(transition._startColor, setg.inColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument);
+                _Color2.default.ease(transition._startColor, setg.inColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument, transition._tColor);
+
+                console.log(transition._tColor.rgba);
 
                 break;
             }
@@ -13422,42 +13689,47 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Debug = function () {
-  function Debug(game) {
+  function Debug(game, drawer) {
     (0, _classCallCheck3.default)(this, Debug);
 
 
     this.game = game;
-    this.draw = game.system.draw;
-    this.context = game.system.render.context;
+    this.draw = drawer;
+    this.context = drawer.context;
     this.x = 8;
     this.y = 12;
     this.lineHeight = 14;
     this.column = 100;
     this.font = "10px Verdana";
     this.textColor = 'white';
-    this.bgcolor = 'black';
-    this.textShadow = 'black';
+    this.bgcolor = '#000';
+    this.textShadow = '#000';
   }
 
   (0, _createClass3.default)(Debug, [{
     key: 'test',
     value: function test() {
 
+      this.draw.disablePointTransform = true;
+      this.x = 8;
+      this.y = 12;
       //this.context.setTransform(1, 0, 0, 1, 0, 0);
       this.context.strokeStyle = this.bgcolor;
       this.context.font = this.font;
-      this.draw.alpha(0.5);
-      this.draw.rect(0, 0, this.game.width, 14 * 4 + 16, this.bgcolor);
-      this.draw.alpha(1);
+      this.draw.alpha = 0.5;
+      this.draw.rect(0, 0, this.game.width, 14 * 3 + 4, this.bgcolor);
+      this.draw.alpha = 1;
       this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / " + this.game.time.desiredFps);
       //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
       this.drawLine("Instances: " + this.game.system.entityList.length);
       this.drawLine("Draw Calls: " + this.game.system.render.drawCalls); /*this.game.physics.length);*/
       this.x += this.game.width / 2;
-      this.y = 12 + 8;
+      //this.y = 12+8;
       //this.drawLine("Sounds count " + this.game.sound.length);
-      this.x = 8;
-      this.y = 12 + 8;
+
+      //this.y = 12+8;
+
+      this.draw.disablePointTransform = false;
     }
   }, {
     key: 'drawLine',
@@ -13558,12 +13830,19 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = InitializeUI;
+
+var _Debug = __webpack_require__(/*! ./Debug */ "./render/ui/Debug.js");
+
+var _Debug2 = _interopRequireDefault(_Debug);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function InitializeUI() {
     this.canvas = this.game.system.render.canvas;
     this.context = this.game.system.render.context;
     this.draw.init();
 
-    if (this.game.config.debug) this.debug = new Debug(this.game);
+    if (this.game.config.debug) this.debug = new _Debug2.default(this.game, this.draw);
 }
 
 /***/ }),
@@ -13671,13 +13950,15 @@ var UI = function () {
         value: function setViewportByAspectRatio(aspectRatio) {
 
             // TODO: IMPROVE THAT
+            var canvasWidth = this.game.system.render.canvas.width; //this.game.system.render.canvas.clientWidth;
+            var canvasHeight = this.game.system.render.canvas.height; //this.game.system.render.canvas.clientHeight
 
-            this.ratiobox = _AspectRatio2.default.computeViewPort(this.game.system.render.canvas.clientWidth / this.game.system.render.canvas.clientHeight, aspectRatio);
+            this.ratiobox = _AspectRatio2.default.computeViewPort(canvasWidth / canvasHeight, aspectRatio);
             var borderX = 0;
             var borderY = 0; //rect.y * this.canvas.clientHeight;
 
             if (this.ratiobox.style === _AspectRatio2.default.Square) {
-                this.viewport.set(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+                this.viewport.set(0, 0, canvasWidth, canvasHeight);
 
                 return this;
             } else {
@@ -13685,14 +13966,14 @@ var UI = function () {
                 if (this.ratiobox.style === _AspectRatio2.default.Pillarbox) borderX = this.ratiobox.x * this.width; //this.canvas.clientWidth;
                 else if (this.ratiobox.style === _AspectRatio2.default.Letterbox) borderY = this.ratiobox.y * this.height; //this.canvas.clientHeight;
 
-                this.viewport.set(borderX, borderY, this.width * (this.canvas.clientWidth / this.width) - borderX * 2, this.height * (this.canvas.clientHeight / this.height) - borderY * 2);
+                this.viewport.set(borderX, borderY, this.width * (canvasWidth / this.width) - borderX * 2, this.height * (canvasHeight / this.height) - borderY * 2);
             }
 
-            var canvasRatioX = this.canvas.clientWidth * (this.ratiobox.x * 2);
-            var canvasRatioY = this.canvas.clientHeight * (this.ratiobox.y * 2);
-            var areaRatio = (this.canvas.clientWidth - canvasRatioX) / this.canvas.clientHeight;
+            var canvasRatioX = canvasWidth * (this.ratiobox.x * 2);
+            var canvasRatioY = canvasHeight * (this.ratiobox.y * 2);
+            var areaRatio = (this.canvas.clientWidth - canvasRatioX) / canvasHeight;
             var orthoSize = this.height / 2;
-            var pixelUnit = this.canvas.clientHeight / (orthoSize * 2) * areaRatio;
+            var pixelUnit = canvasHeight / (orthoSize * 2) * areaRatio;
 
             this.pixelUnit.x = pixelUnit; //(this.canvas.clientWidth - canvasRatioX) / this.width;
             this.pixelUnit.y = pixelUnit; //(this.canvas.clientHeight - canvasRatioY) / this.height;
@@ -13777,6 +14058,7 @@ var UIDrawer = function () {
     this.lastColor = '#000';
     this.currentColor = '#FFF';
     this.currentTextAlign = 'center';
+    this.disablePointTransform = false;
   }
 
   (0, _createClass3.default)(UIDrawer, [{
@@ -13791,12 +14073,23 @@ var UIDrawer = function () {
   }, {
     key: 'transformPosition',
     value: function transformPosition(x, y, w, h) {
-      return {
-        x: x - this.ui.viewport.x,
-        y: y - this.ui.viewport.y,
-        w: w - this.ui.viewport.x || 0,
-        h: h - this.ui.viewport.y || 0
-      };
+
+      if (this.disablePointTransform) {
+        return {
+          x: x,
+          y: y,
+          w: w || 0,
+          h: h || 0
+        };
+      } else {
+
+        return {
+          x: x - this.ui.viewport.x,
+          y: y - this.ui.viewport.y,
+          w: w - this.ui.viewport.x || 0,
+          h: h - this.ui.viewport.y || 0
+        };
+      }
     }
   }, {
     key: 'font',
@@ -13892,28 +14185,31 @@ var UIDrawer = function () {
     key: 'rect',
     value: function rect(x, y, width, height, color) {
 
-      this.context.fillStyle = color || this.currentColor;
       var pos = this.transformPosition(x, y, width, height);
-      this.context.fillRect(pos.x, pos.y, pos.w, pos.h);
+
+      this.context.save();
+      this.context.fillStyle = color || this.currentColor;
+      this.context.translate(pos.x, pos.y);
+
+      this.context.fillRect(0, 0, pos.w, pos.h);
+      this.context.restore();
     }
   }, {
     key: 'outlineRect',
     value: function outlineRect(x, y, width, height, outlineWidth, color) {
 
       color = color || this.currentColor;
-      this.context.lineWidth = outlineWidth || 1;
+
       var pos = this.transformPosition(x, y, width, height);
       //this.context.setLineDash([6]);
+      this.context.save();
+      this.context.translate(pos.x, pos.y);
+      this.context.lineWidth = outlineWidth || 1;
       this.context.strokeStyle = color;
-      this.context.strokeRect(pos.x, pos.y, pos.w, pos.h);
+      this.context.strokeRect(0, 0, pos.w, pos.h);
+      this.context.restore();
       //this.context.rect(x,y,width,height);
       //this.context.stroke();
-    }
-  }, {
-    key: 'color',
-    value: function color(_color) {
-
-      this.context.fillStyle = _color;
     }
   }, {
     key: 'bounds',
@@ -15056,8 +15352,7 @@ var SceneManager = function () {
     value: function _new(sceneName) {
 
       if (this._scenes.has(sceneName)) {
-        throw "Could not create new Scene. The scene name \"" + name + "\" already exists.";
-        return null;
+        throw new Error("Could not create new Scene. The scene name \"" + name + "\" already exists.");
       }
 
       var newScene = new _Scene2.default(this.game, sceneName);
@@ -15070,6 +15365,9 @@ var SceneManager = function () {
     value: function set(sceneName, clearCache) {
       return (0, _SetScene2.default)(this, sceneName, clearCache, false);
     }
+  }, {
+    key: 'transition',
+    value: function transition(sceneName) {}
   }, {
     key: 'restart',
     value: function restart(clearCache) {
@@ -15180,7 +15478,7 @@ var ScintillaLoadingScreen = function (_Scene) {
 
         _this.scintillaLogo = new Image();
         _this.scintillaLogo.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI2MC45OCIgdmlld0JveD0iMCAwIDYzLjUgNjkuMDUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0iI2RjMzBhOSI+PHBhdGggZD0iTTQzLjQ5IDM2Ljg1NmwtMTQuMTgtNi40MzRMNi45NTYgNDkuNzg0bDE5LjM2Mi0yNy4yNC02LjU3Ni05LjU2OCAxNC40NTUgNi41NzVMNTYuNTUxLjE5IDM3LjE5IDI3LjQzeiIgcGFpbnQtb3JkZXI9InN0cm9rZSBtYXJrZXJzIGZpbGwiLz48cGF0aCBkPSJNMTEuMTIgMzYuOTA4bC0uNTQzLTEuMDQxLTEuMDM2LjU0My41MzggMS4wMzZ6bS0xLjg4OC00LjE3NmwtLjM2LTEuMTE2LTEuMTE2LjM2MS4zNjYgMS4xMTV6bS0xLjA2NC00LjQ1NmwtLjA5Ny0uNjM1di0uMDNsLS4wMDYtLjAzLS4wMy0uNDI5LTEuMTY2LjA4LjAzNC40OC4wMDYuMDQ3LjEwMy42ODZ6bS0uMTAzLTUuNjk4bC0xLjE2Ny0uMTA4LS4xMDggMS4xNjcgMS4xNjcuMTA4em0uODY0LTQuNDMzbC4wMDYtLjAzLjAwNi0uMDMtLjMwMy0uMDgtLjgxMi0uMjgxLS4wMDYuMDMtLjAxMi4wNDYtLjI4NiAxLjExNSAxLjEzMi4yOTN6bTEuNDE5LTMuNjMzbC4zMzctLjYyMy0xLjAzLS41NTUtLjM2LjY2My0uMDE4LjA0Mi0uMTcxLjM4MyAxLjA3NS40N3ptMi44NTQtNC40NWwtLjkyNi0uNzIxLS43MjEuOTI3LjkyNy43MTV6bTMuMTg3LTMuMjlsLS43OS0uODYzLS44NjQuNzk1Ljc5Ni44NTh6bTMuMTgtMi4yNjVsLjAzLS4wM2guMDExbC41MjEtLjI4LS41Ni0xLjAzLS41NjEuMzAyLS4wNC4wMy0uNDQ3LjI5My42NDEuOTg0ek00Mi42NDUgMi41bC0uMjUxLS4xMzItLjA0Ni0uMDMtLjgxOC0uMzQzLS40NTIgMS4wNzUuNzcyLjMyNi4yNTIuMTMyem0tMTguMzIzLS4xMzJsLS4zODMtMS4xMS0xLjEwNC4zODQuMzgzIDEuMTA0ek0zOC4xMi44MjhMMzYuOTgyLjU1M2wtLjI2OSAxLjE0NCAxLjEzOC4yN3ptLTkuNTA3LjUzOGguMTMzTDI4LjY0My4xOTloLS4xODNsLTEuMDE4LjE3OC4yIDEuMTU2em00LjgtMS4zMDRMMzIuNTIgMGgtLjMyNmwuMDEyIDEuMTY3aC4yMzVsLjg4Ni4wNjJ6TTUyLjM4IDEzLjA2NWwuNTM4IDEuMDQgMS4wNC0uNTQyLS41NDMtMS4wMzZ6bTEuODgyIDQuMTc2bC4zNjYgMS4xMTUgMS4xMS0uMzYtLjM2LTEuMTE2em0xLjA2NCA0LjQ1NmwuMTAzLjY0di4wM2wuMDA2LjAzLjAyOS40MyAxLjE2Ny0uMDc4LS4wMzQtLjQ4LS4wMDYtLjA0Ny0uMTAzLS42ODZ6bS4xMDkgNS42OThsMS4xNjcuMTA4LjEwMy0xLjE2Ny0xLjE2Ny0uMTA4em0tLjg2NCA0LjQzM2wtLjAwNi4wMy0uMDA2LjAzLjI5Mi4wOC44MTguMjgxLjAxMi0uMDMuMDEyLS4wNDguMjg1LTEuMTEtMS4xMzItLjI5MnptLTEuNDAyIDMuNTkzbC0uMDEyLjAzLS4wMTIuMDMtLjMzNy42MTcgMS4wMzUuNTU1LjM1NS0uNjYzLjAyMy0uMDQyLjE2Ni0uMzg0LTEuMDctLjQ2OXptLTIuODcxIDQuNDlsLjkyNi43MjEuNzE1LS45MjctLjkyNi0uNzE1em0tMy4xOTIgMy4yOWwuNzk1Ljg2My44NjMtLjc5NS0uNzk1LS44NTh6bS0zLjE3NSAyLjI2NWwtLjAzLjAzaC0uMDEybC0uNTIuMjguNTU1IDEuMDMuNTYtLjMwMy4wNDYtLjAzLjQ0Ni0uMjkzLS42NC0uOTg0em0tMjMuMDc2IDIuMDA4bC4yNTEuMTMyLjA0LjAzLjgxOS4zNDMuNDU3LTEuMDc2LS43NzgtLjMyNmgtLjAwNmwtLjAzNC0uMDMtLjIxMi0uMTE0em0xOC4zMTcuMTM4bC4zODMgMS4xMDQgMS4xMS0uMzg0LS4zODQtMS4xMDR6bS0xMy43OTggMS41MzNsMS4xNDQuMjc1LjI2OS0xLjE0NC0xLjE0NC0uMjd6bTkuNTEzLS41MzhoLS4xMzhsLjEwOCAxLjE2N2guMTgzbDEuMDE5LS4xNzgtLjItMS4xNTZ6bS00LjggMS4zMDRsLjg5My4wNjRoLjMybC0uMDEyLTEuMTY3aC0uMjI5bC0uODkyLS4wNjR6IiBjb2xvcj0iIzAwMCIgc29saWQtY29sb3I9IiMwMDAwMDAiIHN0eWxlPSJmb250LWZlYXR1cmUtc2V0dGluZ3M6bm9ybWFsO2ZvbnQtdmFyaWFudC1hbHRlcm5hdGVzOm5vcm1hbDtmb250LXZhcmlhbnQtY2Fwczpub3JtYWw7Zm9udC12YXJpYW50LWxpZ2F0dXJlczpub3JtYWw7Zm9udC12YXJpYW50LW51bWVyaWM6bm9ybWFsO2ZvbnQtdmFyaWFudC1wb3NpdGlvbjpub3JtYWw7aXNvbGF0aW9uOmF1dG87bWl4LWJsZW5kLW1vZGU6bm9ybWFsO3NoYXBlLXBhZGRpbmc6MDt0ZXh0LWRlY29yYXRpb24tY29sb3I6IzAwMDt0ZXh0LWRlY29yYXRpb24tbGluZTpub25lO3RleHQtZGVjb3JhdGlvbi1zdHlsZTpzb2xpZDt0ZXh0LWluZGVudDowO3RleHQtb3JpZW50YXRpb246bWl4ZWQ7dGV4dC10cmFuc2Zvcm06bm9uZSIgcGFpbnQtb3JkZXI9InN0cm9rZSBtYXJrZXJzIGZpbGwiIHdoaXRlLXNwYWNlPSJub3JtYWwiLz48cGF0aCBkPSJNNi4zMiA2NS43MjhxLS4xMDcgMS4zMzMtLjkxIDIuMjc2LS41MjguNjQyLTEuNDA1LjktLjQ3NS4xNDctMS4wODIuMTQ3LTEuMTMxIDAtMS44MTgtLjU1OS0uNTctLjQ2LS44NTgtMS4yNDMtLjI4OC0uNzg5LS4yNDUtMS44MTVsMS44MzQtLjEyNnEuMDIgMS4xMS40NCAxLjYwNi4zMDYuMzc3Ljc1NS4zNTYuNjMtLjAzIDEuMDY0LS42MTQuMjI0LS4zLjI3Ni0uODQ1LjA3Ny0uODAzLS41NjctMS41ODUtLjUyMS0uNTM4LTEuNTU2LTEuNjEzLS44NjktLjkyMi0xLjE5LTEuNjU1LS4zNDYtLjgyMy0uMjU0LTEuNzg3LjE2Ni0xLjczOCAxLjQxOC0yLjYzMlEyLjk5MiA1NiA0LjA2IDU2cTEuMDI2IDAgMS43MTUuNDYxLjUzMS4zNTYuODE5Ljk5OS4yODguNjM1LjI4NSAxLjQ2NmwtMS44NzUuMzM1cS0uMDAyLS43ODItLjMzLTEuMjE1LS4yMzUtLjMyMS0uNzMtLjMyMS0uNTI0IDAtLjg0OC40NjgtLjI2LjM3Ny0uMzEzLjkzNS0uMDg0Ljg3My41ODMgMS43OC4yNTQuMzQzLjc3NC44MS42MTcuNTU5LjgxMi43ODIuNjM3LjcxMi45NjIgMS40MDQuMTUuMzIuMjM2LjYuMjA3LjY3Ny4xNjkgMS4yMjJ6bTQuOTYgMy4zMnEtMS4yNyAwLTIuMDcyLS44ODctLjgwMi0uODg2LS42ODEtMi4xNWwuNjY3LTYuOTc1cS4xMjEtMS4yNjMgMS4xLTIuMTUuOTgtLjg5NCAyLjIzNi0uODk0IDEuMjcgMCAyLjA2NS44OTQuOC44OTMuNjggMi4xNWwtLjEzOSAxLjQ1MmgtMS45OWwuMTQzLTEuNDg3cS4wNDQtLjQ2LS4yNTMtLjc4Mi0uMjktLjMyOC0uNzUtLjMyOC0uNDU1IDAtLjgwNy4zMjgtLjM1Mi4zMjItLjM5Ni43ODJsLS42NyA2Ljk4OXEtLjA0My40Ni4yNDcuNzgyLjI5LjMyMS43NDQuMzIxLjQ2MSAwIC44MTMtLjMyMS4zNTktLjMyMS40MDMtLjc4MmwuMTY4LTEuNzUyaDEuOTlsLS4xNyAxLjc3M3EtLjEyMiAxLjI3LTEuMSAyLjE1Ny0uOTc4Ljg4LTIuMjI4Ljg4em03LjE5LS4xNmgtMS45MTNsMS4yMi0xMi43MzVoMS45MTJ6bTUuNzQtMTIuNzM0bDEuNzIzIDguNTUzLjgxOC04LjU1M2gxLjkybC0xLjIxOSAxMi43MzVoLTIuMDZsLTEuODY1LTguMTU1LS43OCA4LjE1NWgtMS45MTRsMS4yMi0xMi43MzV6bTguNTMgMS45MjFoLTIuMDM5bC4xODQtMS45Mmg1Ljk5bC0uMTgzIDEuOTJIMzQuNjZMMzMuNjI1IDY4Ljg5aC0xLjkyem03LjAzIDEwLjgxM2gtMS45MTNsMS4yMi0xMi43MzVoMS45MTJ6bTcuNiAwaC01LjIzbDEuMjItMTIuNzM1aDEuOTEzbC0xLjAzNyAxMC44MjloMy4zMTZ6bTcuMjEgMGgtNS4yM2wxLjIyLTEyLjczNWgxLjkxM2wtMS4wMzcgMTAuODI5aDMuMzE2em00LjczLTIuOTJsLS43NDggMi45MjVoLTEuOTk3bDMuMzc3LTEyLjczNWgyLjY0NmwuOTEgMTIuNzM1aC0yLjAxbC0uMTc0LTIuOTI1em0xLjY2NS02Ljg5MWwtMS4xOTMgNS4wMmgxLjQyNXoiLz48L2c+PC9zdmc+";
-        _this._loaded = true;
+        _this._loaded = false;
         var self = _this;
 
         //"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAA0CAQAAABxuOPTAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiBAEENCBdKapvAAABjklEQVRYw+2YSxKDIAyGA6seyiXH8mgsORS7dAFpUMNDJ9CNmakFAnz8MVIswCPbkT8L7IqS4REVgSO2HKiGvQOMa+7yGbhY5XKdhFPV2ZpMLaz3gqeIPd5PeeJaWBX3qiNYqqnn7VVrPayqu/JZl3ISSWstEb2wPtDaHjLhbo4nUwunrHQUOyWN2kBFpRJ26iMjp49qgHuPTDvQKkpbW5+i1n1wa5fAijp7P21/OP+wT0Hnws3uefDUdP7pNLtY5ULgPexE4Ohr4tR31H11er322muPdqXrealWYrPrkQNQgI8ZXVDqGbt/GRh20eSp/jERz7jUQn7qe10Ut5Z+HmdTM08WsaxJx02GUMvIgabsYwMA+AIcsuqQO3vk75CRoQhnyCN5LPu5nKQUYz1G5KmPq5V9tbaWn+aKCGABnAmFonAIijPXVUtKSHXd79H9lNqIAM4AbBm7/fDJNqF8biM1W3WMx9JnA3hkRaXqdD1GQW6j1AqdMVS3zgB49FkvXT16dIaDPFaq+5kC4MwX1X+rgjIvVdUAAAAASUVORK5CYII=";
@@ -15193,19 +15491,29 @@ var ScintillaLoadingScreen = function (_Scene) {
         _this.game = game;
         _this.nextScene = null;
         _this.preloadingDone = false;
-        _this._midPos = { x: 320 / 2, y: 240 / 2 };
-        _this._barColor = '#dc30a9';
-        _this._barPosX = 160 - _this.scintillaLogo.width * 0.3 * 0.5;
-        _this._barPosY = 120 - 16 + _this.scintillaLogo.height * 0.3 * 0.5 + 8;
-        _this._barPosW = _this.scintillaLogo.width * 0.3;
+
+        var setLoadingPos = function setLoadingPos() {
+            this._midPos = { x: 320 / 2, y: 240 / 2 };
+            this._barColor = '#dc30a9';
+            this._barPosX = 160 - this.scintillaLogo.width * 0.3 * 0.5;
+            this._barPosY = 120 - 16 + this.scintillaLogo.height * 0.3 * 0.5 + 8;
+            this._barPosW = this.scintillaLogo.width * 0.3;
+        };
+
+        _this.scintillaLogo.onload = function () {
+            self._loaded = true;
+            setLoadingPos.call(self);
+        };
 
         var drawFunc = function drawFunc(draw) {
-            draw.imageExtra(this.scintillaLogo, 160, 120 - 16, 0.3, 0.3, 0.5, 0.5); //131,73);
-            draw.color = this._barColor;
-            draw.outlineRect(this._barPosX, this._barPosY, this._barPosW, 7);
-            draw.rect(this._barPosX + 2, this._barPosY + 2, (this._barPosW - 4) * this.progress, 3);
-            draw.font('Verdana', 6);
-            draw.text('WIP - ' + _Define2.default.VERSION, 320 - 4, 240 - 4, '#490c37', 'right');
+            if (this._loaded) {
+                draw.imageExtra(this.scintillaLogo, 160, 120 - 16, 0.3, 0.3, 0.5, 0.5); //131,73);
+                draw.color = this._barColor;
+                draw.outlineRect(this._barPosX, this._barPosY, this._barPosW, 7);
+                draw.rect(this._barPosX + 2, this._barPosY + 2, (this._barPosW - 4) * this.progress, 3);
+                draw.font('Verdana', 6);
+                draw.text('WIP - ' + _Define2.default.VERSION, 320 - 4, 240 - 4, '#490c37', 'right');
+            }
         };
 
         var loadingFunc = function loadingFunc(dt) {

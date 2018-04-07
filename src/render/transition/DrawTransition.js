@@ -14,7 +14,7 @@ export default function DrawTransition(transition, canvas, context) {
         case TranstionStyle.FILL: {
 
             context.fillStyle = transition._tColor.rgba;  
-            context.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+            context.fillRect(0, 0, canvas.width, canvas.height);
 
             break;
         }

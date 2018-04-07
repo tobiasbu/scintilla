@@ -1,7 +1,9 @@
 
-import DataMap from '../structures/Map'
-import Signal from './Signal'
+import DataMap from '../structures/Map';
+import Signal from './Signal';
 import Validate from '../utils/Validate';
+import GameEvents from './GameEvents';
+import System from '../core/system/System';
 
 export default class EventManager {
 
@@ -53,7 +55,7 @@ export default class EventManager {
 
         if (has === undefined || has === null) return this;
 
-        let args = (arguments.length > 1 ? [arguments[1]] : Array.apply(null, arguments));
+        let args = (arguments.length > 1) ? [arguments[1]] : Array.apply(null, arguments);
 
         has.dispatch(args);
 
@@ -62,3 +64,16 @@ export default class EventManager {
     }
 
 } 
+
+function BulkEventCreation(manager, events) {
+
+    for (let i = 0; i < events.length; i++) {
+        manager.create(events[i]);
+    } 
+
+}
+
+
+System.register('EventManager', EventManager, 'event', function() {
+    BulkEventCreation(this, GameEvents);
+})

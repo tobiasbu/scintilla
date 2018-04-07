@@ -5,7 +5,7 @@ const TransitionBehavior = {
     OUT : 2,
     INOUT : 3,
     IDLE : 4,
-}
+};
 
 Object.freeze(TransitionBehavior)
 

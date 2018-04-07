@@ -156,7 +156,7 @@ class Color {
 
     // static functions
 
-    static ease(from, to, t, easingType, easingMode, easingArg) {
+    static ease(from, to, t, easingType, easingMode, easingArg, destinationColor) {
 
         if (easingType === undefined) easingType = EasingType.LINEAR;
         if (easingMode === undefined) easingMode = 0;
@@ -176,15 +176,16 @@ class Color {
             }
         }
 
-        let color = new Color();
+        if (destinationColor === undefined)
+            destinationColor = new Color();
 
-        color.set(
+            destinationColor.set(
             easer.by(easingType, from.r, to.r, t, easingArg),
             easer.by(easingType, from.g, to.g, t, easingArg),
             easer.by(easingType, from.b, to.b, t, easingArg),
             easer.by(easingType, from.a, to.a, t, easingArg));
 
-        return color;
+        return destinationColor;
     }
 
     static get red() {return new Color(255, 0, 0);}

@@ -13,8 +13,9 @@ export default class UIDrawer {
     this.ui = ui;
     this.lastAlpha = 1;
     this.lastColor = '#000';
-    this.currentColor = '#FFF'
+    this.currentColor = '#FFF';
     this.currentTextAlign = 'center';
+    this.disablePointTransform = false;
   }
 
   init()
@@ -43,12 +44,24 @@ export default class UIDrawer {
   }
 
   transformPosition(x, y, w, h) {
+
+    if (this.disablePointTransform)
+    {
+      return {
+        x : x,
+        y : y,
+        w : w || 0,
+        h : h || 0,
+      };
+    } else {
+
     return {
       x : x - this.ui.viewport.x,
       y : y - this.ui.viewport.y,
       w : (w - this.ui.viewport.x) || 0,
       h : (h - this.ui.viewport.y) || 0,
     };
+  }
   }
 
   font(fontname,size, style) {
@@ -89,7 +102,7 @@ export default class UIDrawer {
         0, 0,
         source.width, source.height,
         pos.x, pos.y,
-        source.width, source.height,
+        source.width, source.height
       );
     //this.context.restore();
   }
@@ -118,7 +131,7 @@ export default class UIDrawer {
       source.height,  // sHeight - crop height
       -dx, // destination x
       -dy, // destination y
-      source.width, source.height,
+      source.width, source.height
       );
 
     this.context.restore();
@@ -161,29 +174,32 @@ export default class UIDrawer {
 
   rect(x, y, width, height, color) {
 
-    this.context.fillStyle= color || this.currentColor;
+   
     let pos = this.transformPosition(x,y, width, height);
-    this.context.fillRect(pos.x, pos.y, pos.w, pos.h)
+
+    this.context.save();
+    this.context.fillStyle= color || this.currentColor;
+    this.context.translate(pos.x, pos.y);
+
+    this.context.fillRect(0, 0, pos.w, pos.h)
+    this.context.restore();
 
   }
 
-  outlineRect(x,y,width,height,outlineWidth, color) {
+  outlineRect(x, y, width, height, outlineWidth, color) {
 
     color = color || this.currentColor;
-    this.context.lineWidth = outlineWidth || 1;
+   
     let pos = this.transformPosition(x,y, width, height);
     //this.context.setLineDash([6]);
+    this.context.save();
+    this.context.translate(pos.x, pos.y);
+    this.context.lineWidth = outlineWidth || 1;
     this.context.strokeStyle=color;
-    this.context.strokeRect(pos.x, pos.y, pos.w, pos.h);
+    this.context.strokeRect(0, 0, pos.w, pos.h);
+    this.context.restore();
     //this.context.rect(x,y,width,height);
     //this.context.stroke();
-
-  }
-
-
-  color(color) {
-
-    this.context.fillStyle = color;
 
   }
 

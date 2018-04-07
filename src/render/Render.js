@@ -1,13 +1,4 @@
-import System from '../core/system/System';
-import DataMap from '../structures/Map'
-import RenderLayer from './RenderLayer'
-import RenderLayerManagment from './RenderLayersManagement'
-import Canvas from './canvas/Canvas'
-import {RenderingType} from './Define'
-import CanvasSmoothing from './canvas/Smoothing';
-import DrawRenderLayer from './components/DrawRenderLayer';
-
-
+import RenderLayerManagment from './layer/RenderLayersManagement';
 
 export default class Render {
     
@@ -15,14 +6,22 @@ export default class Render {
     constructor(game) {
         
         this.game = game;
+        this.doubleBuffer = false;
+        this.smoothing = undefined;
+        this.imageRendering = undefined;
+        this.canvas = undefined;
+        this.context = undefined;
         this.layer = new RenderLayerManagment(this.game);
-        this.canvas = Canvas.create(this.game.parent,this.game.width,this.game.height);
-        this.context = this.canvas.getContext("2d", { alpha: false });  
-        this.imageRendering = (game.config.pixelated) ? RenderingType.NEAREST : RenderingType.LINEAR;
-        this.smooth = new CanvasSmoothing(this.context);
-        this.smooth.set(this.imageRendering);
+        // dom canvas
+        //this._domCanvas = Canvas.create(this.game.parent,this.game.width,this.game.height);
+        //this._donContext = this.canvas.getContext("2d", { alpha: false });  
+        // off screen canvas
+        //this._canvas = Canvas.create();
+        //this.imageRendering = (game.config.pixelated) ? RenderingType.NEAREST : RenderingType.LINEAR;
+        //this.smooth = new CanvasSmoothing(this.context);
+        //this.smooth.set(this.imageRendering);
 
-        this._backgroundColor = '#000'       
+        this._backgroundColor = '#000';     
         this._alpha = 1;
         this._enable = true;
         this.clear = true;
@@ -46,4 +45,4 @@ export default class Render {
     }
 }
 
-System.register('Render', Render, 'render');
+//System.register('Render', Render, 'render');

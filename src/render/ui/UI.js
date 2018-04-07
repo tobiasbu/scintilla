@@ -54,8 +54,10 @@ export default class UI {
     setViewportByAspectRatio(aspectRatio) {
 
         // TODO: IMPROVE THAT
+        let canvasWidth = this.game.system.render.canvas.width;//this.game.system.render.canvas.clientWidth;
+        let canvasHeight = this.game.system.render.canvas.height;//this.game.system.render.canvas.clientHeight
 
-        this.ratiobox = AspectRatio.computeViewPort(this.game.system.render.canvas.clientWidth / this.game.system.render.canvas.clientHeight, aspectRatio);
+        this.ratiobox = AspectRatio.computeViewPort(canvasWidth / canvasHeight, aspectRatio);
         let borderX = 0;
         let borderY = 0;//rect.y * this.canvas.clientHeight;
 
@@ -63,8 +65,8 @@ export default class UI {
             this.viewport.set(
                 0,
                 0,
-                this.canvas.clientWidth,
-                this.canvas.clientHeight);
+                canvasWidth,
+                canvasHeight);
 
             return this;
 
@@ -78,16 +80,16 @@ export default class UI {
             this.viewport.set(
                 borderX,
                 borderY,
-                (this.width * (this.canvas.clientWidth / this.width)) - (borderX*2),
-                (this.height * (this.canvas.clientHeight / this.height)) - (borderY*2));
+                (this.width * (canvasWidth/ this.width)) - (borderX*2),
+                (this.height * (canvasHeight / this.height)) - (borderY*2));
 
         }
         
-        let canvasRatioX = this.canvas.clientWidth * (this.ratiobox.x * 2);
-        let canvasRatioY = this.canvas.clientHeight * (this.ratiobox.y * 2);
-        let areaRatio = (this.canvas.clientWidth - canvasRatioX) / this.canvas.clientHeight;
+        let canvasRatioX = canvasWidth * (this.ratiobox.x * 2);
+        let canvasRatioY =canvasHeight * (this.ratiobox.y * 2);
+        let areaRatio = (this.canvas.clientWidth - canvasRatioX) / canvasHeight;
         let orthoSize = this.height / 2;
-        let pixelUnit = (this.canvas.clientHeight / (orthoSize * 2)) * areaRatio;
+        let pixelUnit = (canvasHeight / (orthoSize * 2)) * areaRatio;
         
         this.pixelUnit.x = pixelUnit;//(this.canvas.clientWidth - canvasRatioX) / this.width;
         this.pixelUnit.y = pixelUnit;//(this.canvas.clientHeight - canvasRatioY) / this.height;
