@@ -2588,31 +2588,40 @@ var scintilla = scintilla || {
 
   // DATA STRUCTURES
   Structures: __webpack_require__(/*! ./structures */ "./structures/index.js"),
+
   // RENDER
   Render: __webpack_require__(/*! ./render */ "./render/index.js"),
   Color: __webpack_require__(/*! ./render/color/Color */ "./render/color/Color.js"),
   Transition: __webpack_require__(/*! ./render/transition */ "./render/transition/index.js"),
+
   // INPUT
   KeyCode: __webpack_require__(/*! ./input/keyboard/KeyCode */ "./input/keyboard/KeyCode.js"),
   MouseButton: __webpack_require__(/*! ./input/mouse/MouseButton */ "./input/mouse/MouseButton.js"),
   Input: __webpack_require__(/*! ./input */ "./input/index.js"),
+
   // MATH
   Math: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js"),
   Matrix: __webpack_require__(/*! ./math/Matrix */ "./math/Matrix.js"),
   Ease: __webpack_require__(/*! ./math/easing */ "./math/easing/index.js"),
-  //EasingType : require('./math/easing/EasingType'),
+
   // ENTITIES
-  SceneManager: __webpack_require__(/*! ./scene/SceneManager */ "./scene/SceneManager.js"),
+  Scene: __webpack_require__(/*! ./scene/ */ "./scene/index.js"),
   Camera: __webpack_require__(/*! ./camera/Camera */ "./camera/Camera.js"),
   Module: __webpack_require__(/*! ./modules */ "./modules/index.js"),
   Entity: __webpack_require__(/*! ./entities */ "./entities/index.js"),
+
   // EVENTS
   Event: __webpack_require__(/*! ./event */ "./event/index.js"),
+
+  // AUDIO
+  Audio: __webpack_require__(/*! ./audio */ "./audio/index.js"),
+
   // CORE
   Resources: __webpack_require__(/*! ./resources */ "./resources/index.js"),
   Cache: __webpack_require__(/*! ./cache/CacheManager */ "./cache/CacheManager.js"),
   Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
   Game: __webpack_require__(/*! ./core/Game */ "./core/Game.js"),
+
   // UTILITIES
   Path: __webpack_require__(/*! ./utils/Path */ "./utils/Path.js")
 };
@@ -2623,6 +2632,286 @@ module.exports = scintilla;
 
 global.scintilla = scintilla;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/webpack/buildin/global.js */ "../node_modules/webpack/buildin/global.js")))
+
+/***/ }),
+
+/***/ "./audio/AudioManager.js":
+/*!*******************************!*\
+  !*** ./audio/AudioManager.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _InitializeAudioSystem = __webpack_require__(/*! ./components/InitializeAudioSystem */ "./audio/components/InitializeAudioSystem.js");
+
+var _InitializeAudioSystem2 = _interopRequireDefault(_InitializeAudioSystem);
+
+var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
+
+var _System2 = _interopRequireDefault(_System);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AudioManager = function () {
+    function AudioManager(game) {
+        (0, _classCallCheck3.default)(this, AudioManager);
+
+
+        this.game = game;
+
+        this.webAudio = false;
+        this.context = null;
+        this.noAudio = false;
+
+        this.channels = 24;
+
+        this.masterVolume = null;
+        this.volume = 1;
+        var _sounds = [];
+    }
+
+    (0, _createClass3.default)(AudioManager, [{
+        key: "getSounds",
+        value: function getSounds() {
+
+            return _sounds;
+        }
+    }, {
+        key: "stopAll",
+        value: function stopAll() {
+
+            if (this.noAudio) {
+                return;
+            }
+
+            for (var i = 0; i < _sounds.length; i++) {
+                if (_sounds[i]) {
+                    _sounds[i].stop();
+                }
+            }
+        }
+    }, {
+        key: "pauseAll",
+        value: function pauseAll() {
+
+            if (this.noAudio) {
+                return;
+            }
+
+            for (var i = 0; i < _sounds.length; i++) {
+                if (_sounds[i]) {
+                    _sounds[i].pause();
+                }
+            }
+        }
+    }, {
+        key: "resumeAll",
+        value: function resumeAll() {
+
+            if (this.noAudio) {
+                return;
+            }
+
+            for (var i = 0; i < _sounds.length; i++) {
+                if (_sounds[i]) {
+                    _sounds[i].resume();
+                }
+            }
+        }
+    }, {
+        key: "decode",
+        value: function decode(tag, sound) {
+
+            sound = sound || null;
+
+            var soundData = this.game.cache.getAssetInfo('sounds', tag);
+
+            if (soundData) {
+
+                if (!soundData.decoded) {
+                    soundData.isDecoding = true;
+
+                    var self = this;
+
+                    try {
+
+                        this.context.decodeAudioData(soundData.data, function (buffer) {
+
+                            if (buffer) {
+                                self.game.cache.soundDecoded(tag, buffer);
+                                console.log("decoded!");
+                                //_this.onSoundDecode.dispatch(key, sound);
+                            }
+                        });
+                    } catch (error) {}
+                }
+            }
+        }
+    }, {
+        key: "add",
+        value: function add(tag, volume, loop, connect) {
+
+            if (volume === undefined) {
+                volume = 1;
+            }
+            if (loop === undefined) {
+                loop = false;
+            }
+            if (connect === undefined) {
+                connect = true;
+            } // connect to master volume
+
+            var sound = new scintilla.Sound(this.game, tag, volume, loop, connect);
+
+            _sounds.push(sound);
+
+            return sound;
+        }
+    }, {
+        key: "play",
+        value: function play(tag, volume, loop) {
+
+            var sound = this.add(tag, volume, loop);
+
+            sound.play();
+
+            return sound;
+        }
+    }, {
+        key: "update",
+        value: function update() {
+
+            if (this.noAudio) {
+                return;
+            }
+
+            for (var i = 0; i < _sounds.length; i++) {
+                _sounds[i].update();
+            }
+        }
+    }, {
+        key: "remove",
+        value: function remove(sound) {
+
+            var i = _sounds.length;
+
+            while (i--) {
+                if (_sounds[i] === sound) {
+                    _sounds[i].destroy(false);
+                    _sounds.splice(i, 1);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }, {
+        key: "destroy",
+        value: function destroy() {
+
+            this.stopAll();
+
+            for (var i = 0; i < this._sounds.length; i++) {
+                if (_sounds[i]) {
+                    _sounds[i].destroy();
+                }
+            }
+
+            _sounds = [];
+
+            this.context.close();
+        }
+    }]);
+    return AudioManager;
+}();
+
+exports.default = AudioManager;
+
+
+_System2.default.register('AudioManager', AudioManager, 'audio', _InitializeAudioSystem2.default);
+
+/***/ }),
+
+/***/ "./audio/components/InitializeAudioSystem.js":
+/*!***************************************************!*\
+  !*** ./audio/components/InitializeAudioSystem.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = InitializeAudioSystem;
+function InitializeAudioSystem() {
+
+    if (!!window['AudioContext']) {
+        try {
+            this.context = new window['AudioContext']();
+        } catch (error) {
+            this.context = null;
+            this.webAudio = false;
+        }
+    } else if (!!window['webkitAudioContext']) {
+        try {
+            this.context = new window['webkitAudioContext']();
+        } catch (error) {
+            this.context = null;
+            this.webAudio = false;
+        }
+    }
+
+    if (this.context === null) {
+
+        this.noAudio = true;
+    } else {
+
+        this.webAudio = true;
+
+        if (this.context.createGain === undefined) {
+            this.masterVolume = this.context.createGainNode();
+        } else {
+            this.masterVolume = this.context.createGain();
+        }
+
+        this.masterVolume.gain.value = 1;
+        this.masterVolume.connect(this.context.destination);
+    }
+}
+
+/***/ }),
+
+/***/ "./audio/index.js":
+/*!************************!*\
+  !*** ./audio/index.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Manager: __webpack_require__(/*! ./AudioManager */ "./audio/AudioManager.js")
+};
 
 /***/ }),
 
@@ -7092,7 +7381,7 @@ var ImageFile = function (_File) {
             assetTag = _ObjectGet2.default.value(tag, 'tag', '');
         }
 
-        var fileConfig = {
+        var assetConfig = {
             type: _AssetsType2.default.image,
             tag: assetTag,
             ext: _ObjectGet2.default.value(tag, 'ext', _Path2.default.getExtension(url)),
@@ -7103,7 +7392,7 @@ var ImageFile = function (_File) {
             config: _ObjectGet2.default.value(tag, 'config', config)
         };
 
-        return (0, _possibleConstructorReturn3.default)(this, (ImageFile.__proto__ || (0, _getPrototypeOf2.default)(ImageFile)).call(this, fileConfig));
+        return (0, _possibleConstructorReturn3.default)(this, (ImageFile.__proto__ || (0, _getPrototypeOf2.default)(ImageFile)).call(this, assetConfig));
     }
 
     (0, _createClass3.default)(ImageFile, [{
@@ -13197,6 +13486,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = RequestRenderableLayerIDChange;
+
+/// TODO - BETTER
 function RequestRenderableLayerIDChange(renderable, oldLayerID, toLayerID) {
 
     // if the to layer is the same of old, we don't change
@@ -14584,26 +14875,25 @@ var UIDrawer = function () {
     key: 'text',
     value: function text(_text, x, y, color, align) {
 
-      if (color === undefined) color = this.currentColor;
-      if (align === undefined) align = this.currentTextAlign;
+      if (color !== undefined) this.color = color;
+      if (align !== undefined) this.align = align;
 
       var pos = this.transformPosition(x, y);
-      this.context.fillStyle = color;
+
       this.context.textAlign = align;
+
+      //this.context.save();
+      //this.context.translate(x, y);
       this.context.fillText(_text, pos.x, pos.y);
+      //this.context.restore();
     }
   }, {
     key: 'image',
     value: function image(source, x, y, scalex, scaley) {
 
-      //this.context.save();
-
-      //this.context.translate(x, y);
-
       var pos = this.transformPosition(x, y);
 
       this.context.drawImage(source, 0, 0, source.width, source.height, pos.x, pos.y, source.width, source.height);
-      //this.context.restore();
     }
   }, {
     key: 'imageExtra',
@@ -14635,26 +14925,29 @@ var UIDrawer = function () {
     }
   }, {
     key: 'sprite',
-    value: function sprite(tag, x, y, anchor) {
+    value: function sprite(tag, x, y, halign, valign) {
 
-      var img = this.cache.getAsset('images', tag);
+      var source = this.cache.image.get(tag);
 
-      if (img != null) {
+      if (source !== null) {
 
-        if (anchor === undefined) {
-          anchor[0] = 0;
-          anchor[1] = 0;
-        }
+        if (halign === undefined) halign = 0;
+        if (valign === undefined) valign = 0;
 
-        var ctx = this.context;
+        var pos = this.transformPosition(x, y);
+        var dx = source.width * halign;
+        var dy = source.height * valign;
 
-        ctx.save();
-
-        ctx.translate(x - img.width * anchor[0], y - img.height * anchor[1]);
-
-        ctx.drawImage(img, 0, 0, img.width, img.height);
-
-        ctx.restore();
+        this.context.save();
+        this.context.translate(pos.x, pos.y);
+        this.context.drawImage(source.data, 0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height);
+        this.context.restore();
       }
     }
   }, {
@@ -15782,6 +16075,14 @@ var _InjectSystems = __webpack_require__(/*! ../core/system/components/InjectSys
 
 var _InjectSystems2 = _interopRequireDefault(_InjectSystems);
 
+var _CreateSceneFrom = __webpack_require__(/*! ./components/CreateSceneFrom */ "./scene/components/CreateSceneFrom.js");
+
+var _CreateSceneFrom2 = _interopRequireDefault(_CreateSceneFrom);
+
+var _Validate = __webpack_require__(/*! ../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SceneManager = function () {
@@ -15819,14 +16120,21 @@ var SceneManager = function () {
     key: 'add',
     value: function add(sceneName, scene) {
 
-      var newScene;
+      if (sceneName === undefined) {
+        throw new Error("SceneManager.add: Could not add Scene. \'sceneName\' is undefined.");
+      }
 
-      if (scintilla.Scene.prototype.isPrototypeOf(scene)) {
-        newScene = scene;
-        newScene.game = this.game;
-      } else newScene = null;
+      if (!_Validate2.default.isString(sceneName)) {
+        throw new Error("SceneManager.add: Could not add Scene. \'sceneName\' is not string.");
+      }
 
-      if (newScene != null) this._scenes.set(sceneName, newScene);
+      if (this._scenes.has(sceneName)) {
+        throw new Error("SceneManager.add: Could not add Scene. There is already a scene with name \"" + sceneName + "\".");
+      }
+
+      var newScene = (0, _CreateSceneFrom2.default)(scene, sceneName);
+      this._scenes.set(sceneName, newScene);
+      return this;
     }
   }, {
     key: 'new',
@@ -15892,6 +16200,36 @@ exports.default = SceneManager;
 _System2.default.register('SceneManager', SceneManager, 'scene', function () {
   (0, _InjectSystems2.default)(this.game, this._loadingPlaceHolder);
 });
+
+/***/ }),
+
+/***/ "./scene/SceneState.js":
+/*!*****************************!*\
+  !*** ./scene/SceneState.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// TODO - FUTURE
+var SceneState = {
+    NONE: 0,
+    START: 1,
+    LOADING: 2,
+    RUNNING: 3
+};
+
+(0, _freeze2.default)(SceneState);
+
+module.exports = SceneState;
 
 /***/ }),
 
@@ -16109,6 +16447,73 @@ function ClearScene(game, sceneManager) {
             game.cache.clear();
         }
     }
+}
+
+/***/ }),
+
+/***/ "./scene/components/CreateSceneFrom.js":
+/*!*********************************************!*\
+  !*** ./scene/components/CreateSceneFrom.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = CreateSceneFrom;
+
+var _Scene = __webpack_require__(/*! ../Scene */ "./scene/Scene.js");
+
+var _Scene2 = _interopRequireDefault(_Scene);
+
+var _Extend = __webpack_require__(/*! ../../utils/object/Extend */ "./utils/object/Extend.js");
+
+var _Extend2 = _interopRequireDefault(_Extend);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateSceneFrom(value, sceneName) {
+
+    if (value === undefined) {
+        throw new Error("SceneManager.add: Could not add Scene. \'scene\' is undefined.");
+    }
+
+    if (value === null) {
+        throw new Error("SceneManager.add: Could not add Scene. \'scene\' is null.");
+    }
+
+    var newScene;
+
+    if (value instanceof _Scene2.default) {
+        newScene = scene;
+    } else if ((typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === _Scene2.default) {
+        newScene = new value();
+    } else if ((typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === 'object') {
+        var placeholder = new _Scene2.default(sceneName);
+        newScene = (0, _Extend2.default)(placeholder, value);
+    } else if (typeof value === 'function') {
+        var _placeholder = new value();
+
+        if (value instanceof _Scene2.default) {
+            newScene = _placeholder;
+        } else {
+            if (_placeholder.name === undefined) {
+                _placeholder.name = sceneName;
+            }
+            newScene = (0, _Extend2.default)(true, _placeholder, _Scene2.default);
+        }
+    }
+
+    return newScene;
 }
 
 /***/ }),
@@ -16486,6 +16891,24 @@ function UpdateScene(sceneManager, deltaTime) {
         }
     }
 }
+
+/***/ }),
+
+/***/ "./scene/index.js":
+/*!************************!*\
+  !*** ./scene/index.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    State: __webpack_require__(/*! ./SceneState */ "./scene/SceneState.js"),
+    Scene: __webpack_require__(/*! ./Scene */ "./scene/Scene.js"),
+    SceneManager: __webpack_require__(/*! ./SceneManager */ "./scene/SceneManager.js")
+};
 
 /***/ }),
 
@@ -18434,6 +18857,9 @@ var Validate = {
     },
     isNumber: function isNumber(value) {
         return !isNaN(value);
+    },
+    isString: function isString(value) {
+        return typeof value === 'string' || value instanceof String;
     }
 };
 

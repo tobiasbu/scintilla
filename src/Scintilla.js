@@ -28,31 +28,40 @@ var scintilla = scintilla || {
 
   // DATA STRUCTURES
   Structures : require('./structures'),
+
   // RENDER
   Render : require('./render'),
   Color : require('./render/color/Color'),
   Transition : require('./render/transition'),
+
   // INPUT
   KeyCode : require('./input/keyboard/KeyCode'),
   MouseButton : require('./input/mouse/MouseButton'),
   Input : require('./input'),
+
   // MATH
   Math : require('./math/MathUtils'),
   Matrix : require('./math/Matrix'),
   Ease : require('./math/easing'),
-  //EasingType : require('./math/easing/EasingType'),
+
   // ENTITIES
-  SceneManager : require('./scene/SceneManager'),
+  Scene : require('./scene/'),
   Camera : require('./camera/Camera'),
   Module : require('./modules'),
   Entity : require('./entities'),
+
   // EVENTS
   Event : require('./event'),
+
+  // AUDIO
+  Audio : require('./audio'),
+
   // CORE
   Resources : require('./resources'),
   Cache : require('./cache/CacheManager'),
   Loader : require('./loader'),
   Game : require('./core/Game'),
+
   // UTILITIES
   Path : require('./utils/Path')
 };

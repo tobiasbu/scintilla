@@ -1,11 +1,12 @@
 
 import System from '../core/system/System';
-import DataMap from '../structures/Map'
-import Scene from './Scene'
+import DataMap from '../structures/Map';
+import Scene from './Scene';
 import ScintillaLoadingScreen from './builtin/ScintillaLoadingScene';
 import SetScene from './components/SetScene';
 import InjectSystems from '../core/system/components/InjectSystems';
-
+import CreateSceneFrom from './components/CreateSceneFrom';
+import Validate from '../utils/Validate';
 
 export default class SceneManager {
   
@@ -38,20 +39,23 @@ export default class SceneManager {
 
   }
 
-  add(sceneName,scene) {
+  add(sceneName, scene) {
 
-    var newScene;
+    if (sceneName === undefined) {
+      throw new Error("SceneManager.add: Could not add Scene. \'sceneName\' is undefined."); 
+    }
 
-    if (scintilla.Scene.prototype.isPrototypeOf(scene)) {
-      newScene = scene;
-      newScene.game = this.game;
-    } else
-      newScene = null;
+    if (!Validate.isString(sceneName)) {
+      throw new Error("SceneManager.add: Could not add Scene. \'sceneName\' is not string."); 
+    }
 
+    if (this._scenes.has(sceneName)) {
+      throw new Error("SceneManager.add: Could not add Scene. There is already a scene with name \"" + sceneName + "\"."); 
+    }
 
-    if (newScene != null)
-      this._scenes.set(sceneName,newScene);
-
+    let newScene = CreateSceneFrom(scene, sceneName);
+    this._scenes.set(sceneName, newScene);
+    return this;
   }
 
   new(sceneName) {

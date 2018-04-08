@@ -1,5 +1,5 @@
 {
-  "name": "Scintilla",
+  "name": "scintilla",
   "version": "0.0.1",
   "description": "Scintilla game engine for web",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tobiasbu/tobiJS.git"
+    "url": "git+https://github.com/tobiasbu/scintilla.git"
   },
   "keywords": [
     "game",
@@ -31,9 +31,9 @@
     "webpack-cli": "^2.0.11"
   },
   "bugs": {
-    "url": "https://github.com/tobiasbu/tobiJS/issues"
+    "url": "https://github.com/tobiasbu/scintilla/issues"
   },
-  "homepage": "https://github.com/tobiasbu/tobiJS#readme",
+  "homepage": "https://github.com/tobiasbu/scintilla#readme",
   "directories": {
     "test": "test"
   }

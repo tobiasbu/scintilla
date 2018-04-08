@@ -24,7 +24,7 @@ export default class ImageFile extends File {
             assetTag = ObjectGet.value(tag, 'tag', '');
         }
 
-        let fileConfig = {
+        let assetConfig = {
             type: AssetsType.image,
             tag: assetTag,
             ext: ObjectGet.value(tag, 'ext', Path.getExtension(url)),
@@ -35,7 +35,7 @@ export default class ImageFile extends File {
             config: ObjectGet.value(tag, 'config', config)
         };
 
-        super(fileConfig);
+        super(assetConfig);
     }
 
     onProcessing(processingCallback)

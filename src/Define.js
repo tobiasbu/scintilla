@@ -8,6 +8,6 @@ const Version = {
     REVISION: 1,
     VERSION : '0.0.1'
 
-}
+};
 
 export default Version;

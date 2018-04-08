@@ -11,7 +11,7 @@
 var VIEW = {
     w : 640,
     h : 480,
-}
+};
 
 var config = {
     width: VIEW.w,
@@ -28,31 +28,41 @@ var config = {
     floorTiles : true
 };
   
-  var game = new scintilla.Game(config);
+var game = new scintilla.Game(config);
 game.render.layer.add('game');
+game.render.layer.add('effects');
 
-  var scene = game.scene.new('scene');
+function SceneTitle() {
+    this.preload = function() {
+        this.load.setPath('assets/');
+        this.load.image('block','img/block.png');
+        this.load.image('title','img/n_title.png');
+        this.load.tilemapJSON('tilemap','map/n_tilemap.json');
+        this.load.webFont('font', 'google', 'Press Start 2P');
+    };
 
-  var x = 0;
-  var camSpeed = 100;
+    this.start = function() {
+        this.transition.settings.setOutDuration(0.65);
+        this.transition.settings.setEaseOutMethod(scintilla.Ease.Type.CUT, 4);
+        this.transition.out();
+    };
 
 
-scene.preload = function() {
-    this.load.setPath('assets/');
-    this.load.image('block','img/block.png');
-    this.load.image('title','img/neof.png');
-    this.load.tilemapJSON('tilemap','map/n_tilemap.json');
-    this.load.webFont('font', 'google', 'Press Start 2P');
+    this.gui = function(drawer) {
+        drawer.sprite('title',320/2,13,0.5, 0);
+        drawer.font('Press Start 2P', 8);
+        drawer.color = '#fff';
+        drawer.align = 'center';
+        drawer.text('PRESS START', 320/2, 148);
+        drawer.align = 'left';
+        drawer.text('TOBIASBU', 8, 228);
+        drawer.align = 'right';
+        drawer.text('2018', 320-8, 228);
+    };
+}
 
-   /* this.load.spritesheet('andando','img/spritesheet.png', 64, 32, 4, 1, 32, 32);
-    var animator = this.cache.createAnimator('heroi_animator');
-    
-    var anim = animator.addState('parado');
-    anim.setImage('andando')
-    anim.addFrame(64, 32, 32, 32);
-    anim.addStrip(64,32,32,32, 4, 1);*/
-    //game.load.text('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
-};
+ game.scene.add('title', SceneTitle);
+ game.scene.set('title');
 
 var t = null;
 
@@ -110,13 +120,12 @@ var EntityTest = {
 
     }
 };
-
+/*
 scene.start = function() {
 
    
-   this.transition.settings.setOutDuration(0.5);
-   this.transition.settings.setEaseOutMethod(scintilla.Ease.Type.CUT, 3);
-   this.transition.out();
+  
+  
    var obj = this.entity.create(EntityTest);
    
    obj.modules.get('render').layerID = 1;
@@ -186,7 +195,7 @@ scene.update = function(dt) {
     
     
     
-}
+}*/
 
-  game.scene.set('scene');
+
 
