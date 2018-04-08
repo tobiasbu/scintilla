@@ -2,21 +2,18 @@ import InjectSystems from "../../core/system/components/InjectSystems";
 
   export default function SetupScene(sceneName) {
 
-
     this.currentScene = this._scenes.get(sceneName);
   
     this.onLoadingCallback = this.currentScene['loading'] || null;
     this.onLoadingRenderCallback = this.currentScene['loadingGUI'] || null;
   
-    let bothIsNull = (this.onLoadingCallback == null && this.onLoadingRenderCallback == null);
+    let bothIsNull = (this.onLoadingCallback === null && this.onLoadingRenderCallback === null);
   
-    if (this.onLoadingCallback == null || this.onLoadingRenderCallback == null)
+    if (this.onLoadingCallback === null || this.onLoadingRenderCallback === null)
     {
-      
       if (bothIsNull)
       {
         this._loadingPlaceHolder.init(this.currentScene);
-        
         this._scintillaLoading = true;
       } else {
         this._scintillaLoading = false;

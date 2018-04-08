@@ -1,6 +1,6 @@
 import TransitionBehavior from "./TranstionBehavior";
 import TransitionState from "./TransitionState";
-import MathUtils from '../../math/MathUtils'
+import MathUtils from '../../math/MathUtils';
 import Ease from "../../math/easing/Ease";
 import Color from "../color/Color";
 
@@ -29,8 +29,6 @@ export default function UpdateTransition(transition, deltaTime) {
                     transition._startColor, setg.inColor, transition._t,
                     setg.timingInMethod, 0, setg.timingInArgument, transition._tColor);
 
-                console.log(transition._tColor.rgba);
-
                 break;
             }
 
@@ -53,8 +51,9 @@ export default function UpdateTransition(transition, deltaTime) {
                     transition._t = 1;
                     changeState = true;
                 }
-
-                transition._color.alpha = Ease.out.by(setg.timingOutMethod, setg.outColor.a, 0, transition._t, setg.timingOutArgument);
+                Color.ease(
+                    transition._startColor, setg.outColor, transition._t,
+                    setg.timingOutMethod, 1, setg.timingOutArgument, transition._tColor);
                 break;
             }
     }
@@ -68,27 +67,37 @@ export default function UpdateTransition(transition, deltaTime) {
     transition._t = 0;
 
     switch (transition._behaviour) {
-        case TransitionBehavior.IN:
-        case TransitionBehavior.OUT: // just fade in or out
+        case TransitionBehavior.FADEIN:
+        case TransitionBehavior.FADEOUT: // just fade in or out
             {
+               
                 transition._behaviour = TransitionBehavior.NONE;
                 transition._state = TransitionState.IDLE;
+                if (transition._behaviour === TransitionBehavior.FADEOUT) {
+                    transition._behaviour = TransitionBehavior.FADEOUT;
+                }
+                transition.game.system.event.dispatch('transition_end');
                 break;
             }
-        case TransitionBehavior.INOUT: // fade in and out
+        case TransitionBehavior.FADEINOUT: // fade in and out
             {
                 if (transition._state === TransitionState.IN) { // end fade in
                     transition._color.setColor(setg.outColor);
+                    
                     if (setg.pauseDuration > 0) {
                         transition._state = TransitionState.WAIT;
                     } else {
                         transition._state = TransitionState.OUT;
                     }
                 } else if (transition._state === TransitionState.WAIT) { // end pause beteween
+                   
                     transition._state = TransitionState.OUT;
+                    transition.game.system.event.dispatch('transition_pause_end');
                 } else if (transition._state === TransitionState.OUT) { // end fade out
+                   
                     transition._state = TransitionState.IDLE;
                     transition._behaviour = TransitionBehavior.NONE;
+                    transition.game.system.event.dispatch('transition_end');
                 }
                 break;
             }

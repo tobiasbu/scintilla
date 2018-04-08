@@ -21,11 +21,11 @@ export default class Scene {
   }
 
 
-  preloadDone() {
+  preloadDone(transition) {
 
     if (this.scene === undefined) return;
 
-    PostPreloadingScene(this.scene);
+    PostPreloadingScene(this.scene, transition);
   }
 
   instanceDestroy(gameObject) {

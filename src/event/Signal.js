@@ -57,7 +57,13 @@ export default class Signal {
      */
     subscribe(listener, context, priority) {
         ValidateListener(listener, 'subscribe');
-        RegisterListener(this, listener, context, priority);
+        RegisterListener(this, listener, context, priority, false);
+        return this;
+    }
+
+    subscribeOnce(listener, context, priority) {
+        ValidateListener(listener, 'subscribeOnce');
+        RegisterListener(this, listener, context, priority, true);
         return this;
     }
 
@@ -72,8 +78,9 @@ export default class Signal {
 
         let i = IndexOfListener(this, listener, context);
         if (i !== -1) {
-            this._bindings[i]._destroy();
+            this._bindings.at(i)._destroy();
             this._bindings.eraseAt(i);
+           
         }
 
         return listener;

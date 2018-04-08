@@ -1,4 +1,6 @@
 import { GameSystems } from "../System";
+import RequestDepthSorting from "../../../render/components/RequestDepthSorting";
+import RequestRenderableLayerIDChange from "../../../render/components/RequestRenderableLayerIDChange";
 
 export default function InitializeSystems(game, render) {
     
@@ -28,6 +30,10 @@ export default function InitializeSystems(game, render) {
 
         InitializeSystemFunction.call(systems[registered.name]);
     }
+
+    // render events callbacks
+    systems.event.subscribe('__render_depthsorting', RequestDepthSorting, render);
+    systems.event.subscribe('__render_layeridchange', RequestRenderableLayerIDChange, render);
 
     return systems;
 

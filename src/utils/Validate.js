@@ -1,7 +1,8 @@
 
 const Validate = {
     isFunction(value) {
-        return (value instanceof Function)
+       // return (value instanceof Function);
+       return  typeof value === "function" && typeof value.nodeType !== "number";
     },
 
     isClass(value) {
@@ -14,8 +15,10 @@ const Validate = {
 
     isNumber(value) {
         return !isNaN(value);
-    }
-}
+    },
+
+    
+};
 
 Object.freeze(Validate);
 

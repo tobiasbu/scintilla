@@ -100,7 +100,7 @@ export default class DataList
     }
 
     eraseAt(index) {
-        var child = this.childs[index];
+        let child = this.childs[index];
 
         if (child)
             this.childs.splice(index, 1);
@@ -135,6 +135,10 @@ export default class DataList
 
     has(child) {
         return (this.childs.indexOf(child) > -1);
+    }
+
+    hasAt(index) {
+        return this.childs[index] !== undefined;
     }
 
     empty() {
@@ -175,20 +179,23 @@ export default class DataList
     }
 
     each(callback) {
-        let params = [ null ];
+        let params = [];
 
-        var content = this.childs;
+        let content = this.childs;
+        let r;
 
-        for (let i = 0; i < arguments.length; i++)
-            params.push(arguments[i+1]);
+        for (let i = 1; i < arguments.length; i++)
+            params.push(arguments[i]);
 
         for (let i = 0; i < content.length; i++) {
-            params[0] = i;
-            let r = callback(content[i], params);
-            if (r !== undefined)
+            r = callback(content[i], i, params);
+            if (r !== undefined) {
                 return r;
+            }
            //break;
         }
+
+        return r;
     }
 
     sort(predicate) {
@@ -251,6 +258,10 @@ export default class DataList
     reverse() {
         this.childs.reverse();
         return this;
+    }
+
+    content() {
+        return this.childs;
     }
 
 

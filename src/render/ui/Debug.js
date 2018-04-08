@@ -20,7 +20,7 @@ export default class Debug {
   test() {
 
     this.draw.disablePointTransform = true;
-    this.x = 8;
+    this.x = 4;
     this.y = 12;
     //this.context.setTransform(1, 0, 0, 1, 0, 0);
     this.context.strokeStyle = this.bgcolor;

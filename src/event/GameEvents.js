@@ -1,9 +1,10 @@
 
 // list of events
 const GameEvents = [
-    '__render_layerdepthsort',
-    '__render_layersort',
-    'transition_between_inout'
+    '__render_depthsorting',
+    '__render_layeridchange',
+    'transition_pause_end',
+    'transition_end'
 ];
 
 Object.freeze(GameEvents);

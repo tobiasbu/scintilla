@@ -17,6 +17,8 @@ export default class SceneManager {
     this.currentScene = null;
     this._currentSceneName = '';
     this._changeScene = null;
+    this._transition = null;
+    this._isTranistioning = false;
 
     this._setup = false;
     this._clearCache = false;
@@ -67,11 +69,12 @@ export default class SceneManager {
   }
 
   set(sceneName, clearCache) {
-    return SetScene(this, sceneName, clearCache, false);
+    return SetScene(this, sceneName, clearCache);
   }
 
-  transition(sceneName) {
-
+  transition(sceneName, type) {
+    SetScene(this, sceneName, false, type);
+    /// TODO
   }
 
   restart(clearCache) {

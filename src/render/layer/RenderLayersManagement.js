@@ -12,6 +12,9 @@ export default class RenderLayersManagement {
         this.add('default');
     }
 
+    has(id) {
+        return this.renderLayers.hasAt(id);
+    }
 
 
     add(name) {
@@ -55,6 +58,14 @@ export default class RenderLayersManagement {
         });
 
         return val || false;
+    }
+
+
+    findRenderableLayer(renderable) {
+        return this.renderLayers.each(function(layer) {
+            if (layer.has(renderable))
+                return layer;
+        });
     }
 
 }

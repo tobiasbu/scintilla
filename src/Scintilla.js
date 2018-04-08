@@ -15,8 +15,8 @@
 *
 */
 
-import Defines from './Define'
-import ObjectExtend from './utils/object/ObjectExtend';
+import Defines from './Define';
+import Extend from './utils/object/Extend';
 
 /**
 * @namespace scintilla
@@ -39,8 +39,8 @@ var scintilla = scintilla || {
   // MATH
   Math : require('./math/MathUtils'),
   Matrix : require('./math/Matrix'),
-  Ease : require('./math/easing/Ease'),
-  EasingType : require('./math/easing/EasingType'),
+  Ease : require('./math/easing'),
+  //EasingType : require('./math/easing/EasingType'),
   // ENTITIES
   SceneManager : require('./scene/SceneManager'),
   Camera : require('./camera/Camera'),
@@ -57,15 +57,7 @@ var scintilla = scintilla || {
   Path : require('./utils/Path')
 };
 
-ObjectExtend(Defines, scintilla);
-
-/*
-scintilla.ShapeType = {
-Rect : 1,
-Circle : 2,
-Polygon : 3
-}*/
-
+Extend(Defines, scintilla);
 
 module.exports = scintilla;
 

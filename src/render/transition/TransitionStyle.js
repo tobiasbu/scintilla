@@ -4,6 +4,6 @@ const TranstionStyle = {
     FILL : 1,
 };
 
-Object.freeze(TranstionStyle)
+Object.freeze(TranstionStyle);
 
 export default TranstionStyle;

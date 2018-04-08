@@ -19,7 +19,7 @@ export default function ModulesUpdater(modulesManager, game)
 
     
     let render = modulesManager.attached.get('render');
-    if (render !== undefined || render != null) {
+    if (render !== undefined && render != null) {
         RenderableUpdate(entity, render, game.system.camera, game.system.loop.updateStep);
     }
     

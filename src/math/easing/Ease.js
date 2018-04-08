@@ -1,5 +1,5 @@
 import EaseIn from "./EaseIn";
-import EaseOut from './EaseOut'
+import EaseOut from './EaseOut';
 import EaseInOut from "./EaseInOut";
 
 /**

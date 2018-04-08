@@ -2555,9 +2555,9 @@ var _Define = __webpack_require__(/*! ./Define */ "./Define.js");
 
 var _Define2 = _interopRequireDefault(_Define);
 
-var _ObjectExtend = __webpack_require__(/*! ./utils/object/ObjectExtend */ "./utils/object/ObjectExtend.js");
+var _Extend = __webpack_require__(/*! ./utils/object/Extend */ "./utils/object/Extend.js");
 
-var _ObjectExtend2 = _interopRequireDefault(_ObjectExtend);
+var _Extend2 = _interopRequireDefault(_Extend);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2599,8 +2599,8 @@ var scintilla = scintilla || {
   // MATH
   Math: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js"),
   Matrix: __webpack_require__(/*! ./math/Matrix */ "./math/Matrix.js"),
-  Ease: __webpack_require__(/*! ./math/easing/Ease */ "./math/easing/Ease.js"),
-  EasingType: __webpack_require__(/*! ./math/easing/EasingType */ "./math/easing/EasingType.js"),
+  Ease: __webpack_require__(/*! ./math/easing */ "./math/easing/index.js"),
+  //EasingType : require('./math/easing/EasingType'),
   // ENTITIES
   SceneManager: __webpack_require__(/*! ./scene/SceneManager */ "./scene/SceneManager.js"),
   Camera: __webpack_require__(/*! ./camera/Camera */ "./camera/Camera.js"),
@@ -2617,14 +2617,7 @@ var scintilla = scintilla || {
   Path: __webpack_require__(/*! ./utils/Path */ "./utils/Path.js")
 };
 
-(0, _ObjectExtend2.default)(_Define2.default, scintilla);
-
-/*
-scintilla.ShapeType = {
-Rect : 1,
-Circle : 2,
-Polygon : 3
-}*/
+(0, _Extend2.default)(_Define2.default, scintilla);
 
 module.exports = scintilla;
 
@@ -3442,7 +3435,7 @@ var Game = function () {
         this.systems = null;
         this.context = null;
         this.time = null;
-        this.events = null;
+        this.event = null;
 
         this.parseConfiguration(this.config);
 
@@ -3738,7 +3731,6 @@ var GameLoop = function () {
                         (0, _BeginDrawRender2.default)(this.renderer);
 
                         if (this.currentScene !== null || this.currentScene !== undefined) {
-
                                 // Scenes
                                 (0, _DrawRender2.default)(this.renderer, this.camera, deltaTime);
 
@@ -3812,10 +3804,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
 
-var SceneSystem = ['Cache',
-//'Draw',
-'Loader', 'EntityFactory', 'Camera', 'SceneManager', 'UserInterface', 'Transition'];
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SceneSystem = ['Cache', 'Loader', 'EntityFactory', 'EntityHierarchy', 'Camera', 'SceneManager', 'UserInterface', 'Transition', 'EventManager'];
+
+(0, _freeze2.default)(SceneSystem);
 
 exports.default = SceneSystem;
 
@@ -3884,6 +3881,16 @@ exports.default = InitializeSystems;
 
 var _System = __webpack_require__(/*! ../System */ "./core/system/System.js");
 
+var _RequestDepthSorting = __webpack_require__(/*! ../../../render/components/RequestDepthSorting */ "./render/components/RequestDepthSorting.js");
+
+var _RequestDepthSorting2 = _interopRequireDefault(_RequestDepthSorting);
+
+var _RequestRenderableLayerIDChange = __webpack_require__(/*! ../../../render/components/RequestRenderableLayerIDChange */ "./render/components/RequestRenderableLayerIDChange.js");
+
+var _RequestRenderableLayerIDChange2 = _interopRequireDefault(_RequestRenderableLayerIDChange);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function InitializeSystems(game, render) {
 
     var systems = {};
@@ -3911,6 +3918,10 @@ function InitializeSystems(game, render) {
 
         InitializeSystemFunction.call(systems[_registered.name]);
     }
+
+    // render events callbacks
+    systems.event.subscribe('__render_depthsorting', _RequestDepthSorting2.default, render);
+    systems.event.subscribe('__render_layeridchange', _RequestRenderableLayerIDChange2.default, render);
 
     return systems;
 }
@@ -4424,20 +4435,26 @@ var EntityUpdateList = function () {
     }, {
         key: "lateUpdate",
         value: function lateUpdate() {
-            var removeSize = this._destroyInstances.size;
-            var insertSize = this._pendingInstances.size;
+            var removeSize = this._destroyInstances.length;
+            var insertSize = this._pendingInstances.length;
 
             if (insertSize === 0 && removeSize === 0) return;
 
             if (removeSize > 0) this._instances.eraseList(this._destroyInstances, removeSize);
 
-            /*this._pendingInstances.each(instance => {
-                  this.initializeModules(instance);
-                  this._instances.push(instance);
-            })
-              this._pendingInstances.clear();*/
+            /*let content = this._pendingInstances.content();
+              for (let i = 0; i < insertSize; i++) {
+                  let element = content[i];
+                this._instances.push(element);
+                this._pendingInstances.eraseAt(i);
+            }*/
 
             this._instances.concat(this._pendingInstances, true);
+
+            /*    
+              this._pendingInstances.clear();*/
+
+            //this._instances.concat(this._pendingInstances, true);
 
             this._pendingInstances.childs.length = 0;
             this._destroyInstances.childs.length = 0;
@@ -4617,6 +4634,222 @@ exports.default = SceneEntity;
 
 /***/ }),
 
+/***/ "./entities/hierarchy/CreateEntityFrom.js":
+/*!************************************************!*\
+  !*** ./entities/hierarchy/CreateEntityFrom.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = CreateEntityFrom;
+
+var _SceneEntity = __webpack_require__(/*! ../SceneEntity */ "./entities/SceneEntity.js");
+
+var _SceneEntity2 = _interopRequireDefault(_SceneEntity);
+
+var _CreateEntityFromObject = __webpack_require__(/*! ./CreateEntityFromObject */ "./entities/hierarchy/CreateEntityFromObject.js");
+
+var _CreateEntityFromObject2 = _interopRequireDefault(_CreateEntityFromObject);
+
+var _Extend = __webpack_require__(/*! ../../utils/object/Extend */ "./utils/object/Extend.js");
+
+var _Extend2 = _interopRequireDefault(_Extend);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateEntityFrom(value, game) {
+
+    var entity = void 0;
+
+    if (value instanceof _SceneEntity2.default) {} else if ((typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === 'object') {
+
+        var placeholder = new _SceneEntity2.default(value.name || undefined, game);
+        entity = (0, _Extend2.default)(true, placeholder, value);
+
+        return entity;
+    } else if (typeof value === 'function') {}
+}
+
+/***/ }),
+
+/***/ "./entities/hierarchy/CreateEntityFromObject.js":
+/*!******************************************************!*\
+  !*** ./entities/hierarchy/CreateEntityFromObject.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = CreateEntityFromObject;
+
+var _SceneEntity = __webpack_require__(/*! ../SceneEntity */ "./entities/SceneEntity.js");
+
+var _SceneEntity2 = _interopRequireDefault(_SceneEntity);
+
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
+
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateEntityFromObject(value) {
+
+    var entity = new _SceneEntity2.default(value.name || undefined);
+
+    for (var prop in value) {
+        if (object.hasOwnProperty(prop)) {
+
+            if (prop === 'function') // create function
+                entity[prop] = value[prop].bind(entity);else entity[prop] = value[prop];
+        }
+    }
+}
+
+/***/ }),
+
+/***/ "./entities/hierarchy/EntityHierarchy.js":
+/*!***********************************************!*\
+  !*** ./entities/hierarchy/EntityHierarchy.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Entity = __webpack_require__(/*! ../Entity */ "./entities/Entity.js");
+
+var _Entity2 = _interopRequireDefault(_Entity);
+
+var _System = __webpack_require__(/*! ../../core/system/System */ "./core/system/System.js");
+
+var _System2 = _interopRequireDefault(_System);
+
+var _CreateEntityFrom = __webpack_require__(/*! ./CreateEntityFrom */ "./entities/hierarchy/CreateEntityFrom.js");
+
+var _CreateEntityFrom2 = _interopRequireDefault(_CreateEntityFrom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EntityHierarchy = function () {
+    function EntityHierarchy(game) {
+        (0, _classCallCheck3.default)(this, EntityHierarchy);
+
+        this.game = game;
+        this._entityList = null;
+    }
+
+    (0, _createClass3.default)(EntityHierarchy, [{
+        key: "find",
+        value: function find(name) {
+
+            var instances = [];
+            var count = this._entityList._instances.size;
+
+            for (var i = 0; i < count; i++) {
+                if (this._entityList[i].name !== name) continue;
+
+                instances.push(this._entityList[i]);
+            }
+
+            return instances;
+        }
+    }, {
+        key: "findFirst",
+        value: function findFirst(name) {
+            this._entityList.each(function (entity) {
+
+                if (entity.name === name) return entity;
+            });
+
+            return null;
+        }
+    }, {
+        key: "findLast",
+        value: function findLast(name) {
+
+            var count = this._entityList._instances.size;
+
+            for (var i = count - 1; i >= 0; i--) {
+                if (this._entityList[i].name === name) return this._entityList[i];
+            }
+
+            return null;
+        }
+    }, {
+        key: "get",
+        value: function get(index) {
+            return this._entityList._instances.at(index) || null;
+        }
+    }, {
+        key: "create",
+        value: function create(entityBase, count) {
+
+            var entity = (0, _CreateEntityFrom2.default)(entityBase, this.game);
+
+            if (entity['start'] !== undefined && entity['start'] !== null) {
+                entity.start.call(entity);
+            }
+
+            this._entityList.add(entity);
+
+            return entity;
+        }
+    }, {
+        key: "destroy",
+        value: function destroy(entity) {}
+    }, {
+        key: "destroyAt",
+        value: function destroyAt(index) {}
+    }, {
+        key: "clear",
+        value: function clear() {}
+    }, {
+        key: "count",
+        get: function get() {
+            return this._entityList._instances.size;
+        }
+    }]);
+    return EntityHierarchy;
+}();
+
+exports.default = EntityHierarchy;
+
+
+_System2.default.register('EntityHierarchy', EntityHierarchy, 'entity', function () {
+    this._entityList = this.game.system.entityList;
+});
+
+/***/ }),
+
 /***/ "./entities/index.js":
 /*!***************************!*\
   !*** ./entities/index.js ***!
@@ -4631,7 +4864,8 @@ module.exports = {
     Entity: __webpack_require__(/*! ./Entity */ "./entities/Entity.js"),
     SceneEntity: __webpack_require__(/*! ./SceneEntity */ "./entities/SceneEntity.js"),
     EntityUpdateList: __webpack_require__(/*! ./EntityUpdateList */ "./entities/EntityUpdateList.js"),
-    EntityFactory: __webpack_require__(/*! ./EntityFactory */ "./entities/EntityFactory.js")
+    EntityFactory: __webpack_require__(/*! ./EntityFactory */ "./entities/EntityFactory.js"),
+    Hierarchy: __webpack_require__(/*! ./hierarchy/EntityHierarchy */ "./entities/hierarchy/EntityHierarchy.js")
 };
 
 /***/ }),
@@ -4647,7 +4881,7 @@ module.exports = {
 
 
 Object.defineProperty(exports, "__esModule", {
-        value: true
+    value: true
 });
 
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
@@ -4681,69 +4915,97 @@ var _System2 = _interopRequireDefault(_System);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EventManager = function () {
-        function EventManager() {
-                (0, _classCallCheck3.default)(this, EventManager);
+    function EventManager() {
+        (0, _classCallCheck3.default)(this, EventManager);
 
-                this._signalsMap = new _Map2.default();
+        this._signalsMap = new _Map2.default();
+    }
+
+    (0, _createClass3.default)(EventManager, [{
+        key: 'create',
+        value: function create(eventName) {
+
+            var has = this._signalsMap.get(eventName);
+
+            if (has !== undefined && has != null) return has;
+
+            var signal = new _Signal2.default();
+
+            this._signalsMap.set(eventName, signal);
+
+            return signal;
+        }
+    }, {
+        key: 'subscribe',
+        value: function subscribe(eventName, delegate, context, priority) {
+
+            var signal = this._signalsMap.get(eventName);
+
+            if (signal === undefined || signal === null) {
+                console.warn("EventManager.subscribe: There is no registered event called \'" + eventName + '\'.');
+                return this;
+            }
+
+            if (!_Validate2.default.isFunction(delegate)) {
+                console.warn("EventManager.subscribe: The variable is not a function.");
+                return this;
+            }
+
+            signal.subscribe(delegate, context, priority);
+
+            return this;
+        }
+    }, {
+        key: 'subscribeOnce',
+        value: function subscribeOnce(eventName, delegate, context, priority) {
+
+            var signal = this._signalsMap.get(eventName);
+
+            if (signal === undefined || signal === null) {
+                console.warn("EventManager.subscribeOnce: There is no registered event called \'" + eventName + '\'.');
+                return this;
+            }
+
+            if (!_Validate2.default.isFunction(delegate)) {
+                console.warn("EventManager.subscribeOnce: The variable \'" + eventName + "\' is not a function.");
+                return this;
+            }
+
+            signal.subscribeOnce(delegate, context, priority);
+
+            return this;
         }
 
-        (0, _createClass3.default)(EventManager, [{
-                key: 'create',
-                value: function create(eventName) {
+        /**
+        * Dispatch to subscribed Signal
+        * @param {String} eventName The subscribed Signal name.
+        * @param {...*} [params] Parameters that should be passed to each handler.
+        */
 
-                        var has = this._signalsMap.get(eventName);
+    }, {
+        key: 'dispatch',
+        value: function dispatch(eventName) {
 
-                        if (has !== undefined && has != null) return has;
+            var signal = this._signalsMap.get(eventName);
 
-                        var signal = new _Signal2.default();
+            if (signal === undefined || signal === null) {
+                //console.warn("EventManager.dispatch: There is no registered event called \'" + eventName + '\'.');
+                return this;
+            }
 
-                        this._signalsMap.set(eventName, signal);
+            var args = arguments.length > 1 ? [arguments[1]] : Array.apply(null, arguments);
 
-                        return signal;
-                }
-        }, {
-                key: 'subscribe',
-                value: function subscribe(eventName, func) {
+            signal.dispatch(args);
 
-                        var has = this._signalsMap.get(eventName);
-
-                        if (has === undefined || has === null) {
-                                console.warn("EventManager.subscribe: There is no registered event called \'" + eventName + '\'.');
-                                return this;
-                        }
-
-                        if (!_Validate2.default.isFunction(func)) {
-                                console.warn("EventManager.subscribe: The variable is not a function.");
-                                return this;
-                        }
-
-                        has.subscribe(func);
-
-                        return this;
-                }
-
-                /**
-                * Dispatch to subscribed Signal
-                * @param {String} eventName The subscribed Signal name.
-                * @param {...*} [params] Parameters that should be passed to each handler.
-                */
-
-        }, {
-                key: 'dispatch',
-                value: function dispatch(eventName) {
-
-                        var has = this._signalsMap.get(eventName);
-
-                        if (has === undefined || has === null) return this;
-
-                        var args = arguments.length > 1 ? [arguments[1]] : Array.apply(null, arguments);
-
-                        has.dispatch(args);
-
-                        return this;
-                }
-        }]);
-        return EventManager;
+            return this;
+        }
+    }, {
+        key: 'has',
+        value: function has(eventName) {
+            return this._signalsMap.has(eventName);
+        }
+    }]);
+    return EventManager;
 }();
 
 exports.default = EventManager;
@@ -4751,13 +5013,13 @@ exports.default = EventManager;
 
 function BulkEventCreation(manager, events) {
 
-        for (var i = 0; i < events.length; i++) {
-                manager.create(events[i]);
-        }
+    for (var i = 0; i < events.length; i++) {
+        manager.create(events[i]);
+    }
 }
 
 _System2.default.register('EventManager', EventManager, 'event', function () {
-        BulkEventCreation(this, _GameEvents2.default);
+    BulkEventCreation(this, _GameEvents2.default);
 });
 
 /***/ }),
@@ -4783,7 +5045,7 @@ var _freeze2 = _interopRequireDefault(_freeze);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // list of events
-var GameEvents = ['__render_layerdepthsort', '__render_layersort', 'transition_between_inout'];
+var GameEvents = ['__render_depthsorting', '__render_layeridchange', 'transition_pause_end', 'transition_end'];
 
 (0, _freeze2.default)(GameEvents);
 
@@ -4893,7 +5155,14 @@ var Signal = function () {
         key: 'subscribe',
         value: function subscribe(listener, context, priority) {
             (0, _ValidateListener2.default)(listener, 'subscribe');
-            (0, _RegisterListener2.default)(this, listener, context, priority);
+            (0, _RegisterListener2.default)(this, listener, context, priority, false);
+            return this;
+        }
+    }, {
+        key: 'subscribeOnce',
+        value: function subscribeOnce(listener, context, priority) {
+            (0, _ValidateListener2.default)(listener, 'subscribeOnce');
+            (0, _RegisterListener2.default)(this, listener, context, priority, true);
             return this;
         }
 
@@ -4911,7 +5180,7 @@ var Signal = function () {
 
             var i = (0, _IndexOfListener2.default)(this, listener, context);
             if (i !== -1) {
-                this._bindings[i]._destroy();
+                this._bindings.at(i)._destroy();
                 this._bindings.eraseAt(i);
             }
 
@@ -4999,17 +5268,17 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SignalBinding = function () {
-    function SignalBinding(signal, listener, listenerContext, priority) {
+    function SignalBinding(signal, listener, listenerContext, priority, once) {
         (0, _classCallCheck3.default)(this, SignalBinding);
 
 
         this._signal = signal;
         this._listener = listener;
-        this.context = listenerContext;
+        this._context = listenerContext;
         this._priority = priority || 0;
         this.active = true;
         this.args = undefined;
-        this._isOnce = false;
+        this._isOnce = once || false;
     }
 
     (0, _createClass3.default)(SignalBinding, [{
@@ -5021,7 +5290,7 @@ var SignalBinding = function () {
             if (this.active && !!this._listener) {
 
                 params = this.args ? this.args.concat(argsArray) : argsArray;
-                handlerReturn = this._listener.apply(this.context, params);
+                handlerReturn = this._listener.apply(this._context, params);
                 if (this._isOnce) {
                     this.detach();
                 }
@@ -5031,7 +5300,8 @@ var SignalBinding = function () {
     }, {
         key: "detach",
         value: function detach() {
-            return this.isBound() ? this._signal.remove(this._listener, this.context) : null;
+            if (!this.isBound()) return;
+            this._signal.unsubscribe(this._listener, this._context);
         }
 
         /**
@@ -5055,6 +5325,11 @@ var SignalBinding = function () {
             delete this._signal;
             delete this._listener;
             delete this.context;
+        }
+    }, {
+        key: "isOnce",
+        get: function get() {
+            return this._isOnce;
         }
     }, {
         key: "listener",
@@ -5118,12 +5393,15 @@ exports.default = IndexOfListener;
 function IndexOfListener(signal, listener, context) {
 
     var r = signal._bindings.each(function (element, index) {
+
         if (element._listener === listener && element._context === context) {
             return index;
         }
     });
 
-    return r || -1;
+    if (r === undefined) r = -1;
+
+    return r;
 }
 
 /***/ }),
@@ -5157,16 +5435,19 @@ var _AddBinding2 = _interopRequireDefault(_AddBinding);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function RegisterListener(signal, listener, listenerContext, priority) {
+function RegisterListener(signal, listener, listenerContext, priority, isOnce) {
 
     var binding = null;
     var index = (0, _IndexOfListener2.default)(signal, listener, listenerContext);
 
     if (index !== -1) {
         binding = signal._bindings[index];
+        if (binding.isOnce !== isOnce) {
+            throw new Error('You cannot add' + (isOnce ? '' : 'Once') + '() then add' + (!isOnce ? '' : 'Once') + '() the same listener without removing the relationship first.');
+        }
     } else {
 
-        binding = new _SignalBinding2.default(signal, listener, listenerContext, priority);
+        binding = new _SignalBinding2.default(signal, listener, listenerContext, priority, isOnce);
         (0, _AddBinding2.default)(signal, binding);
     }
 
@@ -10061,6 +10342,13 @@ module.exports = EaseOut;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.EASE_BACK_CONST = undefined;
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * Describes the easing method type
@@ -10095,9 +10383,31 @@ var EasingType = {
 
 var EASE_BACK_CONST = exports.EASE_BACK_CONST = 1.70158;
 
+(0, _freeze2.default)(EasingType);
+
 exports.default = EasingType;
 
-//module.exports = EasingType;
+
+module.exports = EasingType;
+
+/***/ }),
+
+/***/ "./math/easing/index.js":
+/*!******************************!*\
+  !*** ./math/easing/index.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+
+    Ease: __webpack_require__(/*! ./Ease */ "./math/easing/Ease.js"),
+    Type: __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js")
+
+};
 
 /***/ }),
 
@@ -10482,7 +10792,7 @@ function ModulesUpdater(modulesManager, game) {
     }
 
     var render = modulesManager.attached.get('render');
-    if (render !== undefined || render != null) {
+    if (render !== undefined && render != null) {
         (0, _RenderableUpdate2.default)(entity, render, game.system.camera, game.system.loop.updateStep);
     }
 }
@@ -10567,7 +10877,7 @@ var Renderable = function (_Module) {
         _this._layerID = 0;
         _this._depth = 0;
         _this._alpha = 1;
-        _this._depthDirty = true;
+        _this._depthSorting = 0;
         _this._bounds = new _BoundingBox2.default();
         _this._originInPixels = { x: 0, y: 0 };
         _this._originIsDirty = true;
@@ -10585,9 +10895,12 @@ var Renderable = function (_Module) {
             return this._depthSorting;
         },
         set: function set(value) {
-            if (value != this._depthSorting) {
-                this._depthSorting = value;
-                this._depthDirty = true;
+
+            if (this.entity.game !== undefined) {
+                if (value !== this._depthSorting) {
+                    this._depthSorting = value;
+                    this.entity.game.system.event.dispatch('__render_layersorting', this._layerID);
+                }
             }
             return this;
         }
@@ -11853,15 +12166,6 @@ var Render = function () {
         this.canvas = undefined;
         this.context = undefined;
         this.layer = new _RenderLayersManagement2.default(this.game);
-        // dom canvas
-        //this._domCanvas = Canvas.create(this.game.parent,this.game.width,this.game.height);
-        //this._donContext = this.canvas.getContext("2d", { alpha: false });  
-        // off screen canvas
-        //this._canvas = Canvas.create();
-        //this.imageRendering = (game.config.pixelated) ? RenderingType.NEAREST : RenderingType.LINEAR;
-        //this.smooth = new CanvasSmoothing(this.context);
-        //this.smooth.set(this.imageRendering);
-
         this._backgroundColor = '#000';
         this._alpha = 1;
         this._enable = true;
@@ -12790,35 +13094,42 @@ function DrawRender(render, camera, delta) {
 
 
 Object.defineProperty(exports, "__esModule", {
-        value: true
+    value: true
 });
 exports.default = DrawRenderLayer;
+
+var _SortDepth = __webpack_require__(/*! ../layer/SortDepth */ "./render/layer/SortDepth.js");
+
+var _SortDepth2 = _interopRequireDefault(_SortDepth);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function DrawRenderLayer(layer, camera, context) {
 
-        if (!layer.__enable) return 0;
+    if (!layer.__enable) return 0;
 
-        var drawCalls = 0;
+    var drawCalls = 0;
 
-        if (layer.__isDirty) {
-                layer.renderList.sort(layer.sortDepth);
+    if (layer.__isDirty) {
+        layer.renderList.sort(_SortDepth2.default);
 
-                layer.__isDirty = false;
+        layer.__isDirty = false;
+    }
+
+    var self = this;
+    var size = layer.renderList.size;
+
+    for (var i = 0; i < size; i++) {
+        var element = layer.renderList.at(i);
+
+        if (camera.bounds.intersects(element.bounds)) {
+            drawCalls += element.render(context);
+
+            //camera.game.system.draw.bounds(element.bounds);
         }
+    }
 
-        var self = this;
-        var size = layer.renderList.size;
-
-        for (var i = 0; i < size; i++) {
-                var element = layer.renderList.at(i);
-
-                if (camera.bounds.intersects(element.bounds)) {
-                        drawCalls += element.render(context);
-
-                        //camera.game.system.draw.bounds(element.bounds);
-                }
-        }
-
-        return drawCalls;
+    return drawCalls;
 }
 
 /***/ }),
@@ -12841,6 +13152,87 @@ function EndDrawRender(render) {
 
     render.context.globalAlpha = 1;
     render.context.globalCompositeOperation = 'source-over';
+}
+
+/***/ }),
+
+/***/ "./render/components/RequestDepthSorting.js":
+/*!**************************************************!*\
+  !*** ./render/components/RequestDepthSorting.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = RequestDepthSorting;
+function RequestDepthSorting(layerID) {
+
+    var layer = this.layer.renderLayers.at(layerID);
+
+    if (layer === undefined) return;
+
+    if (layer.__isDirty === true) return;
+
+    layer.__isDirty = true;
+}
+
+/***/ }),
+
+/***/ "./render/components/RequestRenderableLayerIDChange.js":
+/*!*************************************************************!*\
+  !*** ./render/components/RequestRenderableLayerIDChange.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = RequestRenderableLayerIDChange;
+function RequestRenderableLayerIDChange(renderable, oldLayerID, toLayerID) {
+
+    // if the to layer is the same of old, we don't change
+    if (oldLayerID === toLayerID) return oldLayerID;
+
+    var oldLayer = this.layer.renderLayers.at(oldLayerID);
+
+    // if we don't find the old layer ID 
+    if (oldLayer === undefined) {
+
+        // we need to check if the renderable is somewhere
+        oldLayer = this.layer.findRenderableLayer(renderable);
+
+        // still undefined
+        if (oldLayer === undefined) {
+
+            // we add to default layer
+            this.layer.renderLayers.at(0).add(renderable);
+            return 0;
+        }
+    }
+
+    var toLayer = this.layer.renderLayers.at(toLayerID);
+
+    // if tolayer is undefined or same has oldLayer
+    if (toLayer === undefined || toLayer === oldLayer) return oldLayerID;
+
+    // find the renderable index
+    var index = oldLayer.renderList.indexOf(renderer);
+
+    if (index === -1) return oldLayerID;
+
+    oldLayer.removeAt(index);
+    toLayer.add(renderer);
+
+    return toLayerID;
 }
 
 /***/ }),
@@ -12917,8 +13309,12 @@ var RenderLayer = function () {
             if (renderer === undefined) return;
 
             this.renderList.push(renderer);
-            // this.renderer.__renderLayer = this;
             this.__isDirty = true;
+        }
+    }, {
+        key: 'has',
+        value: function has(renderer) {
+            return this.renderList.indexOf(renderer) !== -1;
         }
     }, {
         key: 'remove',
@@ -12927,7 +13323,9 @@ var RenderLayer = function () {
         }
     }, {
         key: 'removeAt',
-        value: function removeAt(index) {}
+        value: function removeAt(index) {
+            return this.renderList.eraseAt(index);
+        }
     }, {
         key: 'at',
         value: function at(index) {
@@ -12935,29 +13333,6 @@ var RenderLayer = function () {
                 throw new Error('RenderLayer.at: Renderer at ' + index + ' does not exist in the render layer list: \"' + name + "\".");
             }
             return this.renderList.at(index);
-        }
-    }, {
-        key: 'sortDepth',
-        value: function sortDepth(a, b) {
-            // sort ascending
-
-            return a._depthSorting - b._depthSorting;
-
-            /*this.__renderers.sort(
-                function(a, b) {
-                        if (a.depth > b.depth) {
-                          return 1;
-                        } else if (a.depth < b.depth) {
-                          return -1;
-                        } else {
-                          if (a.z > b.z) {
-                    return 1;
-                  } else {
-                    return -1;
-                  }
-                  
-                }
-              });*/
         }
     }, {
         key: 'drawCalls',
@@ -12992,6 +13367,33 @@ var RenderLayer = function () {
     }]);
     return RenderLayer;
 }();
+
+/*
+      this.__renderers.sort(
+
+          function(a, b) {
+      
+            if (a.depth > b.depth) {
+      
+              return 1;
+      
+            } else if (a.depth < b.depth) {
+      
+              return -1;
+      
+            } else {
+      
+              if (a.z > b.z) {
+                return 1;
+              } else {
+                return -1;
+              }
+      
+      
+            }
+          });
+*/
+
 
 exports.default = RenderLayer;
 
@@ -13044,6 +13446,11 @@ var RenderLayersManagement = function () {
     }
 
     (0, _createClass3.default)(RenderLayersManagement, [{
+        key: 'has',
+        value: function has(id) {
+            return this.renderLayers.hasAt(id);
+        }
+    }, {
         key: 'add',
         value: function add(name) {
 
@@ -13081,11 +13488,38 @@ var RenderLayersManagement = function () {
 
             return val || false;
         }
+    }, {
+        key: 'findRenderableLayer',
+        value: function findRenderableLayer(renderable) {
+            return this.renderLayers.each(function (layer) {
+                if (layer.has(renderable)) return layer;
+            });
+        }
     }]);
     return RenderLayersManagement;
 }();
 
 exports.default = RenderLayersManagement;
+
+/***/ }),
+
+/***/ "./render/layer/SortDepth.js":
+/*!***********************************!*\
+  !*** ./render/layer/SortDepth.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = SortDepth;
+function SortDepth(a, b) {
+    return a._depthSorting - b._depthSorting;
+}
 
 /***/ }),
 
@@ -13117,6 +13551,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function DrawTransition(transition, canvas, context) {
 
     if (transition._state === _TransitionState2.default.NONE) return;
+
+    context.globalCompositeOperation = 'source-over';
 
     var settings = transition.settings;
 
@@ -13201,7 +13637,7 @@ var Transition = function () {
 
             var old = this._behaviour;
 
-            if (old === _TransitionState2.default.IN) return;
+            if (old === _TranstionBehavior2.default.FADEIN) return;
 
             this._alpha = 0;
             this._t = 0;
@@ -13209,15 +13645,50 @@ var Transition = function () {
             this._startColor.setColor(this.settings.inColor, 0);
             this._tColor.setColor(this._startColor, 0);
             this.settings.inColor.a = 1;
-            this._behaviour = _TranstionBehavior2.default.IN;
+            this._behaviour = _TranstionBehavior2.default.FADEIN;
             this._state = _TransitionState2.default.IN;
         }
     }, {
         key: "out",
-        value: function out() {}
+        value: function out() {
+
+            if (this._behaviour === _TranstionBehavior2.default.FADEOUT) return;
+
+            this._t = 0;
+            this._startColor.setColor(this.settings.outColor, 1);
+            this._tColor.setColor(this._startColor, 1);
+            this.settings.outColor.a = 0;
+            this._behaviour = _TranstionBehavior2.default.FADEOUT;
+            this._state = _TransitionState2.default.OUT;
+        }
     }, {
         key: "inout",
-        value: function inout() {}
+        value: function inout() {
+
+            this.in();
+            this._behaviour = _TranstionBehavior2.default.FADEINOUT;
+        }
+    }, {
+        key: "by",
+        value: function by(type) {
+
+            switch (type) {
+                case _TranstionBehavior2.default.NONE:
+                    return;
+                case _TranstionBehavior2.default.FADEINOUT:
+                    return this.inout();
+                case _TranstionBehavior2.default.FADEIN:
+                    return this.in();
+            }
+        }
+    }, {
+        key: "reset",
+        value: function reset() {
+            this._tColor.setColor(this._startColor, 0);
+            this._t = 0;
+            this._behaviour = _TranstionBehavior2.default.NONE;
+            this._state = _TransitionState2.default.NONE;
+        }
     }]);
     return Transition;
 }();
@@ -13327,22 +13798,22 @@ var TransitionSettings = function () {
             return this;
         }
     }, {
-        key: "setTiming",
-        value: function setTiming(easingType, parameter) {
+        key: "setEaseMethod",
+        value: function setEaseMethod(easingType, parameter) {
             this.setInTiming(easingType, parameter);
             this.setOutTiming(easingType, parameter);
             return this;
         }
     }, {
-        key: "setInTiming",
-        value: function setInTiming(easingType, parameter) {
+        key: "setEaseInMethod",
+        value: function setEaseInMethod(easingType, parameter) {
             this.timingInMethod = easingType;
             this.timingInArgument = parameter || 1;
             return this;
         }
     }, {
-        key: "setOutTiming",
-        value: function setOutTiming(easingType, parameter) {
+        key: "setEaseOutMethod",
+        value: function setEaseOutMethod(easingType, parameter) {
             this.timingOutMethod = easingType;
             this.timingOutArgument = parameter || 1;
             return this;
@@ -13442,9 +13913,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var TransitionBehavior = {
     NONE: 0,
-    IN: 1,
-    OUT: 2,
-    INOUT: 3,
+    FADEIN: 1,
+    FADEOUT: 2,
+    FADEINOUT: 3,
     IDLE: 4
 };
 
@@ -13513,8 +13984,6 @@ function UpdateTransition(transition, deltaTime) {
                 // ease(to, t, easingType, easingMode, easingArg)
                 _Color2.default.ease(transition._startColor, setg.inColor, transition._t, setg.timingInMethod, 0, setg.timingInArgument, transition._tColor);
 
-                console.log(transition._tColor.rgba);
-
                 break;
             }
 
@@ -13537,8 +14006,7 @@ function UpdateTransition(transition, deltaTime) {
                     transition._t = 1;
                     changeState = true;
                 }
-
-                transition._color.alpha = _Ease2.default.out.by(setg.timingOutMethod, setg.outColor.a, 0, transition._t, setg.timingOutArgument);
+                _Color2.default.ease(transition._startColor, setg.outColor, transition._t, setg.timingOutMethod, 1, setg.timingOutArgument, transition._tColor);
                 break;
             }
     }
@@ -13550,20 +14018,26 @@ function UpdateTransition(transition, deltaTime) {
     transition._t = 0;
 
     switch (transition._behaviour) {
-        case _TranstionBehavior2.default.IN:
-        case _TranstionBehavior2.default.OUT:
+        case _TranstionBehavior2.default.FADEIN:
+        case _TranstionBehavior2.default.FADEOUT:
             // just fade in or out
             {
+
                 transition._behaviour = _TranstionBehavior2.default.NONE;
                 transition._state = _TransitionState2.default.IDLE;
+                if (transition._behaviour === _TranstionBehavior2.default.FADEOUT) {
+                    transition._behaviour = _TranstionBehavior2.default.FADEOUT;
+                }
+                transition.game.system.event.dispatch('transition_end');
                 break;
             }
-        case _TranstionBehavior2.default.INOUT:
+        case _TranstionBehavior2.default.FADEINOUT:
             // fade in and out
             {
                 if (transition._state === _TransitionState2.default.IN) {
                     // end fade in
                     transition._color.setColor(setg.outColor);
+
                     if (setg.pauseDuration > 0) {
                         transition._state = _TransitionState2.default.WAIT;
                     } else {
@@ -13571,11 +14045,15 @@ function UpdateTransition(transition, deltaTime) {
                     }
                 } else if (transition._state === _TransitionState2.default.WAIT) {
                     // end pause beteween
+
                     transition._state = _TransitionState2.default.OUT;
+                    transition.game.system.event.dispatch('transition_pause_end');
                 } else if (transition._state === _TransitionState2.default.OUT) {
                     // end fade out
+
                     transition._state = _TransitionState2.default.IDLE;
                     transition._behaviour = _TranstionBehavior2.default.NONE;
+                    transition.game.system.event.dispatch('transition_end');
                 }
                 break;
             }
@@ -13711,7 +14189,7 @@ var Debug = function () {
     value: function test() {
 
       this.draw.disablePointTransform = true;
-      this.x = 8;
+      this.x = 4;
       this.y = 12;
       //this.context.setTransform(1, 0, 0, 1, 0, 0);
       this.context.strokeStyle = this.bgcolor;
@@ -13783,12 +14261,11 @@ function DrawUI(gui, sceneManager) {
     (0, _UpdateUIMatrix2.default)(gui);
 
     // blend
-    //gui.context.globalCompositeOperation = 'source-over';
+    gui.context.globalCompositeOperation = 'source-over';
 
-    var clip = gui.viewport.x !== 0 || gui.viewport.x !== 0 || gui.viewport.width !== gui.canvas.clientWidth || gui.viewport.height !== gui.canvas.clientHeight;
+    var clip = gui.viewport.x !== 0 || gui.viewport.x !== 0 || gui.viewport.width !== gui.canvas.width || gui.viewport.height !== gui.canvas.height;
 
     if (clip) {
-
         gui.context.save();
         gui.context.beginPath();
         gui.context.rect(0, 0, gui.viewport.width, gui.viewport.height);
@@ -13811,7 +14288,9 @@ function DrawUI(gui, sceneManager) {
 
     (0, _RenderScene2.default)(sceneManager, gui.draw);
 
-    if (clip) gui.context.restore();
+    if (clip) {
+        gui.context.restore();
+    }
 }
 
 /***/ }),
@@ -15201,11 +15680,11 @@ var Scene = function () {
 
   (0, _createClass3.default)(Scene, [{
     key: 'preloadDone',
-    value: function preloadDone() {
+    value: function preloadDone(transition) {
 
       if (this.scene === undefined) return;
 
-      (0, _PostPreloadingScene2.default)(this.scene);
+      (0, _PostPreloadingScene2.default)(this.scene, transition);
     }
   }, {
     key: 'instanceDestroy',
@@ -15316,6 +15795,8 @@ var SceneManager = function () {
     this.currentScene = null;
     this._currentSceneName = '';
     this._changeScene = null;
+    this._transition = null;
+    this._isTranistioning = false;
 
     this._setup = false;
     this._clearCache = false;
@@ -15363,11 +15844,14 @@ var SceneManager = function () {
   }, {
     key: 'set',
     value: function set(sceneName, clearCache) {
-      return (0, _SetScene2.default)(this, sceneName, clearCache, false);
+      return (0, _SetScene2.default)(this, sceneName, clearCache);
     }
   }, {
     key: 'transition',
-    value: function transition(sceneName) {}
+    value: function transition(sceneName, type) {
+      (0, _SetScene2.default)(this, sceneName, false, type);
+      /// TODO
+    }
   }, {
     key: 'restart',
     value: function restart(clearCache) {
@@ -15457,6 +15941,10 @@ var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUti
 
 var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
+var _TranstionBehavior = __webpack_require__(/*! ../../render/transition/TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+
+var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var ScintillaLoadingScreen = function (_Scene) {
@@ -15480,7 +15968,7 @@ var ScintillaLoadingScreen = function (_Scene) {
         _this.scintillaLogo.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI2MC45OCIgdmlld0JveD0iMCAwIDYzLjUgNjkuMDUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0iI2RjMzBhOSI+PHBhdGggZD0iTTQzLjQ5IDM2Ljg1NmwtMTQuMTgtNi40MzRMNi45NTYgNDkuNzg0bDE5LjM2Mi0yNy4yNC02LjU3Ni05LjU2OCAxNC40NTUgNi41NzVMNTYuNTUxLjE5IDM3LjE5IDI3LjQzeiIgcGFpbnQtb3JkZXI9InN0cm9rZSBtYXJrZXJzIGZpbGwiLz48cGF0aCBkPSJNMTEuMTIgMzYuOTA4bC0uNTQzLTEuMDQxLTEuMDM2LjU0My41MzggMS4wMzZ6bS0xLjg4OC00LjE3NmwtLjM2LTEuMTE2LTEuMTE2LjM2MS4zNjYgMS4xMTV6bS0xLjA2NC00LjQ1NmwtLjA5Ny0uNjM1di0uMDNsLS4wMDYtLjAzLS4wMy0uNDI5LTEuMTY2LjA4LjAzNC40OC4wMDYuMDQ3LjEwMy42ODZ6bS0uMTAzLTUuNjk4bC0xLjE2Ny0uMTA4LS4xMDggMS4xNjcgMS4xNjcuMTA4em0uODY0LTQuNDMzbC4wMDYtLjAzLjAwNi0uMDMtLjMwMy0uMDgtLjgxMi0uMjgxLS4wMDYuMDMtLjAxMi4wNDYtLjI4NiAxLjExNSAxLjEzMi4yOTN6bTEuNDE5LTMuNjMzbC4zMzctLjYyMy0xLjAzLS41NTUtLjM2LjY2My0uMDE4LjA0Mi0uMTcxLjM4MyAxLjA3NS40N3ptMi44NTQtNC40NWwtLjkyNi0uNzIxLS43MjEuOTI3LjkyNy43MTV6bTMuMTg3LTMuMjlsLS43OS0uODYzLS44NjQuNzk1Ljc5Ni44NTh6bTMuMTgtMi4yNjVsLjAzLS4wM2guMDExbC41MjEtLjI4LS41Ni0xLjAzLS41NjEuMzAyLS4wNC4wMy0uNDQ3LjI5My42NDEuOTg0ek00Mi42NDUgMi41bC0uMjUxLS4xMzItLjA0Ni0uMDMtLjgxOC0uMzQzLS40NTIgMS4wNzUuNzcyLjMyNi4yNTIuMTMyem0tMTguMzIzLS4xMzJsLS4zODMtMS4xMS0xLjEwNC4zODQuMzgzIDEuMTA0ek0zOC4xMi44MjhMMzYuOTgyLjU1M2wtLjI2OSAxLjE0NCAxLjEzOC4yN3ptLTkuNTA3LjUzOGguMTMzTDI4LjY0My4xOTloLS4xODNsLTEuMDE4LjE3OC4yIDEuMTU2em00LjgtMS4zMDRMMzIuNTIgMGgtLjMyNmwuMDEyIDEuMTY3aC4yMzVsLjg4Ni4wNjJ6TTUyLjM4IDEzLjA2NWwuNTM4IDEuMDQgMS4wNC0uNTQyLS41NDMtMS4wMzZ6bTEuODgyIDQuMTc2bC4zNjYgMS4xMTUgMS4xMS0uMzYtLjM2LTEuMTE2em0xLjA2NCA0LjQ1NmwuMTAzLjY0di4wM2wuMDA2LjAzLjAyOS40MyAxLjE2Ny0uMDc4LS4wMzQtLjQ4LS4wMDYtLjA0Ny0uMTAzLS42ODZ6bS4xMDkgNS42OThsMS4xNjcuMTA4LjEwMy0xLjE2Ny0xLjE2Ny0uMTA4em0tLjg2NCA0LjQzM2wtLjAwNi4wMy0uMDA2LjAzLjI5Mi4wOC44MTguMjgxLjAxMi0uMDMuMDEyLS4wNDguMjg1LTEuMTEtMS4xMzItLjI5MnptLTEuNDAyIDMuNTkzbC0uMDEyLjAzLS4wMTIuMDMtLjMzNy42MTcgMS4wMzUuNTU1LjM1NS0uNjYzLjAyMy0uMDQyLjE2Ni0uMzg0LTEuMDctLjQ2OXptLTIuODcxIDQuNDlsLjkyNi43MjEuNzE1LS45MjctLjkyNi0uNzE1em0tMy4xOTIgMy4yOWwuNzk1Ljg2My44NjMtLjc5NS0uNzk1LS44NTh6bS0zLjE3NSAyLjI2NWwtLjAzLjAzaC0uMDEybC0uNTIuMjguNTU1IDEuMDMuNTYtLjMwMy4wNDYtLjAzLjQ0Ni0uMjkzLS42NC0uOTg0em0tMjMuMDc2IDIuMDA4bC4yNTEuMTMyLjA0LjAzLjgxOS4zNDMuNDU3LTEuMDc2LS43NzgtLjMyNmgtLjAwNmwtLjAzNC0uMDMtLjIxMi0uMTE0em0xOC4zMTcuMTM4bC4zODMgMS4xMDQgMS4xMS0uMzg0LS4zODQtMS4xMDR6bS0xMy43OTggMS41MzNsMS4xNDQuMjc1LjI2OS0xLjE0NC0xLjE0NC0uMjd6bTkuNTEzLS41MzhoLS4xMzhsLjEwOCAxLjE2N2guMTgzbDEuMDE5LS4xNzgtLjItMS4xNTZ6bS00LjggMS4zMDRsLjg5My4wNjRoLjMybC0uMDEyLTEuMTY3aC0uMjI5bC0uODkyLS4wNjR6IiBjb2xvcj0iIzAwMCIgc29saWQtY29sb3I9IiMwMDAwMDAiIHN0eWxlPSJmb250LWZlYXR1cmUtc2V0dGluZ3M6bm9ybWFsO2ZvbnQtdmFyaWFudC1hbHRlcm5hdGVzOm5vcm1hbDtmb250LXZhcmlhbnQtY2Fwczpub3JtYWw7Zm9udC12YXJpYW50LWxpZ2F0dXJlczpub3JtYWw7Zm9udC12YXJpYW50LW51bWVyaWM6bm9ybWFsO2ZvbnQtdmFyaWFudC1wb3NpdGlvbjpub3JtYWw7aXNvbGF0aW9uOmF1dG87bWl4LWJsZW5kLW1vZGU6bm9ybWFsO3NoYXBlLXBhZGRpbmc6MDt0ZXh0LWRlY29yYXRpb24tY29sb3I6IzAwMDt0ZXh0LWRlY29yYXRpb24tbGluZTpub25lO3RleHQtZGVjb3JhdGlvbi1zdHlsZTpzb2xpZDt0ZXh0LWluZGVudDowO3RleHQtb3JpZW50YXRpb246bWl4ZWQ7dGV4dC10cmFuc2Zvcm06bm9uZSIgcGFpbnQtb3JkZXI9InN0cm9rZSBtYXJrZXJzIGZpbGwiIHdoaXRlLXNwYWNlPSJub3JtYWwiLz48cGF0aCBkPSJNNi4zMiA2NS43MjhxLS4xMDcgMS4zMzMtLjkxIDIuMjc2LS41MjguNjQyLTEuNDA1LjktLjQ3NS4xNDctMS4wODIuMTQ3LTEuMTMxIDAtMS44MTgtLjU1OS0uNTctLjQ2LS44NTgtMS4yNDMtLjI4OC0uNzg5LS4yNDUtMS44MTVsMS44MzQtLjEyNnEuMDIgMS4xMS40NCAxLjYwNi4zMDYuMzc3Ljc1NS4zNTYuNjMtLjAzIDEuMDY0LS42MTQuMjI0LS4zLjI3Ni0uODQ1LjA3Ny0uODAzLS41NjctMS41ODUtLjUyMS0uNTM4LTEuNTU2LTEuNjEzLS44NjktLjkyMi0xLjE5LTEuNjU1LS4zNDYtLjgyMy0uMjU0LTEuNzg3LjE2Ni0xLjczOCAxLjQxOC0yLjYzMlEyLjk5MiA1NiA0LjA2IDU2cTEuMDI2IDAgMS43MTUuNDYxLjUzMS4zNTYuODE5Ljk5OS4yODguNjM1LjI4NSAxLjQ2NmwtMS44NzUuMzM1cS0uMDAyLS43ODItLjMzLTEuMjE1LS4yMzUtLjMyMS0uNzMtLjMyMS0uNTI0IDAtLjg0OC40NjgtLjI2LjM3Ny0uMzEzLjkzNS0uMDg0Ljg3My41ODMgMS43OC4yNTQuMzQzLjc3NC44MS42MTcuNTU5LjgxMi43ODIuNjM3LjcxMi45NjIgMS40MDQuMTUuMzIuMjM2LjYuMjA3LjY3Ny4xNjkgMS4yMjJ6bTQuOTYgMy4zMnEtMS4yNyAwLTIuMDcyLS44ODctLjgwMi0uODg2LS42ODEtMi4xNWwuNjY3LTYuOTc1cS4xMjEtMS4yNjMgMS4xLTIuMTUuOTgtLjg5NCAyLjIzNi0uODk0IDEuMjcgMCAyLjA2NS44OTQuOC44OTMuNjggMi4xNWwtLjEzOSAxLjQ1MmgtMS45OWwuMTQzLTEuNDg3cS4wNDQtLjQ2LS4yNTMtLjc4Mi0uMjktLjMyOC0uNzUtLjMyOC0uNDU1IDAtLjgwNy4zMjgtLjM1Mi4zMjItLjM5Ni43ODJsLS42NyA2Ljk4OXEtLjA0My40Ni4yNDcuNzgyLjI5LjMyMS43NDQuMzIxLjQ2MSAwIC44MTMtLjMyMS4zNTktLjMyMS40MDMtLjc4MmwuMTY4LTEuNzUyaDEuOTlsLS4xNyAxLjc3M3EtLjEyMiAxLjI3LTEuMSAyLjE1Ny0uOTc4Ljg4LTIuMjI4Ljg4em03LjE5LS4xNmgtMS45MTNsMS4yMi0xMi43MzVoMS45MTJ6bTUuNzQtMTIuNzM0bDEuNzIzIDguNTUzLjgxOC04LjU1M2gxLjkybC0xLjIxOSAxMi43MzVoLTIuMDZsLTEuODY1LTguMTU1LS43OCA4LjE1NWgtMS45MTRsMS4yMi0xMi43MzV6bTguNTMgMS45MjFoLTIuMDM5bC4xODQtMS45Mmg1Ljk5bC0uMTgzIDEuOTJIMzQuNjZMMzMuNjI1IDY4Ljg5aC0xLjkyem03LjAzIDEwLjgxM2gtMS45MTNsMS4yMi0xMi43MzVoMS45MTJ6bTcuNiAwaC01LjIzbDEuMjItMTIuNzM1aDEuOTEzbC0xLjAzNyAxMC44MjloMy4zMTZ6bTcuMjEgMGgtNS4yM2wxLjIyLTEyLjczNWgxLjkxM2wtMS4wMzcgMTAuODI5aDMuMzE2em00LjczLTIuOTJsLS43NDggMi45MjVoLTEuOTk3bDMuMzc3LTEyLjczNWgyLjY0NmwuOTEgMTIuNzM1aC0yLjAxbC0uMTc0LTIuOTI1em0xLjY2NS02Ljg5MWwtMS4xOTMgNS4wMmgxLjQyNXoiLz48L2c+PC9zdmc+";
         _this._loaded = false;
         var self = _this;
-
+        _this._finished = false;
         //"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAA0CAQAAABxuOPTAAAAAmJLR0QA/4ePzL8AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfiBAEENCBdKapvAAABjklEQVRYw+2YSxKDIAyGA6seyiXH8mgsORS7dAFpUMNDJ9CNmakFAnz8MVIswCPbkT8L7IqS4REVgSO2HKiGvQOMa+7yGbhY5XKdhFPV2ZpMLaz3gqeIPd5PeeJaWBX3qiNYqqnn7VVrPayqu/JZl3ISSWstEb2wPtDaHjLhbo4nUwunrHQUOyWN2kBFpRJ26iMjp49qgHuPTDvQKkpbW5+i1n1wa5fAijp7P21/OP+wT0Hnws3uefDUdP7pNLtY5ULgPexE4Ohr4tR31H11er322muPdqXrealWYrPrkQNQgI8ZXVDqGbt/GRh20eSp/jERz7jUQn7qe10Ut5Z+HmdTM08WsaxJx02GUMvIgabsYwMA+AIcsuqQO3vk75CRoQhnyCN5LPu5nKQUYz1G5KmPq5V9tbaWn+aKCGABnAmFonAIijPXVUtKSHXd79H9lNqIAM4AbBm7/fDJNqF8biM1W3WMx9JnA3hkRaXqdD1GQW6j1AqdMVS3zgB49FkvXT16dIaDPFaq+5kC4MwX1X+rgjIvVdUAAAAASUVORK5CYII=";
         //this.scintillaLogo.src = blob;
 
@@ -15508,6 +15996,7 @@ var ScintillaLoadingScreen = function (_Scene) {
         var drawFunc = function drawFunc(draw) {
             if (this._loaded) {
                 draw.imageExtra(this.scintillaLogo, 160, 120 - 16, 0.3, 0.3, 0.5, 0.5); //131,73);
+
                 draw.color = this._barColor;
                 draw.outlineRect(this._barPosX, this._barPosY, this._barPosW, 7);
                 draw.rect(this._barPosX + 2, this._barPosY + 2, (this._barPosW - 4) * this.progress, 3);
@@ -15518,29 +16007,38 @@ var ScintillaLoadingScreen = function (_Scene) {
 
         var loadingFunc = function loadingFunc(dt) {
 
-            this.t += dt / 0.15;
+            if (!this._finished) {
+                this.t += dt / 0.15;
 
-            if (this.t >= 1) this.t = 1.0;
+                if (this.t >= 1) this.t = 1.0;
 
-            if (!this.preloadingDone) {
-                var prog = this.load.progress;
+                if (!this.preloadingDone) {
+                    var prog = this.load.progress;
 
-                if (prog >= 1.0) this.preloadingDone = true;
+                    if (prog >= 1.0) this.preloadingDone = true;
 
-                if (prog > this.progress) {
-                    this.fromProgress = this.progress;
-                    this.toProgress = prog;
-                    this.t = 0;
+                    if (prog > this.progress) {
+                        this.fromProgress = this.progress;
+                        this.toProgress = prog;
+                        this.t = 0;
+                    }
+                } else {
+                    this.wait += dt;
+
+                    if (this.wait >= 1.5) {
+                        //this.preloadDone(TransitionBehavior.FADEIN);
+                        var done = function done() {
+                            this.transition.reset();
+                            this.preloadDone();
+                        };
+                        this.transition.in();
+                        this.event.subscribeOnce('transition_end', done, this);
+                        this._finished = true;
+                    }
                 }
-            } else {
-                this.wait += dt;
 
-                if (this.wait >= 2.0) {
-                    this.preloadDone();
-                }
+                this.progress = _MathUtils2.default.lerp(this.fromProgress, this.toProgress, this.t);
             }
-
-            this.progress = _MathUtils2.default.lerp(this.fromProgress, this.toProgress, this.t);
         };
 
         _this.loading = loadingFunc;
@@ -15560,6 +16058,7 @@ var ScintillaLoadingScreen = function (_Scene) {
             this.preloadingDone = false;
             this.ui.setSize(320, 240);
             this.ui.setViewportByAspectRatio(1.33333333333);
+            this.transition.settings.setInDuration(0.35);
         }
     }, {
         key: "start",
@@ -15628,14 +16127,40 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = PostPreloadingScene;
-function PostPreloadingScene(sceneManger) {
+
+var _TransitionBetweenScenes = __webpack_require__(/*! ./TransitionBetweenScenes */ "./scene/components/TransitionBetweenScenes.js");
+
+var _TransitionBetweenScenes2 = _interopRequireDefault(_TransitionBetweenScenes);
+
+var _TranstionBehavior = __webpack_require__(/*! ../../render/transition/TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+
+var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function PostPreloadingScene(sceneManger, transition) {
+
+    if (transition === undefined) transition = _TranstionBehavior2.default.NONE;
 
     sceneManger._scintillaLoading = false;
+    sceneManger._transition = transition;
 
     if (sceneManger.currentScene === undefined || sceneManger.currentScene === null) return;
 
-    if (sceneManger.onStartCallback) {
-        sceneManger.onStartCallback.call(sceneManger.currentScene, sceneManger.game);
+    function start() {
+
+        this._isTranistioning = false;
+
+        if (this.onStartCallback) {
+            this.onStartCallback.call(this.currentScene, this.game);
+        }
+    }
+
+    if (transition <= _TranstionBehavior2.default.NONE) {
+        start.call(sceneManger);
+    } else {
+
+        (0, _TransitionBetweenScenes2.default)(sceneManger, start.bind(sceneManger));
     }
 }
 
@@ -15676,7 +16201,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function PreUpdateScene(sceneManager) {
 
-      if (!sceneManager.game.systemInited || sceneManager._changeScene == null) return;
+      if (!sceneManager.game.systemInited || sceneManager._changeScene === null) return;
 
       (0, _ClearScene2.default)(sceneManager, sceneManager.game);
 
@@ -15719,25 +16244,43 @@ function PreUpdateScene(sceneManager) {
 
 
 Object.defineProperty(exports, "__esModule", {
-      value: true
+    value: true
 });
 exports.default = PreloadSceneComplete;
+
+var _TranstionBehavior = __webpack_require__(/*! ../../render/transition/TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+
+var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
+
+var _TransitionBetweenScenes = __webpack_require__(/*! ./TransitionBetweenScenes */ "./scene/components/TransitionBetweenScenes.js");
+
+var _TransitionBetweenScenes2 = _interopRequireDefault(_TransitionBetweenScenes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function PreloadSceneComplete() {
 
-      if (this._setup === false && this.onLoadingCallback) {
-            this.onLoadingCallback.call(this.currentScene, this.game);
-      }
+    if (this._setup === false && this.onLoadingCallback) {
+        this.onLoadingCallback.call(this.currentScene, this.game);
+    }
 
-      if (this._scintillaLoading) {
-            //this._scintillaLoading = false;
+    function start() {
+        if (this._scintillaLoading) {
             this._loadingPlaceHolder.start();
-      }
+        } else {
+            if (this.onStartCallback) {
+                this.onStartCallback.call(this.currentScene, this.game);
+            }
+        }
+    }
 
-      this._setup = true;
+    if (this._transition <= _TranstionBehavior2.default.NONE) {
+        start.call(this);
+    } else {
+        (0, _TransitionBetweenScenes2.default)(this, start.bind(this));
+    }
 
-      /*if (!this._scintillaLoading && this.onStartCallback) {
-          this.onStartCallback.call(this.currentScene, this.game);
-      }*/
+    this._setup = true;
 }
 
 /***/ }),
@@ -15790,16 +16333,29 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = SetScene;
-function SetScene(manager, sceneName, clearCache) {
 
-  if (!manager._scenes.has(sceneName)) throw new Error('SceneManager.set: Scene' + sceneName + ' does not exist.');
+var _TranstionBehavior = __webpack_require__(/*! ../../render/transition/TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+
+var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function SetScene(manager, sceneName, clearCache, type) {
+
+  if (!manager._scenes.has(sceneName)) throw new Error('SceneManager.set: Scene \'' + sceneName + '\' does not exist.');
 
   if (clearCache === undefined) {
     clearCache = false;
   }
+  if (type === undefined) {
+    type = _TranstionBehavior2.default.NONE;
+  }
 
+  manager._transition = type;
   manager._changeScene = sceneName;
   manager._clearCache = clearCache;
+
+  return manager;
 }
 
 /***/ }),
@@ -15832,13 +16388,11 @@ function SetupScene(sceneName) {
   this.onLoadingCallback = this.currentScene['loading'] || null;
   this.onLoadingRenderCallback = this.currentScene['loadingGUI'] || null;
 
-  var bothIsNull = this.onLoadingCallback == null && this.onLoadingRenderCallback == null;
+  var bothIsNull = this.onLoadingCallback === null && this.onLoadingRenderCallback === null;
 
-  if (this.onLoadingCallback == null || this.onLoadingRenderCallback == null) {
-
+  if (this.onLoadingCallback === null || this.onLoadingRenderCallback === null) {
     if (bothIsNull) {
       this._loadingPlaceHolder.init(this.currentScene);
-
       this._scintillaLoading = true;
     } else {
       this._scintillaLoading = false;
@@ -15857,6 +16411,43 @@ function SetupScene(sceneName) {
   this._currentSceneName = sceneName;
 
   this._setup = false;
+}
+
+/***/ }),
+
+/***/ "./scene/components/TransitionBetweenScenes.js":
+/*!*****************************************************!*\
+  !*** ./scene/components/TransitionBetweenScenes.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = TransitionBetweenScenes;
+
+var _TranstionBehavior = __webpack_require__(/*! ../../render/transition/TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+
+var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function TransitionBetweenScenes(sceneManager, delegate) {
+
+    var transit = sceneManager._transition;
+
+    sceneManager.game.system.transition.by(transit);
+    if (transit === _TranstionBehavior2.default.FADEINOUT) {
+        sceneManager.game.system.event.subscribeOnce('transition_pause_end', delegate);
+    } else {
+        sceneManager.game.system.event.subscribeOnce('transition_end', delegate);
+    }
+    sceneManager._transition = _TranstionBehavior2.default.NONE;
+    sceneManager._isTranistioning = true;
 }
 
 /***/ }),
@@ -16042,6 +16633,11 @@ var DataList = function () {
             return this.childs.indexOf(child) > -1;
         }
     }, {
+        key: 'hasAt',
+        value: function hasAt(index) {
+            return this.childs[index] !== undefined;
+        }
+    }, {
         key: 'empty',
         value: function empty() {
             return this.childs.length == 0;
@@ -16085,18 +16681,22 @@ var DataList = function () {
     }, {
         key: 'each',
         value: function each(callback) {
-            var params = [null];
+            var params = [];
 
             var content = this.childs;
+            var r = void 0;
 
-            for (var i = 0; i < arguments.length; i++) {
-                params.push(arguments[i + 1]);
+            for (var i = 1; i < arguments.length; i++) {
+                params.push(arguments[i]);
             }for (var _i = 0; _i < content.length; _i++) {
-                params[0] = _i;
-                var r = callback(content[_i], params);
-                if (r !== undefined) return r;
+                r = callback(content[_i], _i, params);
+                if (r !== undefined) {
+                    return r;
+                }
                 //break;
             }
+
+            return r;
         }
     }, {
         key: 'sort',
@@ -16161,6 +16761,11 @@ var DataList = function () {
         value: function reverse() {
             this.childs.reverse();
             return this;
+        }
+    }, {
+        key: 'content',
+        value: function content() {
+            return this.childs;
         }
     }, {
         key: 'size',
@@ -17818,7 +18423,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var Validate = {
     isFunction: function isFunction(value) {
-        return value instanceof Function;
+        // return (value instanceof Function);
+        return typeof value === "function" && typeof value.nodeType !== "number";
     },
     isClass: function isClass(value) {
         return !!(value && value.constructor && value.call && value.apply);
@@ -17891,6 +18497,167 @@ function DeepFreeze(obj) {
 
 /***/ }),
 
+/***/ "./utils/object/Extend.js":
+/*!********************************!*\
+  !*** ./utils/object/Extend.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = Extend;
+
+var _IsPlainObject = __webpack_require__(/*! ./IsPlainObject */ "./utils/object/IsPlainObject.js");
+
+var _IsPlainObject2 = _interopRequireDefault(_IsPlainObject);
+
+var _Validate = __webpack_require__(/*! ../Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// https://api.jquery.com/jQuery.extend/
+// Merge the contents of two or more objects together into the first object.
+function Extend() {
+
+    var options = void 0,
+        name = void 0,
+        src = void 0,
+        copy = void 0,
+        copyIsArray = void 0,
+        clone = void 0;
+    var target = arguments[0] || {};
+    var i = 1;
+    var length = arguments.length;
+    var deep = false;
+
+    // Handle a deep copy situation
+    if (typeof target === "boolean") {
+        deep = target;
+
+        // Skip the boolean and the target
+        target = arguments[i] || {};
+        i++;
+    }
+
+    // Handle case when target is a string or something (possible in deep copy)
+    if ((typeof target === "undefined" ? "undefined" : (0, _typeof3.default)(target)) !== "object" && !_Validate2.default.isFunction(target)) {
+        target = {};
+    }
+
+    // Extend scintilla itself if only one argument is passed
+    if (i === length) {
+        target = this;
+        i--;
+    }
+
+    for (; i < length; i++) {
+
+        // Only deal with non-null/undefined values
+        if ((options = arguments[i]) != null) {
+
+            for (name in options) {
+
+                src = target[name];
+                copy = options[name];
+
+                // Prevent never-ending loop
+                if (target === copy) {
+                    continue;
+                }
+
+                // Recurse if we're merging plain objects or arrays
+                if (deep && copy && ((0, _IsPlainObject2.default)(copy) || (copyIsArray = Array.isArray(copy)))) {
+
+                    if (copyIsArray) {
+                        copyIsArray = false;
+                        clone = src && Array.isArray(src) ? src : [];
+                    } else {
+                        clone = src && (0, _IsPlainObject2.default)(src) ? src : {};
+                    }
+
+                    // Never move original objects, clone them
+                    target[name] = Extend(deep, clone, copy);
+
+                    // Don't bring in undefined values
+                } else if (copy !== undefined) {
+                    target[name] = copy;
+                }
+            }
+        }
+    }
+
+    return target;
+}
+
+/***/ }),
+
+/***/ "./utils/object/IsPlainObject.js":
+/*!***************************************!*\
+  !*** ./utils/object/IsPlainObject.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = IsPlainObject;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/// From jQuery
+
+function HasOwn(classToType) {
+    return classToType.hasOwnProperty;
+}
+
+function IsPlainObject(obj) {
+
+    // Detect obvious negatives
+    if ((typeof obj === 'undefined' ? 'undefined' : (0, _typeof3.default)(obj)) !== 'object' || obj.nodeType || obj === obj.window) {
+        return false;
+    }
+
+    // Objects with no prototype (e.g., `Object.create( null )`) are plain
+    /*let proto = obj.getPrototypeOf;
+      if (!proto)
+        return true;*/
+
+    try {
+        // Objects with prototype are plain if they were constructed by a global Object function
+        //  //!HasOwn.call(proto, 'constructor');
+        if (obj.constructor && !{}.hasOwnProperty.call(obj.constructor.prototype, 'isPrototypeOf')) {
+            return false;
+        }
+    } catch (e) {
+        return false;
+    }
+
+    return true;
+}
+
+/***/ }),
+
 /***/ "./utils/object/MakeImmutable.js":
 /*!***************************************!*\
   !*** ./utils/object/MakeImmutable.js ***!
@@ -17939,52 +18706,6 @@ function MakeImmutable(value, deep) {
     }
 
     return value;
-}
-
-/***/ }),
-
-/***/ "./utils/object/ObjectExtend.js":
-/*!**************************************!*\
-  !*** ./utils/object/ObjectExtend.js ***!
-  \**************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = ObjectExtend;
-function ObjectExtend(source, target, deepCopy) {
-
-    var argsLength = arguments.length;
-    target = arguments[1] || {}, deepCopy = deepCopy || false;
-
-    for (var property in source) {
-
-        var src = source[property];
-        var dst = target[property];
-
-        if (deepCopy) {
-
-            // TODO
-            /*
-            if(	
-            x !== "super" && //Never clone the super referance
-            from[x] instanceof Function && //Only overwrite functions
-            !(from[x].prototype instanceof Class) //Never overwrite referances to classes
-            ){
-            //Never create circular super referances.
-            to[x] = from[x].super || superCopy(from, from[x]);
-            }
-            */
-
-        } else if (dst === undefined) {
-            target[property] = src;
-        }
-    }
 }
 
 /***/ }),

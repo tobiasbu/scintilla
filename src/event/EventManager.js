@@ -24,21 +24,41 @@ export default class EventManager {
         return signal;
     }
 
-    subscribe(eventName, func) {
+    subscribe(eventName, delegate, context, priority) {
 
-        let has = this._signalsMap.get(eventName);
+        let signal = this._signalsMap.get(eventName);
 
-        if (has === undefined || has === null) {
+        if (signal === undefined || signal === null) {
             console.warn("EventManager.subscribe: There is no registered event called \'" + eventName + '\'.');
             return this;
         }
 
-        if (!Validate.isFunction(func)) {
+        if (!Validate.isFunction(delegate)) {
             console.warn("EventManager.subscribe: The variable is not a function.");
             return this;
         }
 
-        has.subscribe(func);
+        signal.subscribe(delegate, context, priority);
+
+        return this;
+
+    } 
+
+    subscribeOnce(eventName, delegate, context, priority) {
+
+        let signal = this._signalsMap.get(eventName);
+
+        if (signal === undefined || signal === null) {
+            console.warn("EventManager.subscribeOnce: There is no registered event called \'" + eventName + '\'.');
+            return this;
+        }
+
+        if (!Validate.isFunction(delegate)) {
+            console.warn("EventManager.subscribeOnce: The variable \'" + eventName +"\' is not a function.");
+            return this;
+        }
+
+        signal.subscribeOnce(delegate, context, priority);
 
         return this;
 
@@ -51,16 +71,24 @@ export default class EventManager {
     */
     dispatch(eventName) {
 
-        let has = this._signalsMap.get(eventName);
+        let signal = this._signalsMap.get(eventName);
 
-        if (has === undefined || has === null) return this;
+        if (signal === undefined || signal === null) {
+            //console.warn("EventManager.dispatch: There is no registered event called \'" + eventName + '\'.');
+            return this;
+        }
+
 
         let args = (arguments.length > 1) ? [arguments[1]] : Array.apply(null, arguments);
 
-        has.dispatch(args);
+        signal.dispatch(args);
 
         return this;
 
+    }
+
+    has(eventName) {
+        return this._signalsMap.has(eventName);
     }
 
 } 

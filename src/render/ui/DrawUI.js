@@ -7,15 +7,12 @@ export default function DrawUI(gui, sceneManager) {
 
  
     // blend
-    //gui.context.globalCompositeOperation = 'source-over';
+    gui.context.globalCompositeOperation = 'source-over';
 
-    let clip = (gui.viewport.x !== 0 || gui.viewport.x !== 0 || gui.viewport.width !== gui.canvas.clientWidth || gui.viewport.height !== gui.canvas.clientHeight);
+    let clip = (gui.viewport.x !== 0 || gui.viewport.x !== 0 || gui.viewport.width !== gui.canvas.width || gui.viewport.height !== gui.canvas.height);
 
     if (clip)
     {
-        
-    
-
         gui.context.save();
         gui.context.beginPath();
         gui.context.rect(
@@ -50,8 +47,9 @@ export default function DrawUI(gui, sceneManager) {
         RenderScene(sceneManager, gui.draw);
 
 
-    if (clip)
+    if (clip) {
         gui.context.restore();
+    }
 
 
        

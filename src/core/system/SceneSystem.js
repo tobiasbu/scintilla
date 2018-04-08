@@ -2,13 +2,16 @@
 
 const SceneSystem = [
     'Cache',
-    //'Draw',
     'Loader',
     'EntityFactory',
+    'EntityHierarchy',
     'Camera',
     'SceneManager',
     'UserInterface',
-    'Transition'
-]
+    'Transition',
+    'EventManager'
+];
+
+Object.freeze(SceneSystem);
 
 export default SceneSystem;

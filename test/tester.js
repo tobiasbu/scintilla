@@ -3,10 +3,10 @@
 //var t = new Test();
 //t.log();
 
-//import scintilla from '../src/Scintilla'
+//import scintilla from '../src/Scintilla';
 
 
-//require('./scintilla.dev');
+//let scintilla = require('./scintilla.dev');
 
 var VIEW = {
     w : 640,
@@ -29,20 +29,17 @@ var config = {
 };
   
   var game = new scintilla.Game(config);
+game.render.layer.add('game');
 
   var scene = game.scene.new('scene');
-  //game.system.render.layer.add('gui');
 
   var x = 0;
   var camSpeed = 100;
 
 
-  console.log(scintilla.VERSION)
-
-
 scene.preload = function() {
-    this.load.setPath('assets/')
-    this.load.image('heroi','img/block.png');
+    this.load.setPath('assets/');
+    this.load.image('block','img/block.png');
     this.load.image('title','img/neof.png');
     this.load.tilemapJSON('tilemap','map/n_tilemap.json');
     this.load.webFont('font', 'google', 'Press Start 2P');
@@ -55,7 +52,7 @@ scene.preload = function() {
     anim.addFrame(64, 32, 32, 32);
     anim.addStrip(64,32,32,32, 4, 1);*/
     //game.load.text('fontie','https://fonts.googleapis.com/css?family=Arima+Madurai:300,400,500', true)
-}
+};
 
 var t = null;
 
@@ -100,16 +97,38 @@ var t = null;
 
 };*/
 
+var EntityTest = {
+    
+    myVariable : 123,
+    aString : 'asdasdasd',
+
+    start() {
+        this.modules.attach.sprite('block');
+    },
+    
+    update() {
+
+    }
+};
+
 scene.start = function() {
 
-    // Cria Objetos rápidos e predefinidos
+   
+   this.transition.settings.setOutDuration(0.5);
+   this.transition.settings.setEaseOutMethod(scintilla.Ease.Type.CUT, 3);
+   this.transition.out();
+   var obj = this.entity.create(EntityTest);
+   
+   obj.modules.get('render').layerID = 1;
+     // Cria Objetos rápidos e predefinidos
     var t = this.create.tilemap('tilemap');
     
     // Cria Prefabs, Find GameObject, acessa hierarquia de objetos
     //this.entity.create(HeroiPrefab);
   
-    t.origin.set(0,0)
-    t.angle = 0;
+    //t.origin.set(0,0);
+    //t.angle = 0;
+
     //t = this.create.sprite('test');
     //t.position.y = 100;
     
@@ -132,9 +151,8 @@ scene.update = function(dt) {
     time += dt;
 
     if (time >= 1 && !ok) {
-        this.transition.in();
+       
         ok = true;
-        console.log('Fade in started');
     }
 
     if (game.input.keyboard.press(scintilla.KeyCode.Right)) 

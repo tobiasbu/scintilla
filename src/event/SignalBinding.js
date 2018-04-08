@@ -2,16 +2,20 @@
 
 export default class SignalBinding {
     
-    constructor(signal, listener, listenerContext, priority) {
+    constructor(signal, listener, listenerContext, priority, once) {
 
         this._signal = signal;
         this._listener = listener;
-        this.context = listenerContext;
+        this._context = listenerContext;
         this._priority = priority || 0;
         this.active = true;
         this.args = undefined;
-        this._isOnce = false;
+        this._isOnce = once || false;
     }
+
+    get isOnce() {return this._isOnce;}
+    get listener() { return this._listener; }
+    get signal() {return this._signal;}
 
     execute(argsArray) {
         let handlerReturn, params;
@@ -19,20 +23,23 @@ export default class SignalBinding {
             if (this.active && !!this._listener) {
 
                 params = this.args ? this.args.concat(argsArray) : argsArray;
-                handlerReturn = this._listener.apply(this.context, params);
+                handlerReturn = this._listener.apply(this._context, params);
                 if (this._isOnce) {
                     this.detach();
+                   
                 }
 
             }
         return handlerReturn;
     }
 
-    get listener() { return this._listener; }
-    get signal() {return this._signal;}
+    
 
     detach() {
-        return this.isBound() ? this._signal.remove(this._listener, this.context) : null;
+        if (!this.isBound())
+            return;
+        this._signal.unsubscribe(this._listener, this._context);
+        
     }
 
      /**

@@ -5,7 +5,7 @@ import StartLoadAssets from "../../loader/components/StartLoadAssets";
 
 export default function PreUpdateScene(sceneManager) {
 
-    if (!sceneManager.game.systemInited || sceneManager._changeScene == null)
+    if (!sceneManager.game.systemInited || sceneManager._changeScene === null)
       return;
 
 

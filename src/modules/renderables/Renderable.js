@@ -12,7 +12,7 @@ export default class Renderable extends Module
         this._layerID = 0;
         this._depth = 0;
         this._alpha = 1;
-        this._depthDirty = true; 
+        this._depthSorting = 0;
         this._bounds = new BoundingBox();
         this._originInPixels = {x:0, y:0};
         this._originIsDirty = true;
@@ -25,10 +25,13 @@ export default class Renderable extends Module
     get layer() { return this._layerID; }
     get alpha() { return this._alpha; }
     set depth(value) {
-        if (value != this._depthSorting)
-        {
-            this._depthSorting = value;
-            this._depthDirty = true;
+
+        if (this.entity.game !== undefined) {
+            if (value !== this._depthSorting)
+            {
+                this._depthSorting = value;
+                this.entity.game.system.event.dispatch('__render_layersorting', this._layerID);
+            }
         }
         return this;
     }

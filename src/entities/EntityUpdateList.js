@@ -62,8 +62,8 @@ export default class EntityUpdateList {
 
     lateUpdate()
     {
-        let removeSize = this._destroyInstances.size;
-        let insertSize = this._pendingInstances.size;
+        let removeSize = this._destroyInstances.length;
+        let insertSize = this._pendingInstances.length;
         
         if (insertSize === 0 && removeSize === 0)
             return;
@@ -72,17 +72,24 @@ export default class EntityUpdateList {
         if (removeSize > 0)
             this._instances.eraseList(this._destroyInstances, removeSize);
 
+
         
-        /*this._pendingInstances.each(instance => {
+        /*let content = this._pendingInstances.content();
 
-            this.initializeModules(instance);
+        for (let i = 0; i < insertSize; i++) {
 
-            this._instances.push(instance);
-        })
+            let element = content[i];
+            this._instances.push(element);
+            this._pendingInstances.eraseAt(i);
+        }*/
+
+        this._instances.concat(this._pendingInstances, true);
+
+        /*    
 
         this._pendingInstances.clear();*/
 
-        this._instances.concat(this._pendingInstances, true);
+        //this._instances.concat(this._pendingInstances, true);
 
         this._pendingInstances.childs.length = 0;
         this._destroyInstances.childs.length = 0;

@@ -1,12 +1,12 @@
 
 const TransitionBehavior = {
     NONE : 0,
-    IN : 1,
-    OUT : 2,
-    INOUT : 3,
+    FADEIN : 1,
+    FADEOUT : 2,
+    FADEINOUT : 3,
     IDLE : 4,
 };
 
-Object.freeze(TransitionBehavior)
+Object.freeze(TransitionBehavior);
 
 export default TransitionBehavior;

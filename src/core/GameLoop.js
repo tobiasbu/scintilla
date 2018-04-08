@@ -86,13 +86,10 @@ export default class GameLoop {
 
     render(deltaTime) {
 
-
-
         BeginDrawRender(this.renderer);
 
         if (this.currentScene !== null || this.currentScene !== undefined)
         {
-
             // Scenes
             DrawRender(this.renderer, this.camera, deltaTime);
 
@@ -102,7 +99,6 @@ export default class GameLoop {
         }
 
         EndDrawRender(this.system.render);
-
 
         // Transition
         this.renderer.context.setTransform(1, 0, 0, 1, 0, 0);

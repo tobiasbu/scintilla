@@ -57,19 +57,19 @@ export default class TransitionSettings {
         return this; 
     }
 
-    setTiming(easingType, parameter) {
+    setEaseMethod(easingType, parameter) {
         this.setInTiming(easingType, parameter);
         this.setOutTiming(easingType, parameter);
         return this;
     }
 
-    setInTiming(easingType, parameter) {
+    setEaseInMethod(easingType, parameter) {
         this.timingInMethod = easingType;
         this.timingInArgument = parameter || 1;
         return this; 
     }
 
-    setOutTiming(easingType, parameter) {
+    setEaseOutMethod(easingType, parameter) {
         this.timingOutMethod = easingType;
         this.timingOutArgument = parameter || 1;
         return this; 

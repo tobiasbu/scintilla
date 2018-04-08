@@ -1,6 +1,5 @@
 import DataList from "../../structures/List";
 
-
 export default class RenderLayer { 
     
     constructor(game,layerName) {
@@ -22,58 +21,28 @@ export default class RenderLayer {
             return;
 
         this.renderList.push(renderer);
-       // this.renderer.__renderLayer = this;
         this.__isDirty = true;
 
     }
 
-    remove(renderer)
-    {
+    has(renderer) {
+        return this.renderList.indexOf(renderer) !== -1;
+    }
+
+    remove(renderer) {
         return this.renderList.remove(renderer);
     }
 
-    removeAt(index)
-    {
-        
+    removeAt(index) {
+        return this.renderList.eraseAt(index);
     }
 
-    at(index)
-    {
+    at(index)  {
         if (index < 0 || index >= this.__renderers.size)
         {
             throw new Error('RenderLayer.at: Renderer at '+ index +' does not exist in the render layer list: \"' + name + "\".");
         }
         return this.renderList.at(index);
-
-    }
-
-    sortDepth(a, b) { // sort ascending
-
-        return a._depthSorting - b._depthSorting;
-
-        /*this.__renderers.sort(
-
-          function(a, b) {
-      
-            if (a.depth > b.depth) {
-      
-              return 1;
-      
-            } else if (a.depth < b.depth) {
-      
-              return -1;
-      
-            } else {
-      
-              if (a.z > b.z) {
-                return 1;
-              } else {
-                return -1;
-              }
-      
-      
-            }
-          });*/
 
     }
 
@@ -95,3 +64,29 @@ export default class RenderLayer {
 }
 
 
+
+/*
+      this.__renderers.sort(
+
+          function(a, b) {
+      
+            if (a.depth > b.depth) {
+      
+              return 1;
+      
+            } else if (a.depth < b.depth) {
+      
+              return -1;
+      
+            } else {
+      
+              if (a.z > b.z) {
+                return 1;
+              } else {
+                return -1;
+              }
+      
+      
+            }
+          });
+*/
