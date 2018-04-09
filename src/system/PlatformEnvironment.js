@@ -1,6 +1,9 @@
 import DetectOS from "./DetectOS";
 import DetectBrowser from "./DetectBrowser";
+import FeatureDetection from "./FeatureDetection";
+import DetectAudioFeatures from "./DetectAudioFeatures";
 import DeepFreeze from "../utils/object/DeepFreeze";
+
 
 class PlatformEnvironment {
 
@@ -9,6 +12,9 @@ class PlatformEnvironment {
         this._userAgent = navigator.userAgent;
         this._osInfo = DetectOS(this._userAgent);
         this._browser = DetectBrowser(this._userAgent);
+        this._features = FeatureDetection(this._osInfo);
+        this._audio = DetectAudioFeatures(this._browser);
+
 
     }
 
@@ -16,22 +22,56 @@ class PlatformEnvironment {
         return this._userAgent;
     }
 
-    get browser() {
-        return this._browser.name;
-    }
-
-    get OS() {
+    get platformName() {
         return this._osInfo.name;
     }
 
-    supportSVG() {
-        return (typeof SVGRect !== undefined && document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#Image', '1.1')); 
+    get mobile() {
+        return this._osInfo.mobile;
     }
+
+    get desktop() {
+        return this._osInfo.desktop;
+    }
+
+    get os() {
+        return this._osInfo.os;
+    }
+
+    get environment() {
+        return this._osInfo.environment;
+    }
+
+    get browserName() {
+        return this._browser.name;
+    }
+
+    get browserVersion() {
+        return this._browser.version;
+    }
+
+    get features() {
+        return this._features;
+    }
+
+    get supportAudio() {
+        return this._audio.audioData;
+    }
+
+    get supportWebAudio() {
+        return this._audio.webAudio;
+    }
+
+    get audioFormats() {
+        return this._audio.format;
+    }
+
+
 
 }
 
-var Platform = new PlatformEnvironment();
+let Environment = new PlatformEnvironment();
 
-DeepFreeze(Platform);
+DeepFreeze(Environment);
 
-export default Platform;
+module.exports = Environment;

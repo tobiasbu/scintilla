@@ -2583,7 +2583,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var scintilla = scintilla || {
 
-  Platform: __webpack_require__(/*! ./system/PlatformEnvironment */ "./system/PlatformEnvironment.js"),
+  Environment: __webpack_require__(/*! ./system/PlatformEnvironment */ "./system/PlatformEnvironment.js"),
   Core: __webpack_require__(/*! ./core */ "./core/index.js"),
 
   // DATA STRUCTURES
@@ -2657,14 +2657,6 @@ var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _InitializeAudioSystem = __webpack_require__(/*! ./components/InitializeAudioSystem */ "./audio/components/InitializeAudioSystem.js");
-
-var _InitializeAudioSystem2 = _interopRequireDefault(_InitializeAudioSystem);
-
-var _System = __webpack_require__(/*! ../core/system/System */ "./core/system/System.js");
-
-var _System2 = _interopRequireDefault(_System);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var AudioManager = function () {
@@ -2733,35 +2725,28 @@ var AudioManager = function () {
                 }
             }
         }
-    }, {
-        key: "decode",
-        value: function decode(tag, sound) {
 
-            sound = sound || null;
-
-            var soundData = this.game.cache.getAssetInfo('sounds', tag);
-
-            if (soundData) {
-
-                if (!soundData.decoded) {
+        /*decode(tag, sound) {
+              sound = sound || null;
+              var soundData = this.game.cache.getAssetInfo('sounds', tag);
+              if (soundData) {
+                  if (!soundData.decoded) {
                     soundData.isDecoding = true;
-
-                    var self = this;
-
-                    try {
-
-                        this.context.decodeAudioData(soundData.data, function (buffer) {
-
-                            if (buffer) {
+                      var self = this;
+                      try {
+                          this.context.decodeAudioData(soundData.data, function (buffer) {
+                              if (buffer) {
                                 self.game.cache.soundDecoded(tag, buffer);
-                                console.log("decoded!");
+                                console.log("decoded!")
                                 //_this.onSoundDecode.dispatch(key, sound);
                             }
-                        });
-                    } catch (error) {}
+                          })
+                      } catch (error) {
+                      }
                 }
             }
-        }
+          }*/
+
     }, {
         key: "add",
         value: function add(tag, volume, loop, connect) {
@@ -2841,9 +2826,6 @@ var AudioManager = function () {
 }();
 
 exports.default = AudioManager;
-
-
-_System2.default.register('AudioManager', AudioManager, 'audio', _InitializeAudioSystem2.default);
 
 /***/ }),
 
@@ -3067,7 +3049,7 @@ var CacheManager = function () {
     this.json = new _Cache2.default();
     this.text = new _Cache2.default();
     this.svg = new _Cache2.default();
-    this.sound = new _Cache2.default();
+    this.audio = new _Cache2.default();
   }
 
   /*addTilemap(tag, dataFormat) {
@@ -3566,93 +3548,6 @@ exports.default = Config;
 
 /***/ }),
 
-/***/ "./core/CreateRender.js":
-/*!******************************!*\
-  !*** ./core/CreateRender.js ***!
-  \******************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = CreateRender;
-
-var _CanvasListManager = __webpack_require__(/*! ../render/canvas/CanvasListManager */ "./render/canvas/CanvasListManager.js");
-
-var _CanvasListManager2 = _interopRequireDefault(_CanvasListManager);
-
-var _CanvasInterpolation = __webpack_require__(/*! ../render/canvas/CanvasInterpolation */ "./render/canvas/CanvasInterpolation.js");
-
-var _CanvasInterpolation2 = _interopRequireDefault(_CanvasInterpolation);
-
-var _CanvasSmoothing = __webpack_require__(/*! ../render/canvas/CanvasSmoothing */ "./render/canvas/CanvasSmoothing.js");
-
-var _CanvasSmoothing2 = _interopRequireDefault(_CanvasSmoothing);
-
-var _Define = __webpack_require__(/*! ../render/Define */ "./render/Define.js");
-
-var _Render = __webpack_require__(/*! ../render/Render */ "./render/Render.js");
-
-var _Render2 = _interopRequireDefault(_Render);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function CreateRender(game, config) {
-
-  var render = new _Render2.default(game);
-
-  render.imageRendering = config.pixelated ? _Define.RenderingType.NEAREST : _Define.RenderingType.LINEAR;
-
-  if (config.canvas) {
-    render.canvas = config.canvas;
-  } else {
-    render.canvas = _CanvasListManager2.default.create(game, config.width, config.height);
-  }
-
-  // create context
-  render.context = render.canvas.getContext("2d", { alpha: false });
-  render.smoothing = new _CanvasSmoothing2.default(render.context);
-
-  if (config.pixelated) {
-
-    _CanvasInterpolation2.default.crisp(render.canvas);
-    render.smoothing.set(render.imageRendering);
-  }
-
-  if (config.doubleBuffer) {
-    render.doubleBuffer = true;
-    render._domCanvas = _CanvasListManager2.default.create(game, config.width, config.height);
-    render._domContext = render._domCanvas.getContext("2d", { alpha: false });
-  }
-
-  return render;
-
-  // default definition
-  /*let defaultDef = {
-    tabindex: '1',
-    width: width,
-    height: height,
-    id: Math.random().toString(36).substr(2, 9),
-    class: "",
-    container: "body",
-    style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
-  };
-      let CO = defaultDef;
-  let canvas;
-    canvas = document.createElement('canvas');
-  //canvas.parent = parent;
-  canvas.setAttribute("id", CO.id);
-  canvas.setAttribute("width", CO.width);
-  canvas.setAttribute("height", CO.height);
-  canvas.setAttribute("style", CO.style);*/
-}
-
-/***/ }),
-
 /***/ "./core/Game.js":
 /*!**********************!*\
   !*** ./core/Game.js ***!
@@ -3826,13 +3721,21 @@ var _InitializeSystems = __webpack_require__(/*! ./system/components/InitializeS
 
 var _InitializeSystems2 = _interopRequireDefault(_InitializeSystems);
 
-var _CreateRender = __webpack_require__(/*! ./CreateRender */ "./core/CreateRender.js");
+var _CreateRender = __webpack_require__(/*! ../render/components/CreateRender */ "./render/components/CreateRender.js");
 
 var _CreateRender2 = _interopRequireDefault(_CreateRender);
 
 var _AppendDOM = __webpack_require__(/*! ../dom/AppendDOM */ "./dom/AppendDOM.js");
 
 var _AppendDOM2 = _interopRequireDefault(_AppendDOM);
+
+var _AudioManager = __webpack_require__(/*! ../audio/AudioManager */ "./audio/AudioManager.js");
+
+var _AudioManager2 = _interopRequireDefault(_AudioManager);
+
+var _InitializeAudioSystem = __webpack_require__(/*! ../audio/components/InitializeAudioSystem */ "./audio/components/InitializeAudioSystem.js");
+
+var _InitializeAudioSystem2 = _interopRequireDefault(_InitializeAudioSystem);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3860,8 +3763,11 @@ function GameInitialize(game) {
     game.physics = new _physics2.default(game);
     game.input = new _Input2.default(game);
     game.time = new _GameTime2.default(game);
+    game.audio = new _AudioManager2.default(game);
 
     (0, _InitializeSystems2.default)(game, render);
+
+    _InitializeAudioSystem2.default.call(game.audio);
 
     game.input.init();
     game.time.init(game.system.loop);
@@ -7299,6 +7205,224 @@ exports.default = AssetTypeHandler;
 
 /***/ }),
 
+/***/ "./loader/assets/AudioFile.js":
+/*!************************************!*\
+  !*** ./loader/assets/AudioFile.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
+
+var _File3 = _interopRequireDefault(_File2);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
+
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
+
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
+
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
+
+var _FindAudioURLPath = __webpack_require__(/*! ./FindAudioURLPath */ "./loader/assets/FindAudioURLPath.js");
+
+var _FindAudioURLPath2 = _interopRequireDefault(_FindAudioURLPath);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+var _PlatformEnvironment = __webpack_require__(/*! ../../system/PlatformEnvironment */ "./system/PlatformEnvironment.js");
+
+var _PlatformEnvironment2 = _interopRequireDefault(_PlatformEnvironment);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AudioFile = function (_File) {
+    (0, _inherits3.default)(AudioFile, _File);
+
+    function AudioFile(tag, url, path, xhrSettings, context) {
+        (0, _classCallCheck3.default)(this, AudioFile);
+
+
+        var assetConfig = {
+            tag: tag,
+            type: _AssetsType2.default.audio,
+            ext: _ObjectGet2.default.value(url, 'type', ''),
+            responseType: 'arraybuffer',
+            url: _ObjectGet2.default.value(url, 'uri', url),
+            path: path,
+            xhrSettings: xhrSettings
+        };
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (AudioFile.__proto__ || (0, _getPrototypeOf2.default)(AudioFile)).call(this, assetConfig));
+
+        _this.context = context;
+
+        return _this;
+    }
+
+    (0, _createClass3.default)(AudioFile, [{
+        key: "onProcessing",
+        value: function onProcessing(processingCallback) {
+            this.state = _LoaderState2.default.PROCESSING;
+
+            var self = this;
+
+            // interesting read https://github.com/WebAudio/web-audio-api/issues/1305
+            this.context.decodeAudioData(this.xhrRequest.response, function (audioBuffer) {
+                self.data = audioBuffer;
+                self.onDone();
+                processingCallback(self);
+            }, function (e) {
+                console.error('AudioFile.onProcessing: Failed to decode audio data of the file \'' + self.tag + '\':', e.message);
+                self.state = _LoaderState2.default.ERROR;
+                processingCallback(self);
+            });
+
+            this.context = null;
+        }
+    }], [{
+        key: "create",
+        value: function create(loader, tag, urls, config, xhrSettings) {
+
+            //var audioConfig = game.config.audio;
+
+            /*if ((audioConfig && audioConfig.noAudio))
+            {
+                console.info('Skipping loading audio \'' + key + '\' since sounds are disabled.');
+                return null;
+            }*/
+
+            if (!_PlatformEnvironment2.default.supportWebAudio && !_PlatformEnvironment2.default.supportAudio) {
+                return null;
+            }
+
+            var url = (0, _FindAudioURLPath2.default)(urls);
+
+            if (!url) {
+                console.warn('AudioFile.create: URL is not supported for audio file \'' + tag + '\'.');
+                return null;
+            }
+
+            //if (deviceAudio.webAudio && !(audioConfig && audioConfig.disableWebAudio))
+            //{
+            return new AudioFile(tag, url, loader.path, xhrSettings, game.audio.context);
+            //}
+            /*else
+            {
+                return new HTML5AudioFile(key, url, loader.path, config, game.sound.locked);
+            }*/
+        }
+    }]);
+    return AudioFile;
+}(_File3.default);
+
+exports.default = AudioFile;
+
+
+_AssetTypeHandler2.default.register('audio', function (tag, url, path, xhrSettings) {
+
+    var audio = AudioFile.create(this, tag, url, config, xhrSettings);
+
+    if (audio) {
+        _AddAsset2.default.call(this, audio);
+    }
+
+    return this;
+});
+
+module.exports = AudioFile;
+
+/***/ }),
+
+/***/ "./loader/assets/FindAudioURLPath.js":
+/*!*******************************************!*\
+  !*** ./loader/assets/FindAudioURLPath.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = FindAudioURLPath;
+
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
+
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
+
+var _PlatformEnvironment = __webpack_require__(/*! ../../system/PlatformEnvironment */ "./system/PlatformEnvironment.js");
+
+var _PlatformEnvironment2 = _interopRequireDefault(_PlatformEnvironment);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// based on phaser - https://github.com/photonstorm/phaser/blob/src/loader/filetypes/AudioFile.js
+function FindAudioURLPath(urls) {
+    if (urls.constructor !== Array) urls = [urls];
+
+    for (var i = 0; i < urls.length; i++) {
+        var url = _ObjectGet2.default.value(urls[i], 'uri', urls[i]);
+
+        if (url.indexOf('blob:') === 0 || url.indexOf('data:') === 0) {
+            return url;
+        }
+
+        var type = url.match(/\.([a-zA-Z0-9]+)($|\?)/);
+        type = _ObjectGet2.default.value(urls[i], 'type', type ? type[1] : '').toLowerCase();
+
+        if (_PlatformEnvironment2.default.audioFormats[type]) {
+            return {
+                uri: url,
+                type: type
+            };
+        }
+    }
+
+    return null;
+}
+
+/***/ }),
+
 /***/ "./loader/assets/ImageFile.js":
 /*!************************************!*\
   !*** ./loader/assets/ImageFile.js ***!
@@ -8286,6 +8410,7 @@ _AssetTypeHandler2.default.register('webFont', function (tag, provider, fontFami
 module.exports = {
     AssetsTypeHandler: __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js"),
     ImageFile: __webpack_require__(/*! ./ImageFile */ "./loader/assets/ImageFile.js"),
+    AudioFile: __webpack_require__(/*! ./AudioFile */ "./loader/assets/AudioFile.js"),
     SVGFile: __webpack_require__(/*! ./SVGFile */ "./loader/assets/SVGFile.js"),
     TextFile: __webpack_require__(/*! ./TextFile */ "./loader/assets/TextFile.js"),
     ScriptFile: __webpack_require__(/*! ./ScriptFile */ "./loader/assets/ScriptFile.js"),
@@ -8672,27 +8797,16 @@ function ProcessDoneAssets() {
         default:
           break;
 
+        case _AssetsType2.default.svg:
         case _AssetsType2.default.image:
           {
             cache.image.add(file.tag, file.data);
             break;
           }
-        case _AssetsType2.default.svg:
-          {
-            cache.svg.add(file.tag, file.data);
-            break;
-          }
+
         case _AssetsType2.default.audio:
           {
-
-            file.data = requestXHR.response;
-
-            cache.addSound(file.tag, file.url, file.data, true);
-
-            if (file.autoDecode) {
-              this.game.sound.decode(file.tag);
-            }
-
+            cache.audio.add(file.tag, file.data);
             break;
           }
         case _AssetsType2.default.json:
@@ -13310,6 +13424,102 @@ function BeginDrawRender(render) {
 
 /***/ }),
 
+/***/ "./render/components/CreateRender.js":
+/*!*******************************************!*\
+  !*** ./render/components/CreateRender.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = CreateRender;
+
+var _CanvasListManager = __webpack_require__(/*! ../canvas/CanvasListManager */ "./render/canvas/CanvasListManager.js");
+
+var _CanvasListManager2 = _interopRequireDefault(_CanvasListManager);
+
+var _CanvasInterpolation = __webpack_require__(/*! ../canvas/CanvasInterpolation */ "./render/canvas/CanvasInterpolation.js");
+
+var _CanvasInterpolation2 = _interopRequireDefault(_CanvasInterpolation);
+
+var _CanvasSmoothing = __webpack_require__(/*! ../canvas/CanvasSmoothing */ "./render/canvas/CanvasSmoothing.js");
+
+var _CanvasSmoothing2 = _interopRequireDefault(_CanvasSmoothing);
+
+var _Define = __webpack_require__(/*! ../Define */ "./render/Define.js");
+
+var _Render = __webpack_require__(/*! ../Render */ "./render/Render.js");
+
+var _Render2 = _interopRequireDefault(_Render);
+
+var _PlatformEnvironment = __webpack_require__(/*! ../../system/PlatformEnvironment */ "./system/PlatformEnvironment.js");
+
+var _PlatformEnvironment2 = _interopRequireDefault(_PlatformEnvironment);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function CreateRender(game, config) {
+
+  if (!_PlatformEnvironment2.default.features.canvas) {
+    throw new Error('Game.CreateRender: Could not create Canvas element. Canvas is not supported in your platform.');
+  }
+
+  var render = new _Render2.default(game);
+
+  render.imageRendering = config.pixelated ? _Define.RenderingType.NEAREST : _Define.RenderingType.LINEAR;
+
+  if (config.canvas) {
+    render.canvas = config.canvas;
+  } else {
+    render.canvas = _CanvasListManager2.default.create(game, config.width, config.height);
+  }
+
+  // create context
+  render.context = render.canvas.getContext("2d", { alpha: false });
+  render.smoothing = new _CanvasSmoothing2.default(render.context);
+
+  // set pixelated
+  if (config.pixelated) {
+
+    _CanvasInterpolation2.default.crisp(render.canvas);
+    render.smoothing.set(render.imageRendering);
+  }
+
+  if (config.doubleBuffer) {
+    render.doubleBuffer = true;
+    render._domCanvas = _CanvasListManager2.default.create(game, config.width, config.height);
+    render._domContext = render._domCanvas.getContext("2d", { alpha: false });
+  }
+
+  return render;
+
+  // default definition
+  /*let defaultDef = {
+    tabindex: '1',
+    width: width,
+    height: height,
+    id: Math.random().toString(36).substr(2, 9),
+    class: "",
+    container: "body",
+    style: "padding: 0;margin: auto;display: block;top: 0; bottom: 0;left: 0;right: 0;border:1px solid #d3d3d3;background-color: #f1f1f1;"
+  };
+      let CO = defaultDef;
+  let canvas;
+    canvas = document.createElement('canvas');
+  //canvas.parent = parent;
+  canvas.setAttribute("id", CO.id);
+  canvas.setAttribute("width", CO.width);
+  canvas.setAttribute("height", CO.height);
+  canvas.setAttribute("style", CO.style);*/
+}
+
+/***/ }),
+
 /***/ "./render/components/DrawRender.js":
 /*!*****************************************!*\
   !*** ./render/components/DrawRender.js ***!
@@ -15068,8 +15278,6 @@ function UpdateUIMatrix(gui) {
     gui.matrix.setIdentity().scale(gui.pixelUnit.x, gui.pixelUnit.y).translate(gui.viewport.x, gui.viewport.y);
 
     gui._isDirty = false;
-
-    console.log(gui.matrix);
 }
 
 /***/ }),
@@ -17652,6 +17860,83 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./system/DetectAudioFeatures.js":
+/*!***************************************!*\
+  !*** ./system/DetectAudioFeatures.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DetectAudioFeatures;
+function DetectAudioFeatures(browser) {
+
+    var audioFeatures = {
+        webAudio: false,
+        audioData: false,
+        format: {
+            ogg: false,
+            mp3: false,
+            wav: false,
+            webm: false,
+            dolby: false,
+            opus: false
+        }
+    };
+
+    audioFeatures.audioData = !!window['Audio'];
+    audioFeatures.webAudio = !!(window['AudioContext'] || window['webkitAudioContext']);
+
+    // test if we can play audio in the current document
+
+    var element = document.createElement('audio');
+    var result = !!element.canPlayType;
+
+    if (result) {
+
+        try {
+            if (element.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, '')) audioFeatures.format.ogg = true;
+
+            if (element.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/, '') || element.canPlayType('audio/opus;').replace(/^no$/, '')) audioFeatures.format.opus = true;
+
+            if (element.canPlayType('audio/mpeg;').replace(/^no$/, '')) audioFeatures.format.mp3 = true;
+
+            //  Mimetypes accepted:
+            //  developer.mozilla.org/En/Media_formats_supported_by_the_audio_and_video_elements
+            //  bit.ly/iphoneoscodecs
+            if (element.canPlayType('audio/wav; codecs="1"').replace(/^no$/, '')) audioFeatures.format.wav = true;
+
+            if (element.canPlayType('audio/x-m4a;') || element.canPlayType('audio/aac;').replace(/^no$/, '')) audioFeatures.format.m4a = true;
+
+            if (element.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '')) audioFeatures.format.webm = true;
+
+            if (element.canPlayType('audio/mp4;codecs="ec-3"') !== '') {
+                if (browser.manufacturer.edge) {
+                    audioFeatures.format.dolby = true;
+                } else if (browser.manufacturer.safari && browser.version >= 9) {
+                    if (/Mac OS X (\d+)_(\d+)/.test(navigator.userAgent)) {
+                        var major = parseInt(RegExp.$1, 10);
+                        var minor = parseInt(RegExp.$2, 10);
+
+                        if (major === 10 && minor >= 11 || major > 10) {
+                            audioFeatures.format.dolby = true;
+                        }
+                    }
+                }
+            }
+        } catch (exception) {}
+    }
+
+    return audioFeatures;
+}
+
+/***/ }),
+
 /***/ "./system/DetectBrowser.js":
 /*!*********************************!*\
   !*** ./system/DetectBrowser.js ***!
@@ -17851,10 +18136,10 @@ function DetectOS(userAgent) {
 
 /***/ }),
 
-/***/ "./system/PlatformEnvironment.js":
-/*!***************************************!*\
-  !*** ./system/PlatformEnvironment.js ***!
-  \***************************************/
+/***/ "./system/FeatureDetection.js":
+/*!************************************!*\
+  !*** ./system/FeatureDetection.js ***!
+  \************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17868,6 +18153,56 @@ Object.defineProperty(exports, "__esModule", {
 var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
 
 var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = FeatureDetection;
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function FeatureDetection(os) {
+
+    var features = {
+        canvas: false,
+        svg: false,
+        file: false,
+        fileSystem: false,
+        worker: false, // computationally expensive tasks
+        pointerLock: false, // restrict mouse movement to an element
+        vibration: false
+    };
+
+    features.canvas = !!window['CanvasRenderingContext2D'] || os.environment.cocoonJS;
+
+    features.file = !!window['File'] && !!window['FileReader'] && !!window['FileList'] && !!window['Blob'];
+    features.fileSystem = !!window['requestFileSystem'];
+
+    features.worker = !!window['Worker'];
+
+    features.pointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+
+    features.svg = (typeof SVGRect === 'undefined' ? 'undefined' : (0, _typeof3.default)(SVGRect)) !== undefined && document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#Image', '1.1');
+
+    window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
+    navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+
+    if (navigator.vibrate) {
+        features.vibration = true;
+    }
+
+    return features;
+}
+
+/***/ }),
+
+/***/ "./system/PlatformEnvironment.js":
+/*!***************************************!*\
+  !*** ./system/PlatformEnvironment.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
@@ -17885,6 +18220,14 @@ var _DetectBrowser = __webpack_require__(/*! ./DetectBrowser */ "./system/Detect
 
 var _DetectBrowser2 = _interopRequireDefault(_DetectBrowser);
 
+var _FeatureDetection = __webpack_require__(/*! ./FeatureDetection */ "./system/FeatureDetection.js");
+
+var _FeatureDetection2 = _interopRequireDefault(_FeatureDetection);
+
+var _DetectAudioFeatures = __webpack_require__(/*! ./DetectAudioFeatures */ "./system/DetectAudioFeatures.js");
+
+var _DetectAudioFeatures2 = _interopRequireDefault(_DetectAudioFeatures);
+
 var _DeepFreeze = __webpack_require__(/*! ../utils/object/DeepFreeze */ "./utils/object/DeepFreeze.js");
 
 var _DeepFreeze2 = _interopRequireDefault(_DeepFreeze);
@@ -17899,37 +18242,79 @@ var PlatformEnvironment = function () {
         this._userAgent = navigator.userAgent;
         this._osInfo = (0, _DetectOS2.default)(this._userAgent);
         this._browser = (0, _DetectBrowser2.default)(this._userAgent);
+        this._features = (0, _FeatureDetection2.default)(this._osInfo);
+        this._audio = (0, _DetectAudioFeatures2.default)(this._browser);
     }
 
     (0, _createClass3.default)(PlatformEnvironment, [{
-        key: "supportSVG",
-        value: function supportSVG() {
-            return (typeof SVGRect === "undefined" ? "undefined" : (0, _typeof3.default)(SVGRect)) !== undefined && document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#Image', '1.1');
-        }
-    }, {
         key: "info",
         get: function get() {
             return this._userAgent;
         }
     }, {
-        key: "browser",
+        key: "platformName",
+        get: function get() {
+            return this._osInfo.name;
+        }
+    }, {
+        key: "mobile",
+        get: function get() {
+            return this._osInfo.mobile;
+        }
+    }, {
+        key: "desktop",
+        get: function get() {
+            return this._osInfo.desktop;
+        }
+    }, {
+        key: "os",
+        get: function get() {
+            return this._osInfo.os;
+        }
+    }, {
+        key: "environment",
+        get: function get() {
+            return this._osInfo.environment;
+        }
+    }, {
+        key: "browserName",
         get: function get() {
             return this._browser.name;
         }
     }, {
-        key: "OS",
+        key: "browserVersion",
         get: function get() {
-            return this._osInfo.name;
+            return this._browser.version;
+        }
+    }, {
+        key: "features",
+        get: function get() {
+            return this._features;
+        }
+    }, {
+        key: "supportAudio",
+        get: function get() {
+            return this._audio.audioData;
+        }
+    }, {
+        key: "supportWebAudio",
+        get: function get() {
+            return this._audio.webAudio;
+        }
+    }, {
+        key: "audioFormats",
+        get: function get() {
+            return this._audio.format;
         }
     }]);
     return PlatformEnvironment;
 }();
 
-var Platform = new PlatformEnvironment();
+var Environment = new PlatformEnvironment();
 
-(0, _DeepFreeze2.default)(Platform);
+(0, _DeepFreeze2.default)(Environment);
 
-exports.default = Platform;
+module.exports = Environment;
 
 /***/ }),
 

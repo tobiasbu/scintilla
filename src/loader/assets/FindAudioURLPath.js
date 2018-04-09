@@ -1,8 +1,8 @@
 import ObjectGet from "../../utils/object/ObjectGet";
-
+import Environment from '../../system/PlatformEnvironment';
 
 // based on phaser - https://github.com/photonstorm/phaser/blob/src/loader/filetypes/AudioFile.js
-export default function FindAudioURLPath(game, urls)
+export default function FindAudioURLPath(urls)
 {
     if (urls.constructor !== Array)
         urls = [urls];
@@ -19,7 +19,7 @@ export default function FindAudioURLPath(game, urls)
         var type = url.match(/\.([a-zA-Z0-9]+)($|\?)/);
         type = ObjectGet.value(urls[i], 'type', type ? type[1] : '').toLowerCase();
 
-        if (game.device.audio[type])
+        if (Environment.audioFormats[type])
         {
             return {
                 uri: url,

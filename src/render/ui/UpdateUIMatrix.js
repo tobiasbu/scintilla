@@ -9,7 +9,4 @@ export default function UpdateUIMatrix(gui) {
     .translate(gui.viewport.x, gui.viewport.y);
 
     gui._isDirty = false;
-
-    console.log(gui.matrix);
-
 }

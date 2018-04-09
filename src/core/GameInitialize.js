@@ -2,8 +2,10 @@ import Physics from "../physics/physics";
 import Input from "../input/Input";
 import GameTime from "../time/GameTime";
 import InitializeSystems from "./system/components/InitializeSystems";
-import CreateRender from "./CreateRender";
 import AppendDOM from "../dom/AppendDOM";
+import AudioManager from "../audio/AudioManager";
+import InitializeAudioSystem from "../audio/components/InitializeAudioSystem";
+import InitializeRender from "../render/components/InitializeRender";
 
   /**
     * Initialize engine
@@ -16,7 +18,7 @@ export default function GameInitialize(game) {
     if (game.systemInited)
         return;
 
-    let render = CreateRender(game, game.config);
+    let render = InitializeRender(game, game.config);
  
     let canvas = render.canvas;
 
@@ -31,8 +33,11 @@ export default function GameInitialize(game) {
     game.physics = new Physics(game);
     game.input = new Input(game);
     game.time = new GameTime(game);
+    game.audio = new AudioManager(game);
 
     InitializeSystems(game, render);
+
+    InitializeAudioSystem.call(game.audio);
 
     game.input.init();
     game.time.init(game.system.loop);

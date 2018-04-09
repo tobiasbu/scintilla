@@ -23,7 +23,7 @@ import Extend from './utils/object/Extend';
 */
 var scintilla = scintilla || {
   
-  Platform : require('./system/PlatformEnvironment'),
+  Environment : require('./system/PlatformEnvironment'),
   Core : require('./core'),
 
   // DATA STRUCTURES

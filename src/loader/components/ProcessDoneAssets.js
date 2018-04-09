@@ -25,25 +25,14 @@ export default function ProcessDoneAssets() {
           default:
             break;
 
+          case AssetsType.svg: 
           case AssetsType.image: {
             cache.image.add(file.tag,file.data);
             break;
           }
-          case AssetsType.svg: {
-            cache.svg.add(file.tag, file.data);
-            break;
-          }
+
           case AssetsType.audio: {
-
-            file.data = requestXHR.response;
-
-            cache.addSound(file.tag,file.url,file.data,true);
-
-            if (file.autoDecode)
-            {
-                this.game.sound.decode(file.tag);
-            }
-
+            cache.audio.add(file.tag, file.data);
             break;
           }
           case AssetsType.json: {

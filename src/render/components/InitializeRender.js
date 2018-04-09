@@ -1,10 +1,16 @@
-import CanvasManager from "../render/canvas/CanvasListManager";
-import CanvasInterpolation from "../render/canvas/CanvasInterpolation";
-import CanvasSmoothing from "../render/canvas/CanvasSmoothing";
-import { RenderingType } from "../render/Define";
-import Render from "../render/Render";
+import CanvasManager from "../canvas/CanvasListManager";
+import CanvasInterpolation from "../canvas/CanvasInterpolation";
+import CanvasSmoothing from "../canvas/CanvasSmoothing";
+import { RenderingType } from "../Define";
+import Render from "../Render";
+import Environment from '../../system/PlatformEnvironment';
 
-export default function CreateRender(game, config) {
+export default function InitializeRender(game, config) {
+
+  if (!Environment.features.canvas) {
+    throw new Error('Game.CreateRender: Could not create Canvas element. Canvas is not supported in your platform.');
+  }
+
 
   let render = new Render(game);
 
@@ -20,6 +26,7 @@ export default function CreateRender(game, config) {
     render.context = render.canvas.getContext("2d", { alpha: false });  
     render.smoothing = new CanvasSmoothing(render.context);
 
+    // set pixelated
     if (config.pixelated) {
       
       CanvasInterpolation.crisp(render.canvas);

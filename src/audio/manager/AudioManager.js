@@ -1,5 +1,4 @@
-import InitializeAudioSystem from "./components/InitializeAudioSystem";
-import System from "../core/system/System";
+import DataList from "../structures/List";
 
 export default class AudioManager {
 
@@ -7,67 +6,21 @@ export default class AudioManager {
 
         this.game = game;
 
-        this.webAudio = false;
-        this.context = null;
-        this.noAudio = false;
+        this._soundCache = game.system.cache.sound;
+        this._noAudio = false;
+        this._sounds = new DataList();
+        this._system = null;
 
-        this.channels = 24;
-
-
-        this.masterVolume = null;
         this.volume = 1;
-        var _sounds = [];
+        this.mute = false;
+        this.pauseOnBlur = true;
+        this.masterVolume = null;
+        
+        
     }
 
-    getSounds() {
 
-        return _sounds;
-
-    }
-
-    stopAll() {
-
-        if (this.noAudio) {
-            return;
-        }
-
-        for (var i = 0; i < _sounds.length; i++) {
-            if (_sounds[i]) {
-                _sounds[i].stop();
-            }
-        }
-
-    }
-
-    pauseAll() {
-
-        if (this.noAudio) {
-            return;
-        }
-
-        for (var i = 0; i < _sounds.length; i++) {
-            if (_sounds[i]) {
-                _sounds[i].pause();
-            }
-        }
-
-    };
-
-    resumeAll() {
-
-        if (this.noAudio) {
-            return;
-        }
-
-        for (var i = 0; i < _sounds.length; i++) {
-            if (_sounds[i]) {
-                _sounds[i].resume();
-            }
-        }
-
-    };
-
-    decode(tag, sound) {
+    /*decode(tag, sound) {
 
         sound = sound || null;
 
@@ -98,9 +51,9 @@ export default class AudioManager {
             }
         }
 
-    }
+    }*/
 
-    add(tag, volume, loop, connect) {
+    /*add(tag, volume, loop, connect) {
 
         if (volume === undefined) {
             volume = 1;
@@ -118,9 +71,12 @@ export default class AudioManager {
 
         return sound;
 
-    }
+    }*/
 
     play(tag, volume, loop) {
+
+        if (this._noAudio)
+            return;
 
         var sound = this.add(tag, volume, loop);
 
@@ -130,17 +86,6 @@ export default class AudioManager {
 
     }
 
-    update() {
-
-        if (this.noAudio) {
-            return;
-        }
-
-        for (var i = 0; i < _sounds.length; i++) {
-            _sounds[i].update();
-        }
-
-    }
 
     remove(sound) {
 
@@ -176,6 +121,47 @@ export default class AudioManager {
 
     }
 
+    topAll() {
+
+        if (this.noAudio) {
+            return;
+        }
+
+        for (var i = 0; i < _sounds.length; i++) {
+            if (_sounds[i]) {
+                _sounds[i].stop();
+            }
+        }
+
+    }
+
+    pauseAll() {
+
+        if (this.noAudio) {
+            return;
+        }
+
+        for (var i = 0; i < _sounds.length; i++) {
+            if (_sounds[i]) {
+                _sounds[i].pause();
+            }
+        }
+
+    }
+
+    resumeAll() {
+
+        if (this.noAudio) {
+            return;
+        }
+
+        for (var i = 0; i < _sounds.length; i++) {
+            if (_sounds[i]) {
+                _sounds[i].resume();
+            }
+        }
+
+    }
+
 }
 
-System.register('AudioManager', AudioManager, 'audio', InitializeAudioSystem);

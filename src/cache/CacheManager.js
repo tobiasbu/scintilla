@@ -36,7 +36,7 @@ constructor(game) {
   this.json = new Cache();
   this.text = new Cache();
   this.svg = new Cache();
-  this.sound = new Cache();
+  this.audio = new Cache();
 
 
 }

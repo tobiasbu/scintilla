@@ -32,6 +32,8 @@ var game = new scintilla.Game(config);
 game.render.layer.add('game');
 game.render.layer.add('effects');
 
+console.log(scintilla.Environment.info);
+
 function SceneTitle() {
     this.preload = function() {
         this.load.setPath('assets/');
@@ -39,6 +41,7 @@ function SceneTitle() {
         this.load.image('title','img/n_title.png');
         this.load.tilemapJSON('tilemap','map/n_tilemap.json');
         this.load.webFont('font', 'google', 'Press Start 2P');
+        this.load.audio('titleMusic', 'sfx/n_title.ogg');
     };
 
     this.start = function() {
