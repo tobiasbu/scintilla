@@ -15,5 +15,5 @@ export default function CreateWebAudioContext(audioSystem) {
 
     audioSystem.destination = audioSystem.masterVolume;
 
-    audioSystem.locked = this.context.state === 'suspended' && 'ontouchstart' in window;
+    audioSystem.locked = audioSystem.context.state === 'suspended' && 'ontouchstart' in window;
 }

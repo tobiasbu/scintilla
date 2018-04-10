@@ -12,7 +12,7 @@ export default function InitializeLoader() {
     this._successFiles = new DataSet();
     this._failedFiles = new DataSet();
     this._processedFiles = new DataSet();
-    this.event = new EventManager();
+    this.events = new EventManager();
 
     this._filesQueueCount = 0;
     this._loadedFilesCount = 0;

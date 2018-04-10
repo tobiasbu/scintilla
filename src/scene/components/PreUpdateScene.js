@@ -27,6 +27,21 @@ export default function PreUpdateScene(sceneManager) {
         sceneManager.game.system.load.reset();
         sceneManager.onPreloadCallback.call(sceneManager.currentScene, sceneManager.game);
 
+         // should we run the loading screen
+        let bothIsNull = (sceneManager.onLoadingCallback === null && sceneManager.onLoadingRenderCallback === null);
+
+       
+        if (sceneManager.onLoadingCallback === null || sceneManager.onLoadingRenderCallback === null)
+        {
+          if (bothIsNull && sceneManager.game.system.load.totalQueuedFiles > 0)
+          {
+            sceneManager._loadingPlaceHolder.init(sceneManager.currentScene);
+            sceneManager._scintillaLoading = true;
+          } else {
+            sceneManager._scintillaLoading = false;
+          }
+        }
+
         if (sceneManager.game.system.load.totalQueuedFiles === 0)
         {
           PreloadSceneComplete.call(sceneManager);

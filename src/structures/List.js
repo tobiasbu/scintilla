@@ -108,21 +108,50 @@ export default class DataList
         return child;
     }
 
-    eraseList(listToRemove, size){
-        
-        if (size === undefined) size = listToRemove.size;
+    eraseList(listToRemove, size, destroy){
 
-        for (let i = 0; i < size; i++)
-        {
-            var child = listToRemove.childs[i];
-            this.erase(child);
-            /*let child = this.listToRemove[i];
-            let index = this._instances.indexOf(gameObject);
+        if (destroy === undefined) destroy = false;
 
-            if (index > -1)
-               this._instances.splice(index, 1);*/
+        if (Array.isArray(listToRemove)) {
+            if (size === undefined) size = listToRemove.length;
+
+            for (let i = 0; i < size; i++)
+            {
+                let child = listToRemove[i];
+                this.erase(child);           
+            }
+
+        } else {
+            if (size === undefined) size = listToRemove.size;
+
+            for (let i = 0; i < size; i++)
+            {
+                let child = listToRemove.childs[i];
+                this.erase(child);           
+            }
+        }        
+    }
+
+    deleteIndexesList(listToRemove) {
+
+        let size = listToRemove.length;
+
+        if (Array.isArray(listToRemove)) {
             
+            for (let i = 0; i < size; i++)
+            {
+                let index = listToRemove[i];
+                this.eraseAt(index);   
+            }
+
+        } else {
+            for (let i = 0; i < size; i++)
+            {
+                let index = listToRemove.childs[i];
+                this.eraseAt(index);           
+            }
         }
+        return this;
     }
 
     pop() {

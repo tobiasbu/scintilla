@@ -1,12 +1,12 @@
 
-export default function CreateAudioBuffer(webAudioSource) {
+export default function CreateBufferSource(webAudioSource) {
 
     let self = webAudioSource;
-    let bufferSource = this.manager.context.createBufferSource();
+    let bufferSource = webAudioSource._system.context.createBufferSource();
 
     bufferSource.buffer = webAudioSource.resource;
 
-    //bufferSource.connect();
+    bufferSource.connect(webAudioSource.gainNode);
 
     bufferSource.onended = function(event) {
         if (ev.target === self.source)

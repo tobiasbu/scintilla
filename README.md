@@ -1,7 +1,7 @@
 # Scintilla - HTML5 Game Engine
 
-<div align="center">
-<img src="https://raw.githubusercontent.com/tobiasbu/scintilla/master/resources/scintilla_logo_official.png" style="margin:1.5em 0"/>
+<div align="center" style="margin:16px 0">
+<img src="https://raw.githubusercontent.com/tobiasbu/scintilla/master/resources/scintilla_logo_official.png"/>
 </div>
 
 

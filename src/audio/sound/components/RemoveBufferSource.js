@@ -1,5 +1,5 @@
 
-export default function RemoveAudioBuffer(webAudioSource) {
+export default function RemoveBufferSource(webAudioSource) {
 
     if (webAudioSource.buffer) {
         webAudioSource.buffer.stop();

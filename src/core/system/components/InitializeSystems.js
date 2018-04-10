@@ -32,8 +32,8 @@ export default function InitializeSystems(game, render) {
     }
 
     // render events callbacks
-    systems.event.subscribe('__render_depthsorting', RequestDepthSorting, render);
-    systems.event.subscribe('__render_layeridchange', RequestRenderableLayerIDChange, render);
+    systems.events.subscribe('__render_depthsorting', RequestDepthSorting, render);
+    systems.events.subscribe('__render_layeridchange', RequestRenderableLayerIDChange, render);
 
     return systems;
 

@@ -34,29 +34,79 @@ game.render.layer.add('effects');
 
 console.log(scintilla.Environment.info);
 
-function SceneTitle() {
+function SceneLogo() {
+
+    this.waitLogoTime = 0;
+    this.done = false;
+
     this.preload = function() {
         this.load.setPath('assets/');
         this.load.image('block','img/block.png');
         this.load.image('title','img/n_title.png');
+        this.load.image('antifaJamLogo','img/antifagamejamlogo.png');
         this.load.tilemapJSON('tilemap','map/n_tilemap.json');
         this.load.webFont('font', 'google', 'Press Start 2P');
-        this.load.audio('titleMusic', 'sfx/n_title.ogg');
+        this.load.audio('titleMusic', 'n_title.mp3');
     };
 
     this.start = function() {
-        this.transition.settings.setOutDuration(0.65);
-        this.transition.settings.setEaseOutMethod(scintilla.Ease.Type.CUT, 4);
+        this.transition.settings.setOutDuration(1);
+        this.transition.settings.setEaseOutMethod(scintilla.Ease.Type.CUT, 3);
+        this.transition.settings.setEaseInMethod(scintilla.Ease.Type.CUT, 3);
         this.transition.out();
+        this.audio.play('titleMusic', 0.05, true);
     };
 
+    this.update = function(dt) {
+        if (!this.done)
+        {
+            this.waitLogoTime += dt / 2.5;
+
+            if (this.waitLogoTime >= 1) {
+                this.transition.settings.setInDuration(1);
+                this.transition.in();
+                var next = function() {
+                    this.scene.set('title');
+                };
+                this.events.subscribeOnce('transition_end', next, this);
+                this.done = true;
+            } 
+        }
+    }
+
+    this.gui = function(drawer) {
+        drawer.sprite('antifaJamLogo',320/2,240/2,0.5, 0.5);
+    }
+}
+
+function SceneTitle() {
+
+    this.blinkStartTime = 0;
+    this.blinkStart = false;
+
+    this.start = function() {
+        this.transition.out();
+    }
+
+    this.update = function(dt) {
+        this.blinkStartTime += dt;
+
+        if (this.blinkStartTime >= 0.5) {
+            this.blinkStart = !this.blinkStart;
+            this.blinkStartTime = 0;
+        }
+    }
 
     this.gui = function(drawer) {
         drawer.sprite('title',320/2,13,0.5, 0);
+
+        
         drawer.font('Press Start 2P', 8);
         drawer.color = '#fff';
         drawer.align = 'center';
-        drawer.text('PRESS START', 320/2, 148);
+        if (this.blinkStart) {
+            drawer.text('PRESS START', 320/2, 148);
+        }
         drawer.align = 'left';
         drawer.text('TOBIASBU', 8, 228);
         drawer.align = 'right';
@@ -64,10 +114,9 @@ function SceneTitle() {
     };
 }
 
- game.scene.add('title', SceneTitle);
- game.scene.set('title');
-
-var t = null;
+game.scene.add('logo', SceneLogo);
+game.scene.add('title', SceneTitle);
+game.scene.set('logo');
 
 
 /*var HeroiPrefab = {

@@ -57,7 +57,7 @@ export default class AudioFile extends File {
 
     static create(loader, tag, urls, config, xhrSettings) {
 
-        //var audioConfig = game.config.audio;
+
 
         /*if ((audioConfig && audioConfig.noAudio))
         {
@@ -66,6 +66,7 @@ export default class AudioFile extends File {
         }*/
 
         if (!Environment.supportWebAudio && !Environment.supportAudio) {
+            console.warn('AudioFile.create: WebAudio is not supported.');
             return null;
         }
 
@@ -78,7 +79,7 @@ export default class AudioFile extends File {
 
         //if (deviceAudio.webAudio && !(audioConfig && audioConfig.disableWebAudio))
         //{
-        return new AudioFile(tag, url, loader.path, xhrSettings, game.audio.context);
+        return new AudioFile(tag, url, loader.path, xhrSettings,  game.audio._system.context);
         //}
         /*else
         {

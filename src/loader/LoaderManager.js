@@ -34,7 +34,7 @@ export default class LoadManager {
     this.baseURL = null;
     this.state = null;
     this.webFontLoader = undefined;
-    this.event = null;
+    this.events = null;
     this.crossOrigin = undefined;
 
     let gameConfig = game.config.loader;
@@ -56,7 +56,9 @@ export default class LoadManager {
     return this._filesQueueCount - this._loadedFilesCount;
   }
 
-
+  /*get totalQueuedFiles() {
+    return this._filesQueue.size;
+  }*/
 
 
   setPath(path) {

@@ -3,8 +3,7 @@ import Input from "../input/Input";
 import GameTime from "../time/GameTime";
 import InitializeSystems from "./system/components/InitializeSystems";
 import AppendDOM from "../dom/AppendDOM";
-import AudioManager from "../audio/AudioManager";
-import InitializeAudioSystem from "../audio/components/InitializeAudioSystem";
+import InitializeAudioSystemManager from "../audio/manager/components/InitializeAudioSystemManager";
 import InitializeRender from "../render/components/InitializeRender";
 
   /**
@@ -33,11 +32,11 @@ export default function GameInitialize(game) {
     game.physics = new Physics(game);
     game.input = new Input(game);
     game.time = new GameTime(game);
-    game.audio = new AudioManager(game);
+  
 
     InitializeSystems(game, render);
 
-    InitializeAudioSystem.call(game.audio);
+    game.audio = InitializeAudioSystemManager(game);
 
     game.input.init();
     game.time.init(game.system.loop);

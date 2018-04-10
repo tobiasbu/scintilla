@@ -1,10 +1,10 @@
-import Environment from '../../system/PlatformEnvironment';
+import Environment from '../../../system/PlatformEnvironment';
 import AudioManager from '../AudioManager';
 import AddWebAudioSource from './webaudio/AddWebAudioSource';
 import CreateWebAudioContext from './webaudio/CreateWebAudioContext';
 import WebAudioSystem from './webaudio/WebAudioSystem';
 
-export default function InitializedAudioSystemManager(game) {
+export default function InitializeAudioSystemManager(game) {
 
     let audioManager = new AudioManager(game);
 
@@ -12,7 +12,10 @@ export default function InitializedAudioSystemManager(game) {
 
     if (webAudioSupported) {
 
-        audioManager._system = new WebAudioSystem(audioManager);
+        let system = new WebAudioSystem(audioManager);
+        CreateWebAudioContext(system);
+
+        audioManager._system = system;
         audioManager.add = AddWebAudioSource.bind(audioManager);
         
     }

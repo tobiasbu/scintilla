@@ -30,7 +30,7 @@ export default class Renderable extends Module
             if (value !== this._depthSorting)
             {
                 this._depthSorting = value;
-                this.entity.game.system.event.dispatch('__render_layersorting', this._layerID);
+                this.entity.game.system.events.dispatch('__render_layersorting', this._layerID);
             }
         }
         return this;

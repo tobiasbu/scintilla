@@ -4,11 +4,10 @@ export default class AudioSource {
     constructor(manager, resource) {
 
         this.manager = manager;
+        this._system = manager._system;
         this.resource = resource;
-        //this.tag = tag;
 
-
-        this.volume = 1;
+        this._volume = 1;
         this.duration = 0;
         this.startTime = 0;
         this.currentTime = 0;

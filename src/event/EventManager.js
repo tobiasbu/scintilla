@@ -102,6 +102,6 @@ function BulkEventCreation(manager, events) {
 }
 
 
-System.register('EventManager', EventManager, 'event', function() {
+System.register('EventManager', EventManager, 'events', function() {
     BulkEventCreation(this, GameEvents);
 })

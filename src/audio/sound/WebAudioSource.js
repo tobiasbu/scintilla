@@ -1,18 +1,23 @@
-import SoundSource from "./SoundSource";
-import CreateAudioBuffer from "./components/CreateAudioBuffer";
-import RemoveAudioBuffer from "./components/RemoveAudioBuffer";
-import StartAudioBuffer from "./components/StartAudioBuffer";
+import AudioSource from "./AudioSource";
+import CreateBufferSource from "./components/CreateBufferSource";
+import RemoveBufferSource from "./components/RemoveBufferSource";
+import StartBufferSource from "./components/StartBufferSource";
 
-export default class WebAudioSource extends SoundSource {
 
-    constructor(manager, resource) {
+export default class WebAudioSource extends AudioSource {
+
+    constructor(manager, resource, volume, loop) {
 
         super(manager, resource);
 
+
         this.buffer = null;
         this.duration = resource.duration;
-        this.gainNode = manager.context.createGain();
-        this.gainNode.connect(manager.context);
+        this.gainNode = this._system.context.createGain();
+        this.gainNode.connect(this._system.destination);
+
+        this.volume = volume || 1;
+        this.loop = loop || false;
 
 
     }
@@ -21,16 +26,24 @@ export default class WebAudioSource extends SoundSource {
         return this.gainNode.gain.value;
     }
 
-    set volume() {
+    set volume(value) {
+        if (this.gainNode)
+            this.gainNode.gain.setValueAtTime(value, 0);
 
+        this._volume = value;
+    }
+
+    setVolume(value) {
+        this._volume = value;
+        return this;
     }
 
     play() {
         super.play();
 
-        RemoveAudioBuffer(this);
-        this.buffer = CreateAudioBuffer(this);
-        StartAudioBuffer(this);
+        RemoveBufferSource(this);
+        this.buffer = CreateBufferSource(this);
+        StartBufferSource(this);
     }
 
     pause() {
@@ -40,14 +53,14 @@ export default class WebAudioSource extends SoundSource {
     stop() {
         super.stop();
 
-        RemoveAudioBuffer(this);
+        RemoveBufferSource(this);
 
         return this;
     }
 
     destroy() {
         
-        RemoveAudioBuffer(this);
+        RemoveBufferSource(this);
 
         this.buffer = null;
         this.gainNode.disconnect();

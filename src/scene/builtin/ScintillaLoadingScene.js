@@ -97,7 +97,7 @@ export default class ScintillaLoadingScreen extends Scene {
                         this.preloadDone();                 
                     };
                     this.transition.in();
-                    this.event.subscribeOnce('transition_end', done, this);
+                    this.events.subscribeOnce('transition_end', done, this);
                     this._finished = true;
 
                 }

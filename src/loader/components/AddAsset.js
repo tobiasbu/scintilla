@@ -17,7 +17,7 @@ export default function AddAsset(asset, check) {
 
 
 
-      this.event.create('onpostload_webFontLoader').subscribe(
+      this.events.create('onpostload_webFontLoader').subscribe(
         () => {
         asset.fontLoad();
         });

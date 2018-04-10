@@ -1,4 +1,5 @@
 
 module.exports = {
-    Manager : require('./AudioManager')
+    Manager : require('./manager/AudioManager'),
+    AudioSource : require('./sound/AudioSource')
 };

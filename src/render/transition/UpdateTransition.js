@@ -76,7 +76,7 @@ export default function UpdateTransition(transition, deltaTime) {
                 if (transition._behaviour === TransitionBehavior.FADEOUT) {
                     transition._behaviour = TransitionBehavior.FADEOUT;
                 }
-                transition.game.system.event.dispatch('transition_end');
+                transition.game.system.events.dispatch('transition_end');
                 break;
             }
         case TransitionBehavior.FADEINOUT: // fade in and out
@@ -92,12 +92,12 @@ export default function UpdateTransition(transition, deltaTime) {
                 } else if (transition._state === TransitionState.WAIT) { // end pause beteween
                    
                     transition._state = TransitionState.OUT;
-                    transition.game.system.event.dispatch('transition_pause_end');
+                    transition.game.system.events.dispatch('transition_pause_end');
                 } else if (transition._state === TransitionState.OUT) { // end fade out
                    
                     transition._state = TransitionState.IDLE;
                     transition._behaviour = TransitionBehavior.NONE;
-                    transition.game.system.event.dispatch('transition_end');
+                    transition.game.system.events.dispatch('transition_end');
                 }
                 break;
             }

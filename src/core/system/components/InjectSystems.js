@@ -20,6 +20,7 @@ export default function InjectSystems(game, scene) {
 
     scene['key'] = game.input.keyboard;
     scene['mouse'] = game.input.mouse;
+    scene['audio'] = game.audio;
 
     /*for (let property in gameSystems) {
 

@@ -1,4 +1,4 @@
-import DataList from "../structures/List";
+import DataList from "../../structures/List";
 
 export default class AudioManager {
 
@@ -6,16 +6,19 @@ export default class AudioManager {
 
         this.game = game;
 
-        this._soundCache = game.system.cache.sound;
+        this._soundCache = game.system.cache.audio;
         this._noAudio = false;
         this._sounds = new DataList();
         this._system = null;
+
+        this.add = null;
 
         this.volume = 1;
         this.mute = false;
         this.pauseOnBlur = true;
         this.masterVolume = null;
         
+        this._removalList = [];
         
     }
 
@@ -76,9 +79,9 @@ export default class AudioManager {
     play(tag, volume, loop) {
 
         if (this._noAudio)
-            return;
+            return null;
 
-        var sound = this.add(tag, volume, loop);
+        let sound = this.add(tag, volume, loop);
 
         sound.play();
 
@@ -104,24 +107,9 @@ export default class AudioManager {
     }
 
 
-    destroy() {
-
-        this.stopAll();
-
-        for (var i = 0; i < this._sounds.length; i++) {
-            if (_sounds[i]) {
-                _sounds[i].destroy();
-            }
-        }
-
-        _sounds = [];
-
-        this.context.close();
 
 
-    }
-
-    topAll() {
+    stopAll() {
 
         if (this.noAudio) {
             return;
@@ -161,6 +149,27 @@ export default class AudioManager {
             }
         }
 
+    }
+
+    destroy() {
+
+        if (this._system === null)
+            return;
+
+        this._system.destroy(); 
+
+        this.stopAll();
+
+        for (let i = 0; i < this._sounds.length; i++) {
+
+            let sound = this._sounds.at(i)
+
+            if (sound) {
+                sound.destroy();
+            }
+        }
+
+        this._sounds.clear();
     }
 
 }

@@ -5,14 +5,6 @@ export default class Sound {
         this.manager = manager;
         this.source = source;
 
-        this.isPlaying = false;
-        this.isPaused = false;
-       
-
-        this.mute = false;
-        this.loop = false;
-
-
         this._volume = volume;
         this.context = null;
 

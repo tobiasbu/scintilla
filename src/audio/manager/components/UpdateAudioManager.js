@@ -6,9 +6,21 @@ export default function UpdateAudioManager() {
 
 
     for (let i = 0; i < this._sounds.length; i++) {
-        this._sounds[i].update();
+
+        let sound = this._sounds.at(i);
+
+        sound.update();
+
+        if (sound._requireRemoval) {
+            this._removalList.push(i);
+        }
     }
 
-    // cehck removal
+    // check removal
+    if (this._removalList.length > 0) {
+
+        this._sounds.eraseIndexesList(_removalList);
+        _removalList.length = 0;
+    }
 
 }
