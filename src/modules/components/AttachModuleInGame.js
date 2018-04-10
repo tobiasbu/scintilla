@@ -7,6 +7,7 @@ export default function AttachModuleInGame(entityModule, modulesManager, game) {
     // RENDERABLES
     if (entityModule instanceof Sprite) 
     {
+        console.log("asdasdsad");
         game.system.render.layer.renderLayers.at(0).add(entityModule);
     } 
     else if (entityModule instanceof Tilemap) {

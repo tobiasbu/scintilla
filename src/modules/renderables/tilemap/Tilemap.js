@@ -31,8 +31,10 @@ export default class Tilemap extends Renderable {
         this.layers = [];
 
         let animations = false;
+        let layersSize = resource.layers.length;
 
-        for (let i = 0; i < resource.layers.length; i++)
+
+        for (let i = layersSize - 1; i >= 0; i--)
         {
             let layer = resource.layers.at(i);
 

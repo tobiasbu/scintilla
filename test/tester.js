@@ -24,7 +24,7 @@ var config = {
     debug: false,
     fps: 60,
     pixelated: true,
-    roundPixels : false,
+    roundPixels : true,
     floorTiles : true
 };
   
@@ -95,6 +95,10 @@ function SceneTitle() {
             this.blinkStart = !this.blinkStart;
             this.blinkStartTime = 0;
         }
+
+        if (this.key.pressed(scintilla.KeyCode.Enter)) {
+            this.scene.set('game');
+        }
     }
 
     this.gui = function(drawer) {
@@ -114,8 +118,46 @@ function SceneTitle() {
     };
 }
 
+
+function Player() {
+    this.start = function() {
+        this.modules.attach.sprite('block');
+    }
+}
+
+function SceneGame() {
+
+    var camSpeed = 100;
+
+    this.start = function() {
+        //this.create.tilemap('tilemap');
+        this.entity.create(Player);
+    };
+
+    this.update = function(dt) {
+        if (this.key.press(scintilla.KeyCode.Right)) 
+        {
+            this.camera.x += dt * camSpeed;
+        }
+        if (this.key.press(scintilla.KeyCode.Left)) 
+        {
+            this.camera.x -= dt * camSpeed;
+        }
+    
+        if (this.key.press(scintilla.KeyCode.Up)) 
+        {
+            this.camera.y -= dt * camSpeed;
+        }
+        if (this.key.press(scintilla.KeyCode.Down)) 
+        {
+            this.camera.y += dt * camSpeed;
+        }
+    }
+}
+
 game.scene.add('logo', SceneLogo);
 game.scene.add('title', SceneTitle);
+game.scene.add('game', SceneGame);
 game.scene.set('logo');
 
 

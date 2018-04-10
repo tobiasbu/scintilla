@@ -12,7 +12,6 @@ export default class SceneEntity extends Entity //Hierarchy
         name = name || 'New SceneEntity';
         super(name, game || null)
         this.transform = new Transform();
-        this.type = null;
         this.pool = null;
         this.modules = new ModuleManager(this);
         //this.bounds = new BoundingBox();

@@ -8,15 +8,24 @@ export default function CreateEntityFrom(value, game) {
 
     if (value instanceof SceneEntity) {
 
+        entity = value;
+
+    } else if (typeof value === SceneEntity)  {
+
+        entity = new value(value.name, game);
+
     } else if (typeof value === 'object') {
 
         let placeholder = new SceneEntity(value.name || undefined, game);
         entity = Extend(true, placeholder, value);
 
-        return entity;
-
     } else if (typeof value === 'function') {
+        let entityHolder = new SceneEntity(value.name, game);
+        let placeholder = new value();
 
+        entity = Extend(true, entityHolder, placeholder);
     }
+
+    return entity;
 
 }

@@ -5141,9 +5141,9 @@ var EntityUpdateList = function () {
         (0, _classCallCheck3.default)(this, EntityUpdateList);
 
         this.game = game;
-        this._instances = null;
-        this._destroyInstances = null;
-        this._pendingInstances = null;
+        this._instances = new _List2.default();
+        this._destroyInstances = new _List2.default();
+        this._pendingInstances = new _List2.default();
         this._camera = null;
     }
 
@@ -5153,7 +5153,6 @@ var EntityUpdateList = function () {
             if (this._instances.indexOf(instance) === -1 && this._pendingInstances.indexOf(instance) === -1) {
                 this._pendingInstances.push(instance);
             }
-
             return instance;
         }
     }, {
@@ -5163,12 +5162,11 @@ var EntityUpdateList = function () {
         key: "update",
         value: function update(dt) {
 
-            for (var i = 0; i < this._instances.size; i++) {
+            for (var i = 0; i < this._instances.length; i++) {
 
                 var element = this._instances.at(i);
 
                 if (element.active) {
-
                     if (element.update !== undefined) element.update.call(element, dt); //update(dt);
 
                     (0, _UpdateTransform2.default)(element.transform, this._camera.transform);
@@ -5187,7 +5185,10 @@ var EntityUpdateList = function () {
 
             if (insertSize === 0 && removeSize === 0) return;
 
-            if (removeSize > 0) this._instances.eraseList(this._destroyInstances, removeSize);
+            if (removeSize > 0) {
+                this._instances.eraseList(this._destroyInstances, removeSize);
+                this._destroyInstances.childs.length = 0;
+            }
 
             /*let content = this._pendingInstances.content();
               for (let i = 0; i < insertSize; i++) {
@@ -5196,15 +5197,17 @@ var EntityUpdateList = function () {
                 this._pendingInstances.eraseAt(i);
             }*/
 
-            this._instances.concat(this._pendingInstances, true);
+            if (insertSize > 0) {
+                this._instances.concat(this._pendingInstances);
+                this._pendingInstances.childs.length = 0;
+                console.log(this._instances.childs);
+            }
 
             /*    
               this._pendingInstances.clear();*/
 
             //this._instances.concat(this._pendingInstances, true);
 
-            this._pendingInstances.childs.length = 0;
-            this._destroyInstances.childs.length = 0;
         }
     }, {
         key: "length",
@@ -5219,9 +5222,7 @@ exports.default = EntityUpdateList;
 
 
 _System2.default.register('EntityUpdateList', EntityUpdateList, 'entityList', function () {
-    this._instances = new _List2.default();
-    this._destroyInstances = new _List2.default();
-    this._pendingInstances = new _List2.default();
+
     this._camera = this.game.system.camera;
 });
 
@@ -5291,7 +5292,6 @@ var SceneEntity = function (_Entity) {
         var _this = (0, _possibleConstructorReturn3.default)(this, (SceneEntity.__proto__ || (0, _getPrototypeOf2.default)(SceneEntity)).call(this, name, game || null));
 
         _this.transform = new _Transform2.default();
-        _this.type = null;
         _this.pool = null;
         _this.modules = new _ModuleManager2.default(_this);
         //this.bounds = new BoundingBox();
@@ -5419,13 +5419,24 @@ function CreateEntityFrom(value, game) {
 
     var entity = void 0;
 
-    if (value instanceof _SceneEntity2.default) {} else if ((typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === 'object') {
+    if (value instanceof _SceneEntity2.default) {
+
+        entity = value;
+    } else if ((typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === _SceneEntity2.default) {
+
+        entity = new value(value.name, game);
+    } else if ((typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value)) === 'object') {
 
         var placeholder = new _SceneEntity2.default(value.name || undefined, game);
         entity = (0, _Extend2.default)(true, placeholder, value);
+    } else if (typeof value === 'function') {
+        var entityHolder = new _SceneEntity2.default(value.name, game);
+        var _placeholder = new value();
 
-        return entity;
-    } else if (typeof value === 'function') {}
+        entity = (0, _Extend2.default)(true, entityHolder, _placeholder);
+    }
+
+    return entity;
 }
 
 /***/ }),
@@ -11677,6 +11688,7 @@ function AttachModuleInGame(entityModule, modulesManager, game) {
 
     // RENDERABLES
     if (entityModule instanceof _Sprite2.default) {
+        console.log("asdasdsad");
         game.system.render.layer.renderLayers.at(0).add(entityModule);
     } else if (entityModule instanceof _Tilemap2.default) {
         for (var i = 0; i < entityModule.layers.length; i++) {
@@ -12519,8 +12531,9 @@ var Tilemap = function (_Renderable) {
         _this.layers = [];
 
         var animations = false;
+        var layersSize = resource.layers.length;
 
-        for (var i = 0; i < resource.layers.length; i++) {
+        for (var i = layersSize - 1; i >= 0; i--) {
             var layer = resource.layers.at(i);
 
             if (layer.hasAnimatedTiles) animations = true;
