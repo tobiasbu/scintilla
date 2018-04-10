@@ -9,7 +9,7 @@ export default class TilemapResource extends Resource {
 
     constructor(name, source, cache) {
 
-        super(name);
+        super(name, ResourceType.Tilemap);
 
         this.metaData = new TilemapMetadata ({
             name: source.name,
@@ -20,12 +20,8 @@ export default class TilemapResource extends Resource {
             orietation: source.orietation
         });
 
-        this.name = name;
         this.tilesets = ParseTilesets(source, cache);
         this.layers = ParseLayers(source, this);
-        this.type = ResourceType.Tilemap;
-        
-
     }
 
     getTilesetByGID(gid) {

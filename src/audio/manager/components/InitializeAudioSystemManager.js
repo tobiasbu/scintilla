@@ -8,16 +8,19 @@ export default function InitializeAudioSystemManager(game) {
 
     let audioManager = new AudioManager(game);
 
-    let webAudioSupported = Environment.supportAudio && Environment.supportWebAudio;
+    if (!game.config.audio.noAudio) {
 
-    if (webAudioSupported) {
+        let webAudioSupported = Environment.supportAudio && Environment.supportWebAudio;
 
-        let system = new WebAudioSystem(audioManager);
-        CreateWebAudioContext(system);
+        if (webAudioSupported && game.config.audio.webAudio) {
 
-        audioManager._system = system;
-        audioManager.add = AddWebAudioSource.bind(audioManager);
-        
+            let system = new WebAudioSystem(audioManager);
+            CreateWebAudioContext(system);
+
+            audioManager._system = system;
+            audioManager.add = AddWebAudioSource.bind(audioManager);
+            
+        }
     }
 
     

@@ -2,33 +2,34 @@ import Module from "../Module";
 
 export default class AnimationControl extends Module {
 
-constructor(game) {
+  constructor(moduleManger) {
 
-  this.game = game;
-  this.animations = {};
-
-  this.currentAnimation = null;
-
-  this.loop = false;
-  this.isPlaying = false;
-  this.isPaused = true;
-
-  this.currentFrame = 0;
-  this._gameObject = null;
-  this._currentAnimObj = null;
-
-  this.frameSpeed = 1; // frame rate 1 / 60
+    super('animation','animationController', this.moduleManager);
     
-}
+    this.animations = {};
+
+    this.currentAnimation = null;
+
+    this.loop = false;
+    this.isPlaying = false;
+    this.isPaused = true;
+
+    this.currentFrame = 0;
+    this._gameObject = null;
+    this._currentAnimObj = null;
+
+    this.frameSpeed = 1; // frame rate 1 / 60
+
+  }
 
   add(name, image) {
 
-    return this.animations[name] = new scintilla.Animation(name,image);
+    return this.animations[name] = new scintilla.Animation(name, image);
   }
 
-  addFromCache(container,name) {
+  addFromCache(container, name) {
 
-    var anim = this.game.animationCache.get(container,name);
+    var anim = this.game.animationCache.get(container, name);
 
     if (anim) {
 
@@ -39,8 +40,8 @@ constructor(game) {
       }
 
       return anim;
-  } else
-    return null;
+    } else
+      return null;
 
 
   }
@@ -49,7 +50,7 @@ constructor(game) {
   remove(name) {
 
     if (this.animations[name])
-    delete this.animations[name];
+      delete this.animations[name];
 
 
   }
@@ -59,32 +60,32 @@ constructor(game) {
     if (this.animations[name]) {
       this.currentAnimation = name;
       this._currentAnimObj = this.animations[name];
-      this.setFrame(0,true);
+      this.setFrame(0, true);
     }
 
 
 
   }
 
-  setFrame(index,resetTimer) {
+  setFrame(index, resetTimer) {
 
-      if (resetTimer === undefined) resetTimer = true;
+    if (resetTimer === undefined) resetTimer = true;
 
-      if (index >= this._currentAnimObj.length)
-        index = this._currentAnimObj.length-1
-      else if (index < 0)
-        index = 0;
+    if (index >= this._currentAnimObj.length)
+      index = this._currentAnimObj.length - 1
+    else if (index < 0)
+      index = 0;
 
-      this.currentFrame = index;
+    this.currentFrame = index;
 
-      // set in sprite
+    // set in sprite
 
-        this._gameObject.component['render'].setFrameRect(this._currentAnimObj.getFrame(this.currentFrame));
-        this._gameObject.component['render'].setImage(this._currentAnimObj.source);
+    this._gameObject.component['render'].setFrameRect(this._currentAnimObj.getFrame(this.currentFrame));
+    this._gameObject.component['render'].setImage(this._currentAnimObj.source);
 
 
-      if (resetTimer)
-        this._timer = 0;
+    if (resetTimer)
+      this._timer = 0;
 
   }
 
@@ -112,56 +113,54 @@ constructor(game) {
   stop() {
 
     this.isPaused = true;
-	  this.currentFrame = 0;
-	  this.setFrame(this.currentFrame);
+    this.currentFrame = 0;
+    this.setFrame(this.currentFrame);
 
   }
 
   update(time) {
 
     // if not paused and we have a valid animation
-	if (!this.isPaused && this._currentAnimObj != null)	{
+    if (!this.isPaused && this._currentAnimObj != null) {
 
 
-		// add delta time
-		this._timer += time*this.frameSpeed;
+      // add delta time
+      this._timer += time * this.frameSpeed;
 
-		// if current time is bigger then the frame time advance one frame
-		if (this._timer >= this.game.clock.timeStep_mili) {
+      // if current time is bigger then the frame time advance one frame
+      if (this._timer >= this.game.clock.timeStep_mili) {
 
-			// reset time, but keep the remainder
-			this._timer =  0;
+        // reset time, but keep the remainder
+        this._timer = 0;
 
-			// get next Frame index
-			if (this.currentFrame + 1 < this._currentAnimObj.length)
-				this.currentFrame++;
-			else
-			{
+        // get next Frame index
+        if (this.currentFrame + 1 < this._currentAnimObj.length)
+          this.currentFrame++;
+        else {
 
-        // animation has ended
-        this.currentFrame = 0; // reset to start
+          // animation has ended
+          this.currentFrame = 0; // reset to start
 
-        if (!this.loop)
-        {
-          this.isPaused = true;
+          if (!this.loop) {
+            this.isPaused = true;
+          }
+
+          if (this._gameObject["onAnimationEnd"]) {
+
+
+            this._gameObject.onAnimationEnd();
+
+          }
+
         }
 
-        if (this._gameObject["onAnimationEnd"]) {
+        // set the current frame, not reseting the time
+        this.setFrame(this.currentFrame, false);
+      }
+
+    }
 
 
-          this._gameObject.onAnimationEnd();
-
-        }
-
-			}
-
-			// set the current frame, not reseting the time
-			   this.setFrame(this.currentFrame, false);
-		}
 
   }
-
-
-
-}
 }

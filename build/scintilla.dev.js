@@ -7291,7 +7291,7 @@ var File = function () {
         key: 'onLoad',
         value: function onLoad(event) {
 
-            this.XHRreset();
+            this.clearXHR();
 
             if (event.target && event.target.status !== 200) {
                 _NextAsset2.default.call(this.loader, this);
@@ -7307,7 +7307,7 @@ var File = function () {
         value: function onError(event) {
             console.error("Loader.File: Error on load file: \"" + this.url + "\".");
 
-            this.XHRreset();
+            this.clearXHR();
 
             _NextAsset2.default.call(this.loader, this);
         }
@@ -7338,8 +7338,8 @@ var File = function () {
             processingCallback(this);
         }
     }, {
-        key: 'XHRreset',
-        value: function XHRreset() {
+        key: 'clearXHR',
+        value: function clearXHR() {
             if (this.xhrRequest) {
                 this.xhrRequest.onload = undefined;
                 this.xhrRequest.onerror = undefined;

@@ -3,11 +3,10 @@ import ResourceType from "./ResourceType";
 
 export default class Resource {
 
-    constructor(name, data)
+    constructor(name, type)
     {
-        //this.data = data || undefined;
         this.name = name || 'Resource';
-        this.type = ResourceType.None;
+        this.type = type || ResourceType.None;
     }
 
 }

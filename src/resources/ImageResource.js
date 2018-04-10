@@ -8,15 +8,14 @@ import ResourceType from "./ResourceType";
 */
 export default class ImageResource extends Resource {
 
-    constructor(name, data) {
+    constructor(name) {
 
-      super(name);
+      super(name, ResourceType.Image);
       
       this.data = data;
       this.width = 0;
       this.height = 0;
       this.imageUrl = null;
-      this.type = ResourceType.Image;
 
       if ((this.data.complete || this.data.getContext) && this.data.width && this.data.height) {
 

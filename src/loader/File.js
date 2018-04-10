@@ -85,7 +85,7 @@ export default class File {
 
     onLoad(event) {
        
-        this.XHRreset();
+        this.clearXHR();
 
         if (event.target && event.target.status !== 200)
         {
@@ -105,7 +105,7 @@ export default class File {
     {
         console.error("Loader.File: Error on load file: \"" + this.url + "\".")
 
-        this.XHRreset();
+        this.clearXHR();
 
         NextAsset.call(this.loader, this);
     }
@@ -139,7 +139,7 @@ export default class File {
     }
 
 
-    XHRreset()
+    clearXHR()
     {
         if (this.xhrRequest)
         {

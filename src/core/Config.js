@@ -30,6 +30,12 @@ export default class Config {
             async : callback_2(config, 'loader.async', true),
         };
 
+        this.audio = {
+            noAudio : callback_2(config, 'audio.noAudio', false),
+            context : callback_2(config, 'audio.context', null),
+            webAudio : callback_2(config, 'audio.webAudio', true),
+        }
+
         this.fps = callback(config, 'fps', 60);
         this.time = {
             timeoutMode : callback_2(config, 'time.timeOutMode', false),

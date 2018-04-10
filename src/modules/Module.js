@@ -9,11 +9,14 @@ export default class Module
         this.entity = null;
         this.moduleManager = moduleManager || undefined;
 
+        Object.freeze(this._moduleType);
+        Object.freeze(this._moduleName);
+
         if (moduleManager !== undefined)
         {
             this.entity = moduleManager.entity;
         }
-        //this.game = moduleManager.game || null;
+
     }
 
 

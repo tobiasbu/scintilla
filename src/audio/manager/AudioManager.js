@@ -7,8 +7,12 @@ export default class AudioManager {
         this.game = game;
 
         this._soundCache = game.system.cache.audio;
-        this._noAudio = false;
-        this._sounds = new DataList();
+        this._noAudio = game.config.audio.noAudio;
+        this._sounds = null;
+
+        if (!this._noAudio) 
+            this._sounds = new DataList();
+
         this._system = null;
 
         this.add = null;
@@ -92,6 +96,9 @@ export default class AudioManager {
 
     remove(sound) {
 
+        if (this._noAudio)
+            return false;
+
         var i = _sounds.length;
 
         while (i--) {
@@ -111,7 +118,7 @@ export default class AudioManager {
 
     stopAll() {
 
-        if (this.noAudio) {
+        if (this._noAudio) {
             return;
         }
 
@@ -125,7 +132,7 @@ export default class AudioManager {
 
     pauseAll() {
 
-        if (this.noAudio) {
+        if (this._noAudio) {
             return;
         }
 
@@ -139,7 +146,7 @@ export default class AudioManager {
 
     resumeAll() {
 
-        if (this.noAudio) {
+        if (this._noAudio) {
             return;
         }
 

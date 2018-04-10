@@ -37,7 +37,8 @@ constructor(game) {
   this.text = new Cache();
   this.svg = new Cache();
   this.audio = new Cache();
-
+  this.animation = new Cache();
+  this.animMachine = new Cache();  
 
 }
 
