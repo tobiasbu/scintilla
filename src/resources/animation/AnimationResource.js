@@ -1,6 +1,8 @@
 import DataList from "../../structures/List";
 import Resource from "./Resource";
 import ResourceType from "./ResourceType";
+import Validate from '../../utils/Validate';
+import AnimationUpdateFrameRate from "./components/AnimationUpdateFrameRate";
 
 // storage of animation state
 export default class Animation extends Resource {
@@ -10,62 +12,83 @@ export default class Animation extends Resource {
 
     super(name, ResourceType.Animation);
 
-    this._keyFrames = new DataList();
-
+    this.keyFrames = new DataList();
+    this._duration = 1;
+    this._frameRate = 60;
+    this._secondsPerFrame = 1;
+    this.loop = false;
+    this.uniformDuration = true;
   }
 
 
-  addFrame(x, y, width, height) {
-
-    this.frames.push(new scintilla.Rect(x, y, width, height));
-
+ 
+  set duration(value) {
+    if (Validate.isNumber(value)) {
+      AnimationUpdateFrameRate.call(this, null, value);
+    }
   }
 
-  addStrip(xinit, yinit, frameWidth, frameHeight, numberOfFrames, imagesPerRow) {
+  set frameRate(value) {
+    if (Validate.isNumber(value)) {
+      AnimationUpdateFrameRate.call(this, value, null);
+    }
+  }
 
-    var y = 0;
-    var x = 0;
+  get length() {
+    return this.keyFrames.size;
+  }
 
-    for (var i = 0; i < numberOfFrames; i++) {
+  get duration() {
+    return this._duration;
+  }
 
-      this.addFrame(xinit + (frameWidth * x),
-        yinit + (frameHeight * y),
-        frameWidth,
-        frameHeight
-      );
-      x++;
+  get frameRate() {
+    return this._frameRate;
+  }
 
-      if (i % imagesPerRow == (imagesPerRow - 1)) {
-        x = 0;
-        y++;
+  get secondsPerFrame() {
+    return this._secondsPerFrame;
+  }
+
+  get totalDuration() {
+    let size = this.keyFrames.size;
+
+    if (size === 0)
+      return 0;
+    else {
+
+      let dur = 0;
+
+      for (let i = 0; i < size; i++) {
+        dur += this.keyFrames.at(i).duration || 0;
       }
 
+      return dur;
     }
-
   }
 
-  duplicateFrame(index, at) {
-
-    if (at === undefined)
-      this.frames.push(this.frames[index]);
-    else
-      this.frames.splice(at, 0, this.frames[index]);
-
-
+  get(frameIndex) {
+    return this.keyFrames.at(frameIndex);
   }
 
-  getFrame(index) {
+  duplicate(frameIndex, atIndex) {
+  
+    let frame = this.keyFrames.at(frameIndex);
 
-    return this.frames[index];
+    if (frame !== null) {
 
+      if (atIndex === undefined)
+        this.keyFrames.push(frame);
+      else
+        this.keyFrames.splice(atIndex, 0, frame);
+
+    }
+  }
+
+  remove(frameIndex) {
+    let frame = this.keyFrames.eraseAt(frameIndex);
+    return frame;
   }
 
 }
 
-Object.defineProperty(scintilla.Animation.prototype, "length", {
-
-  get: function () {
-    return this.frames.length;
-  }
-
-});

@@ -184,8 +184,8 @@ export default class DataList
         return this;
     }
 
-    splice(start, count) {
-        return this.childs.splice(start, count);
+    splice(start, count, items) {
+        return this.childs.splice(start, count, items);
     }
 
     destroy() {

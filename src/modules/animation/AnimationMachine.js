@@ -1,4 +1,5 @@
 import Module from "../Module";
+import DataMap from '../../structures/Map';
 
 export default class AnimationMachine extends Module {
 
@@ -6,6 +7,7 @@ export default class AnimationMachine extends Module {
 
         super('animation','animMachine', moduleManager);
 
+        this.animations = new DataMap();
     }
 
 }

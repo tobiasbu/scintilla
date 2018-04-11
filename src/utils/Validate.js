@@ -26,6 +26,6 @@ const Validate = {
 
 Object.freeze(Validate);
 
-export default Validate;
+//export default Validate;
 
 module.exports = Validate;

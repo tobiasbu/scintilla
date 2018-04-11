@@ -5,21 +5,15 @@ export default class AnimationControl extends Module {
   constructor(moduleManger) {
 
     super('animation','animationController', this.moduleManager);
-    
-    this.animations = {};
 
-    this.currentAnimation = null;
+    this._currentAnimation = null;
 
     this.loop = false;
     this.isPlaying = false;
     this.isPaused = true;
 
-    this.currentFrame = 0;
-    this._gameObject = null;
-    this._currentAnimObj = null;
-
-    this.frameSpeed = 1; // frame rate 1 / 60
-
+    this._currentFrame = 0;
+  
   }
 
   add(name, image) {

@@ -1,9 +1,34 @@
 
+import Rect from '../../math/Rect';
+
 export default class KeyFrame {
     
-    constructor() {
+    constructor(animation) {
+        this.animation = animation;
         this.duration = 0;
-        this.config = 0;
+        this.progress = 0;
+        this.type = 'key';
+    }
+
+    destroy() {
+
+    }
+
+}
+
+export class SpritesheetKeyFrame extends KeyFrame {
+
+    constructor(animation, image, frame, duration) {
+        super(animation);
+
+        this.duration = duration || 1;
+        this.type = 'sprite';
+        this.frame = frame || new Rect();
+        this.image = image || null;
+    }
+
+    destroy() {
+        
     }
 
 }
