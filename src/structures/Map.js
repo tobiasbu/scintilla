@@ -159,6 +159,24 @@ export default class DataMap {
     return this;
   }
 
+  find(predicate) {
+
+    if (predicate === undefined)
+      return;
+
+    let content = this._content;
+
+    for (let property in content) {
+
+      if (predicate(property, content[property])) {
+        return content[property];
+      }
+          
+    }
+
+    return null;
+  }
+
 
 
 }

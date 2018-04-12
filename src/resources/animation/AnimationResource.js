@@ -1,6 +1,6 @@
 import DataList from "../../structures/List";
-import Resource from "./Resource";
-import ResourceType from "./ResourceType";
+import Resource from "../Resource";
+import ResourceType from "../ResourceType";
 import Validate from '../../utils/Validate';
 import AnimationUpdateFrameRate from "./components/AnimationUpdateFrameRate";
 
@@ -35,6 +35,10 @@ export default class Animation extends Resource {
   }
 
   get length() {
+    return this.keyFrames.size;
+  }
+
+  get size() {
     return this.keyFrames.size;
   }
 
@@ -81,8 +85,9 @@ export default class Animation extends Resource {
         this.keyFrames.push(frame);
       else
         this.keyFrames.splice(atIndex, 0, frame);
-
     }
+
+    return this;
   }
 
   remove(frameIndex) {

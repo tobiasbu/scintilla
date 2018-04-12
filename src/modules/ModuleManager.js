@@ -2,7 +2,11 @@
 import DataMap from '../structures/Map'
 import DataList from '../structures/List'
 import ModuleAttacher from './ModuleAttacher'
+import Validate from '../utils/Validate';
 
+const ModulesMap = {
+    'sprite' : 'render'
+}
 
 export default class ModuleManager
 {
@@ -19,12 +23,40 @@ export default class ModuleManager
         
     }
 
-    has(moduleName) {
-        return this.attached.has(moduleName);
+    has(moduleType) {
+        return this.attached.has(moduleType);
     }
 
-    get(moduleName) {
-        return this.attached.get(moduleName);
+    hasByName(moduleName) {
+        
+        let moduleType = ModulesMap[moduleName];
+
+        if (moduleType === undefined)
+            return false;
+
+        return this.has(moduleType);
     }
+
+    get(moduleType) {
+        return this.attached.get(moduleType);
+    }
+
+    getByName(moduleType) {
+        
+        if (!Validate.isString(moduleName))
+            return null;
+
+        return this.attached.find(function(key, value) {
+
+            if (value.name === moduleName)
+                return value;
+
+        });
+
+    }
+
+
+
+    
 
 } 

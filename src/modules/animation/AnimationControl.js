@@ -1,160 +1,98 @@
 import Module from "../Module";
+import Animation from "../../resources/animation/AnimationResource";
+import ModuleProvider from "../ModuleProvider";
 
 export default class AnimationControl extends Module {
 
-  constructor(moduleManger) {
+  constructor(moduleManger, spriteModule, animation) {
 
-    super('animation','animationController', this.moduleManager);
+    super('animation','animationControl', moduleManager);
 
-    this._currentAnimation = null;
+    this._animation = animation || null;
 
+    // playing stuff
     this.loop = false;
-    this.isPlaying = false;
-    this.isPaused = true;
 
-    this._currentFrame = 0;
-  
-  }
-
-  add(name, image) {
-
-    return this.animations[name] = new scintilla.Animation(name, image);
-  }
-
-  addFromCache(container, name) {
-
-    var anim = this.game.animationCache.get(container, name);
-
-    if (anim) {
-
-      this.animations[name] = anim;
-
-      if (this.currentAnimation == null) {
-        this.setState(name);
-      }
-
-      return anim;
-    } else
-      return null;
-
-
-  }
-
-
-  remove(name) {
-
-    if (this.animations[name])
-      delete this.animations[name];
-
-
-  }
-
-  setState(name) {
-
-    if (this.animations[name]) {
-      this.currentAnimation = name;
-      this._currentAnimObj = this.animations[name];
-      this.setFrame(0, true);
+    if (animation !== null) {
+      this.loop = animation.loop;
     }
 
+    this.isPlaying = false;
+    this.isPaused = true;
+    this._timer = 0;
+    this._spriteModule = spriteModule || null;
 
-
+    this.currentFrame = 0;
+    //this.overrideAnimationConfig = false;
+    this.speed = 0;
   }
 
-  setFrame(index, resetTimer) {
-
-    if (resetTimer === undefined) resetTimer = true;
-
-    if (index >= this._currentAnimObj.length)
-      index = this._currentAnimObj.length - 1
-    else if (index < 0)
-      index = 0;
-
-    this.currentFrame = index;
-
-    // set in sprite
-
-    this._gameObject.component['render'].setFrameRect(this._currentAnimObj.getFrame(this.currentFrame));
-    this._gameObject.component['render'].setImage(this._currentAnimObj.source);
-
-
-    if (resetTimer)
-      this._timer = 0;
-
+  get animation() {
+    return this._animation;
   }
 
-  setSpeed(time) {
+  setAnimation(animation) {
+    
+    let animResource;
+    
+    if (typeof(animation) === 'string') {
+      animResource = this.entity.game.cache.animation.get(animation);
+    } else if (animation instanceof AnimationResource) {
+      animResource = animation;
+    } 
 
-    this.frameSpeed = time;
+    if (animResource !== undefined) {
+      this._animation = animResource;
+      this.loop = animation.loop;
+    } else {
+      console.warn("AnimationControl.setAnimation: Could not set animation. The animation is undefined.");
+    }
 
+    return this;
   }
 
   play(loop) {
+
+    if (this.isPlaying || this._animation === null)
+      return this;
 
     this.loop = loop;
     this.isPlaying = true;
     this.isPaused = false;
 
-
+    return this;
   }
 
   pause() {
+    if (this.isPaused || this._animation === null)
+      return this;
 
     this.isPaused = true;
+    this.isPlaying = false;
 
+    return this;
   }
 
   stop() {
-
-    this.isPaused = true;
+    this.isPaused = false;
+    this.isPlaying = false;
     this.currentFrame = 0;
-    this.setFrame(this.currentFrame);
-
-  }
-
-  update(time) {
-
-    // if not paused and we have a valid animation
-    if (!this.isPaused && this._currentAnimObj != null) {
-
-
-      // add delta time
-      this._timer += time * this.frameSpeed;
-
-      // if current time is bigger then the frame time advance one frame
-      if (this._timer >= this.game.clock.timeStep_mili) {
-
-        // reset time, but keep the remainder
-        this._timer = 0;
-
-        // get next Frame index
-        if (this.currentFrame + 1 < this._currentAnimObj.length)
-          this.currentFrame++;
-        else {
-
-          // animation has ended
-          this.currentFrame = 0; // reset to start
-
-          if (!this.loop) {
-            this.isPaused = true;
-          }
-
-          if (this._gameObject["onAnimationEnd"]) {
-
-
-            this._gameObject.onAnimationEnd();
-
-          }
-
-        }
-
-        // set the current frame, not reseting the time
-        this.setFrame(this.currentFrame, false);
-      }
-
-    }
-
-
-
+    this._timer = 0;
+    return this;
   }
 }
+
+ModuleProvider.register('spritesheet',function(moduleManager, args) {
+
+  let asset = args[1];
+
+  if (asset !== undefined) {
+    // this.entity.game.system.cache.image.get(tag);
+    asset = moduleManager.entity.game.system.cache.animation.get(tag);
+  }
+
+  let spritesheetModule = new AnimationControl(moduleManager,args[0], asset);
+
+  return spritesheetModule;
+
+});

@@ -24,37 +24,49 @@ export default class Sprite extends Renderable {
     setFrame(x, y, width, height)
     {
         this.frame.set(x,y,width,height);
+        return this;
     }
 
-    setFrameRect(rect)
-    {
-        this.frame.set(x,y,width,height);
+    setFrameRect(rect) {
+        if (rect === undefined) return this;
+
+        this.frame.copy(rect);
+        return this;
     }
 
     setSprite(tag) {
 
-        if (this.entity != null || this.entity !== undefined) {
-            var sprite = this.entity.game.system.cache.image.get(tag);
+        if (this.entity !== null && this.entity !== undefined) {
+            let sprite = this.entity.game.system.cache.image.get(tag);
 
-            if (sprite != null) {
-                this.setSource(sprite.data, true);
-            }
+            //if (sprite !== null) {
+                this.setImage(sprite, true);
+
         } else {
-            throw new Error("Sprite.setSprite: Can not set Sprite. The entity is not in the game");
+            Console.warn("Sprite.setSprite: Could not set Sprite. The entity is null in the game");
         }
+        return this;
         
     }
 
-    setSource(image, changeFrame) {
+    setImage(image, fullFrame) {
 
-        if (changeFrame === undefined) changeFrame = false;
+        /*if (image === null)
+        {
+            Console.warn("Sprite.setImage: Could not set Sprite source image. The image is null.");
+            return this;
+        }*/
+
+        if (fullFrame === undefined) fullFrame = true;
       
-        if (this.source != image)
+        if (this.source !== image)
           this.source = image;
       
-        if (changeFrame)
+        if (fullFrame === true && image !== null) {
             this.setFrame(0,0,this.source.width,this.source.height);
+        }
       
+        return this;
       
     }
 
@@ -64,7 +76,7 @@ export default class Sprite extends Renderable {
             return false;
 
         DrawImage(context, 
-            this.source, this.frame,
+            this.source.data, this.frame,
             this.entity.transform, this._originInPixels);
    
        return true;

@@ -672,7 +672,7 @@ module.exports = function (it) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.5.4' };
+var core = module.exports = { version: '2.5.3' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -810,7 +810,6 @@ var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/libra
 var core = __webpack_require__(/*! ./_core */ "../node_modules/core-js/library/modules/_core.js");
 var ctx = __webpack_require__(/*! ./_ctx */ "../node_modules/core-js/library/modules/_ctx.js");
 var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
-var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
 var PROTOTYPE = 'prototype';
 
 var $export = function (type, name, source) {
@@ -828,7 +827,7 @@ var $export = function (type, name, source) {
   for (key in source) {
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && has(exports, key)) continue;
+    if (own && key in exports) continue;
     // export native or passed
     out = own ? target[key] : source[key];
     // prevent global pollution for namespaces
@@ -1053,6 +1052,7 @@ var LIBRARY = __webpack_require__(/*! ./_library */ "../node_modules/core-js/lib
 var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
 var redefine = __webpack_require__(/*! ./_redefine */ "../node_modules/core-js/library/modules/_redefine.js");
 var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
 var Iterators = __webpack_require__(/*! ./_iterators */ "../node_modules/core-js/library/modules/_iterators.js");
 var $iterCreate = __webpack_require__(/*! ./_iter-create */ "../node_modules/core-js/library/modules/_iter-create.js");
 var setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ "../node_modules/core-js/library/modules/_set-to-string-tag.js");
@@ -1079,7 +1079,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
   var VALUES_BUG = false;
   var proto = Base.prototype;
   var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = $native || getMethod(DEFAULT);
+  var $default = (!BUGGY && $native) || getMethod(DEFAULT);
   var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
   var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
   var methods, key, IteratorPrototype;
@@ -1090,7 +1090,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
       // Set @@toStringTag to native iterators
       setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') hide(IteratorPrototype, ITERATOR, returnThis);
+      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -6862,13 +6862,16 @@ var Keyboard = function () {
 /* this._keyWatch.each(function (key, value) {
      //var value = this._keyWatch.get(key);
      value.update();
-       //console.log(value);
-       if (value.event == KeyEvent.IDLE)
+
+     //console.log(value);
+
+     if (value.event == KeyEvent.IDLE)
      {
          self._keyGarbage.push(key);
      }
  });
-     if (this._keyGarbage.length > 0)
+
+   if (this._keyGarbage.length > 0)
    {
      this._keyWatch.deleteByIndexedArray(this._keyGarbage);
      this._keyGarbage.splice(0, this._keyGarbage.length)
@@ -11577,9 +11580,31 @@ var ModuleAttacher = function () {
         key: "tilemap",
         value: function tilemap(tag) {
 
-            if (tag === undefined || tag == null) throw new Error("ModuleAttacher.tilemap: Can not create Tilemap module without a proper tag name.");
+            if (tag === undefined || tag == null) {
+                console.warn("ModuleAttacher.tilemap: Can not create Tilemap module without a proper tag name.");
+                return null;
+            }
 
             return _ModuleProvider2.default.attach(this.moduleManager, 'tilemap', tag);
+        }
+    }, {
+        key: "spritesheet",
+        value: function spritesheet(tag) {
+
+            var spriteModule = void 0;
+
+            if (this.moduleManager.has('render') === false) {
+                spriteModule = _ModuleProvider2.default.attach(this.moduleManager, 'sprite');
+            } else {
+                spriteModule = this.moduleManager.getByName('sprite');
+            }
+
+            if (spriteModule === undefined || spriteModule === null) {
+                console.warn("ModuleAttacher.spritesheet: Could not create Spritesheet module. There is no Sprite module attached. The current Renderable module is not compatible with SpriteSheet module.");
+                return null;
+            }
+
+            return _ModuleProvider2.default.attach(this.moduleManager, 'spritesheet', [spriteModule, tag]);
         }
     }]);
     return ModuleAttacher;
@@ -11623,7 +11648,15 @@ var _ModuleAttacher = __webpack_require__(/*! ./ModuleAttacher */ "./modules/Mod
 
 var _ModuleAttacher2 = _interopRequireDefault(_ModuleAttacher);
 
+var _Validate = __webpack_require__(/*! ../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ModulesMap = {
+    'sprite': 'render'
+};
 
 var ModuleManager = function () {
     function ModuleManager(entity) {
@@ -11640,13 +11673,34 @@ var ModuleManager = function () {
         value: function detach(moduleName, index) {}
     }, {
         key: 'has',
-        value: function has(moduleName) {
-            return this.attached.has(moduleName);
+        value: function has(moduleType) {
+            return this.attached.has(moduleType);
+        }
+    }, {
+        key: 'hasByName',
+        value: function hasByName(moduleName) {
+
+            var moduleType = ModulesMap[moduleName];
+
+            if (moduleType === undefined) return false;
+
+            return this.has(moduleType);
         }
     }, {
         key: 'get',
-        value: function get(moduleName) {
-            return this.attached.get(moduleName);
+        value: function get(moduleType) {
+            return this.attached.get(moduleType);
+        }
+    }, {
+        key: 'getByName',
+        value: function getByName(moduleType) {
+
+            if (!_Validate2.default.isString(moduleName)) return null;
+
+            return this.attached.find(function (key, value) {
+
+                if (value.name === moduleName) return value;
+            });
         }
     }]);
     return ModuleManager;
@@ -11733,6 +11787,283 @@ exports.default = ModuleProvider;
 
 /***/ }),
 
+/***/ "./modules/animation/AnimationControl.js":
+/*!***********************************************!*\
+  !*** ./modules/animation/AnimationControl.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _Module2 = __webpack_require__(/*! ../Module */ "./modules/Module.js");
+
+var _Module3 = _interopRequireDefault(_Module2);
+
+var _AnimationResource = __webpack_require__(/*! ../../resources/animation/AnimationResource */ "./resources/animation/AnimationResource.js");
+
+var _AnimationResource2 = _interopRequireDefault(_AnimationResource);
+
+var _ModuleProvider = __webpack_require__(/*! ../ModuleProvider */ "./modules/ModuleProvider.js");
+
+var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AnimationControl = function (_Module) {
+  (0, _inherits3.default)(AnimationControl, _Module);
+
+  function AnimationControl(moduleManger, spriteModule, animation) {
+    (0, _classCallCheck3.default)(this, AnimationControl);
+
+    var _this = (0, _possibleConstructorReturn3.default)(this, (AnimationControl.__proto__ || (0, _getPrototypeOf2.default)(AnimationControl)).call(this, 'animation', 'animationControl', moduleManager));
+
+    _this._animation = animation || null;
+
+    // playing stuff
+    _this.loop = false;
+
+    if (animation !== null) {
+      _this.loop = animation.loop;
+    }
+
+    _this.isPlaying = false;
+    _this.isPaused = true;
+    _this._timer = 0;
+    _this._spriteModule = spriteModule || null;
+
+    _this.currentFrame = 0;
+    //this.overrideAnimationConfig = false;
+    _this.speed = 0;
+    return _this;
+  }
+
+  (0, _createClass3.default)(AnimationControl, [{
+    key: "setAnimation",
+    value: function setAnimation(animation) {
+
+      var animResource = void 0;
+
+      if (typeof animation === 'string') {
+        animResource = this.entity.game.cache.animation.get(animation);
+      } else if (animation instanceof AnimationResource) {
+        animResource = animation;
+      }
+
+      if (animResource !== undefined) {
+        this._animation = animResource;
+        this.loop = animation.loop;
+      } else {
+        console.warn("AnimationControl.setAnimation: Could not set animation. The animation is undefined.");
+      }
+
+      return this;
+    }
+  }, {
+    key: "play",
+    value: function play(loop) {
+
+      if (this.isPlaying || this._animation === null) return this;
+
+      this.loop = loop;
+      this.isPlaying = true;
+      this.isPaused = false;
+
+      return this;
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      if (this.isPaused || this._animation === null) return this;
+
+      this.isPaused = true;
+      this.isPlaying = false;
+
+      return this;
+    }
+  }, {
+    key: "stop",
+    value: function stop() {
+      this.isPaused = false;
+      this.isPlaying = false;
+      this.currentFrame = 0;
+      this._timer = 0;
+      return this;
+    }
+  }, {
+    key: "animation",
+    get: function get() {
+      return this._animation;
+    }
+  }]);
+  return AnimationControl;
+}(_Module3.default);
+
+exports.default = AnimationControl;
+
+
+_ModuleProvider2.default.register('spritesheet', function (moduleManager, args) {
+
+  var asset = args[1];
+
+  if (asset !== undefined) {
+    // this.entity.game.system.cache.image.get(tag);
+    asset = moduleManager.entity.game.system.cache.animation.get(tag);
+  }
+
+  var spritesheetModule = new AnimationControl(moduleManager, args[0], asset);
+
+  return spritesheetModule;
+});
+
+/***/ }),
+
+/***/ "./modules/animation/components/SetSpritesheetFrame.js":
+/*!*************************************************************!*\
+  !*** ./modules/animation/components/SetSpritesheetFrame.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = SetSpritesheetFrame;
+function SetSpritesheetFrame(animationControl, keyFrame) {
+
+    if (animationControl._spriteModule === null) return;
+
+    if (keyFrame.image === null) return;
+
+    if (animationControl._spriteModule.source !== keyFrame.image) {
+        animationControl._spriteModule.setImage(keyFrame.image, false);
+    }
+
+    animationControl._spriteModule.setFrameRect(keyFrame.frame);
+}
+
+/***/ }),
+
+/***/ "./modules/animation/components/UpdateAnimationControl.js":
+/*!****************************************************************!*\
+  !*** ./modules/animation/components/UpdateAnimationControl.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = UpdateAnimationControl;
+
+var _ResourceType = __webpack_require__(/*! ../../../resources/ResourceType */ "./resources/ResourceType.js");
+
+var _ResourceType2 = _interopRequireDefault(_ResourceType);
+
+var _SetSpritesheetFrame = __webpack_require__(/*! ./SetSpritesheetFrame */ "./modules/animation/components/SetSpritesheetFrame.js");
+
+var _SetSpritesheetFrame2 = _interopRequireDefault(_SetSpritesheetFrame);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function UpdateAnimationControl(deltaTime) {
+
+  if (this._animation === undefined && this._animation === null) return;
+
+  // if not paused and we have a valid animation
+  if (!this.isPaused && this.isPlaying) {
+
+    // add delta time
+    this._timer += deltaTime; // * this.frameSpeed;
+
+    var duration = void 0;
+    var currentKeyFrame = this._animation.get(this.currentFrame);
+
+    if (this._animation.uniformDuration) {
+      duration = this._animation.duration;
+    } else {
+      duration = currentKeyFrame.duration;
+    }
+
+    //let currentKeyFrame = 
+
+    // if current time is bigger then the frame time advance one frame
+    if (this._timer >= duration) {
+
+      // reset time, but keep the remainder
+      this._timer = 0;
+
+      // get next Frame index
+      if (this.currentFrame + 1 < this._animation.size) {
+        this.currentFrame++;
+      } else {
+
+        // animation has ended
+        this.currentFrame = 0; // reset to start
+
+        if (!this.loop) {
+          this.stop();
+        }
+      }
+
+      // set the current frame, not reseting the time
+      if (this._animation.type === _ResourceType2.default.Spritesheet) {
+        currentKeyFrame = this._animation.get(this.currentFrame);
+        (0, _SetSpritesheetFrame2.default)(this, currentKeyFrame);
+      }
+    }
+  }
+}
+
+/***/ }),
+
+/***/ "./modules/animation/index.js":
+/*!************************************!*\
+  !*** ./modules/animation/index.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    AnimationControl: __webpack_require__(/*! ./AnimationControl */ "./modules/animation/AnimationControl.js")
+};
+
+/***/ }),
+
 /***/ "./modules/components/AttachModuleInGame.js":
 /*!**************************************************!*\
   !*** ./modules/components/AttachModuleInGame.js ***!
@@ -11766,7 +12097,6 @@ function AttachModuleInGame(entityModule, modulesManager, game) {
 
     // RENDERABLES
     if (entityModule instanceof _Sprite2.default) {
-        console.log("asdasdsad");
         game.system.render.layer.renderLayers.at(0).add(entityModule);
     } else if (entityModule instanceof _Tilemap2.default) {
         for (var i = 0; i < entityModule.layers.length; i++) {
@@ -11826,6 +12156,10 @@ var _AttachModuleInGame = __webpack_require__(/*! ./AttachModuleInGame */ "./mod
 
 var _AttachModuleInGame2 = _interopRequireDefault(_AttachModuleInGame);
 
+var _UpdateAnimationControl = __webpack_require__(/*! ../animation/components/UpdateAnimationControl */ "./modules/animation/components/UpdateAnimationControl.js");
+
+var _UpdateAnimationControl2 = _interopRequireDefault(_UpdateAnimationControl);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ModulesUpdater(modulesManager, game) {
@@ -11842,8 +12176,14 @@ function ModulesUpdater(modulesManager, game) {
     }
 
     var render = modulesManager.attached.get('render');
-    if (render !== undefined && render != null) {
+    if (render !== undefined || render !== null) {
         (0, _RenderableUpdate2.default)(entity, render, game.system.camera, game.system.loop.updateStep);
+    }
+    var anim = modulesManager.attached.get('animation');
+    if (anim !== undefined || anim !== null) {
+        if (anim.type === 'animationControl') {
+            _UpdateAnimationControl2.default.call(anim, game.system.loop.updateStep.deltaTime);
+        }
     }
 }
 
@@ -11863,7 +12203,8 @@ module.exports = {
     Module: __webpack_require__(/*! ./Module */ "./modules/Module.js"),
     ModuleProvider: __webpack_require__(/*! ./ModuleProvider */ "./modules/ModuleProvider.js"),
     ModuleAttacher: __webpack_require__(/*! ./ModuleAttacher */ "./modules/ModuleAttacher.js"),
-    Renderables: __webpack_require__(/*! ./renderables */ "./modules/renderables/index.js")
+    Renderables: __webpack_require__(/*! ./renderables */ "./modules/renderables/index.js"),
+    Animation: __webpack_require__(/*! ./animation */ "./modules/animation/index.js")
 };
 
 /***/ }),
@@ -12061,42 +12402,56 @@ var Sprite = function (_Renderable) {
         key: "setFrame",
         value: function setFrame(x, y, width, height) {
             this.frame.set(x, y, width, height);
+            return this;
         }
     }, {
         key: "setFrameRect",
         value: function setFrameRect(rect) {
-            this.frame.set(x, y, width, height);
+            if (rect === undefined) return this;
+
+            this.frame.copy(rect);
+            return this;
         }
     }, {
         key: "setSprite",
         value: function setSprite(tag) {
 
-            if (this.entity != null || this.entity !== undefined) {
+            if (this.entity !== null && this.entity !== undefined) {
                 var sprite = this.entity.game.system.cache.image.get(tag);
 
-                if (sprite != null) {
-                    this.setSource(sprite.data, true);
-                }
+                //if (sprite !== null) {
+                this.setImage(sprite, true);
             } else {
-                throw new Error("Sprite.setSprite: Can not set Sprite. The entity is not in the game");
+                Console.warn("Sprite.setSprite: Could not set Sprite. The entity is null in the game");
             }
+            return this;
         }
     }, {
-        key: "setSource",
-        value: function setSource(image, changeFrame) {
+        key: "setImage",
+        value: function setImage(image, fullFrame) {
 
-            if (changeFrame === undefined) changeFrame = false;
+            /*if (image === null)
+            {
+                Console.warn("Sprite.setImage: Could not set Sprite source image. The image is null.");
+                return this;
+            }*/
 
-            if (this.source != image) this.source = image;
+            if (fullFrame === undefined) fullFrame = true;
 
-            if (changeFrame) this.setFrame(0, 0, this.source.width, this.source.height);
+            if (this.source !== image) this.source = image;
+
+            if (fullFrame === true && image !== null) {
+                this.setFrame(0, 0, this.source.width, this.source.height);
+            }
+
+            return this;
         }
     }, {
         key: "render",
         value: function render(context) {
             if (!this._enabled) return false;
 
-            (0, _DrawImage2.default)(context, this.source, this.frame, this.entity.transform, this._originInPixels);
+            (0, _DrawImage2.default)(context, this.source.data, this.frame, this.entity.transform, this._originInPixels);
 
             return true;
         }
@@ -16104,14 +16459,216 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var ResourceType = {
     None: -1,
     Image: 0,
     Tilemap: 1,
-    Animation: 2
+    Animation: 2,
+    Spritesheet: 3
 };
 
+(0, _freeze2.default)(ResourceType);
+
 exports.default = ResourceType;
+
+/***/ }),
+
+/***/ "./resources/animation/AnimationResource.js":
+/*!**************************************************!*\
+  !*** ./resources/animation/AnimationResource.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+var _Resource2 = __webpack_require__(/*! ../Resource */ "./resources/Resource.js");
+
+var _Resource3 = _interopRequireDefault(_Resource2);
+
+var _ResourceType = __webpack_require__(/*! ../ResourceType */ "./resources/ResourceType.js");
+
+var _ResourceType2 = _interopRequireDefault(_ResourceType);
+
+var _Validate = __webpack_require__(/*! ../../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
+var _AnimationUpdateFrameRate = __webpack_require__(/*! ./components/AnimationUpdateFrameRate */ "./resources/animation/components/AnimationUpdateFrameRate.js");
+
+var _AnimationUpdateFrameRate2 = _interopRequireDefault(_AnimationUpdateFrameRate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// storage of animation state
+var Animation = function (_Resource) {
+  (0, _inherits3.default)(Animation, _Resource);
+
+  function Animation(name) {
+    (0, _classCallCheck3.default)(this, Animation);
+
+    var _this = (0, _possibleConstructorReturn3.default)(this, (Animation.__proto__ || (0, _getPrototypeOf2.default)(Animation)).call(this, name, _ResourceType2.default.Animation));
+
+    _this.keyFrames = new _List2.default();
+    _this._duration = 1;
+    _this._frameRate = 60;
+    _this._secondsPerFrame = 1;
+    _this.loop = false;
+    _this.uniformDuration = true;
+    _this._size = 0;
+    return _this;
+  }
+
+  (0, _createClass3.default)(Animation, [{
+    key: "get",
+    value: function get(frameIndex) {
+      return this.keyFrames.at(frameIndex);
+    }
+  }, {
+    key: "duplicate",
+    value: function duplicate(frameIndex, atIndex) {
+
+      var frame = this.keyFrames.at(frameIndex);
+
+      if (frame !== null) {
+
+        if (atIndex === undefined) this.keyFrames.push(frame);else this.keyFrames.splice(atIndex, 0, frame);
+
+        this._size++;
+      }
+
+      return this;
+    }
+  }, {
+    key: "remove",
+    value: function remove(frameIndex) {
+      var frame = this.keyFrames.eraseAt(frameIndex);
+      if (frame !== undefined && frame !== null) this._size--;
+      return frame;
+    }
+  }, {
+    key: "duration",
+    set: function set(value) {
+      if (_Validate2.default.isNumber(value)) {
+        _AnimationUpdateFrameRate2.default.call(this, null, value);
+      }
+    },
+    get: function get() {
+      return this._duration;
+    }
+  }, {
+    key: "frameRate",
+    set: function set(value) {
+      if (_Validate2.default.isNumber(value)) {
+        _AnimationUpdateFrameRate2.default.call(this, value, null);
+      }
+    },
+    get: function get() {
+      return this._frameRate;
+    }
+  }, {
+    key: "length",
+    get: function get() {
+      return this.keyFrames.size;
+    }
+  }, {
+    key: "size",
+    get: function get() {
+      return this._size;
+    }
+  }, {
+    key: "secondsPerFrame",
+    get: function get() {
+      return this._secondsPerFrame;
+    }
+  }, {
+    key: "totalDuration",
+    get: function get() {
+      var size = this.keyFrames.size;
+
+      if (size === 0) return 0;else {
+
+        var dur = 0;
+
+        for (var i = 0; i < size; i++) {
+          dur += this.keyFrames.at(i).duration || 0;
+        }
+
+        return dur;
+      }
+    }
+  }]);
+  return Animation;
+}(_Resource3.default);
+
+exports.default = Animation;
+
+/***/ }),
+
+/***/ "./resources/animation/components/AnimationUpdateFrameRate.js":
+/*!********************************************************************!*\
+  !*** ./resources/animation/components/AnimationUpdateFrameRate.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = AnimationUpdateFrameRate;
+function AnimationUpdateFrameRate(frameRate, duration) {
+
+    if (duration === null && frameRate === null) {
+        this._frameRate = 60;
+        this._duration = frameRate / this.keyFrames.length * 1000;
+    } else if (duration && frameRate === null) {
+        this._duration = duration;
+        this._frameRate = this.keyFrames.length / (duration / 1000);
+    } else {
+        this._frameRate = frameRate;
+        this._duration = this.keyFrames.length / frameRate * 1000;
+    }
+
+    this._secondsPerFrame = 1000 / this._frameRate;
+}
 
 /***/ }),
 
@@ -16128,7 +16685,8 @@ exports.default = ResourceType;
 module.exports = {
     ResourceType: __webpack_require__(/*! ./ResourceType */ "./resources/ResourceType.js"),
     ImageResource: __webpack_require__(/*! ./ImageResource */ "./resources/ImageResource.js"),
-    TilemapResource: __webpack_require__(/*! ./tilemap/TilemapResource */ "./resources/tilemap/TilemapResource.js")
+    TilemapResource: __webpack_require__(/*! ./tilemap/TilemapResource */ "./resources/tilemap/TilemapResource.js"),
+    AnimationResource: __webpack_require__(/*! ./animation/AnimationResource */ "./resources/animation/AnimationResource.js")
 };
 
 /***/ }),
@@ -18331,6 +18889,23 @@ var DataMap = function () {
       }
 
       return this;
+    }
+  }, {
+    key: "find",
+    value: function find(predicate) {
+
+      if (predicate === undefined) return;
+
+      var content = this._content;
+
+      for (var property in content) {
+
+        if (predicate(property, content[property])) {
+          return content[property];
+        }
+      }
+
+      return null;
     }
   }, {
     key: "size",

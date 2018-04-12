@@ -1,6 +1,7 @@
 import Animation from "./AnimationResource";
 import KeyFrame, { SpritesheetKeyFrame } from "./KeyFrame";
 import Validate from '../../utils/Validate';
+import ResourceType from "../ResourceType";
 
 export default class SpritesheetResource extends Animation {
 
@@ -9,6 +10,7 @@ export default class SpritesheetResource extends Animation {
         super(name);
 
         this.mainImage = image || null;
+        this.type = ResourceType.Spritesheet;
 
     }
 
@@ -28,6 +30,7 @@ export default class SpritesheetResource extends Animation {
         );
 
         this.keyFrames.push(keyFrame);
+        this._size++;
 
         return this;
     }
@@ -66,14 +69,12 @@ export default class SpritesheetResource extends Animation {
                 frameHeight
             );
 
+            this._size++;
             xx += spacing.x + frameWidth;
-
-            //horizontalCount++;
 
             if (i % framesPerRow == (framesPerRow - 1)) {
                 xx = x;
                 yy += spacing.y + frameHeight;
-                //verticalCount++;
             }
         }
 

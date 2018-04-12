@@ -4,6 +4,9 @@ const ResourceType = {
     Image : 0,
     Tilemap : 1,
     Animation : 2,
+    Spritesheet : 3
 }
+
+Object.freeze(ResourceType);
 
 export default ResourceType;

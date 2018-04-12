@@ -1,6 +1,7 @@
 import InitializeModuleBase from "./InitializeModuleBase";
 import RenderableUpdate from "../renderables/components/RenderableUpdate";
 import AttachModuleInGame from "./AttachModuleInGame";
+import UpdateAnimationControl from "../animation/components/UpdateAnimationControl";
 
 export default function ModulesUpdater(modulesManager, game)
 {
@@ -19,9 +20,15 @@ export default function ModulesUpdater(modulesManager, game)
 
     
     let render = modulesManager.attached.get('render');
-    if (render !== undefined && render != null) {
+    if (render !== undefined || render !== null) {
         RenderableUpdate(entity, render, game.system.camera, game.system.loop.updateStep);
     }
-    
+    let anim = modulesManager.attached.get('animation');
+    if (anim !== undefined || anim !== null) {
+        if (anim.type === 'animationControl') {
+            UpdateAnimationControl.call(anim, game.system.loop.updateStep.deltaTime);
+        }
+    }
+
 }
 
