@@ -8,7 +8,7 @@ import ResourceType from "./ResourceType";
 */
 export default class ImageResource extends Resource {
 
-    constructor(name) {
+    constructor(name, data) {
 
       super(name, ResourceType.Image);
       

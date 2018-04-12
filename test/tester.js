@@ -42,11 +42,21 @@ function SceneLogo() {
     this.preload = function() {
         this.load.setPath('assets/');
         this.load.image('block','img/block.png');
-        this.load.image('title','img/n_title.png');
+        /// TITLE
+        this.load.image('titleNeo','img/n_title_neo.png');
+        this.load.image('titleBugre','img/n_title_bugre.png');
+        this.load.image('titleBugreBack','img/n_title_bugre_fill.png');
+        this.load.image('titleBugreBack2','img/n_title_bugre_fill2.png');
+        this.load.image('titleBg','img/n_title_bg.bmp');
         this.load.image('antifaJamLogo','img/antifagamejamlogo.png');
+
+        /// AUDIO
+        this.load.audio('titleMusic', 'sfx/505-loop3.ogg');
+        this.load.audio('ok', 'sfx/n_confirm.wav');
+
         this.load.tilemapJSON('tilemap','map/n_tilemap.json');
         this.load.webFont('font', 'google', 'Press Start 2P');
-        this.load.audio('titleMusic', 'n_title.mp3');
+        
     };
 
     this.start = function() {
@@ -54,7 +64,7 @@ function SceneLogo() {
         this.transition.settings.setEaseOutMethod(scintilla.Ease.Type.CUT, 3);
         this.transition.settings.setEaseInMethod(scintilla.Ease.Type.CUT, 3);
         this.transition.out();
-        this.audio.play('titleMusic', 0.05, true);
+        this.audio.play('titleMusic', 0.08, true);
     };
 
     this.update = function(dt) {
@@ -64,15 +74,18 @@ function SceneLogo() {
 
             if (this.waitLogoTime >= 1) {
                 this.transition.settings.setInDuration(1);
-                this.transition.in();
-                var next = function() {
-                    this.scene.set('title');
-                };
-                this.events.subscribeOnce('transition_end', next, this);
                 this.done = true;
             } 
+        } else {
+            
+            this.transition.in();
+            
+            var next = function() {
+                this.scene.set('title');
+            };
+            this.events.subscribeOnce('transition_end', next, this);
         }
-    }
+    };
 
     this.gui = function(drawer) {
         drawer.sprite('antifaJamLogo',320/2,240/2,0.5, 0.5);
@@ -83,13 +96,25 @@ function SceneTitle() {
 
     this.blinkStartTime = 0;
     this.blinkStart = false;
+    var neoRotX = 0;
+    var neoRotY = 0;
+    var angt = 0;
+    var rot = 0;
+    var bugPosX = 62 + 114.5;
+    var bugPosY = 57 + 24.5
+    var it = 1;
+    var optionsMenu = false;
+    var optionsSelect = 0;
 
     this.start = function() {
         this.transition.out();
-    }
+    };
 
     this.update = function(dt) {
+
+    if (!optionsMenu) {
         this.blinkStartTime += dt;
+        
 
         if (this.blinkStartTime >= 0.5) {
             this.blinkStart = !this.blinkStart;
@@ -97,24 +122,82 @@ function SceneTitle() {
         }
 
         if (this.key.pressed(scintilla.KeyCode.Enter)) {
-            this.scene.set('game');
+            optionsMenu = true;
+            this.audio.playOnce('ok', 0.5);
         }
+    } else {
+
+        let arrow = this.key.pressed(scintilla.KeyCode.Up) || this.key.pressed(scintilla.KeyCode.Down);
+
+        if (arrow) {
+            this.audio.playOnce('ok',0.5);
+            optionsSelect = !optionsSelect;
+        }
+
     }
 
+        angt += (dt / 8.0);
+
+        if (angt >= 1) {
+            angt = 0;
+        }
+        rot = scintilla.Math.degToRad * (angt * 360);
+
+        neoRotX = Math.cos(rot);
+        neoRotY = Math.sin(rot);
+    };
+
     this.gui = function(drawer) {
-        drawer.sprite('title',320/2,13,0.5, 0);
+
+        drawer.sprite('titleBg',0,0);
+
+        var itX, itY;
+
+
+        for (; it < 4; it++) {
+            //drawer.alpha = 1;
+            itX = it * 48; // 4, 8
+            itY = it * 64;
+            //drawer.spriteSkew('titleBugreBack2',bugPosX+(itX * neoRotX * 0.05),bugPosY+(itY * -neoRotY * 0.05),neoRotX * 0.025,-neoRotY * 0.05, 0.5, 0.5);
+            drawer.alpha = 1 - ((it-1) / 3);
+            
+            drawer.spriteSkew('titleBugreBack',bugPosX+(itX * -neoRotX * 0.05),bugPosY+(itY * neoRotY * 0.05),neoRotX * 0.025,-neoRotY * 0.05, 0.5, 0.5);
+           
+        }
+
+        drawer.alpha = 1;
+        it = 1;
+
+        // 62,57 
+        drawer.spriteSkew('titleBugre',bugPosX,bugPosY,neoRotX * 0.05,-neoRotY * 0.05, 0.5, 0.5);
+        drawer.sprite('titleNeo',14 + (neoRotX * 4),12 + ( 4 -neoRotY * 3));
 
         
         drawer.font('Press Start 2P', 8);
         drawer.color = '#fff';
-        drawer.align = 'center';
-        if (this.blinkStart) {
-            drawer.text('PRESS START', 320/2, 148);
+        
+        if (!optionsMenu) {
+            drawer.align = 'center';
+            if (this.blinkStart) {
+                drawer.text('PRESS START', 160, 164);
+            }
+            drawer.align = 'left';
+        } else {
+            drawer.align = 'center';
+            drawer.text('FAIR EXCHANGE?', 160, 148);
+            drawer.align = 'left';
+            //let unicode = eval('"\\u' + 2192 + '"'); //String.fromCharCode("8594");
+            drawer.text(">", 148-16, 148+16 + (optionsSelect * 12));
+            drawer.text('YES', 148, 148+16);
+            drawer.text('NO', 148, 148+16+12);
         }
-        drawer.align = 'left';
-        drawer.text('TOBIASBU', 8, 228);
+
+        
+       
+        drawer.text('TOBIASBU', 8, 232);
+        drawer.text('MUSIC BY 505', 8, 232-10);
         drawer.align = 'right';
-        drawer.text('2018', 320-8, 228);
+        drawer.text('2018', 320-8, 232);
     };
 }
 

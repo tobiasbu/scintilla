@@ -99,33 +99,25 @@ const MathUtils = {
   },
 
   distance : function(x0,y0,x1,y1) {
-
     return Math.sqrt((x0 -= x1) * x0 + (y0 -= y1) * y0);
-
   },
 
   angleBetween : function(x0,y0,x1,y1) {
-
-    var angle = this.toDegree(Math.atan2(y1 - y0, x1 - x0));
+    let angle = this.toDegree(Math.atan2(y1 - y0, x1 - x0));
 
     if (angle < 0 && angle >= -180)
       angle = 360 + angle;
 
 
     return angle;
-
   },
 
   toDegree : function(radians) {
-
     return radians * MathUtils.radToDeg;
-
   },
 
   toRadian : function(degrees) {
-
     return degrees * MathUtils.degToRad;
-
   }
 
 }

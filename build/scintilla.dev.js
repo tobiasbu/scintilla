@@ -2784,8 +2784,11 @@ var AudioManager = function () {
         this.game = game;
 
         this._soundCache = game.system.cache.audio;
-        this._noAudio = false;
-        this._sounds = new _List2.default();
+        this._noAudio = game.config.audio.noAudio;
+        this._sounds = null;
+
+        if (!this._noAudio) this._sounds = new _List2.default();
+
         this._system = null;
 
         this.add = null;
@@ -2847,8 +2850,19 @@ var AudioManager = function () {
             return sound;
         }
     }, {
+        key: "playOnce",
+        value: function playOnce(tag, volume, loop) {
+            var sound = this.play(tag, volume, loop);
+
+            if (sound !== null) sound.once = true;
+
+            return sound;
+        }
+    }, {
         key: "remove",
         value: function remove(sound) {
+
+            if (this._noAudio) return false;
 
             var i = _sounds.length;
 
@@ -2866,7 +2880,7 @@ var AudioManager = function () {
         key: "stopAll",
         value: function stopAll() {
 
-            if (this.noAudio) {
+            if (this._noAudio) {
                 return;
             }
 
@@ -2880,7 +2894,7 @@ var AudioManager = function () {
         key: "pauseAll",
         value: function pauseAll() {
 
-            if (this.noAudio) {
+            if (this._noAudio) {
                 return;
             }
 
@@ -2894,7 +2908,7 @@ var AudioManager = function () {
         key: "resumeAll",
         value: function resumeAll() {
 
-            if (this.noAudio) {
+            if (this._noAudio) {
                 return;
             }
 
@@ -2974,15 +2988,18 @@ function InitializeAudioSystemManager(game) {
 
     var audioManager = new _AudioManager2.default(game);
 
-    var webAudioSupported = _PlatformEnvironment2.default.supportAudio && _PlatformEnvironment2.default.supportWebAudio;
+    if (!game.config.audio.noAudio) {
 
-    if (webAudioSupported) {
+        var webAudioSupported = _PlatformEnvironment2.default.supportAudio && _PlatformEnvironment2.default.supportWebAudio;
 
-        var system = new _WebAudioSystem2.default(audioManager);
-        (0, _CreateWebAudioContext2.default)(system);
+        if (webAudioSupported && game.config.audio.webAudio) {
 
-        audioManager._system = system;
-        audioManager.add = _AddWebAudioSource2.default.bind(audioManager);
+            var system = new _WebAudioSystem2.default(audioManager);
+            (0, _CreateWebAudioContext2.default)(system);
+
+            audioManager._system = system;
+            audioManager.add = _AddWebAudioSource2.default.bind(audioManager);
+        }
     }
 
     return audioManager;
@@ -3168,6 +3185,7 @@ var AudioSource = function () {
         this.loop = false;
 
         this._ended = false;
+        this.once = false;
 
         this._requireRemoval = false;
     }
@@ -3380,7 +3398,7 @@ function CreateBufferSource(webAudioSource) {
     bufferSource.connect(webAudioSource.gainNode);
 
     bufferSource.onended = function (event) {
-        if (ev.target === self.source) {
+        if (event.target === self.source) {
             // sound ended
             self.hasEnded = true;
         }
@@ -3606,6 +3624,8 @@ var CacheManager = function () {
     this.text = new _Cache2.default();
     this.svg = new _Cache2.default();
     this.audio = new _Cache2.default();
+    this.animation = new _Cache2.default();
+    this.animMachine = new _Cache2.default();
   }
 
   /*addTilemap(tag, dataFormat) {
@@ -4041,7 +4061,7 @@ function UpdateCamera(camera, canvas) {
 
 
 Object.defineProperty(exports, "__esModule", {
-        value: true
+    value: true
 });
 
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
@@ -4055,49 +4075,55 @@ var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Config = function Config(config) {
-        (0, _classCallCheck3.default)(this, Config);
+    (0, _classCallCheck3.default)(this, Config);
 
-        if (config === undefined) config = {};
+    if (config === undefined) config = {};
 
-        var callback = _ObjectGet2.default.value;
-        var callback_2 = _ObjectGet2.default.propertyValue;
+    var callback = _ObjectGet2.default.value;
+    var callback_2 = _ObjectGet2.default.propertyValue;
 
-        // view and canvas
-        this.width = callback(config, 'width', 640);
-        this.height = callback(config, 'height', 480);
-        this.parent = callback(config, 'parent', null);
-        this.debug = callback(config, 'debug', false);
-        this.pixelated = callback(config, 'pixelated', false);
-        this.doubleBuffer = callback(config, 'doubleBuffer', true);
+    // view and canvas
+    this.width = callback(config, 'width', 640);
+    this.height = callback(config, 'height', 480);
+    this.parent = callback(config, 'parent', null);
+    this.debug = callback(config, 'debug', false);
+    this.pixelated = callback(config, 'pixelated', false);
+    this.doubleBuffer = callback(config, 'doubleBuffer', true);
 
-        this.roundPixels = callback(config, 'roundPixels', false);
-        this.floorTiles = callback(config, 'floorTiles', false),
+    this.roundPixels = callback(config, 'roundPixels', false);
+    this.floorTiles = callback(config, 'floorTiles', false),
 
-        // loader
-        this.loader = {
-                baseURL: callback_2(config, 'loader.baseURL', ''),
-                path: callback_2(config, 'loader.path', ''),
-                responseType: callback_2(config, 'loader.responseType', ''),
-                async: callback_2(config, 'loader.async', true)
-        };
+    // loader
+    this.loader = {
+        baseURL: callback_2(config, 'loader.baseURL', ''),
+        path: callback_2(config, 'loader.path', ''),
+        responseType: callback_2(config, 'loader.responseType', ''),
+        async: callback_2(config, 'loader.async', true)
+    };
 
-        this.fps = callback(config, 'fps', 60);
-        this.time = {
-                timeoutMode: callback_2(config, 'time.timeOutMode', false)
-        };
+    this.audio = {
+        noAudio: callback_2(config, 'audio.noAudio', false),
+        context: callback_2(config, 'audio.context', null),
+        webAudio: callback_2(config, 'audio.webAudio', true)
+    };
 
-        this.camera = {
-                width: callback_2(config, 'camera.width', this.width),
-                height: callback_2(config, 'camera.height', this.height)
-        };
+    this.fps = callback(config, 'fps', 60);
+    this.time = {
+        timeoutMode: callback_2(config, 'time.timeOutMode', false)
+    };
 
-        /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
-            this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
-            this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
-            
-            this.loaderUser = GetValue(config, 'loader.user', '');
-            this.loaderPassword = GetValue(config, 'loader.password', '');
-        this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
+    this.camera = {
+        width: callback_2(config, 'camera.width', this.width),
+        height: callback_2(config, 'camera.height', this.height)
+    };
+
+    /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
+        this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
+        this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
+        
+        this.loaderUser = GetValue(config, 'loader.user', '');
+        this.loaderPassword = GetValue(config, 'loader.password', '');
+    this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
 };
 
 exports.default = Config;
@@ -6428,7 +6454,8 @@ var Key = function () {
     }, {
         key: 'isPressed',
         value: function isPressed() {
-            return this.press && this.pressDuration === 0;
+
+            return this.press && this._event === _KeyEvent2.default.PRESSED;
         }
     }, {
         key: 'isReleased',
@@ -6606,10 +6633,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var KeyEvent = {
-    NONE: -1,
-    IDLE: 0,
-    PRESSED: 1,
-    RELEASED: 2
+    NONE: 0,
+    IDLE: 1,
+    PRESSED: 2,
+    IDLEPRESSED: 3,
+    RELEASED: 4
 };
 
 exports.default = KeyEvent;
@@ -6679,8 +6707,8 @@ var Keyboard = function () {
     this.eventHandler = null;
     this._eventQueue = new _List2.default();
     this._keyMapping = new _Map2.default();
-    //this._keyWatch = new DataMap();
-    //this._keyGarbage = [];
+    this._keyWatch = new _Map2.default();
+    this._keyGarbage = [];
     this.lastKey = null;
   }
 
@@ -6741,9 +6769,32 @@ var Keyboard = function () {
     key: 'update',
     value: function update() {
 
+      if (!this._enabled) return;
+
+      if (this._keyWatch.length !== 0) {
+
+        var self = this;
+
+        this._keyWatch.each(function (code, key) {
+
+          if (key.event === _KeyEvent2.default.PRESSED) {
+
+            key._event = _KeyEvent2.default.IDLEPRESSED;
+          } else if (key.event === _KeyEvent2.default.RELEASED) {
+            key._event = _KeyEvent2.default.NONE;
+            self._keyGarbage.push(code);
+          }
+        });
+
+        if (this._keyGarbage.length !== 0) {
+          this._keyWatch.eraseList(this._keyGarbage);
+          this._keyGarbage.splice(0, this._keyGarbage.length);
+        }
+      }
+
       var eventSize = this._eventQueue.size;
 
-      if (!this._enabled || eventSize === 0) return;
+      if (eventSize === 0) return;
 
       // clear and copy queue
       var queue = this._eventQueue.splice(0, eventSize);
@@ -6756,12 +6807,18 @@ var Keyboard = function () {
         // check if is valid scintilla key
         var key = this._keyMapping.get(keycode);
 
-        if (key !== undefined || key !== null) {
+        if (key !== undefined && key !== null) {
 
           if (event.type === 'keydown') {
 
             // /*&& (this._keyMapping.at(keycode) === undefined || this._keyMapping[keycode].press === false)*/
-            (0, _ProcessKeyPress2.default)(event, key);
+            if (key.status === false) {
+              if (key.event === _KeyEvent2.default.NONE) {
+                this._keyWatch.set(keycode, key);
+              }
+
+              (0, _ProcessKeyPress2.default)(event, key);
+            }
           } else {
             // if (event.type === 'keyup') {
             (0, _ProcessKeyRelease2.default)(event, key);
@@ -6836,6 +6893,13 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = ProcessKeyPress;
+
+var _KeyEvent = __webpack_require__(/*! ../KeyEvent */ "./input/keyboard/KeyEvent.js");
+
+var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function ProcessKeyPress(event, key) {
 
     if (key.preventDefault) event.preventDefault();
@@ -6852,6 +6916,8 @@ function ProcessKeyPress(event, key) {
         key.pressTime = event.timeStamp; //this.game.time.time;
         key.pressDuration = 0;
         key.releaseDuration = key.pressTime - key.releaseTime;
+
+        key._event = _KeyEvent2.default.PRESSED;
     }
 
     //this.lastKey = key;
@@ -6891,6 +6957,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = ProcessKeyRelease;
+
+var _KeyEvent = __webpack_require__(/*! ../KeyEvent */ "./input/keyboard/KeyEvent.js");
+
+var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function ProcessKeyRelease(event, key) {
 
   if (key.preventDefault) event.preventDefault();
@@ -6906,6 +6979,9 @@ function ProcessKeyRelease(event, key) {
   key.releaseTime = event.timeStamp;
   key.pressDuration = key.releaseTime - key.pressTime;
   key.releaseDuration = 0;
+  key.pressTime = 0;
+
+  key._event = _KeyEvent2.default.RELEASED;
 }
 
 /***/ }),
@@ -9824,12 +9900,10 @@ var MathUtils = {
   },
 
   distance: function distance(x0, y0, x1, y1) {
-
     return Math.sqrt((x0 -= x1) * x0 + (y0 -= y1) * y0);
   },
 
   angleBetween: function angleBetween(x0, y0, x1, y1) {
-
     var angle = this.toDegree(Math.atan2(y1 - y0, x1 - x0));
 
     if (angle < 0 && angle >= -180) angle = 360 + angle;
@@ -9838,12 +9912,10 @@ var MathUtils = {
   },
 
   toDegree: function toDegree(radians) {
-
     return radians * MathUtils.radToDeg;
   },
 
   toRadian: function toRadian(degrees) {
-
     return degrees * MathUtils.degToRad;
   }
 
@@ -11396,6 +11468,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -11416,10 +11492,12 @@ var Module = function () {
         this.entity = null;
         this.moduleManager = moduleManager || undefined;
 
+        (0, _freeze2.default)(this._moduleType);
+        (0, _freeze2.default)(this._moduleName);
+
         if (moduleManager !== undefined) {
             this.entity = moduleManager.entity;
         }
-        //this.game = moduleManager.game || null;
     }
 
     (0, _createClass3.default)(Module, [{
@@ -15731,8 +15809,60 @@ var UIDrawer = function () {
       }
     }
   }, {
-    key: 'spriteTransformed',
-    value: function spriteTransformed(tag, x, y, xscale, yscale, angle) {}
+    key: 'spriteScaled',
+    value: function spriteScaled(tag, x, y, xscale, yscale, halign, valign) {
+
+      var source = this.cache.image.get(tag);
+
+      if (source !== null) {
+
+        if (halign === undefined) halign = 0;
+        if (valign === undefined) valign = 0;
+
+        var pos = this.transformPosition(x, y);
+        var dx = source.width * halign;
+        var dy = source.height * valign;
+
+        this.context.save();
+        this.context.translate(pos.x, pos.y);
+        this.context.scale(xscale, yscale);
+        this.context.drawImage(source.data, 0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height);
+        this.context.restore();
+      }
+    }
+  }, {
+    key: 'spriteSkew',
+    value: function spriteSkew(tag, x, y, skewX, skewY, halign, valign) {
+      var source = this.cache.image.get(tag);
+
+      if (source !== null) {
+
+        if (halign === undefined) halign = 0;
+        if (valign === undefined) valign = 0;
+
+        var pos = this.transformPosition(x, y);
+        var dx = source.width * halign;
+        var dy = source.height * valign;
+
+        this.context.save();
+        this.context.transform(1, Math.tan(skewX), 0, 1, x, y);
+        this.context.transform(1, 0, Math.tan(skewY), 1, 0, 0);
+        this.context.drawImage(source.data, 0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height);
+        this.context.restore();
+      }
+    }
   }, {
     key: 'rect',
     value: function rect(x, y, width, height, color) {
@@ -15903,13 +16033,12 @@ var ImageResource = function (_Resource) {
       function ImageResource(name, data) {
             (0, _classCallCheck3.default)(this, ImageResource);
 
-            var _this = (0, _possibleConstructorReturn3.default)(this, (ImageResource.__proto__ || (0, _getPrototypeOf2.default)(ImageResource)).call(this, name));
+            var _this = (0, _possibleConstructorReturn3.default)(this, (ImageResource.__proto__ || (0, _getPrototypeOf2.default)(ImageResource)).call(this, name, _ResourceType2.default.Image));
 
             _this.data = data;
             _this.width = 0;
             _this.height = 0;
             _this.imageUrl = null;
-            _this.type = _ResourceType2.default.Image;
 
             if ((_this.data.complete || _this.data.getContext) && _this.data.width && _this.data.height) {
 
@@ -15950,12 +16079,11 @@ var _ResourceType2 = _interopRequireDefault(_ResourceType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Resource = function Resource(name, data) {
+var Resource = function Resource(name, type) {
     (0, _classCallCheck3.default)(this, Resource);
 
-    //this.data = data || undefined;
     this.name = name || 'Resource';
-    this.type = _ResourceType2.default.None;
+    this.type = type || _ResourceType2.default.None;
 };
 
 exports.default = Resource;
@@ -15979,7 +16107,8 @@ Object.defineProperty(exports, "__esModule", {
 var ResourceType = {
     None: -1,
     Image: 0,
-    Tilemap: 1
+    Tilemap: 1,
+    Animation: 2
 };
 
 exports.default = ResourceType;
@@ -16066,7 +16195,7 @@ var TilemapResource = function (_Resource) {
     function TilemapResource(name, source, cache) {
         (0, _classCallCheck3.default)(this, TilemapResource);
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (TilemapResource.__proto__ || (0, _getPrototypeOf2.default)(TilemapResource)).call(this, name));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (TilemapResource.__proto__ || (0, _getPrototypeOf2.default)(TilemapResource)).call(this, name, _ResourceType2.default.Tilemap));
 
         _this.metaData = new _TilemapMetadata2.default({
             name: source.name,
@@ -16077,11 +16206,8 @@ var TilemapResource = function (_Resource) {
             orietation: source.orietation
         });
 
-        _this.name = name;
         _this.tilesets = (0, _ParseTileset2.default)(source, cache);
         _this.layers = (0, _ParseLayers2.default)(source, _this);
-        _this.type = _ResourceType2.default.Tilemap;
-
         return _this;
     }
 
@@ -17826,8 +17952,8 @@ var DataList = function () {
             }
         }
     }, {
-        key: 'deleteIndexesList',
-        value: function deleteIndexesList(listToRemove) {
+        key: 'eraseIndexedList',
+        value: function eraseIndexedList(listToRemove) {
 
             var size = listToRemove.length;
 
@@ -17883,8 +18009,8 @@ var DataList = function () {
         }
     }, {
         key: 'splice',
-        value: function splice(start, count) {
-            return this.childs.splice(start, count);
+        value: function splice(start, count, items) {
+            if (items === undefined) return this.childs.splice(start, count);else return this.childs.splice(start, count, items);
         }
     }, {
         key: 'destroy',
@@ -18085,6 +18211,9 @@ var DataMap = function () {
   }, {
     key: "get",
     value: function get(key) {
+
+      if (key === undefined) return null;
+
       if (this.has(key)) {
         return this._content[key];
       } else {
@@ -18134,8 +18263,8 @@ var DataMap = function () {
       return prop;
     }
   }, {
-    key: "delete",
-    value: function _delete(key) {
+    key: "erase",
+    value: function erase(key) {
 
       if (!this.has(key)) return false;
 
@@ -18144,23 +18273,40 @@ var DataMap = function () {
 
       return true;
     }
-  }, {
-    key: "deleteAt",
-    value: function deleteAt(key) {
 
-      //if (!this.hasTagInKey(key))
+    /*eraseAt(key) {
+        //if (!this.hasTagInKey(key))
       //  return false;
-      this._size--;
-      delete this._content[key];
-    }
+        this._size--;
+       delete this._content[key];
+      }*/
+
   }, {
-    key: "deleteByIndexedArray",
-    value: function deleteByIndexedArray(array) {
-      for (var i = 0; i < array.length; i++) {
+    key: "eraseList",
+    value: function eraseList(listToRemove) {
+
+      if (listToRemove === undefined) return this;
+
+      var size = listToRemove.length;
+
+      if (Array.isArray(listToRemove)) {
+
+        for (var i = 0; i < size; i++) {
+          var index = listToRemove[i];
+          this.erase(index);
+        }
+      }
+
+      return this;
+    }
+
+    /*deleteByIndexedArray(array) {
+      for (let i = 0; i < array.length; i++) {
         delete this._content[array[i]];
         this._size--;
       }
-    }
+      }*/
+
   }, {
     key: "clear",
     value: function clear() {
@@ -19816,10 +19962,6 @@ module.exports = Path;
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
 
 var _freeze2 = _interopRequireDefault(_freeze);
@@ -19847,8 +19989,7 @@ var Validate = {
 
 (0, _freeze2.default)(Validate);
 
-exports.default = Validate;
-
+//export default Validate;
 
 module.exports = Validate;
 

@@ -93,6 +93,15 @@ export default class AudioManager {
 
     }
 
+    playOnce(tag, volume, loop) {
+        let sound = this.play(tag, volume, loop);
+
+        if (sound !== null)
+            sound.once = true;
+
+        return sound;
+    }
+
 
     remove(sound) {
 

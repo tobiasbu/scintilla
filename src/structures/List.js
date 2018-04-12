@@ -132,7 +132,7 @@ export default class DataList
         }        
     }
 
-    deleteIndexesList(listToRemove) {
+    eraseIndexedList(listToRemove) {
 
         let size = listToRemove.length;
 
@@ -185,6 +185,9 @@ export default class DataList
     }
 
     splice(start, count, items) {
+        if (items === undefined)
+        return this.childs.splice(start, count);
+        else 
         return this.childs.splice(start, count, items);
     }
 

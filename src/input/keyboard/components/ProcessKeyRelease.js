@@ -1,3 +1,4 @@
+import KeyEvent from "../KeyEvent";
 
 export default function ProcessKeyRelease(event, key) {
 
@@ -17,5 +18,8 @@ export default function ProcessKeyRelease(event, key) {
   key.releaseTime = event.timeStamp;
   key.pressDuration = key.releaseTime - key.pressTime;
   key.releaseDuration = 0;
+  key.pressTime = 0;
 
+
+  key._event = KeyEvent.RELEASED;
 }

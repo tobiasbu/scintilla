@@ -77,7 +77,8 @@ export default class Key {
     }
 
     isPressed() {
-        return (this.press && this.pressDuration === 0);
+        
+        return (this.press && this._event === KeyEvent.PRESSED);
     }
 
     isReleased() {

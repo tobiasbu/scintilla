@@ -1,3 +1,4 @@
+import KeyEvent from "../KeyEvent";
 
  export default function ProcessKeyPress(event, key) { 
 
@@ -18,6 +19,8 @@
       key.pressTime = event.timeStamp;//this.game.time.time;
       key.pressDuration = 0;
       key.releaseDuration = key.pressTime - key.releaseTime;
+
+      key._event = KeyEvent.PRESSED;
   }
 
     //this.lastKey = key;

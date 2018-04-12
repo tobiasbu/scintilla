@@ -30,6 +30,9 @@ export default class DataMap {
   }
 
   get(key) {
+
+    if (key === undefined) return null;
+
       if (this.has(key))
       {
         return this._content[key];
@@ -83,7 +86,7 @@ export default class DataMap {
 
   }
 
-  delete(key) {
+  erase(key) {
 
     if (!this.has(key))
       return false;
@@ -94,26 +97,44 @@ export default class DataMap {
       return true;
   }
 
-  deleteAt(key) {
+  /*eraseAt(key) {
 
     //if (!this.hasTagInKey(key))
     //  return false;
       this._size--;
      delete this._content[key];
 
+  }*/
+
+  eraseList(listToRemove) {
+
+    if (listToRemove === undefined) return this;
+
+    let size = listToRemove.length;
+
+    if (Array.isArray(listToRemove)) {
+        
+        for (let i = 0; i < size; i++)
+        {
+            let index = listToRemove[i];
+            this.erase(index);   
+        }
+      }
+
+    return this;
   }
 
-  deleteByIndexedArray(array) {
-    for (var i = 0; i < array.length; i++) {
+  /*deleteByIndexedArray(array) {
+    for (let i = 0; i < array.length; i++) {
       delete this._content[array[i]];
       this._size--;
     }
 
-  }
+  }*/
 
   clear() {
 
-    for (var property in this._content) 
+    for (let property in this._content) 
       delete this._content[property];
     
 
@@ -126,9 +147,9 @@ export default class DataMap {
   }
 
   each(callback) {
-    var content = this._content;
+    let content = this._content;
 
-    for (var property in content) {
+    for (let property in content) {
 
       if (callback(property, content[property]) === false)
           break;

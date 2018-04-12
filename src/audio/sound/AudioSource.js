@@ -20,7 +20,7 @@ export default class AudioSource {
         this.loop = false;
 
         this._ended = false;
-
+        this.once = false;
        
         this._requireRemoval = false;
     }

@@ -1,9 +1,10 @@
 
 const KeyEvent = {
-    NONE : -1,
-    IDLE: 0,
-    PRESSED : 1,
-    RELEASED : 2,
+    NONE : 0,
+    IDLE: 1,
+    PRESSED : 2,
+    IDLEPRESSED : 3,
+    RELEASED : 4,
 };
 
 export default KeyEvent;
