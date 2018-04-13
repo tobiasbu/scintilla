@@ -1,26 +1,22 @@
-
 import DataMap from '../structures/Map'
 import DataList from '../structures/List'
 import ModuleAttacher from './ModuleAttacher'
 import Validate from '../utils/Validate';
 
 const ModulesMap = {
-    'sprite' : 'render'
+    'sprite': 'render'
 }
 
-export default class ModuleManager
-{
-    constructor(entity)
-    {
+export default class ModuleManager {
+    constructor(entity) {
         this.entity = entity || null;
         this.attached = new DataMap();
         this._pendingModulesInitialization = new DataList();
         this.attach = new ModuleAttacher(this);
     }
 
-    detach(moduleName, index)
-    {
-        
+    detach(moduleName, index) {
+
     }
 
     has(moduleType) {
@@ -28,7 +24,7 @@ export default class ModuleManager
     }
 
     hasByName(moduleName) {
-        
+
         let moduleType = ModulesMap[moduleName];
 
         if (moduleType === undefined)
@@ -42,11 +38,11 @@ export default class ModuleManager
     }
 
     getByName(moduleType) {
-        
+
         if (!Validate.isString(moduleName))
             return null;
 
-        return this.attached.find(function(key, value) {
+        return this.attached.find(function (key, value) {
 
             if (value.name === moduleName)
                 return value;
@@ -54,9 +50,4 @@ export default class ModuleManager
         });
 
     }
-
-
-
-    
-
-} 
+}

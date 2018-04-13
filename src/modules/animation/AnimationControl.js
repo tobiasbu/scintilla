@@ -18,7 +18,7 @@ export default class AnimationControl extends Module {
     }
 
     this.isPlaying = false;
-    this.isPaused = true;
+    this.isPaused = false;
     this._timer = 0;
     this._spriteModule = spriteModule || null;
 
