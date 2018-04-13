@@ -40,9 +40,13 @@ export default function ProcessDoneAssets() {
             break;
           }
           
-
           case AssetsType.tilemapJSON: {
             cache.tilemap.add(file.tag, file.data);
+            break;
+          }
+
+          case AssetsType.spritesheet: {
+            cache.animation.add(file.tag,file.data);
             break;
           }
         }

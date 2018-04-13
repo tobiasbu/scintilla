@@ -16,6 +16,8 @@ export default class SpritesheetResource extends Animation {
 
     addFrame(x, y, width, height, image, duration) {
 
+        if (duration === undefined) duration = this._duration;
+
         if (image === undefined) {
             image = this.mainImage;
         } else {
@@ -26,11 +28,11 @@ export default class SpritesheetResource extends Animation {
             this, 
             image,
             new Rect(x, y, width, height),
-            duration || this._duration
+            duration
         );
 
         this.keyFrames.push(keyFrame);
-        this._size++;
+        //this._size++;
 
         return this;
     }
@@ -42,15 +44,14 @@ export default class SpritesheetResource extends Animation {
      * @param {Number} frameWidth The frame image width.
      * @param {Number} frameHeight The frame image height.
      * @param {Number} numberOfImages The number of frames. Default: 1.
-     * @param {Number} framesPerRow Frames per row. Default: Equal to numberOfImages
+     * @param {Number} [framesPerRow] Optional: Frames per row. Default: Equal to numberOfImages
      * @param {Number|Object} [spacing] Optional: the spacing between the frames images. 
      * To define spacing for x and y axis, spacing should be defined as Object ie: {x:Number,y:Number}.
      */
     addStrip(x, y, frameWidth, frameHeight, numberOfImages, framesPerRow, spacing) {
 
-        if (margin === undefined) margin = 0;
         if (spacing === undefined) {
-            spacing = {x:0,y:0}
+            spacing = {x:0,y:0};
         } else if (Validate.isNumber(spacing)) {
             spacing = {x:spacing, y:spacing};
         }
@@ -69,7 +70,7 @@ export default class SpritesheetResource extends Animation {
                 frameHeight
             );
 
-            this._size++;
+            //this._size++;
             xx += spacing.x + frameWidth;
 
             if (i % framesPerRow == (framesPerRow - 1)) {

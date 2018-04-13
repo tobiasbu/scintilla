@@ -18,6 +18,7 @@ export default class AudioSource {
         this.isPaused = false;
         this.mute = false;
         this.loop = false;
+        this.persistent = false;
 
         this._ended = false;
         this.once = false;

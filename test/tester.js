@@ -1,4 +1,3 @@
-
 //Test.log();
 //var t = new Test();
 //t.log();
@@ -9,8 +8,8 @@
 //let scintilla = require('./scintilla.dev');
 
 var VIEW = {
-    w : 640,
-    h : 480,
+    w: 640,
+    h: 480,
 };
 
 var config = {
@@ -24,10 +23,10 @@ var config = {
     debug: false,
     fps: 60,
     pixelated: true,
-    roundPixels : true,
-    floorTiles : true
+    roundPixels: true,
+    floorTiles: true
 };
-  
+
 var game = new scintilla.Game(config);
 game.render.layer.add('game');
 game.render.layer.add('effects');
@@ -39,56 +38,63 @@ function SceneLogo() {
     this.waitLogoTime = 0;
     this.done = false;
 
-    this.preload = function() {
+    this.preload = function () {
         this.load.setPath('assets/');
-        this.load.image('block','img/block.png');
+        this.load.image('block', 'img/block.png');
+
         /// TITLE
-        this.load.image('titleNeo','img/n_title_neo.png');
-        this.load.image('titleBugre','img/n_title_bugre.png');
-        this.load.image('titleBugreBack','img/n_title_bugre_fill.png');
-        this.load.image('titleBugreBack2','img/n_title_bugre_fill2.png');
-        this.load.image('titleBg','img/n_title_bg.bmp');
-        this.load.image('antifaJamLogo','img/antifagamejamlogo.png');
+        this.load.webFont('font', 'google', 'Press Start 2P');
+        this.load.image('titleNeo', 'img/n_title_neo.png');
+        this.load.image('titleBugre', 'img/n_title_bugre.png');
+        this.load.image('titleBugreBack', 'img/n_title_bugre_fill.png');
+        this.load.image('titleBugreBack2', 'img/n_title_bugre_fill2.png');
+        this.load.image('titleBg', 'img/n_title_bg.bmp');
+        this.load.image('antifaJamLogo', 'img/antifagamejamlogo.png');
 
         /// AUDIO
         this.load.audio('titleMusic', 'sfx/505-loop3.ogg');
+        this.load.audio('gameMusic', 'sfx/505-myth.ogg');
         this.load.audio('ok', 'sfx/n_confirm.wav');
 
-        this.load.tilemapJSON('tilemap','map/n_tilemap.json');
-        this.load.webFont('font', 'google', 'Press Start 2P');
-        
+        /// GAME
+        this.load.tilemapJSON('tilemap', 'map/n_tilemap.json');
+        this.load.image('chars', 'img/n_chars.png');
+        this.load.spritesheet('bug_down', 'chars', 0, 0, 16, 16, 2);
+        this.load.spritesheet('bug_side', 'chars', 0, 16, 16, 16, 2);
+        this.load.spritesheet('bug_up', 'chars', 0, 32, 16, 16, 2);
+        this.load.animMachine('bugreiro', ['bug_down', 'bug_side', 'bug_up']);
+
     };
 
-    this.start = function() {
+    this.start = function () {
         this.transition.settings.setOutDuration(1);
         this.transition.settings.setEaseOutMethod(scintilla.Ease.Type.CUT, 3);
         this.transition.settings.setEaseInMethod(scintilla.Ease.Type.CUT, 3);
         this.transition.out();
-        this.audio.play('titleMusic', 0.08, true);
+        this.audio.playPersistent('titleMusic', 0.3, true);
     };
 
-    this.update = function(dt) {
-        if (!this.done)
-        {
+    this.update = function (dt) {
+        if (!this.done) {
             this.waitLogoTime += dt / 2.5;
 
             if (this.waitLogoTime >= 1) {
                 this.transition.settings.setInDuration(1);
                 this.done = true;
-            } 
+            }
         } else {
-            
+
             this.transition.in();
-            
-            var next = function() {
+
+            var next = function () {
                 this.scene.set('title');
             };
             this.events.subscribeOnce('transition_end', next, this);
         }
     };
 
-    this.gui = function(drawer) {
-        drawer.sprite('antifaJamLogo',320/2,240/2,0.5, 0.5);
+    this.gui = function (drawer) {
+        drawer.sprite('antifaJamLogo', 320 / 2, 240 / 2, 0.5, 0.5);
     }
 }
 
@@ -105,36 +111,73 @@ function SceneTitle() {
     var it = 1;
     var optionsMenu = false;
     var optionsSelect = 0;
+    var startGame = 0;
+    var bgm = null;
 
-    this.start = function() {
+    this.start = function () {
         this.transition.out();
     };
 
-    this.update = function(dt) {
+    this.update = function (dt) {
 
-    if (!optionsMenu) {
-        this.blinkStartTime += dt;
-        
+        if (startGame === 0) {
 
-        if (this.blinkStartTime >= 0.5) {
-            this.blinkStart = !this.blinkStart;
-            this.blinkStartTime = 0;
+            if (!optionsMenu) {
+                this.blinkStartTime += dt;
+
+
+                if (this.blinkStartTime >= 0.5) {
+                    this.blinkStart = !this.blinkStart;
+                    this.blinkStartTime = 0;
+                }
+
+                if (this.key.pressed(scintilla.KeyCode.Enter)) {
+                    optionsMenu = true;
+                    this.audio.playOnce('ok', 0.5);
+                }
+            } else {
+
+                let arrow = this.key.pressed(scintilla.KeyCode.Up) || this.key.pressed(scintilla.KeyCode.Down);
+
+                if (arrow) {
+                    this.audio.playOnce('ok', 0.5);
+                    optionsSelect = !optionsSelect;
+                }
+
+                if (this.key.pressed(scintilla.KeyCode.Enter)) {
+                    this.transition.in();
+                    this.audio.playOnce('ok', 0.5);
+                    this.blinkStartTime = 0;
+                    bgm = this.audio.at(0);
+                    this.events.subscribeOnce('transition_end', function () {
+                        startGame = 2;
+                    });
+                    startGame = 1;
+                }
+            }
+
+        } else {
+
+            
+
+
+            if (startGame === 2) {
+
+                this.blinkStartTime += dt;
+
+                var tVolume = this.blinkStartTime / 1.5;
+
+                if (tVolume >= 1)
+                    tVolume = 1;
+
+                bgm.volume = scintilla.Math.lerp(0.3, 0, tVolume);
+
+                if (this.blinkStartTime >= 2) {
+                    this.audio.stopAll(true);
+                    this.scene.set('game');
+                }
+            }
         }
-
-        if (this.key.pressed(scintilla.KeyCode.Enter)) {
-            optionsMenu = true;
-            this.audio.playOnce('ok', 0.5);
-        }
-    } else {
-
-        let arrow = this.key.pressed(scintilla.KeyCode.Up) || this.key.pressed(scintilla.KeyCode.Down);
-
-        if (arrow) {
-            this.audio.playOnce('ok',0.5);
-            optionsSelect = !optionsSelect;
-        }
-
-    }
 
         angt += (dt / 8.0);
 
@@ -147,35 +190,45 @@ function SceneTitle() {
         neoRotY = Math.sin(rot);
     };
 
-    this.gui = function(drawer) {
+    this.gui = function (drawer) {
 
-        drawer.sprite('titleBg',0,0);
+        drawer.sprite('titleBg', 0, 0);
 
         var itX, itY;
+        var tanY = Math.atan(neoRotY) * 0.05;
+        //var xFrom =  0 - (64 * rot);
+        //var yFrom =  0 - (64 * rot);
+        var tanX = Math.atan(neoRotX) * 0.05;
 
+        //if (tanX < 0 && tanX >= -Math.PI)
 
         for (; it < 4; it++) {
             //drawer.alpha = 1;
-            itX = it * 48; // 4, 8
-            itY = it * 64;
+            itX = it * 80; //64; // 4, 8
+            itY = it * 64; //64;
             //drawer.spriteSkew('titleBugreBack2',bugPosX+(itX * neoRotX * 0.05),bugPosY+(itY * -neoRotY * 0.05),neoRotX * 0.025,-neoRotY * 0.05, 0.5, 0.5);
-            drawer.alpha = 1 - ((it-1) / 3);
-            
-            drawer.spriteSkew('titleBugreBack',bugPosX+(itX * -neoRotX * 0.05),bugPosY+(itY * neoRotY * 0.05),neoRotX * 0.025,-neoRotY * 0.05, 0.5, 0.5);
-           
+            drawer.alpha = 1 - ((it - 1) / 3);
+
+
+
+            drawer.spriteSkew('titleBugreBack',
+                bugPosX + (itX * tanX),
+                bugPosY + (itY * tanY),
+                neoRotX * 0.05, -neoRotY * 0.05, 0.5, 0.5);
+
         }
 
         drawer.alpha = 1;
         it = 1;
 
         // 62,57 
-        drawer.spriteSkew('titleBugre',bugPosX,bugPosY,neoRotX * 0.05,-neoRotY * 0.05, 0.5, 0.5);
-        drawer.sprite('titleNeo',14 + (neoRotX * 4),12 + ( 4 -neoRotY * 3));
+        drawer.spriteSkew('titleBugre', bugPosX, bugPosY, neoRotX * 0.05, -neoRotY * 0.05, 0.5, 0.5);
+        drawer.sprite('titleNeo', 14 + (neoRotX * 4), 12 + (4 - neoRotY * 3));
 
-        
+
         drawer.font('Press Start 2P', 8);
         drawer.color = '#fff';
-        
+
         if (!optionsMenu) {
             drawer.align = 'center';
             if (this.blinkStart) {
@@ -187,23 +240,23 @@ function SceneTitle() {
             drawer.text('FAIR EXCHANGE?', 160, 148);
             drawer.align = 'left';
             //let unicode = eval('"\\u' + 2192 + '"'); //String.fromCharCode("8594");
-            drawer.text(">", 148-16, 148+16 + (optionsSelect * 12));
-            drawer.text('YES', 148, 148+16);
-            drawer.text('NO', 148, 148+16+12);
+            drawer.text(">", 148 - 16, 148 + 16 + (optionsSelect * 12));
+            drawer.text('YES', 148, 148 + 16);
+            drawer.text('NO', 148, 148 + 16 + 12);
         }
 
-        
-       
+
+
         drawer.text('TOBIASBU', 8, 232);
-        drawer.text('MUSIC BY 505', 8, 232-10);
+        drawer.text('MUSIC BY 505', 8, 232 - 10);
         drawer.align = 'right';
-        drawer.text('2018', 320-8, 232);
+        drawer.text('2018', 320 - 8, 232);
     };
 }
 
 
 function Player() {
-    this.start = function() {
+    this.start = function () {
         this.modules.attach.sprite('block');
     }
 }
@@ -212,29 +265,27 @@ function SceneGame() {
 
     var camSpeed = 100;
 
-    this.start = function() {
-        //this.create.tilemap('tilemap');
+    this.start = function () {
+        this.transition.out();
+        this.audio.play('gameMusic',0.3, true);
+        this.create.tilemap('tilemap');
         this.entity.create(Player);
     };
 
-    this.update = function(dt) {
-        if (this.key.press(scintilla.KeyCode.Right)) 
-        {
+    this.update = function (dt) {
+        if (this.key.press(scintilla.KeyCode.Right)) {
             this.camera.x += dt * camSpeed;
         }
-        if (this.key.press(scintilla.KeyCode.Left)) 
-        {
+        if (this.key.press(scintilla.KeyCode.Left)) {
             this.camera.x -= dt * camSpeed;
         }
-    
-        if (this.key.press(scintilla.KeyCode.Up)) 
-        {
+
+        /*if (this.key.press(scintilla.KeyCode.Up)) {
             this.camera.y -= dt * camSpeed;
         }
-        if (this.key.press(scintilla.KeyCode.Down)) 
-        {
+        if (this.key.press(scintilla.KeyCode.Down)) {
             this.camera.y += dt * camSpeed;
-        }
+        }*/
     }
 }
 
@@ -285,14 +336,14 @@ game.scene.set('logo');
 };*/
 
 var EntityTest = {
-    
-    myVariable : 123,
-    aString : 'asdasdasd',
+
+    myVariable: 123,
+    aString: 'asdasdasd',
 
     start() {
         this.modules.attach.sprite('block');
     },
-    
+
     update() {
 
     }
@@ -373,6 +424,3 @@ scene.update = function(dt) {
     
     
 }*/
-
-
-

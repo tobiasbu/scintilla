@@ -30,7 +30,6 @@ export default class WebFontFile extends File {
 
         if (this.state === LoaderState.FINISHED) {
             this.onDone();
-
             NextAsset.call(this.loader, this);
         } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === LoaderState.DONE) {
             if (this.fontLoad !== undefined)
@@ -69,7 +68,7 @@ export default class WebFontFile extends File {
 
             WebFontConfig[provider] = WebFontProvider;
 
-            WebFont.load(WebFontConfig)
+            WebFont.load(WebFontConfig);
         }
     }
 

@@ -10,6 +10,7 @@ import UpdateScene from "../scene/components/UpdateScene";
 import DrawUI from "../render/ui/DrawUI";
 import DrawTransition from "../render/transition/DrawTransition";
 import UpdateTransition from "../render/transition/UpdateTransition";
+import UpdateAudioManager from "../audio/manager/components/UpdateAudioManager";
 
 
 
@@ -36,6 +37,8 @@ export default class GameLoop {
     loop(deltaTime) {
 
          // Core Managers
+
+        UpdateAudioManager.call(this.game.audio);
 
          this.game.input.update();
         

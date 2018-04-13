@@ -1,7 +1,7 @@
 
 module.exports = {
     ResourceType : require('./ResourceType'),
-    ImageResource : require('./ImageResource'),
-    TilemapResource : require('./tilemap/TilemapResource'),
-    AnimationResource : require('./animation/AnimationResource')
-}
+    Image : require('./ImageResource'),
+    Tilemap : require('./tilemap/TilemapResource'),
+    Animation : require('./animation')
+};

@@ -63,8 +63,11 @@ export default class WebAudioSource extends AudioSource {
         RemoveBufferSource(this);
 
         this.buffer = null;
-        this.gainNode.disconnect();
-        this.gainNode = null;
+        
+        if (this.gainNode !== null) {
+            this.gainNode.disconnect();
+            this.gainNode = null;
+        }
         
         super.destroy();
 

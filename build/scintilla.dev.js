@@ -672,7 +672,7 @@ module.exports = function (it) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.5.3' };
+var core = module.exports = { version: '2.5.4' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -810,6 +810,7 @@ var global = __webpack_require__(/*! ./_global */ "../node_modules/core-js/libra
 var core = __webpack_require__(/*! ./_core */ "../node_modules/core-js/library/modules/_core.js");
 var ctx = __webpack_require__(/*! ./_ctx */ "../node_modules/core-js/library/modules/_ctx.js");
 var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
+var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
 var PROTOTYPE = 'prototype';
 
 var $export = function (type, name, source) {
@@ -827,7 +828,7 @@ var $export = function (type, name, source) {
   for (key in source) {
     // contains in native
     own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && key in exports) continue;
+    if (own && has(exports, key)) continue;
     // export native or passed
     out = own ? target[key] : source[key];
     // prevent global pollution for namespaces
@@ -1052,7 +1053,6 @@ var LIBRARY = __webpack_require__(/*! ./_library */ "../node_modules/core-js/lib
 var $export = __webpack_require__(/*! ./_export */ "../node_modules/core-js/library/modules/_export.js");
 var redefine = __webpack_require__(/*! ./_redefine */ "../node_modules/core-js/library/modules/_redefine.js");
 var hide = __webpack_require__(/*! ./_hide */ "../node_modules/core-js/library/modules/_hide.js");
-var has = __webpack_require__(/*! ./_has */ "../node_modules/core-js/library/modules/_has.js");
 var Iterators = __webpack_require__(/*! ./_iterators */ "../node_modules/core-js/library/modules/_iterators.js");
 var $iterCreate = __webpack_require__(/*! ./_iter-create */ "../node_modules/core-js/library/modules/_iter-create.js");
 var setToStringTag = __webpack_require__(/*! ./_set-to-string-tag */ "../node_modules/core-js/library/modules/_set-to-string-tag.js");
@@ -1079,7 +1079,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
   var VALUES_BUG = false;
   var proto = Base.prototype;
   var $native = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT];
-  var $default = (!BUGGY && $native) || getMethod(DEFAULT);
+  var $default = $native || getMethod(DEFAULT);
   var $entries = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined;
   var $anyNative = NAME == 'Array' ? proto.entries || $native : $native;
   var methods, key, IteratorPrototype;
@@ -1090,7 +1090,7 @@ module.exports = function (Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE
       // Set @@toStringTag to native iterators
       setToStringTag(IteratorPrototype, TAG, true);
       // fix for some old engines
-      if (!LIBRARY && !has(IteratorPrototype, ITERATOR)) hide(IteratorPrototype, ITERATOR, returnThis);
+      if (!LIBRARY && typeof IteratorPrototype[ITERATOR] != 'function') hide(IteratorPrototype, ITERATOR, returnThis);
     }
   }
   // fix Array#{values, @@iterator}.name in V8 / FF
@@ -2838,6 +2838,17 @@ var AudioManager = function () {
       }*/
 
     (0, _createClass3.default)(AudioManager, [{
+        key: "at",
+        value: function at(index) {
+            if (this._noAudio) return null;
+
+            return this._sounds.at(index);
+        }
+
+        /*get(sourceName) {
+          }*/
+
+    }, {
         key: "play",
         value: function play(tag, volume, loop) {
 
@@ -2846,6 +2857,16 @@ var AudioManager = function () {
             var sound = this.add(tag, volume, loop);
 
             sound.play();
+
+            return sound;
+        }
+    }, {
+        key: "playPersistent",
+        value: function playPersistent(tag, volume, loop) {
+
+            var sound = this.play(tag, volume, loop);
+
+            if (sound !== null) sound.persistent = true;
 
             return sound;
         }
@@ -2878,15 +2899,23 @@ var AudioManager = function () {
         }
     }, {
         key: "stopAll",
-        value: function stopAll() {
+        value: function stopAll(destroy) {
 
             if (this._noAudio) {
                 return;
             }
 
-            for (var i = 0; i < _sounds.length; i++) {
-                if (_sounds[i]) {
-                    _sounds[i].stop();
+            if (destroy === undefined) destroy = false;
+
+            for (var i = 0; i < this._sounds.length; i++) {
+
+                var source = this._sounds.at(i);
+
+                if (source) {
+                    source.stop();
+                    if (destroy === true) {
+                        source.destroy();
+                    }
                 }
             }
         }
@@ -2947,6 +2976,71 @@ exports.default = AudioManager;
 
 /***/ }),
 
+/***/ "./audio/manager/components/AudioSystemType.js":
+/*!*****************************************************!*\
+  !*** ./audio/manager/components/AudioSystemType.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AudioSystemType = {
+    NOAUDIO: 0,
+    WEBAUDIO: 1
+};
+
+(0, _freeze2.default)(AudioSystemType);
+
+exports.default = AudioSystemType;
+
+/***/ }),
+
+/***/ "./audio/manager/components/ClearAudioSources.js":
+/*!*******************************************************!*\
+  !*** ./audio/manager/components/ClearAudioSources.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ClearAudioSources;
+function ClearAudioSources() {
+
+    if (this._noAudio === true) return;
+
+    for (var i = 0; i < this._sounds.length; i++) {
+
+        var source = this._sounds.at(i);
+
+        if (source.persistent === false || source.persistent === undefined || source._pendingRemoval === true) {
+            source.stop();
+            source.destroy();
+            this._sounds.splice(i, 1);
+        }
+    }
+
+    this._removalList.length = 0;
+}
+
+/***/ }),
+
 /***/ "./audio/manager/components/InitializeAudioSystemManager.js":
 /*!******************************************************************!*\
   !*** ./audio/manager/components/InitializeAudioSystemManager.js ***!
@@ -3003,6 +3097,59 @@ function InitializeAudioSystemManager(game) {
     }
 
     return audioManager;
+}
+
+/***/ }),
+
+/***/ "./audio/manager/components/UpdateAudioManager.js":
+/*!********************************************************!*\
+  !*** ./audio/manager/components/UpdateAudioManager.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateAudioManager;
+
+var _AudioSystemType = __webpack_require__(/*! ./AudioSystemType */ "./audio/manager/components/AudioSystemType.js");
+
+var _AudioSystemType2 = _interopRequireDefault(_AudioSystemType);
+
+var _UpdateWebAudioSource = __webpack_require__(/*! ../../sound/components/UpdateWebAudioSource */ "./audio/sound/components/UpdateWebAudioSource.js");
+
+var _UpdateWebAudioSource2 = _interopRequireDefault(_UpdateWebAudioSource);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function UpdateAudioManager() {
+
+    if (this._noAudio) return;
+
+    for (var i = 0; i < this._sounds.length; i++) {
+
+        var source = this._sounds.at(i);
+
+        if (this._system.type === _AudioSystemType2.default.WEBAUDIO) {
+            (0, _UpdateWebAudioSource2.default)(source);
+        }
+
+        if (source._requireRemoval) {
+            this._removalList.push(i);
+        }
+    }
+
+    // check removal
+    var removalSize = this._removalList.length;
+
+    if (removalSize === 0) return;
+
+    this._sounds.eraseIndexedList(this._removalList);
+    this._removalList.length = 0;
 }
 
 /***/ }),
@@ -3105,6 +3252,10 @@ var _CreateWebAudioContext = __webpack_require__(/*! ./CreateWebAudioContext */ 
 
 var _CreateWebAudioContext2 = _interopRequireDefault(_CreateWebAudioContext);
 
+var _AudioSystemType = __webpack_require__(/*! ../AudioSystemType */ "./audio/manager/components/AudioSystemType.js");
+
+var _AudioSystemType2 = _interopRequireDefault(_AudioSystemType);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var WebAudioSystem = function () {
@@ -3117,6 +3268,7 @@ var WebAudioSystem = function () {
         this.masterVolume = null;
         this.destination = null;
         this.locked = null;
+        this.type = _AudioSystemType2.default.WEBAUDIO;
 
         (0, _CreateWebAudioContext2.default)(this);
     }
@@ -3183,6 +3335,7 @@ var AudioSource = function () {
         this.isPaused = false;
         this.mute = false;
         this.loop = false;
+        this.persistent = false;
 
         this._ended = false;
         this.once = false;
@@ -3351,8 +3504,11 @@ var WebAudioSource = function (_AudioSource) {
             (0, _RemoveBufferSource2.default)(this);
 
             this.buffer = null;
-            this.gainNode.disconnect();
-            this.gainNode = null;
+
+            if (this.gainNode !== null) {
+                this.gainNode.disconnect();
+                this.gainNode = null;
+            }
 
             (0, _get3.default)(WebAudioSource.prototype.__proto__ || (0, _getPrototypeOf2.default)(WebAudioSource.prototype), "destroy", this).call(this);
         }
@@ -3467,6 +3623,39 @@ function StartBufferSource(webAudioSource, position) {
 
     buffer.start(Math.max(0, start), Math.max(0, delay), Math.max(0, duration));
     webAudioSource.gainNode.gain.value = webAudioSource._volume;
+}
+
+/***/ }),
+
+/***/ "./audio/sound/components/UpdateWebAudioSource.js":
+/*!********************************************************!*\
+  !*** ./audio/sound/components/UpdateWebAudioSource.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateWebAudioSource;
+function UpdateWebAudioSource(source) {
+
+    if (source._ended) {
+
+        if (!source.loop) {
+            source.stop();
+        } else {
+            source.playTime = source.startTime = 0;
+        }
+
+        if (source.once) {
+            source.destroy();
+            source._pendingRemoval = true;
+        }
+    }
 }
 
 /***/ }),
@@ -4428,6 +4617,10 @@ var _UpdateTransition = __webpack_require__(/*! ../render/transition/UpdateTrans
 
 var _UpdateTransition2 = _interopRequireDefault(_UpdateTransition);
 
+var _UpdateAudioManager = __webpack_require__(/*! ../audio/manager/components/UpdateAudioManager */ "./audio/manager/components/UpdateAudioManager.js");
+
+var _UpdateAudioManager2 = _interopRequireDefault(_UpdateAudioManager);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /*
@@ -4456,6 +4649,8 @@ var GameLoop = function () {
                 value: function loop(deltaTime) {
 
                         // Core Managers
+
+                        _UpdateAudioManager2.default.call(this.game.audio);
 
                         this.game.input.update();
 
@@ -4759,20 +4954,32 @@ function InjectSystems(game, scene) {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 exports.default = UnjectSystems;
 
 var _System = __webpack_require__(/*! ../System */ "./core/system/System.js");
 
+var _SceneSystem = __webpack_require__(/*! ../SceneSystem */ "./core/system/SceneSystem.js");
+
+var _SceneSystem2 = _interopRequireDefault(_SceneSystem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function UnjectSystems(scene) {
 
-    for (var property in _System.GameSystems) {
+        for (var property in _SceneSystem2.default) {
 
-        if (scene[sys.name] !== undefined) {
-            delete scene[sys.name]; // = undefined;
+                var sys = _System.GameSystems[_SceneSystem2.default[property]];
+
+                if (sys !== undefined) {
+                        delete scene[sys.name]; // = undefined;
+                }
         }
-    }
+
+        delete scene['key'];
+        delete scene['mouse'];
+        delete scene['audio'];
 }
 
 /***/ }),
@@ -4994,6 +5201,7 @@ var Entity = function () {
         this._active = true;
         this._pool = null;
         this.game = game || undefined;
+        this.persistent = false;
     }
 
     (0, _createClass3.default)(Entity, [{
@@ -5226,7 +5434,6 @@ var EntityUpdateList = function () {
             if (insertSize > 0) {
                 this._instances.concat(this._pendingInstances);
                 this._pendingInstances.childs.length = 0;
-                console.log(this._instances.childs);
             }
 
             /*    
@@ -5404,6 +5611,49 @@ var SceneEntity = function (_Entity) {
 );
 
 exports.default = SceneEntity;
+
+/***/ }),
+
+/***/ "./entities/hierarchy/ClearEntities.js":
+/*!*********************************************!*\
+  !*** ./entities/hierarchy/ClearEntities.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ClearEntities;
+
+var _ClearModules = __webpack_require__(/*! ../../modules/components/ClearModules */ "./modules/components/ClearModules.js");
+
+var _ClearModules2 = _interopRequireDefault(_ClearModules);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ClearEntities() {
+
+    for (var i = 0; i < this._instances.length; i++) {
+
+        var element = this._instances.at(i);
+
+        if (element['destroy'] !== undefined && element['destroy'] !== null) {
+            element.destroy();
+        }
+
+        if (element.persistent === false) {
+            (0, _ClearModules2.default)(element.modulesManager);
+            element.transform = null;
+            element.modulesManager = null;
+            element = null;
+            this._instances.splice(i, 1);
+        }
+    }
+}
 
 /***/ }),
 
@@ -6989,6 +7239,34 @@ function ProcessKeyRelease(event, key) {
 
 /***/ }),
 
+/***/ "./input/keyboard/components/ResetKeyboard.js":
+/*!****************************************************!*\
+  !*** ./input/keyboard/components/ResetKeyboard.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ResetKeyboard;
+function ResetKeyboard() {
+
+    this._keyWatch.each(function (code, key) {
+        key._event = KeyEvent.NONE;
+        key.status = false;
+    });
+
+    this._keyWatch.clear();
+    this._keyGarbage.splice(0, this._keyGarbage.length);
+    this._eventQueue.splice(0, this._eventQueue.length);
+}
+
+/***/ }),
+
 /***/ "./input/mouse/Mouse.js":
 /*!******************************!*\
   !*** ./input/mouse/Mouse.js ***!
@@ -7248,7 +7526,9 @@ var AssetsType = {
     'script': 5,
     'json': 6,
     'webFont': 7,
-    'tilemapJSON': 8
+    'tilemapJSON': 8,
+    'spritesheet': 9,
+    'animMachine': 10
 };
 
 exports.default = AssetsType;
@@ -7312,8 +7592,8 @@ var File = function () {
         this.tag = _ObjectGet2.default.value(config, 'tag', null);
         this.useExternal = _ObjectGet2.default.value(config, 'useExternal', false);
 
-        if (this.type == null || this.tag == null) {
-            throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
+        if (this.type === null || this.tag === null) {
+            throw new Error('Loader.File: Invalid tag.');
         }
 
         this.url = _ObjectGet2.default.value(config, 'url', undefined);
@@ -7324,7 +7604,7 @@ var File = function () {
 
         // Web fonts is managed by WebFontLoader provided by google
         // There is no need to create XHR settings and request
-        if (this.type !== _AssetsType2.default.webFont) {
+        if (this.type !== _AssetsType2.default.webFont || this.type !== _AssetsType2.default.spritesheet) {
 
             this.xhrSettings = _XHR2.default.createSettings(_ObjectGet2.default.value(config, 'responseType', undefined));
 
@@ -7824,6 +8104,173 @@ var XHR = {
 };
 
 exports.default = XHR;
+
+/***/ }),
+
+/***/ "./loader/assets/AdditionalLoaderResources.js":
+/*!****************************************************!*\
+  !*** ./loader/assets/AdditionalLoaderResources.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _AssetTypeHandler = __webpack_require__(/*! ./AssetTypeHandler */ "./loader/assets/AssetTypeHandler.js");
+
+var _AssetTypeHandler2 = _interopRequireDefault(_AssetTypeHandler);
+
+var _SpritesheetResource = __webpack_require__(/*! ../../resources/animation/SpritesheetResource */ "./resources/animation/SpritesheetResource.js");
+
+var _SpritesheetResource2 = _interopRequireDefault(_SpritesheetResource);
+
+var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.js");
+
+var _AssetsType2 = _interopRequireDefault(_AssetsType);
+
+var _AddAsset = __webpack_require__(/*! ../components/AddAsset */ "./loader/components/AddAsset.js");
+
+var _AddAsset2 = _interopRequireDefault(_AddAsset);
+
+var _File2 = __webpack_require__(/*! ../File */ "./loader/File.js");
+
+var _File3 = _interopRequireDefault(_File2);
+
+var _LoaderState = __webpack_require__(/*! ../LoaderState */ "./loader/LoaderState.js");
+
+var _LoaderState2 = _interopRequireDefault(_LoaderState);
+
+var _NextAsset = __webpack_require__(/*! ../components/NextAsset */ "./loader/components/NextAsset.js");
+
+var _NextAsset2 = _interopRequireDefault(_NextAsset);
+
+var _AnimationMachineResource = __webpack_require__(/*! ../../resources/animation/AnimationMachineResource */ "./resources/animation/AnimationMachineResource.js");
+
+var _AnimationMachineResource2 = _interopRequireDefault(_AnimationMachineResource);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AdditionalLoaderResource = function (_File) {
+    (0, _inherits3.default)(AdditionalLoaderResource, _File);
+
+    function AdditionalLoaderResource(tag, type, config) {
+        (0, _classCallCheck3.default)(this, AdditionalLoaderResource);
+
+
+        var assetConfig = {
+            type: type,
+            tag: tag,
+            config: config
+        };
+
+        return (0, _possibleConstructorReturn3.default)(this, (AdditionalLoaderResource.__proto__ || (0, _getPrototypeOf2.default)(AdditionalLoaderResource)).call(this, assetConfig));
+    }
+
+    (0, _createClass3.default)(AdditionalLoaderResource, [{
+        key: "load",
+        value: function load(gameLoader) {
+            this.loader = gameLoader;
+
+            if (this.state === _LoaderState2.default.FINISHED) {
+                this.onDone();
+            }
+            /// Do nothing
+            _NextAsset2.default.call(this.loader, this);
+        }
+    }, {
+        key: "onProcessing",
+        value: function onProcessing(processingCallback) {
+
+            this.state = _LoaderState2.default.PROCESSING;
+
+            if (this.type === _AssetsType2.default.spritesheet) {
+
+                var image = this.loader.cache.image.get(this.config.imageTag);
+
+                this.data = new _SpritesheetResource2.default(this.tag, image);
+                this.data.addStrip(config.x, config.y, config.frameWidth, config.frameHeight, config.numberOfImages, config.framesPerRow, config.spacing);
+            } else if (this.type === _AssetsType2.default.animMachine) {
+
+                this.data = new _AnimationMachineResource2.default(this.tag);
+
+                if (this.config.animations !== undefined) {
+
+                    var cache = this.loader.cache.animation;
+
+                    for (var i = 0; i < this.config.animations.length; i++) {
+
+                        var anim = cache.get(this.config.animations[i]);
+
+                        this.data.add(this.config.animations[i], anim);
+                    }
+                }
+            }
+
+            this.onDone();
+
+            processingCallback(this);
+        }
+    }]);
+    return AdditionalLoaderResource;
+}(_File3.default);
+
+exports.default = AdditionalLoaderResource;
+
+
+_AssetTypeHandler2.default.register('spritesheet', function (tag, imageTag, x, y, frameWidth, frameHeight, numberOfImages, framesPerRow, spacing) {
+
+    var resource = new AdditionalLoaderResource(tag, _AssetsType2.default.spritesheet, {
+        imageTag: imageTag,
+        x: x || 0,
+        y: y || 0,
+        frameWidth: frameWidth || 0,
+        frameHeight: frameHeight || 0,
+        numberOfImages: numberOfImages || 0,
+        framesPerRow: framesPerRow,
+        spacing: spacing
+    });
+
+    _AddAsset2.default.call(this, resource);
+
+    return this;
+});
+
+_AssetTypeHandler2.default.register('animMachine', function (tag, animations) {
+
+    var resource = new AdditionalLoaderResource(tag, _AssetsType2.default.animMachine, {
+        animations: animations || []
+
+    });
+
+    _AddAsset2.default.call(this, resource);
+
+    return this;
+});
 
 /***/ }),
 
@@ -8978,7 +9425,6 @@ var WebFontFile = function (_File) {
 
             if (this.state === _LoaderState2.default.FINISHED) {
                 this.onDone();
-
                 _NextAsset2.default.call(this.loader, this);
             } else if (this.loader.webFontLoader !== undefined && this.loader.webFontLoader.state === _LoaderState2.default.DONE) {
                 if (this.fontLoad !== undefined) this.fontLoad();
@@ -9063,7 +9509,8 @@ module.exports = {
     ScriptFile: __webpack_require__(/*! ./ScriptFile */ "./loader/assets/ScriptFile.js"),
     JSONFile: __webpack_require__(/*! ./JSONFile */ "./loader/assets/JSONFile.js"),
     TilemapJSON: __webpack_require__(/*! ./TilemapJSON */ "./loader/assets/TilemapJSON.js"),
-    WebFontFile: __webpack_require__(/*! ./WebFontFile */ "./loader/assets/WebFontFile.js")
+    WebFontFile: __webpack_require__(/*! ./WebFontFile */ "./loader/assets/WebFontFile.js"),
+    AdditionalResources: __webpack_require__(/*! ./AdditionalLoaderResources */ "./loader/assets/AdditionalLoaderResources.js")
 };
 
 /***/ }),
@@ -9106,7 +9553,7 @@ function AddAsset(asset, check) {
         this._filesQueue.set(this.webFontLoader);
         this._filesQueueCount++;
 
-        this.events.create('onpostload_webFontLoader').subscribe(function () {
+        this.events.create('onpostload_webFontLoader').subscribeOnce(function () {
             asset.fontLoad();
         });
     }
@@ -9465,6 +9912,12 @@ function ProcessDoneAssets() {
         case _AssetsType2.default.tilemapJSON:
           {
             cache.tilemap.add(file.tag, file.data);
+            break;
+          }
+
+        case _AssetsType2.default.spritesheet:
+          {
+            cache.animation.add(file.tag, file.data);
             break;
           }
       }
@@ -12107,6 +12560,33 @@ function AttachModuleInGame(entityModule, modulesManager, game) {
 
 /***/ }),
 
+/***/ "./modules/components/ClearModules.js":
+/*!********************************************!*\
+  !*** ./modules/components/ClearModules.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ClearModules;
+function ClearModules(modulesManager) {
+
+    modulesManager.attached.each(function (key, value) {
+
+        value.entity = null;
+        value.moduleManager = null;
+    });
+
+    modulesManager.attached.clear();
+}
+
+/***/ }),
+
 /***/ "./modules/components/InitializeModuleBase.js":
 /*!****************************************************!*\
   !*** ./modules/components/InitializeModuleBase.js ***!
@@ -12180,7 +12660,7 @@ function ModulesUpdater(modulesManager, game) {
         (0, _RenderableUpdate2.default)(entity, render, game.system.camera, game.system.loop.updateStep);
     }
     var anim = modulesManager.attached.get('animation');
-    if (anim !== undefined || anim !== null) {
+    if (anim !== undefined && anim !== null) {
         if (anim.type === 'animationControl') {
             _UpdateAnimationControl2.default.call(anim, game.system.loop.updateStep.deltaTime);
         }
@@ -16470,12 +16950,115 @@ var ResourceType = {
     Image: 0,
     Tilemap: 1,
     Animation: 2,
-    Spritesheet: 3
+    Spritesheet: 3,
+    AnimationMachine: 4
 };
 
 (0, _freeze2.default)(ResourceType);
 
 exports.default = ResourceType;
+
+/***/ }),
+
+/***/ "./resources/animation/AnimationMachineResource.js":
+/*!*********************************************************!*\
+  !*** ./resources/animation/AnimationMachineResource.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _Resource2 = __webpack_require__(/*! ../Resource */ "./resources/Resource.js");
+
+var _Resource3 = _interopRequireDefault(_Resource2);
+
+var _ResourceType = __webpack_require__(/*! ../ResourceType */ "./resources/ResourceType.js");
+
+var _ResourceType2 = _interopRequireDefault(_ResourceType);
+
+var _Map = __webpack_require__(/*! ../../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var AnimationMachineResource = function (_Resource) {
+    (0, _inherits3.default)(AnimationMachineResource, _Resource);
+
+    function AnimationMachineResource(name) {
+        (0, _classCallCheck3.default)(this, AnimationMachineResource);
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (AnimationMachineResource.__proto__ || (0, _getPrototypeOf2.default)(AnimationMachineResource)).call(this, name, _ResourceType2.default.AnimationMachine));
+
+        _this.states = new _Map2.default();
+
+        return _this;
+    }
+
+    (0, _createClass3.default)(AnimationMachineResource, [{
+        key: "add",
+        value: function add(state, animation) {
+
+            if (this.states.has(state)) {
+                Console.warn("AnimationMachineResource.add: Could not add state. There is already a state called \'" + state + "\".");
+                return this;
+            }
+
+            //let anim = this._cache.get(animationTag);
+            if (animation !== undefined) {
+                this.states.set(state, animation);
+            } else {
+                Console.warn("AnimationMachineResource.add: Could not add state with undefined animation.");
+            }
+
+            return this;
+        }
+
+        /// TODO
+        /*create(state) {
+            if (this.states.has(state)) {
+                Console.warn("AnimationMachineResource.create: Could not create state. There is already a state called \'" + state + "\".");
+                return this;
+            }
+              this.states.set(stateName, );
+        }*/
+
+    }, {
+        key: "get",
+        value: function get(stateName) {
+            return this.states.get(stateName);
+        }
+    }]);
+    return AnimationMachineResource;
+}(_Resource3.default);
+
+exports.default = AnimationMachineResource;
 
 /***/ }),
 
@@ -16550,7 +17133,6 @@ var Animation = function (_Resource) {
     _this._secondsPerFrame = 1;
     _this.loop = false;
     _this.uniformDuration = true;
-    _this._size = 0;
     return _this;
   }
 
@@ -16568,8 +17150,6 @@ var Animation = function (_Resource) {
       if (frame !== null) {
 
         if (atIndex === undefined) this.keyFrames.push(frame);else this.keyFrames.splice(atIndex, 0, frame);
-
-        this._size++;
       }
 
       return this;
@@ -16578,7 +17158,6 @@ var Animation = function (_Resource) {
     key: "remove",
     value: function remove(frameIndex) {
       var frame = this.keyFrames.eraseAt(frameIndex);
-      if (frame !== undefined && frame !== null) this._size--;
       return frame;
     }
   }, {
@@ -16609,7 +17188,7 @@ var Animation = function (_Resource) {
   }, {
     key: "size",
     get: function get() {
-      return this._size;
+      return this.keyFrames.size;
     }
   }, {
     key: "secondsPerFrame",
@@ -16637,6 +17216,227 @@ var Animation = function (_Resource) {
 }(_Resource3.default);
 
 exports.default = Animation;
+
+/***/ }),
+
+/***/ "./resources/animation/KeyFrame.js":
+/*!*****************************************!*\
+  !*** ./resources/animation/KeyFrame.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.SpritesheetKeyFrame = undefined;
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Rect = __webpack_require__(/*! ../../math/Rect */ "./math/Rect.js");
+
+var _Rect2 = _interopRequireDefault(_Rect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var KeyFrame = function () {
+    function KeyFrame(animation) {
+        (0, _classCallCheck3.default)(this, KeyFrame);
+
+        this.animation = animation;
+        this.duration = 0;
+        this.progress = 0;
+        this.type = 'key';
+    }
+
+    (0, _createClass3.default)(KeyFrame, [{
+        key: 'destroy',
+        value: function destroy() {}
+    }]);
+    return KeyFrame;
+}();
+
+exports.default = KeyFrame;
+
+var SpritesheetKeyFrame = exports.SpritesheetKeyFrame = function (_KeyFrame) {
+    (0, _inherits3.default)(SpritesheetKeyFrame, _KeyFrame);
+
+    function SpritesheetKeyFrame(animation, image, frame, duration) {
+        (0, _classCallCheck3.default)(this, SpritesheetKeyFrame);
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (SpritesheetKeyFrame.__proto__ || (0, _getPrototypeOf2.default)(SpritesheetKeyFrame)).call(this, animation));
+
+        _this.duration = duration || 1;
+        _this.type = 'sprite';
+        _this.frame = frame || new _Rect2.default();
+        _this.image = image || null;
+        return _this;
+    }
+
+    (0, _createClass3.default)(SpritesheetKeyFrame, [{
+        key: 'destroy',
+        value: function destroy() {}
+    }]);
+    return SpritesheetKeyFrame;
+}(KeyFrame);
+
+/***/ }),
+
+/***/ "./resources/animation/SpritesheetResource.js":
+/*!****************************************************!*\
+  !*** ./resources/animation/SpritesheetResource.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _AnimationResource = __webpack_require__(/*! ./AnimationResource */ "./resources/animation/AnimationResource.js");
+
+var _AnimationResource2 = _interopRequireDefault(_AnimationResource);
+
+var _KeyFrame = __webpack_require__(/*! ./KeyFrame */ "./resources/animation/KeyFrame.js");
+
+var _KeyFrame2 = _interopRequireDefault(_KeyFrame);
+
+var _Validate = __webpack_require__(/*! ../../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
+var _ResourceType = __webpack_require__(/*! ../ResourceType */ "./resources/ResourceType.js");
+
+var _ResourceType2 = _interopRequireDefault(_ResourceType);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SpritesheetResource = function (_Animation) {
+    (0, _inherits3.default)(SpritesheetResource, _Animation);
+
+    function SpritesheetResource(name, image, duration) {
+        (0, _classCallCheck3.default)(this, SpritesheetResource);
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (SpritesheetResource.__proto__ || (0, _getPrototypeOf2.default)(SpritesheetResource)).call(this, name));
+
+        _this.mainImage = image || null;
+        _this.type = _ResourceType2.default.Spritesheet;
+
+        return _this;
+    }
+
+    (0, _createClass3.default)(SpritesheetResource, [{
+        key: "addFrame",
+        value: function addFrame(x, y, width, height, image, duration) {
+
+            if (duration === undefined) duration = this._duration;
+
+            if (image === undefined) {
+                image = this.mainImage;
+            } else {
+                image = this.cache.image.get(image);
+            }
+
+            var keyFrame = new _KeyFrame.SpritesheetKeyFrame(this, image, new Rect(x, y, width, height), duration);
+
+            this.keyFrames.push(keyFrame);
+            //this._size++;
+
+            return this;
+        }
+
+        /** Add stripped images frames from the main image of the SpriteSheet animation.
+         * 
+         * @param {Number} x Initial x position of the strip
+         * @param {Number} y Initial y position of the strip
+         * @param {Number} frameWidth The frame image width.
+         * @param {Number} frameHeight The frame image height.
+         * @param {Number} numberOfImages The number of frames. Default: 1.
+         * @param {Number} [framesPerRow] Optional: Frames per row. Default: Equal to numberOfImages
+         * @param {Number|Object} [spacing] Optional: the spacing between the frames images. 
+         * To define spacing for x and y axis, spacing should be defined as Object ie: {x:Number,y:Number}.
+         */
+
+    }, {
+        key: "addStrip",
+        value: function addStrip(x, y, frameWidth, frameHeight, numberOfImages, framesPerRow, spacing) {
+
+            if (spacing === undefined) {
+                spacing = { x: 0, y: 0 };
+            } else if (_Validate2.default.isNumber(spacing)) {
+                spacing = { x: spacing, y: spacing };
+            }
+
+            var verticalCount = 0;
+            var horizontalCount = 0;
+            var xx = x;
+            var yy = y;
+
+            for (var i = 0; i < numberOfImages; i++) {
+
+                this.addFrame(xx, yy, frameWidth, frameHeight);
+
+                //this._size++;
+                xx += spacing.x + frameWidth;
+
+                if (i % framesPerRow == framesPerRow - 1) {
+                    xx = x;
+                    yy += spacing.y + frameHeight;
+                }
+            }
+        }
+    }, {
+        key: "addImageStrip",
+        value: function addImageStrip(image, x, y, frameWidth, frameHeight, numberOfImages, framesPerRow, spacing) {}
+    }]);
+    return SpritesheetResource;
+}(_AnimationResource2.default);
+
+exports.default = SpritesheetResource;
 
 /***/ }),
 
@@ -16672,6 +17472,24 @@ function AnimationUpdateFrameRate(frameRate, duration) {
 
 /***/ }),
 
+/***/ "./resources/animation/index.js":
+/*!**************************************!*\
+  !*** ./resources/animation/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    AnimationBase: __webpack_require__(/*! ./AnimationResource */ "./resources/animation/AnimationResource.js"),
+    Spritesheet: __webpack_require__(/*! ./SpritesheetResource */ "./resources/animation/SpritesheetResource.js"),
+    AnimationMachine: __webpack_require__(/*! ./AnimationMachineResource */ "./resources/animation/AnimationMachineResource.js")
+};
+
+/***/ }),
+
 /***/ "./resources/index.js":
 /*!****************************!*\
   !*** ./resources/index.js ***!
@@ -16684,9 +17502,9 @@ function AnimationUpdateFrameRate(frameRate, duration) {
 
 module.exports = {
     ResourceType: __webpack_require__(/*! ./ResourceType */ "./resources/ResourceType.js"),
-    ImageResource: __webpack_require__(/*! ./ImageResource */ "./resources/ImageResource.js"),
-    TilemapResource: __webpack_require__(/*! ./tilemap/TilemapResource */ "./resources/tilemap/TilemapResource.js"),
-    AnimationResource: __webpack_require__(/*! ./animation/AnimationResource */ "./resources/animation/AnimationResource.js")
+    Image: __webpack_require__(/*! ./ImageResource */ "./resources/ImageResource.js"),
+    Tilemap: __webpack_require__(/*! ./tilemap/TilemapResource */ "./resources/tilemap/TilemapResource.js"),
+    Animation: __webpack_require__(/*! ./animation */ "./resources/animation/index.js")
 };
 
 /***/ }),
@@ -17892,22 +18710,38 @@ var _UnjectSystems = __webpack_require__(/*! ../../core/system/components/Unject
 
 var _UnjectSystems2 = _interopRequireDefault(_UnjectSystems);
 
+var _ClearAudioSources = __webpack_require__(/*! ../../audio/manager/components/ClearAudioSources */ "./audio/manager/components/ClearAudioSources.js");
+
+var _ClearAudioSources2 = _interopRequireDefault(_ClearAudioSources);
+
+var _ClearEntities = __webpack_require__(/*! ../../entities/hierarchy/ClearEntities */ "./entities/hierarchy/ClearEntities.js");
+
+var _ClearEntities2 = _interopRequireDefault(_ClearEntities);
+
+var _ResetKeyboard = __webpack_require__(/*! ../../input/keyboard/components/ResetKeyboard */ "./input/keyboard/components/ResetKeyboard.js");
+
+var _ResetKeyboard2 = _interopRequireDefault(_ResetKeyboard);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ClearScene(game, sceneManager) {
 
-    if (sceneManager._currentSceneName) {
+    if (sceneManager.currentScene !== null && sceneManager.currentScene !== undefined) {
 
         //game.system.unject(sceneManager.currentScene);
         (0, _UnjectSystems2.default)(sceneManager.currentScene);
 
         if (sceneManager.onDestroyCallback) {
-            sceneManager.onDestroyCallback.call(sceneManager.currentScene, game);
+            sceneManager.onDestroyCallback.call(sceneManager.currentScene);
         }
 
         if (sceneManager._clearCache) {
             game.cache.clear();
         }
+
+        _ClearEntities2.default.call(game.system.entityList);
+        _ResetKeyboard2.default.call(game.input.keyboard);
+        _ClearAudioSources2.default.call(game.audio);
     }
 }
 
@@ -18070,7 +18904,7 @@ function PreUpdateScene(sceneManager) {
 
   if (!sceneManager.game.systemInited || sceneManager._changeScene === null) return;
 
-  (0, _ClearScene2.default)(sceneManager, sceneManager.game);
+  (0, _ClearScene2.default)(sceneManager.game, sceneManager);
 
   _SetupScene2.default.call(sceneManager, sceneManager._changeScene);
 
@@ -18872,6 +19706,8 @@ var DataMap = function () {
       for (var property in this._content) {
         delete this._content[property];
       }this._size = 0;
+
+      return this;
     }
   }, {
     key: "slowSize",

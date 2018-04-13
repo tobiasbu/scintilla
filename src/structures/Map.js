@@ -140,6 +140,8 @@ export default class DataMap {
 
     this._size = 0;
 
+    return this;
+
   }
 
   slowSize() {

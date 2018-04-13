@@ -18,17 +18,19 @@ export default function ModulesUpdater(modulesManager, game)
         modulesManager._pendingModulesInitialization.clear();
     }
 
+    let anim = modulesManager.attached.get('animation');
+    if (anim !== undefined && anim !== null) {
+        if (anim.type === 'animationControl') {
+            UpdateAnimationControl.call(anim, game.system.loop.updateStep.deltaTime);
+        }
+    }
+
     
     let render = modulesManager.attached.get('render');
     if (render !== undefined || render !== null) {
         RenderableUpdate(entity, render, game.system.camera, game.system.loop.updateStep);
     }
-    let anim = modulesManager.attached.get('animation');
-    if (anim !== undefined || anim !== null) {
-        if (anim.type === 'animationControl') {
-            UpdateAnimationControl.call(anim, game.system.loop.updateStep.deltaTime);
-        }
-    }
+    
 
 }
 

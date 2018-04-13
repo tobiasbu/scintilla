@@ -13,6 +13,7 @@ export default class Entity {
         this._active = true;
         this._pool = null;
         this.game = game || undefined; 
+        this.persistent = false;
     }
 
     get active() {return this._active;}

@@ -8,5 +8,6 @@ module.exports = {
     ScriptFile : require('./ScriptFile'),
     JSONFile : require('./JSONFile'),
     TilemapJSON : require('./TilemapJSON'),
-    WebFontFile : require('./WebFontFile')
+    WebFontFile : require('./WebFontFile'),
+    AdditionalResources : require('./AdditionalLoaderResources')
 }

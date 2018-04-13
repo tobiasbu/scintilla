@@ -80,7 +80,7 @@ export default class EntityUpdateList {
         if (insertSize > 0) {
             this._instances.concat(this._pendingInstances);
             this._pendingInstances.childs.length = 0;
-            console.log( this._instances.childs);
+            
         }
 
         /*    

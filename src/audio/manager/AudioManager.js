@@ -80,6 +80,17 @@ export default class AudioManager {
 
     }*/
 
+    at(index) {
+        if (this._noAudio)
+            return null;
+
+        return this._sounds.at(index);
+    }
+
+    /*get(sourceName) {
+
+    }*/
+
     play(tag, volume, loop) {
 
         if (this._noAudio)
@@ -88,6 +99,18 @@ export default class AudioManager {
         let sound = this.add(tag, volume, loop);
 
         sound.play();
+
+        return sound;
+
+    }
+
+    playPersistent(tag, volume, loop) {
+
+        let sound = this.play(tag, volume, loop);
+
+        if (sound !== null)
+            sound.persistent = true;
+
 
         return sound;
 
@@ -125,15 +148,23 @@ export default class AudioManager {
 
 
 
-    stopAll() {
+    stopAll(destroy) {
 
         if (this._noAudio) {
             return;
         }
 
-        for (var i = 0; i < _sounds.length; i++) {
-            if (_sounds[i]) {
-                _sounds[i].stop();
+        if (destroy === undefined) destroy = false;
+
+        for (let i = 0; i < this._sounds.length; i++) {
+
+            let source = this._sounds.at(i);
+
+            if (source) {
+                source.stop();
+                if (destroy === true) {
+                    source.destroy();
+                } 
             }
         }
 

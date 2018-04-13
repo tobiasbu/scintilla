@@ -1,4 +1,6 @@
 import CreateWebAudioContext from "./CreateWebAudioContext";
+import AudioSystemType from "../AudioSystemType";
+
 
 export default class WebAudioSystem {
 
@@ -9,6 +11,7 @@ export default class WebAudioSystem {
         this.masterVolume = null;
         this.destination = null;
         this.locked = null;
+        this.type = AudioSystemType.WEBAUDIO;
 
 
         CreateWebAudioContext(this);

@@ -1,3 +1,5 @@
+import AudioSystemType from "./AudioSystemType";
+import UpdateWebAudioSource from '../../sound/components/UpdateWebAudioSource';
 
 export default function UpdateAudioManager() {
     
@@ -7,20 +9,23 @@ export default function UpdateAudioManager() {
 
     for (let i = 0; i < this._sounds.length; i++) {
 
-        let sound = this._sounds.at(i);
+        let source = this._sounds.at(i);
 
-        sound.update();
+        if (this._system.type === AudioSystemType.WEBAUDIO) {
+            UpdateWebAudioSource(source);
+        }
 
-        if (sound._requireRemoval) {
+        if (source._requireRemoval) {
             this._removalList.push(i);
         }
     }
 
     // check removal
-    if (this._removalList.length > 0) {
+    let removalSize = this._removalList.length;
 
-        this._sounds.eraseIndexesList(_removalList);
-        _removalList.length = 0;
-    }
+    if (removalSize === 0)
+        return;
 
+    this._sounds.eraseIndexedList(this._removalList);
+    this._removalList.length = 0;
 }

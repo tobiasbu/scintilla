@@ -1,8 +1,11 @@
 import UnjectSystems from "../../core/system/components/UnjectSystems";
+import ClearAudioSources from "../../audio/manager/components/ClearAudioSources";
+import ClearEntities from "../../entities/hierarchy/ClearEntities";
+import ResetKeyboard from "../../input/keyboard/components/ResetKeyboard";
 
 export default function ClearScene(game, sceneManager) {
 
-    if (sceneManager._currentSceneName)
+    if (sceneManager.currentScene !== null && sceneManager.currentScene !== undefined)
     {
   
       //game.system.unject(sceneManager.currentScene);
@@ -10,13 +13,18 @@ export default function ClearScene(game, sceneManager) {
 
       if (sceneManager.onDestroyCallback)
       {
-        sceneManager.onDestroyCallback.call(sceneManager.currentScene, game);
+        sceneManager.onDestroyCallback.call(sceneManager.currentScene);
       }
   
       if (sceneManager._clearCache)
       {
         game.cache.clear();
       }
+
+     
+      ClearEntities.call(game.system.entityList);
+      ResetKeyboard.call(game.input.keyboard);
+      ClearAudioSources.call(game.audio);
 
     }
 

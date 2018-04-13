@@ -9,6 +9,8 @@ const AssetsType = {
     'json' : 6,
     'webFont' : 7,
     'tilemapJSON' : 8,
+    'spritesheet' : 9,
+    'animMachine' : 10
 }
 
 export default AssetsType;

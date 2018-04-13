@@ -1,10 +1,10 @@
 
-import ObjectGet from '../utils/object/ObjectGet'
-import XHR from './XHR'
-import LoaderState from './LoaderState'
+import ObjectGet from '../utils/object/ObjectGet';
+import XHR from './XHR';
+import LoaderState from './LoaderState';
 import AssetsType from './AssetsType';
 import NextAsset from './components/NextAsset';
-import Path from '../utils/Path'
+import Path from '../utils/Path';
 
 export default class File {
 
@@ -14,9 +14,9 @@ export default class File {
         this.tag = ObjectGet.value(config, 'tag', null);
         this.useExternal =  ObjectGet.value(config, 'useExternal', false);
 
-        if (this.type == null || this.tag == null)
+        if (this.type === null || this.tag === null)
         {
-            throw new Error('Loader.File: Invalid tag \"' + tag + "\".");
+            throw new Error('Loader.File: Invalid tag.');
         }
 
         this.url = ObjectGet.value(config, 'url', undefined);
@@ -32,7 +32,7 @@ export default class File {
 
         // Web fonts is managed by WebFontLoader provided by google
         // There is no need to create XHR settings and request
-        if (this.type !== AssetsType.webFont) {
+        if (this.type !== AssetsType.webFont || this.type !== AssetsType.spritesheet) {
 
             this.xhrSettings = XHR.createSettings(ObjectGet.value(config, 'responseType', undefined));
             

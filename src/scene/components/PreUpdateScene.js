@@ -9,7 +9,7 @@ export default function PreUpdateScene(sceneManager) {
       return;
 
 
-      ClearScene(sceneManager, sceneManager.game);
+      ClearScene(sceneManager.game, sceneManager);
 
       SetupScene.call(sceneManager, sceneManager._changeScene);
 
