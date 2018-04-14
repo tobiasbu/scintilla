@@ -42,4 +42,8 @@ export default class AnimationMachineResource extends Resource {
         return this.states.get(stateName);
     }
 
+    at(index) {
+        return this.states.at(index);
+    }
+
 }

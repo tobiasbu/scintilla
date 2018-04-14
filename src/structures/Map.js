@@ -43,12 +43,25 @@ export default class DataMap {
       }
   }
 
+  at(index) {
+    let n = 0;
+    for (let key in this._content)
+    {
+      if (index === n){
+        return this._content[key];
+      }
+      n++;
+    }
+
+    return null;
+  }
+
   has(key) {
     return this._content.hasOwnProperty(key);
   }
 
   contains(value) {
-    for (var key in this._content)
+    for (let key in this._content)
     {
       if (entries[key] === value)
       {

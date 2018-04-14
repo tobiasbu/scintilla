@@ -1,37 +1,30 @@
 import Module from "../Module";
 import Animation from "../../resources/animation/AnimationResource";
 import ModuleProvider from "../ModuleProvider";
+import AnimationBaseModule from "./AnimationBaseModule";
+import InitializeAnimationModule from "./components/InitializeAnimationModule";
 
-export default class AnimationControl extends Module {
+export default class AnimationControl extends AnimationBaseModule {
 
-  constructor(moduleManger, spriteModule, animation) {
+  constructor(moduleManager, config) {
 
-    super('animation','animationControl', moduleManager);
-
-    this._animation = animation || null;
+    super('animationControl', moduleManager, config);
 
     // playing stuff
     this.loop = false;
 
-    if (animation !== null) {
-      this.loop = animation.loop;
-    }
+    InitializeAnimationModule(this); 
+  }
 
-    this.isPlaying = false;
-    this.isPaused = false;
-    this._timer = 0;
-    this._spriteModule = spriteModule || null;
-
-    this.currentFrame = 0;
-    //this.overrideAnimationConfig = false;
-    this.speed = 0;
+  get trackPosition() {
+    return this._position;
   }
 
   get animation() {
     return this._animation;
   }
 
-  setAnimation(animation) {
+  set animation(animation) {
     
     let animResource;
     
@@ -42,44 +35,13 @@ export default class AnimationControl extends Module {
     } 
 
     if (animResource !== undefined) {
-      this._animation = animResource;
+      this._resource = animResource;
       this.loop = animation.loop;
     } else {
       console.warn("AnimationControl.setAnimation: Could not set animation. The animation is undefined.");
     }
-
-    return this;
   }
 
-  play(loop) {
-
-    if (this.isPlaying || this._animation === null)
-      return this;
-
-    this.loop = loop;
-    this.isPlaying = true;
-    this.isPaused = false;
-
-    return this;
-  }
-
-  pause() {
-    if (this.isPaused || this._animation === null)
-      return this;
-
-    this.isPaused = true;
-    this.isPlaying = false;
-
-    return this;
-  }
-
-  stop() {
-    this.isPaused = false;
-    this.isPlaying = false;
-    this.currentFrame = 0;
-    this._timer = 0;
-    return this;
-  }
 }
 
 ModuleProvider.register('spritesheet',function(moduleManager, args) {
@@ -91,7 +53,12 @@ ModuleProvider.register('spritesheet',function(moduleManager, args) {
     asset = moduleManager.entity.game.system.cache.animation.get(tag);
   }
 
-  let spritesheetModule = new AnimationControl(moduleManager,args[0], asset);
+  let config = {
+    resource : asset,
+    spriteModule : args[0]
+  };
+
+  let spritesheetModule = new AnimationControl(moduleManager,config);
 
   return spritesheetModule;
 

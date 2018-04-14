@@ -1,7 +1,10 @@
 import System from "../core/system/System";
+import Cache from "./Cache";
 import ImageResource from "../resources/ImageResource";
 import TilemapResource from "../resources/tilemap/TilemapResource";
-import Cache from "./Cache";
+import SpritesheetResource from "../resources/animation/SpritesheetResource";
+import AnimationMachineResource from "../resources/animation/AnimationMachineResource";
+import AssetsType from "../loader/AssetsType";
 
 
 const CacheTypes = [
@@ -10,6 +13,8 @@ const CacheTypes = [
   'audio',
   'text',
   'tilemap',
+  'animation',
+  'animMachine'
 ];
 
 /**
@@ -35,64 +40,42 @@ constructor(game) {
 
   this.json = new Cache();
   this.text = new Cache();
-  this.svg = new Cache();
   this.audio = new Cache();
-  this.animation = new Cache();
-  this.animMachine = new Cache();  
+  this.animation = new Cache((tag, data) => {
+
+    let resource;
+
+    if (data.type ===  AssetsType.spritesheet) {
+      let image = self.image.get(data.imageTag);
+
+      resource = new SpritesheetResource(tag, image);
+      resource.addStrip(data.x, data.y, data.frameWidth, data.frameHeight, data.numberOfImages, data.framesPerRow, data.spacing);
+    }
+
+    return resource;
+
+  });
+
+  this.animMachine = new Cache((tag, data) => {
+    
+    let resource = new AnimationMachineResource(tag);
+
+    if (data.animations !== undefined) {
+
+        for (let i = 0; i < data.animations.length; i++) {
+
+            let anim = self.animation.get(data.animations[i]);
+            resource.add(data.animations[i], anim);          
+        }
+    }
+
+    return resource;
+
+  });  
+
 
 }
 
-  /*addTilemap(tag, dataFormat) {
-    this._cache.tilemap[tag] = new TilemapResource(dataFormat, tag, this);
-  }
-
-  addJSON(tag, dataFormat) {
-    this._cache.json[tag] = dataFormat;
-  }
-
-  addImage(tag, url, data) {
-
-    if (this.tagExists('images',tag))
-      this.removeTagAt('images',tag);
-
-    
-    var img = new ImageResource(data,tag)
-
-    this._cache.images[tag] = img;
-
-  }
-
-  addSound(tag, url,data,webAudio) {
-
-    var decoded = false;
-
-    if (!webAudio)
-    {
-        decoded = true;
-    }
-
-    var audio = {
-            tag: tag,
-            url: url,
-            data: data,
-            usingWebAudio: webAudio,
-            decoded: decoded,
-            isDecoding: false
-    };
-
-    this._cache.sounds[tag] = audio;
-
-  }
-
-  soundDecoded(tag, data) {
-
-    var sound = this.getAssetInfo("sounds",tag);
-
-    sound.data = data;
-    sound.decoded = true;
-    sound.isDecoding = false;
-
-  }*/
 
   hasCache(cacheType) {
     return (typeof CacheTypes[cacheType] !== undefined);

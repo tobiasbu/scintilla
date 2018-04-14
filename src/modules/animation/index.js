@@ -1,4 +1,6 @@
 
 module.exports = {
-    AnimationControl : require('./AnimationControl')
+    AnimationBaseModule : require('./AnimationBaseModule'),
+    AnimationControl : require('./AnimationControl'),
+    AnimationMachine : require('./AnimationMachine')
 };

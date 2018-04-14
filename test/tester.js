@@ -87,7 +87,7 @@ function SceneLogo() {
             this.transition.in();
 
             var next = function () {
-                this.scene.set('title');
+                this.scene.set('game');
             };
             this.events.subscribeOnce('transition_end', next, this);
         }
@@ -256,8 +256,13 @@ function SceneTitle() {
 
 
 function Player() {
+
+    var anim;
+
     this.start = function () {
-        this.modules.attach.sprite('block');
+        console.log(this);
+        anim = this.modules.attach.animMachine('bugreiro');
+       
     }
 }
 
@@ -268,7 +273,7 @@ function SceneGame() {
     this.start = function () {
         this.transition.out();
         this.audio.play('gameMusic',0.3, true);
-        this.create.tilemap('tilemap');
+        //this.create.tilemap('tilemap');
         this.entity.create(Player);
     };
 

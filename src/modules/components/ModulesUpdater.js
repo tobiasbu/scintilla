@@ -1,7 +1,7 @@
 import InitializeModuleBase from "./InitializeModuleBase";
 import RenderableUpdate from "../renderables/components/RenderableUpdate";
 import AttachModuleInGame from "./AttachModuleInGame";
-import UpdateAnimationControl from "../animation/components/UpdateAnimationControl";
+import UpdateAnimationModule from "../animation/components/UpdateAnimationModule";
 
 export default function ModulesUpdater(modulesManager, game)
 {
@@ -19,9 +19,16 @@ export default function ModulesUpdater(modulesManager, game)
     }
 
     let anim = modulesManager.attached.get('animation');
-    if (anim !== undefined && anim !== null) {
-        if (anim.type === 'animationControl') {
-            UpdateAnimationControl.call(anim, game.system.loop.updateStep.deltaTime);
+    if (anim !== undefined || anim !== null) {
+        let resource;
+        if (anim.name === 'animationControl') {
+            resource = anim._resource;
+        } else if (anim.name === 'animMachine') {
+            resource = anim._currentState;
+        }
+
+        if (resource !== undefined) {
+            UpdateAnimationModule(anim, resource, game.system.loop.updateStep.hiDeltaTime);
         }
     }
 

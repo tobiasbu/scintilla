@@ -1,4 +1,6 @@
 import ModuleProvider from "./ModuleProvider";
+import GetRenderModule from "./components/GetRenderModule";
+
 
 
 export default class ModuleAttacher
@@ -23,21 +25,23 @@ export default class ModuleAttacher
 
     spritesheet(tag) {
 
-        let spriteModule;
+        let spriteModule = GetRenderModule(this.moduleManager, 'spritesheet', "SpriteSheet");
 
-        if (this.moduleManager.has('render') === false) {
-            spriteModule = ModuleProvider.attach(this.moduleManager, 'sprite');
-        } else {
-            spriteModule = this.moduleManager.getByName('sprite');
-        }
-
-        if (spriteModule === undefined || spriteModule === null) {
-            console.warn("ModuleAttacher.spritesheet: Could not create Spritesheet module. There is no Sprite module attached. The current Renderable module is not compatible with SpriteSheet module.");
+        if (spriteModule !== null)
+            return ModuleProvider.attach(this.moduleManager,'spritesheet', [spriteModule, tag]);
+        else
             return null;
-        }
-
-        return ModuleProvider.attach(this.moduleManager,'spritesheet', [spriteModule, tag]);
 
 
+    }
+
+    animMachine(tag) {
+
+        let spriteModule = GetRenderModule(this.moduleManager, 'animMachine', "AnimationMachine");
+
+        if (spriteModule !== null)
+            return ModuleProvider.attach(this.moduleManager,'animMachine', [spriteModule, tag]);
+        else
+            return null;
     }
 }

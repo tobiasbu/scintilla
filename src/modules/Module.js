@@ -7,12 +7,12 @@ export default class Module
         this._moduleName = moduleName || "noName";
         this._enabled = true;
         this.entity = null;
-        this.moduleManager = moduleManager || undefined;
+        this.moduleManager = moduleManager || null;
 
         Object.freeze(this._moduleType);
         Object.freeze(this._moduleName);
 
-        if (moduleManager !== undefined)
+        if (moduleManager !== null)
         {
             this.entity = moduleManager.entity;
         }

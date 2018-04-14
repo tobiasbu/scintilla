@@ -11,9 +11,9 @@ class ModuleProviderManager
         this.proxyModules = new DataMap();
     }
 
-    attach(modulesManager, moduleName, args)
+    attach(moduleManager, moduleName, args)
     {
-        let attached = modulesManager.attached;
+        let attached = moduleManager.attached;
 
         if (attached.has(moduleName))
             throw new Error('ModuleManager.attach: Could not attach module ' + moduleName + '. Already exists');
@@ -22,16 +22,16 @@ class ModuleProviderManager
             throw new Error('ModuleManager.attach: Module type ' + moduleName + ' don\'t exists.');
 
         // create a new module
-        let newModule = this.proxyModules.get(moduleName)(modulesManager, args);
+        let newModule = this.proxyModules.get(moduleName)(moduleManager, args);
 
         // initialize entity module
-        InitializeModuleBase(newModule, modulesManager.entity);
+        InitializeModuleBase(newModule, moduleManager.entity);
 
         // attach the new module to manager
         attached.set(newModule.type, newModule);
 
         // add to pending initialization list
-        modulesManager._pendingModulesInitialization.push(newModule);
+        moduleManager._pendingModulesInitialization.push(newModule);
 
         return newModule;
     }

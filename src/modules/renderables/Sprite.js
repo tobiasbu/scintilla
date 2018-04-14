@@ -12,7 +12,7 @@ export default class Sprite extends Renderable {
         super('sprite', moduleManager);
 
         //this._type = "sprite";
-        this.source = null;
+        this.resource = null;
         this.frame = new Rect();
    
     
@@ -28,8 +28,6 @@ export default class Sprite extends Renderable {
     }
 
     setFrameRect(rect) {
-        if (rect === undefined) return this;
-
         this.frame.copy(rect);
         return this;
     }
@@ -59,11 +57,11 @@ export default class Sprite extends Renderable {
 
         if (fullFrame === undefined) fullFrame = true;
       
-        if (this.source !== image)
-          this.source = image;
+        if (this.resource !== image)
+          this.resource = image;
       
-        if (fullFrame === true && image !== null) {
-            this.setFrame(0,0,this.source.width,this.source.height);
+        if (fullFrame === true && resource !== null) {
+            this.setFrame(0,0,this.resource.width,this.resource.height);
         }
       
         return this;
@@ -75,8 +73,11 @@ export default class Sprite extends Renderable {
         if (!this._enabled)
             return false;
 
+        if (!this.resource)
+            return false;
+
         DrawImage(context, 
-            this.source.data, this.frame,
+            this.resource.data, this.frame,
             this.entity.transform, this._originInPixels);
    
        return true;
@@ -89,7 +90,7 @@ ModuleProvider.register('sprite', function(moduleManager, tag) {
 
     if (tag !== undefined)
     {   
-        spr.setSprite(tag)
+        spr.setSprite(tag);
     } 
 
 

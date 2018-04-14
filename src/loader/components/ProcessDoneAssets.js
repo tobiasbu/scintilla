@@ -49,13 +49,18 @@ export default function ProcessDoneAssets() {
             cache.animation.add(file.tag,file.data);
             break;
           }
+
+          case AssetsType.animMachine: {
+            cache.animMachine.add(file.tag,file.data);
+            break;
+          }
         }
 
-      })
+      });
 
-      this._processedFiles.clear();
+      //
     }
-
+    this._processedFiles.clear();
     this.state = LoaderState.DONE;
 
     //this.game.scene.preloadComplete();

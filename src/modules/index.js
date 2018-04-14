@@ -5,4 +5,4 @@ module.exports = {
     ModuleAttacher : require('./ModuleAttacher'),
     Renderables : require('./renderables'),
     Animation : require('./animation')
-}
+};

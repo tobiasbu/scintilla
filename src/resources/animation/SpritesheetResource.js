@@ -2,6 +2,8 @@ import Animation from "./AnimationResource";
 import KeyFrame, { SpritesheetKeyFrame } from "./KeyFrame";
 import Validate from '../../utils/Validate';
 import ResourceType from "../ResourceType";
+import Rect from "../../math/Rect";
+import AnimationUpdateFrameRate from "./components/AnimationUpdateFrameRate";
 
 export default class SpritesheetResource extends Animation {
 
@@ -14,9 +16,10 @@ export default class SpritesheetResource extends Animation {
 
     }
 
-    addFrame(x, y, width, height, image, duration) {
+    addFrame(x, y, width, height, image, duration, shouldUpdateFrameRate) {
 
-        if (duration === undefined) duration = this._duration;
+        if (duration === undefined) duration = this._secondsPerFrame;
+        if (shouldUpdateFrameRate === undefined) shouldUpdateFrameRate = true;
 
         if (image === undefined) {
             image = this.mainImage;
@@ -32,8 +35,11 @@ export default class SpritesheetResource extends Animation {
         );
 
         this.keyFrames.push(keyFrame);
-        //this._size++;
 
+        if (shouldUpdateFrameRate === true) {
+            AnimationUpdateFrameRate.call(this, this._frameRate, null);
+        }
+        
         return this;
     }
 
@@ -49,6 +55,8 @@ export default class SpritesheetResource extends Animation {
      * To define spacing for x and y axis, spacing should be defined as Object ie: {x:Number,y:Number}.
      */
     addStrip(x, y, frameWidth, frameHeight, numberOfImages, framesPerRow, spacing) {
+
+        if (framesPerRow === undefined) framesPerRow = numberOfImages;
 
         if (spacing === undefined) {
             spacing = {x:0,y:0};
@@ -67,7 +75,10 @@ export default class SpritesheetResource extends Animation {
                 xx,
                 yy,
                 frameWidth,
-                frameHeight
+                frameHeight,
+                undefined,
+                undefined,
+                false
             );
 
             //this._size++;
@@ -78,6 +89,10 @@ export default class SpritesheetResource extends Animation {
                 yy += spacing.y + frameHeight;
             }
         }
+
+        AnimationUpdateFrameRate.call(this, this._frameRate, null);
+
+        return this;
 
     }
 

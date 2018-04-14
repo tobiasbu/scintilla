@@ -1,17 +1,16 @@
 
-export default function SetSpritesheetFrame(animationControl, keyFrame) {
+export default function SetSpritesheetFrame(spriteModule, keyFrame) {
 
-    if (animationControl._spriteModule === null)
+    if (spriteModule === null)
         return;
 
-    if (keyFrame.image === null)
+    if (keyFrame.image === undefined || keyFrame.image === null)
         return;
 
-    if (animationControl._spriteModule.source !== keyFrame.image) {
-        animationControl._spriteModule.setImage(keyFrame.image, false);
+    if (spriteModule.resource === null || spriteModule.resource !== keyFrame.image) {
+        spriteModule.setImage(keyFrame.image, false);
     }
 
-    animationControl._spriteModule.setFrameRect(keyFrame.frame);
-    
+    spriteModule.setFrameRect(keyFrame.frame);    
     
 }

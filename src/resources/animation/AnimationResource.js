@@ -3,6 +3,7 @@ import Resource from "../Resource";
 import ResourceType from "../ResourceType";
 import Validate from '../../utils/Validate';
 import AnimationUpdateFrameRate from "./components/AnimationUpdateFrameRate";
+import ComputeTotalDuration from "./components/ComputeTotalDuration";
 
 // storage of animation state
 export default class Animation extends Resource {
@@ -13,11 +14,14 @@ export default class Animation extends Resource {
     super(name, ResourceType.Animation);
 
     this.keyFrames = new DataList();
-    this._duration = 1;
-    this._frameRate = 60;
+    //this._duration = 1;
+    this._totalDuration = 1;
+    this._frameRate = 30;
     this._secondsPerFrame = 1;
-    this.loop = false;
+    this.loop = true;
     this.uniformDuration = true;
+
+    AnimationUpdateFrameRate.call(this, 30, null, 1);
   }
 
 
@@ -43,7 +47,7 @@ export default class Animation extends Resource {
   }
 
   get duration() {
-    return this._duration;
+    return this._totalDuration;
   }
 
   get frameRate() {
@@ -55,19 +59,10 @@ export default class Animation extends Resource {
   }
 
   get totalDuration() {
-    let size = this.keyFrames.size;
-
-    if (size === 0)
-      return 0;
-    else {
-
-      let dur = 0;
-
-      for (let i = 0; i < size; i++) {
-        dur += this.keyFrames.at(i).duration || 0;
-      }
-
-      return dur;
+    if (this.uniformDuration) {
+      return this._totalDuration;
+    } else {
+      return ComputeTotalDuration(this.keyFrames);
     }
   }
 
@@ -87,11 +82,14 @@ export default class Animation extends Resource {
         this.keyFrames.splice(atIndex, 0, frame);
     }
 
+    AnimationUpdateFrameRate.call(this, this._frameRate, null);
+
     return this;
   }
 
   remove(frameIndex) {
     let frame = this.keyFrames.eraseAt(frameIndex);
+    AnimationUpdateFrameRate.call(this, this._frameRate, null);
     return frame;
   }
 

@@ -11,7 +11,7 @@ export default class KeyFrame {
     }
 
     destroy() {
-
+        this.animation = null;
     }
 
 }
@@ -28,7 +28,9 @@ export class SpritesheetKeyFrame extends KeyFrame {
     }
 
     destroy() {
-        
+        this.frame = null;
+        this.image = null;
+        this.animation = null;
     }
 
 }

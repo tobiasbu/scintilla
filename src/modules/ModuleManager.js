@@ -1,11 +1,11 @@
-import DataMap from '../structures/Map'
-import DataList from '../structures/List'
-import ModuleAttacher from './ModuleAttacher'
+import DataMap from '../structures/Map';
+import DataList from '../structures/List';
+import ModuleAttacher from './ModuleAttacher';
 import Validate from '../utils/Validate';
 
 const ModulesMap = {
     'sprite': 'render'
-}
+};
 
 export default class ModuleManager {
     constructor(entity) {
@@ -42,12 +42,14 @@ export default class ModuleManager {
         if (!Validate.isString(moduleName))
             return null;
 
-        return this.attached.find(function (key, value) {
+        let r =  this.attached.find(function (key, value) {
 
             if (value.name === moduleName)
                 return value;
 
         });
+
+        return r || null;
 
     }
 }
