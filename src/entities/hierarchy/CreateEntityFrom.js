@@ -1,5 +1,4 @@
 import SceneEntity from "../SceneEntity";
-import CreateEntityFromObject from "./CreateEntityFromObject";
 import Extend from "../../utils/object/Extend";
 
 export default function CreateEntityFrom(value, game) {

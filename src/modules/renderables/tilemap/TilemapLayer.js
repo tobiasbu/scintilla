@@ -7,12 +7,12 @@ export default class TilemapLayer extends Renderable {
 
         super('tilemapLayer', tilemap.moduleManager);     
         this.tilemap = tilemap;
-        this.layerData = layerData;
+        this.data = layerData;
     }
 
 
-    get width() {return this.layerData.width * this.tilemap.tileWidth;}
-    get height() {return this.layerData.height * this.tilemap.tileHeight;}
+    get width() {return this.data.width * this.tilemap.tileWidth;}
+    get height() {return this.data.height * this.tilemap.tileHeight;}
 
 
     render(context) {
@@ -20,8 +20,12 @@ export default class TilemapLayer extends Renderable {
         if (!this._enabled && !this.tilemap._enabled)
             return false;
 
-        return DrawTilemapLayer(context, this.tilemap, this.layerData, this.tilemap.moduleManager.entity.transform);
+        return DrawTilemapLayer(context, this.tilemap, this.data, this.tilemap.moduleManager.entity.transform);
 
+    }
+
+    getTile(x, y) {
+        return this.data.getTile(x, y);
     }
 
 }

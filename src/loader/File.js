@@ -125,7 +125,7 @@ export default class File {
     onDone() {
         this.state = LoaderState.DONE;
 
-        this.loader.events.dispatch('oncomplete_' + this.tag);
+        this.loader.game.events.dispatch('file_complete_' + this.tag);
 
     }
 

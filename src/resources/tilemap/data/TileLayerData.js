@@ -1,7 +1,7 @@
 
-import ObjectGet from '../../../utils/object/ObjectGet'
+import ObjectGet from '../../../utils/object/ObjectGet';
 
-export default class TilemapLayerData {
+export default class TileLayerData {
 
     constructor(config) {
         this.width = ObjectGet.value(config,'width', 0);
@@ -14,6 +14,12 @@ export default class TilemapLayerData {
         this.visible = ObjectGet.value(config,'visible', true);
         this.tiles =  ObjectGet.value(config,'tiles', []);
         this.hasAnimatedTiles = false;
+    }
+
+    getTile(x, y) {
+        let index = x + y * this.width;
+
+        return this.tiles[index];
     }
 
 }

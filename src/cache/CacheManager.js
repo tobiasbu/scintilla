@@ -50,6 +50,8 @@ constructor(game) {
 
       resource = new SpritesheetResource(tag, image);
       resource.addStrip(data.x, data.y, data.frameWidth, data.frameHeight, data.numberOfImages, data.framesPerRow, data.spacing);
+      if (data.duration !== undefined)
+        resource.duration = data.duration;
     }
 
     return resource;

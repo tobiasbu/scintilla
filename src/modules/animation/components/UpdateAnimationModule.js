@@ -1,6 +1,7 @@
 
 import SetSpritesheetFrame from "./SetSpritesheetFrame";
 import ResourceType from "../../../resources/ResourceType";
+import WrapMode from "../../../resources/animation/WrapMode";
 
 export default function UpdateAnimationModule(animationModule, resource, deltaTime) {
 
@@ -41,12 +42,21 @@ export default function UpdateAnimationModule(animationModule, resource, deltaTi
           animationModule.currentFrame++;
         } else {
 
-          // animation has ended
-          animationModule.currentFrame = 0; // reset to start
+          let last =  animationModule.currentFrame;
+          animationModule.currentFrame = 0;
+               
+          // reset to start
+          if (resource.wrapMode === WrapMode.Once || animationModule.loop === false) {
+            animationModule.stop();
+            animationModule.currentFrame = last;
+          }
+           
+          
 
-          if (animationModule.loop !== undefined && animationModule.loop === false) {
-            animationModule.pause();
-          } 
+          // animation has ended
+          if (animationModule['onAnimationEnd'] !== undefined) {
+            animationModule.onAnimationEnd.call(animationModule.entity);
+          }
         }
 
         // set the current frame, not reseting the time

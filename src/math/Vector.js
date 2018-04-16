@@ -1,6 +1,6 @@
 
 
-import MathUtils from './MathUtils'
+import MathUtils from './MathUtils';
 
 /**
 * Class for points and vectors.
@@ -268,7 +268,7 @@ export default class Vector {
   get magnitude() {return Math.sqrt((this.x * this.x) + (this.y * this.y));}
   get normal() {
     let mag = this.magnitude;
-    let vec = new tobiJS.Vector(this.x / mag,this.y / mag);
+    let vec = new Vector(this.x / mag,this.y / mag);
     return vec;
   }
 

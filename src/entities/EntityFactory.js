@@ -1,5 +1,6 @@
 import System from "../core/system/System";
 import SceneEntity from "./SceneEntity";
+import InitializeEntity from "./hierarchy/InitializeEntity";
 
 
 export default class EntityFactory {
@@ -21,7 +22,7 @@ export default class EntityFactory {
         entity.modules.attach.sprite(tag);
 
         if (this.scene.current_scene !== null) {
-            this.entityList.add(entity);
+            InitializeEntity(entity, this.game);
         }
 
         return entity;
@@ -32,7 +33,18 @@ export default class EntityFactory {
         entity.modules.attach.tilemap(tag);
 
         if (this.scene.current_scene !== null) {
-            this.entityList.add(entity);
+            InitializeEntity(entity, this.game);
+        }
+
+        return entity;
+    }
+
+    spritesheet(tag, entityName) {
+        let entity = this.entity(entityName);
+        entity.modules.attach.spritesheet(tag);
+
+        if (this.scene.current_scene !== null) {
+            InitializeEntity(entity, this.game);
         }
 
         return entity;

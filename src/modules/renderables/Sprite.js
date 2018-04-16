@@ -60,7 +60,7 @@ export default class Sprite extends Renderable {
         if (this.resource !== image)
           this.resource = image;
       
-        if (fullFrame === true && resource !== null) {
+        if (fullFrame === true && image !== null) {
             this.setFrame(0,0,this.resource.width,this.resource.height);
         }
       
@@ -84,14 +84,25 @@ export default class Sprite extends Renderable {
     }
 }
 
-ModuleProvider.register('sprite', function(moduleManager, tag) {
+ModuleProvider.register('sprite', function(moduleManager, config) {
 
     var spr = new Sprite(moduleManager);
 
-    if (tag !== undefined)
-    {   
-        spr.setSprite(tag);
-    } 
+    if (config !== undefined) {
+        if (config[0] !== undefined)
+        {   
+            spr.setSprite(config[0]);
+
+            if (spr.resource !== null) {
+                if (config[1] === undefined) config[1] = 0; // framex
+                if (config[2] === undefined) config[2] = 0; // framey
+                if (config[2] === undefined) config[3] = spr.resource.width; // framew
+                if (config[4] === undefined) config[4] = spr.resource.height; // frameh
+
+                spr.setFrame(config[1], config[2], config[3], config[4]);
+            }
+        } 
+    }
 
 
     return spr;

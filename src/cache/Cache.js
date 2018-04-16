@@ -15,6 +15,8 @@ export default class Cache {
             resource = this.adderWrapper(tag, asset);
 
         this.resources.set(tag, resource);
+
+        return resource;
     }
 
     has(tag) {

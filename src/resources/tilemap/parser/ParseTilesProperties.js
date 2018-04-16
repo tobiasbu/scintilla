@@ -1,44 +1,23 @@
 
-export default function ParseTilesProperties(tileset, tilesetTilesProperties) {
+export default function ParseTileProperties(tileset, tileProperties) {
 
-    for (let tileIndex in tilesetTilesProperties) {
+    for (let tileIndex in tileProperties) {
 
         let tileData = tileset.getTile(tileIndex);
 
         if (tileData === null || tileData === undefined) continue;
 
 
-        let tileProperties = tilesetTilesProperties[tileIndex];
+        let props = tileProperties[tileIndex];
+        tileData.properties = props;
 
         // check properties
-        for (let property in tileProperties) {
+        /*for (let property in props) {
         
             let propertyContent = tileProperties[property];
-
-            if (property == 'animation') {
-
-                let animationSize = propertyContent.length;
-
-                if (animationSize > 1) {
-                    tileData.isAnimated = true;
-
-                    let keyFrames = [];
-
-                    for (let i = 0; i < animationSize; i++) {
-                        let anim = propertyContent[i];
-                        keyFrames.push({
-                            duration: anim.duration,
-                            tileID : anim.tileid 
-                        });
-                    }
-                    
-                    tileData.keyFrames = keyFrames;
-                }
-
-            }
-        }
+            tileData.properties = propertyContent;
+        }*/
 
     }
 
-  
 }

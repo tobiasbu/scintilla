@@ -29,14 +29,15 @@ export default class Tilemap extends Renderable {
         this.floorTiles = false;
         this.tilesets = resource.tilesets;
         this.layers = [];
+        this.objectLayers = resource.objectLayers;
 
         let animations = false;
-        let layersSize = resource.layers.length;
+        let layersSize = resource.tileLayers.length;
 
 
         for (let i = layersSize - 1; i >= 0; i--)
         {
-            let layer = resource.layers.at(i);
+            let layer = resource.tileLayers.at(i);
 
             if (layer.hasAnimatedTiles)
                 animations = true;
@@ -48,7 +49,14 @@ export default class Tilemap extends Renderable {
             this.animator = new TilemapAnimator(this, this.layers);
         }
 
-    }   
+    }
+    
+    getObjectsLayer(name) {
+        return this.objectLayers.find(function(a) {
+            if (a.name === name) 
+                return a;
+        });
+    }
 
 }
 

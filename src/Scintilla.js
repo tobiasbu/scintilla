@@ -40,7 +40,8 @@ var scintilla = scintilla || {
   Input : require('./input'),
 
   // MATH
-  Math : require('./math/MathUtils'),
+  Math : require('./math/MathUtils').default,
+  Random : require('./math/Random').default,
   Matrix : require('./math/Matrix'),
   Ease : require('./math/easing'),
 
@@ -49,6 +50,8 @@ var scintilla = scintilla || {
   Camera : require('./camera/Camera'),
   Module : require('./modules'),
   Entity : require('./entities'),
+  Pool : require('./entities/pool'),
+
 
   // EVENTS
   Event : require('./event'),
@@ -56,14 +59,16 @@ var scintilla = scintilla || {
   // AUDIO
   Audio : require('./audio'),
 
-  // CORE
+  // CACHE AND LOADER
   Resources : require('./resources'),
   Cache : require('./cache/CacheManager'),
+  AssetType : require('./loader/AssetsType'),
   Loader : require('./loader'),
   Game : require('./core/Game'),
 
   // UTILITIES
-  Path : require('./utils/Path')
+  Path : require('./utils/Path'),
+  WrapMode : require('./resources/animation/WrapMode').default
 };
 
 Extend(Defines, scintilla);

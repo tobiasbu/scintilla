@@ -8,6 +8,7 @@ export default class Tile {
         this.tileY = tileY;
         this.id = id;
         this.frame = tileData.st;
+
         // pixels positions
         this.x = Math.round(tileX * tileData.st.width);
         this.y = Math.round(tileY * tileData.st.height);

@@ -18,7 +18,13 @@ export default class AnimationBaseModule extends Module {
     this.speed = 0;
   }
 
+  setDuration(value) {
 
+    if (this._resource === null)
+      return;
+
+    this._resource.duration = value;
+  }
 
   play() {
 
@@ -52,8 +58,6 @@ export default class AnimationBaseModule extends Module {
   restart() {
     this.stop();
     this.isPlaying = true;
-    this.currentFrame = 0;
-    this._timer = 0;
     return this;
   }
 }

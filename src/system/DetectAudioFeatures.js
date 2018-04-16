@@ -17,6 +17,14 @@ export default function DetectAudioFeatures(browser) {
     audioFeatures.webAudio = !!(window['AudioContext'] || window['webkitAudioContext']);
 
     // test if we can play audio in the current document
+    // Edge:
+    // dolby: true
+    // m4a: true
+    // mp3: true
+    // ogg: false
+    // opus: false
+    // wav: true
+    // webm: false
 
     let element = document.createElement('audio');
     let result = !!element.canPlayType;
@@ -63,8 +71,8 @@ export default function DetectAudioFeatures(browser) {
         } catch (exception) {
 
         }
-
     }
+
 
 
     return audioFeatures;

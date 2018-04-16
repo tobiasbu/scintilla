@@ -2,8 +2,9 @@
 import Resource from "../Resource";
 import TilemapMetadata from "./data/TilemapMetadata";
 import ParseTilesets from "./parser/ParseTileset";
-import ParseLayers from "./parser/ParseLayers";
-import ResourceType from '../ResourceType'
+import ResourceType from '../ResourceType';
+import ParseTileLayers from "./parser/ParseTileLayers";
+import ParseObjectLayers from "./parser/ParseObjectsLayers";
 
 export default class TilemapResource extends Resource {
 
@@ -21,7 +22,9 @@ export default class TilemapResource extends Resource {
         });
 
         this.tilesets = ParseTilesets(source, cache);
-        this.layers = ParseLayers(source, this);
+        this.tileLayers = ParseTileLayers(source, this);
+        this.objectLayers = ParseObjectLayers(source);
+        
     }
 
     getTilesetByGID(gid) {

@@ -11,6 +11,8 @@ const AssetsType = {
     'tilemapJSON' : 8,
     'spritesheet' : 9,
     'animMachine' : 10
-}
+};
+
+Object.freeze(AssetsType);
 
 export default AssetsType;

@@ -1,26 +1,26 @@
-
-import ObjectGet from '../../../utils/object/ObjectGet'
+import ObjectGet from '../../../utils/object/ObjectGet';
 import Base64Utils from '../../../utils/Base64Utils';
 import DataSet from '../../../structures/Set';
 import DataList from '../../../structures/List';
-import ParseGID from './ParseGID'
-import TilemapLayerData from '../data/TilemapLayerData';
+import ParseGID from './ParseGID';
+import TileLayerData from '../data/TileLayerData';
 import Tile from '../data/Tile';
 
 
-export default function ParseLayers(json, map) {
+export default function ParseTileLayers(json, map) {
 
     let size = json.layers.length;
-    let tileLayers = new DataList();
+    let layers = new DataList();
 
     if (size <= 0)
-        return tileLayers;
+        return layers;
 
     for (let i = size - 1; i >= 0; i--) {
 
         let jsonLayer = json.layers[i];
 
-        if (jsonLayer.type !== "tilelayer") continue;
+        if (jsonLayer.type !== "tilelayer")
+            continue;
 
         if (jsonLayer.enconding) {
             if (jsonLayer.enconding === 'base64') {
@@ -30,7 +30,7 @@ export default function ParseLayers(json, map) {
             }
         }
 
-        let newLayer = new TilemapLayerData({
+        let newLayer = new TileLayerData({
             name: jsonLayer.name,
             x: ObjectGet.value(jsonLayer, 'offsetx', 0) + jsonLayer.x,
             y: ObjectGet.value(jsonLayer, 'offsety', 0) + jsonLayer.y,
@@ -60,7 +60,7 @@ export default function ParseLayers(json, map) {
                 let gid = gidProp.gid;
                 let tileset = map.getTilesetByGID(gid);
                 let tileData = tileset.getTileGID(gid);
-                
+
                 if (tileData.isAnimated) {
                     animatedTilesGID.set(gid);
                     hasAnimatedTiles = true;
@@ -68,7 +68,7 @@ export default function ParseLayers(json, map) {
                 }
 
                 tile = new Tile(newLayer, tileData, x, y, id);
-            } 
+            }
 
             tiles.push(tile);
 
@@ -84,11 +84,11 @@ export default function ParseLayers(json, map) {
         newLayer.hasAnimatedTiles = hasAnimatedTiles;
         newLayer.animatedTiles = (animatedTilesGID.size > 0) ? animatedTilesGID : undefined;
 
-        tileLayers.push(newLayer);
+        layers.push(newLayer);
 
     }
 
-   
-    return tileLayers;
+
+    return layers;
 
 }

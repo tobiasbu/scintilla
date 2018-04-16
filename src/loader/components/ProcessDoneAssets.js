@@ -9,6 +9,7 @@ export default function ProcessDoneAssets() {
 
     let cache = this.cache;
 
+
     if (this._processedFiles.size > 0)
     {
 
@@ -17,8 +18,12 @@ export default function ProcessDoneAssets() {
         return (a.type > b.type);
       });
 
+      let self = this;
+
       // add assets to cache
       this._processedFiles.each(function(file) {
+
+       let asset;
 
         switch (file.type)
         {
@@ -27,34 +32,37 @@ export default function ProcessDoneAssets() {
 
           case AssetsType.svg: 
           case AssetsType.image: {
-            cache.image.add(file.tag,file.data);
+            asset = cache.image.add(file.tag,file.data);
             break;
           }
 
           case AssetsType.audio: {
-            cache.audio.add(file.tag, file.data);
+            asset = cache.audio.add(file.tag, file.data);
             break;
           }
           case AssetsType.json: {
-            cache.json.add(file.tag, file.data);
+            asset = cache.json.add(file.tag, file.data);
             break;
           }
           
           case AssetsType.tilemapJSON: {
-            cache.tilemap.add(file.tag, file.data);
+            asset = cache.tilemap.add(file.tag, file.data);
             break;
           }
 
           case AssetsType.spritesheet: {
-            cache.animation.add(file.tag,file.data);
+            asset = cache.animation.add(file.tag,file.data);
             break;
           }
 
           case AssetsType.animMachine: {
-            cache.animMachine.add(file.tag,file.data);
+            asset = cache.animMachine.add(file.tag,file.data);
             break;
           }
         }
+
+        if (asset !== undefined)
+          self.game.events.dispatch('asset_complete', asset, file.type);
 
       });
 

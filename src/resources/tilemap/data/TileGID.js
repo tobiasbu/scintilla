@@ -10,6 +10,7 @@ export default class TileGID {
         this.keyFrames = undefined;
         this.isAnimated = false;
         this.currentFrame = 0;
+        this.properties = null;
     }
     
 }

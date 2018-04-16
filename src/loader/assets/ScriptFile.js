@@ -41,7 +41,7 @@ export default class ScriptFile extends File {
         // append to html document
         document.head.appendChild(this.data);
 
-        this.loader.events.dispatch('onpostload_' + this.tag);
+        this.loader.game.events.dispatch('file_postload_' + this.tag);
 
         //this.onDone();
 

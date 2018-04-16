@@ -1,7 +1,7 @@
 
 export default function ComputeTotalDuration(keyFrames) {
 
-    let size = this.keyFrames.size;
+    let size = keyFrames.size;
 
     if (size === 0)
       return 0;
@@ -10,7 +10,7 @@ export default function ComputeTotalDuration(keyFrames) {
       let dur = 0;
 
       for (let i = 0; i < size; i++) {
-        dur += this.keyFrames.at(i).duration || 0;
+        dur += keyFrames.at(i).duration || 0;
       }
 
       return dur;

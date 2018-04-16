@@ -12,13 +12,33 @@ export default class SceneEntity extends Entity //Hierarchy
         name = name || 'New SceneEntity';
         super(name, game || null)
         this.transform = new Transform();
-        this.pool = null;
+        this._pool = null;
         this.modules = new ModuleManager(this);
-        //this.bounds = new BoundingBox();
-        //this._transformDirty = false;
-        //this._currentScene = null;
-        
-        
+        this.scene = null;       
+        this._pendingRemoval = false;
+    }
+
+    get isPooled() {
+        return this._pool !== null;
+    }
+
+    /**
+     * If the object is pooled, send back to his pool.
+     * @returns {Boolean} True if the object was sent to pool, otherwise false.
+     */
+    back() {
+        if (this.isPooled) {
+            
+            if (this.scene !== null) {
+                this._pendingRemoval = true;
+                return this.game.system.pool.push(this);
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
     }
 
     set x(value) {
@@ -26,7 +46,7 @@ export default class SceneEntity extends Entity //Hierarchy
         this.transform.markDirty();
     }
 
-    get x() { return this.transform.position.y; }
+    get x() { return this.transform.position.x; }
 
     set y(value) {
         this.transform.position.y = value;

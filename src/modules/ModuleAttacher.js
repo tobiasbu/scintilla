@@ -9,8 +9,8 @@ export default class ModuleAttacher
         this.moduleManager = moduleManager;
     }
 
-    sprite(tag) {
-        return ModuleProvider.attach(this.moduleManager, 'sprite', tag);
+    sprite(tag, frameX, frameY, frameWidth, frameHeight) {
+        return ModuleProvider.attach(this.moduleManager, 'sprite', [tag, frameX, frameY, frameWidth, frameHeight]);
     }
 
     tilemap(tag) {
@@ -27,21 +27,22 @@ export default class ModuleAttacher
 
         let spriteModule = GetRenderModule(this.moduleManager, 'spritesheet', "SpriteSheet");
 
-        if (spriteModule !== null)
-            return ModuleProvider.attach(this.moduleManager,'spritesheet', [spriteModule, tag]);
-        else
+        if (spriteModule === null)
             return null;
+        else
+            return ModuleProvider.attach(this.moduleManager,'spritesheet', [spriteModule, tag]);
 
 
     }
+
 
     animMachine(tag) {
 
         let spriteModule = GetRenderModule(this.moduleManager, 'animMachine', "AnimationMachine");
 
-        if (spriteModule !== null)
-            return ModuleProvider.attach(this.moduleManager,'animMachine', [spriteModule, tag]);
-        else
+        if (spriteModule === null)
             return null;
+        else
+            return ModuleProvider.attach(this.moduleManager,'animMachine', [spriteModule, tag]);
     }
 }

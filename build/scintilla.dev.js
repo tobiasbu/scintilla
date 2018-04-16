@@ -2696,7 +2696,8 @@ var scintilla = scintilla || {
   Input: __webpack_require__(/*! ./input */ "./input/index.js"),
 
   // MATH
-  Math: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js"),
+  Math: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js").default,
+  Random: __webpack_require__(/*! ./math/Random */ "./math/Random.js").default,
   Matrix: __webpack_require__(/*! ./math/Matrix */ "./math/Matrix.js"),
   Ease: __webpack_require__(/*! ./math/easing */ "./math/easing/index.js"),
 
@@ -2705,6 +2706,7 @@ var scintilla = scintilla || {
   Camera: __webpack_require__(/*! ./camera/Camera */ "./camera/Camera.js"),
   Module: __webpack_require__(/*! ./modules */ "./modules/index.js"),
   Entity: __webpack_require__(/*! ./entities */ "./entities/index.js"),
+  Pool: __webpack_require__(/*! ./entities/pool */ "./entities/pool/index.js"),
 
   // EVENTS
   Event: __webpack_require__(/*! ./event */ "./event/index.js"),
@@ -2712,14 +2714,16 @@ var scintilla = scintilla || {
   // AUDIO
   Audio: __webpack_require__(/*! ./audio */ "./audio/index.js"),
 
-  // CORE
+  // CACHE AND LOADER
   Resources: __webpack_require__(/*! ./resources */ "./resources/index.js"),
   Cache: __webpack_require__(/*! ./cache/CacheManager */ "./cache/CacheManager.js"),
+  AssetType: __webpack_require__(/*! ./loader/AssetsType */ "./loader/AssetsType.js"),
   Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
   Game: __webpack_require__(/*! ./core/Game */ "./core/Game.js"),
 
   // UTILITIES
-  Path: __webpack_require__(/*! ./utils/Path */ "./utils/Path.js")
+  Path: __webpack_require__(/*! ./utils/Path */ "./utils/Path.js"),
+  WrapMode: __webpack_require__(/*! ./resources/animation/WrapMode */ "./resources/animation/WrapMode.js").default
 };
 
 (0, _Extend2.default)(_Define2.default, scintilla);
@@ -2852,13 +2856,18 @@ var AudioManager = function () {
         key: "play",
         value: function play(tag, volume, loop) {
 
-            if (this._noAudio) return null;
+            if (this._noAudio) {
+                return null;
+            }
 
             var sound = this.add(tag, volume, loop);
 
-            sound.play();
+            if (sound !== undefined && sound !== null) {
+                sound.play();
+                return sound;
+            }
 
-            return sound;
+            return null;
         }
     }, {
         key: "playPersistent",
@@ -3554,9 +3563,9 @@ function CreateBufferSource(webAudioSource) {
     bufferSource.connect(webAudioSource.gainNode);
 
     bufferSource.onended = function (event) {
-        if (event.target === self.source) {
+        if (event.target === self.buffer) {
             // sound ended
-            self.hasEnded = true;
+            self._ended = true;
         }
     };
 
@@ -3619,7 +3628,9 @@ function StartBufferSource(webAudioSource, position) {
 
     var buffer = webAudioSource.buffer;
 
-    if (webAudioSource.loop) buffer.loop = true;
+    if (buffer.loop !== undefined) {
+        buffer.loop = webAudioSource.loop;
+    }
 
     buffer.start(Math.max(0, start), Math.max(0, delay), Math.max(0, duration));
     webAudioSource.gainNode.gain.value = webAudioSource._volume;
@@ -3641,14 +3652,32 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = UpdateWebAudioSource;
+
+var _StartBufferSource = __webpack_require__(/*! ./StartBufferSource */ "./audio/sound/components/StartBufferSource.js");
+
+var _StartBufferSource2 = _interopRequireDefault(_StartBufferSource);
+
+var _CreateBufferSource = __webpack_require__(/*! ./CreateBufferSource */ "./audio/sound/components/CreateBufferSource.js");
+
+var _CreateBufferSource2 = _interopRequireDefault(_CreateBufferSource);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function UpdateWebAudioSource(source) {
 
-    if (source._ended) {
+    if (source._ended === true) {
+
+        source._ended = false;
 
         if (!source.loop) {
             source.stop();
         } else {
             source.playTime = source.startTime = 0;
+
+            //let buffer = webAudioSource.buffer;
+
+            source.buffer = (0, _CreateBufferSource2.default)(source);
+            (0, _StartBufferSource2.default)(source, 0);
         }
 
         if (source.once) {
@@ -3705,6 +3734,8 @@ var Cache = function () {
             if (this.adderWrapper !== undefined) resource = this.adderWrapper(tag, asset);
 
             this.resources.set(tag, resource);
+
+            return resource;
         }
     }, {
         key: "has",
@@ -3833,6 +3864,7 @@ var CacheManager = function () {
 
         resource = new _SpritesheetResource2.default(tag, image);
         resource.addStrip(data.x, data.y, data.frameWidth, data.frameHeight, data.numberOfImages, data.framesPerRow, data.spacing);
+        if (data.duration !== undefined) resource.duration = data.duration;
       }
 
       return resource;
@@ -4200,7 +4232,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function UpdateCamera(camera, canvas) {
 
-  if (!camera.transform._isDirty) return;
+  if (camera.transform._isDirty === false) return;
 
   var t = camera.transform;
 
@@ -4673,6 +4705,10 @@ var GameLoop = function () {
 
                         if (shouldUpdate) {
 
+                                this.entityUpdateList.beginUpdate(deltaTime);
+
+                                var lastCameraState = this.camera.transform._isDirty;
+
                                 (0, _UpdateScene2.default)(this.game.scene, deltaTime);
                                 /*if (this.game.scene._setup)
                                 {
@@ -4686,11 +4722,11 @@ var GameLoop = function () {
 
                                 (0, _UpdateCamera2.default)(this.camera, this.canvas);
 
+                                //this.entityUpdateList.transformUpdate(this.camera);
+
                                 this.entityUpdateList.update(deltaTime);
 
-                                this.entityUpdateList.lateUpdate(deltaTime);
-
-                                if (this.camera.transform._isDirty) this.camera.transform._isDirty = false;
+                                if (lastCameraState) this.camera.transform._isDirty = false;
                         }
                 }
         }, {
@@ -4779,7 +4815,7 @@ var _freeze2 = _interopRequireDefault(_freeze);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var SceneSystem = ['Cache', 'Loader', 'EntityFactory', 'EntityHierarchy', 'Camera', 'SceneManager', 'UserInterface', 'Transition', 'EventManager'];
+var SceneSystem = ['Cache', 'Loader', 'EntityFactory', 'EntityHierarchy', 'Camera', 'SceneManager', 'UserInterface', 'Transition', 'EventManager', 'PoolManager'];
 
 (0, _freeze2.default)(SceneSystem);
 
@@ -4875,6 +4911,7 @@ function InitializeSystems(game, render) {
     game.system = systems;
     game.scene = systems.scene;
     game.render = render;
+    game.events = systems.events;
     systems.render = render;
 
     // initialize systems
@@ -5272,6 +5309,10 @@ var _SceneEntity = __webpack_require__(/*! ./SceneEntity */ "./entities/SceneEnt
 
 var _SceneEntity2 = _interopRequireDefault(_SceneEntity);
 
+var _InitializeEntity = __webpack_require__(/*! ./hierarchy/InitializeEntity */ "./entities/hierarchy/InitializeEntity.js");
+
+var _InitializeEntity2 = _interopRequireDefault(_InitializeEntity);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EntityFactory = function () {
@@ -5297,7 +5338,7 @@ var EntityFactory = function () {
             entity.modules.attach.sprite(tag);
 
             if (this.scene.current_scene !== null) {
-                this.entityList.add(entity);
+                (0, _InitializeEntity2.default)(entity, this.game);
             }
 
             return entity;
@@ -5309,7 +5350,19 @@ var EntityFactory = function () {
             entity.modules.attach.tilemap(tag);
 
             if (this.scene.current_scene !== null) {
-                this.entityList.add(entity);
+                (0, _InitializeEntity2.default)(entity, this.game);
+            }
+
+            return entity;
+        }
+    }, {
+        key: "spritesheet",
+        value: function spritesheet(tag, entityName) {
+            var entity = this.entity(entityName);
+            entity.modules.attach.spritesheet(tag);
+
+            if (this.scene.current_scene !== null) {
+                (0, _InitializeEntity2.default)(entity, this.game);
             }
 
             return entity;
@@ -5370,6 +5423,18 @@ var _ModulesUpdater = __webpack_require__(/*! ../modules/components/ModulesUpdat
 
 var _ModulesUpdater2 = _interopRequireDefault(_ModulesUpdater);
 
+var _DestroyEntity = __webpack_require__(/*! ./hierarchy/DestroyEntity */ "./entities/hierarchy/DestroyEntity.js");
+
+var _DestroyEntity2 = _interopRequireDefault(_DestroyEntity);
+
+var _DetachModules = __webpack_require__(/*! ../modules/components/DetachModules */ "./modules/components/DetachModules.js");
+
+var _DetachModules2 = _interopRequireDefault(_DetachModules);
+
+var _AttachModules = __webpack_require__(/*! ../modules/components/AttachModules */ "./modules/components/AttachModules.js");
+
+var _AttachModules2 = _interopRequireDefault(_AttachModules);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EntityUpdateList = function () {
@@ -5379,51 +5444,115 @@ var EntityUpdateList = function () {
         this.game = game;
         this._instances = new _List2.default();
         this._destroyInstances = new _List2.default();
+        this._removalInstances = new _List2.default();
         this._pendingInstances = new _List2.default();
         this._camera = null;
     }
 
     (0, _createClass3.default)(EntityUpdateList, [{
-        key: "add",
-        value: function add(instance) {
+        key: "addInstance",
+        value: function addInstance(instance) {
             if (this._instances.indexOf(instance) === -1 && this._pendingInstances.indexOf(instance) === -1) {
                 this._pendingInstances.push(instance);
             }
             return instance;
         }
     }, {
-        key: "remove",
-        value: function remove(instance) {}
+        key: "destroyInstance",
+        value: function destroyInstance(instance) {
+
+            if (instance === undefined) return false;
+
+            if (this._instances.has(instance) && this._destroyInstances.indexOf(instance) === -1) {
+                this._destroyInstances.push(instance);
+                return true;
+            }
+
+            return false;
+        }
+    }, {
+        key: "removeInstance",
+        value: function removeInstance(instance) {
+
+            var index = this._instances.indexOf(instance);
+
+            if (index > -1 && this._destroyInstances.indexOf(instance) === -1 && this._removalInstances.indexOf(instance) === -1) {
+                this._removalInstances.push(instance);
+                return true;
+                //DetachModules(instance.modules, this.game);
+                //return this._instances.eraseAt(instance);
+            }
+
+            return false;
+        }
     }, {
         key: "update",
         value: function update(dt) {
 
-            for (var i = 0; i < this._instances.length; i++) {
+            var instances = this._instances;
 
-                var element = this._instances.at(i);
+            for (var i = 0; i < instances.size; i++) {
 
-                if (element.active) {
-                    if (element.update !== undefined) element.update.call(element, dt); //update(dt);
+                var element = instances.at(i);
 
-                    (0, _UpdateTransform2.default)(element.transform, this._camera.transform);
+                if (!element.active) continue;
 
-                    (0, _ModulesUpdater2.default)(element.modules, this.game);
+                (0, _UpdateTransform2.default)(element.transform, this._camera.transform);
 
-                    if (element.transform._isDirty) element.transform._isDirty = false;
-                }
+                if (element.update !== undefined) element.update.call(element, dt); //update(dt);
+
+
+                (0, _ModulesUpdater2.default)(element.modules, this.game);
+
+                if (element.transform._isDirty) element.transform._isDirty = false;
             }
         }
+
+        /*transformUpdate(camera) {
+            for (let i = 0; i < this._instances.length; i++) {
+                  let element = this._instances.at(i);
+                  if (!element.active)
+                    continue;
+                
+                    UpdateTransform(element.transform, camera.transform);
+            }
+        }*/
+
     }, {
-        key: "lateUpdate",
-        value: function lateUpdate() {
-            var removeSize = this._destroyInstances.length;
+        key: "beginUpdate",
+        value: function beginUpdate() {
+            var destroySize = this._destroyInstances.length;
+            var removalSize = this._removalInstances.length;
             var insertSize = this._pendingInstances.length;
 
-            if (insertSize === 0 && removeSize === 0) return;
+            if (insertSize === 0 && removalSize === 0 && destroySize === 0) return;
 
-            if (removeSize > 0) {
-                this._instances.eraseList(this._destroyInstances, removeSize);
+            if (destroySize > 0) {
+
+                for (var i = 0; i < destroySize; i++) {
+                    var instance = this._destroyInstances.at(i);
+
+                    if (instance !== undefined) {
+                        (0, _DestroyEntity2.default)(instance, this.game, false);
+                        instance = null;
+                    }
+                }
+
+                this._instances.eraseList(this._destroyInstances, destroySize);
                 this._destroyInstances.childs.length = 0;
+            }
+
+            if (removalSize !== 0) {
+                for (var _i = 0; _i < removalSize; _i++) {
+                    var _instance = this._removalInstances.at(_i);
+
+                    if (_instance !== undefined) {
+                        (0, _DetachModules2.default)(_instance.modules, this.game);
+                        this._instances.erase(_instance);
+                    }
+                }
+
+                this._removalInstances.childs.length = 0;
             }
 
             /*let content = this._pendingInstances.content();
@@ -5433,16 +5562,19 @@ var EntityUpdateList = function () {
                 this._pendingInstances.eraseAt(i);
             }*/
 
-            if (insertSize > 0) {
-                this._instances.concat(this._pendingInstances);
+            var content = this._pendingInstances.content();
+
+            if (insertSize !== 0) {
+                for (var _i2 = 0; _i2 < insertSize; _i2++) {
+
+                    var _instance2 = this._pendingInstances.at(_i2);
+                    (0, _AttachModules2.default)(_instance2.modules, this.game);
+                    this._instances.push(_instance2);
+                    //this._pendingInstances.eraseAt(i);
+                }
+                //this._instances.concat(this._pendingInstances);
                 this._pendingInstances.childs.length = 0;
             }
-
-            /*    
-              this._pendingInstances.clear();*/
-
-            //this._instances.concat(this._pendingInstances, true);
-
         }
     }, {
         key: "length",
@@ -5527,24 +5659,47 @@ var SceneEntity = function (_Entity) {
         var _this = (0, _possibleConstructorReturn3.default)(this, (SceneEntity.__proto__ || (0, _getPrototypeOf2.default)(SceneEntity)).call(this, name, game || null));
 
         _this.transform = new _Transform2.default();
-        _this.pool = null;
+        _this._pool = null;
         _this.modules = new _ModuleManager2.default(_this);
-        //this.bounds = new BoundingBox();
-        //this._transformDirty = false;
-        //this._currentScene = null;
-
-
+        _this.scene = null;
+        _this._pendingRemoval = false;
         return _this;
     }
 
     (0, _createClass3.default)(SceneEntity, [{
+        key: 'back',
+
+
+        /**
+         * If the object is pooled, send back to his pool.
+         * @returns {Boolean} True if the object was sent to pool, otherwise false.
+         */
+        value: function back() {
+            if (this.isPooled) {
+
+                if (this.scene !== null) {
+                    this._pendingRemoval = true;
+                    return this.game.system.pool.push(this);
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+    }, {
+        key: 'isPooled',
+        get: function get() {
+            return this._pool !== null;
+        }
+    }, {
         key: 'x',
         set: function set(value) {
             this.transform.position.x = value;
             this.transform.markDirty();
         },
         get: function get() {
-            return this.transform.position.y;
+            return this.transform.position.x;
         }
     }, {
         key: 'y',
@@ -5635,26 +5790,39 @@ var _ClearModules = __webpack_require__(/*! ../../modules/components/ClearModule
 
 var _ClearModules2 = _interopRequireDefault(_ClearModules);
 
+var _DestroyEntity = __webpack_require__(/*! ./DestroyEntity */ "./entities/hierarchy/DestroyEntity.js");
+
+var _DestroyEntity2 = _interopRequireDefault(_DestroyEntity);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function ClearEntities() {
+function ClearEntities(entityList, game) {
 
-    for (var i = 0; i < this._instances.length; i++) {
+    for (var i = 0; i < entityList._instances.length; i++) {
 
-        var element = this._instances.at(i);
+        var instance = entityList._instances.at(i);
 
-        if (element['destroy'] !== undefined && element['destroy'] !== null) {
-            element.destroy();
-        }
-
-        if (element.persistent === false) {
-            (0, _ClearModules2.default)(element.modulesManager);
-            element.transform = null;
-            element.modulesManager = null;
-            element = null;
-            this._instances.splice(i, 1);
+        if (instance.isPooled) {
+            game.system.pool.pull(instance);
+        } else {
+            (0, _DestroyEntity2.default)(instance, game, true);
         }
     }
+
+    for (var _i = 0; _i < entityList._pendingInstances.length; _i++) {
+
+        var _instance = entityList._instances.at(_i);
+
+        if (_instance.isPooled) {
+            game.system.pool.pull(_instance);
+        } else {
+            (0, _DestroyEntity2.default)(_instance, game, true);
+        }
+    }
+
+    entityList._pendingInstances.childs.length = 0;
+    entityList._destroyInstances.childs.length = 0;
+    entityList._instances.childs.length = 0;
 }
 
 /***/ }),
@@ -5682,10 +5850,6 @@ exports.default = CreateEntityFrom;
 var _SceneEntity = __webpack_require__(/*! ../SceneEntity */ "./entities/SceneEntity.js");
 
 var _SceneEntity2 = _interopRequireDefault(_SceneEntity);
-
-var _CreateEntityFromObject = __webpack_require__(/*! ./CreateEntityFromObject */ "./entities/hierarchy/CreateEntityFromObject.js");
-
-var _CreateEntityFromObject2 = _interopRequireDefault(_CreateEntityFromObject);
 
 var _Extend = __webpack_require__(/*! ../../utils/object/Extend */ "./utils/object/Extend.js");
 
@@ -5719,10 +5883,10 @@ function CreateEntityFrom(value, game) {
 
 /***/ }),
 
-/***/ "./entities/hierarchy/CreateEntityFromObject.js":
-/*!******************************************************!*\
-  !*** ./entities/hierarchy/CreateEntityFromObject.js ***!
-  \******************************************************/
+/***/ "./entities/hierarchy/DestroyEntity.js":
+/*!*********************************************!*\
+  !*** ./entities/hierarchy/DestroyEntity.js ***!
+  \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5732,28 +5896,42 @@ function CreateEntityFrom(value, game) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = CreateEntityFromObject;
+exports.default = DestroyEntity;
 
-var _SceneEntity = __webpack_require__(/*! ../SceneEntity */ "./entities/SceneEntity.js");
+var _ClearModules = __webpack_require__(/*! ../../modules/components/ClearModules */ "./modules/components/ClearModules.js");
 
-var _SceneEntity2 = _interopRequireDefault(_SceneEntity);
-
-var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
-
-var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
+var _ClearModules2 = _interopRequireDefault(_ClearModules);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function CreateEntityFromObject(value) {
+function DestroyEntity(instance, game, verifyPersistance) {
 
-    var entity = new _SceneEntity2.default(value.name || undefined);
+    if (instance === undefined) return;
 
-    for (var prop in value) {
-        if (object.hasOwnProperty(prop)) {
+    if (verifyPersistance === undefined) verifyPersistance = false;
 
-            if (prop === 'function') // create function
-                entity[prop] = value[prop].bind(entity);else entity[prop] = value[prop];
+    if (instance['destroy'] !== undefined && instance['destroy'] !== null) {
+        instance.destroy.call(instance);
+    }
+
+    var completelyDestroy = true;
+
+    if (verifyPersistance) {
+        completelyDestroy = element.persistent === false;
+    }
+
+    if (completelyDestroy) {
+        (0, _ClearModules2.default)(instance.modules, game);
+
+        if (instance.isPooled === true) {
+            var pool = game.system.pool.get(instance._pool);
+            pool.remove(instance);
         }
+
+        instance.scene = null;
+        instance.transform = null;
+        instance.modulesManager = null;
+        instance = null;
     }
 }
 
@@ -5792,6 +5970,10 @@ var _System2 = _interopRequireDefault(_System);
 var _CreateEntityFrom = __webpack_require__(/*! ./CreateEntityFrom */ "./entities/hierarchy/CreateEntityFrom.js");
 
 var _CreateEntityFrom2 = _interopRequireDefault(_CreateEntityFrom);
+
+var _InitializeEntity = __webpack_require__(/*! ./InitializeEntity */ "./entities/hierarchy/InitializeEntity.js");
+
+var _InitializeEntity2 = _interopRequireDefault(_InitializeEntity);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5850,24 +6032,24 @@ var EntityHierarchy = function () {
         value: function create(entityBase, count) {
 
             var entity = (0, _CreateEntityFrom2.default)(entityBase, this.game);
-
-            if (entity['start'] !== undefined && entity['start'] !== null) {
-                entity.start.call(entity);
-            }
-
-            this._entityList.add(entity);
-
+            (0, _InitializeEntity2.default)(entity, this.game);
             return entity;
         }
     }, {
         key: "destroy",
-        value: function destroy(entity) {}
+        value: function destroy(entity) {
+            return this._entityList.destroyInstance(entity);
+        }
     }, {
         key: "destroyAt",
-        value: function destroyAt(index) {}
+        value: function destroyAt(index) {
+            /// TODO
+        }
     }, {
         key: "clear",
-        value: function clear() {}
+        value: function clear() {
+            /// TODO
+        }
     }, {
         key: "count",
         get: function get() {
@@ -5883,6 +6065,36 @@ exports.default = EntityHierarchy;
 _System2.default.register('EntityHierarchy', EntityHierarchy, 'entity', function () {
     this._entityList = this.game.system.entityList;
 });
+
+/***/ }),
+
+/***/ "./entities/hierarchy/InitializeEntity.js":
+/*!************************************************!*\
+  !*** ./entities/hierarchy/InitializeEntity.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = InitializeEntity;
+function InitializeEntity(entity, game) {
+
+    // inject scene
+    entity.scene = game.scene.currentScene;
+
+    if (entity['start'] !== undefined && entity['start'] !== null) {
+        entity.start.call(entity);
+    }
+
+    game.system.entityList.addInstance(entity);
+
+    return entity;
+}
 
 /***/ }),
 
@@ -5902,6 +6114,367 @@ module.exports = {
     EntityUpdateList: __webpack_require__(/*! ./EntityUpdateList */ "./entities/EntityUpdateList.js"),
     EntityFactory: __webpack_require__(/*! ./EntityFactory */ "./entities/EntityFactory.js"),
     Hierarchy: __webpack_require__(/*! ./hierarchy/EntityHierarchy */ "./entities/hierarchy/EntityHierarchy.js")
+};
+
+/***/ }),
+
+/***/ "./entities/pool/Pool.js":
+/*!*******************************!*\
+  !*** ./entities/pool/Pool.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+var _CreateEntityFrom = __webpack_require__(/*! ../hierarchy/CreateEntityFrom */ "./entities/hierarchy/CreateEntityFrom.js");
+
+var _CreateEntityFrom2 = _interopRequireDefault(_CreateEntityFrom);
+
+var _PreparePooledToGame = __webpack_require__(/*! ./PreparePooledToGame */ "./entities/pool/PreparePooledToGame.js");
+
+var _PreparePooledToGame2 = _interopRequireDefault(_PreparePooledToGame);
+
+var _RemovePooledFromGame = __webpack_require__(/*! ./RemovePooledFromGame */ "./entities/pool/RemovePooledFromGame.js");
+
+var _RemovePooledFromGame2 = _interopRequireDefault(_RemovePooledFromGame);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Pool = function () {
+    function Pool(game, name, baseEntity, count) {
+        (0, _classCallCheck3.default)(this, Pool);
+
+
+        this.game = game;
+        this._baseEntity = baseEntity;
+        this.name = name || baseEntity.name || 'Entity Pool';
+
+        this._pool = new _List2.default();
+        this._pooledEntities = new _List2.default();
+
+        if (count === undefined) count = 1;
+
+        this.add(count);
+    }
+
+    (0, _createClass3.default)(Pool, [{
+        key: "add",
+        value: function add(count) {
+
+            if (count === undefined) count = 1;
+
+            for (var i = 0; i < count; i++) {
+
+                var entity = (0, _CreateEntityFrom2.default)(this._baseEntity, this.game);
+
+                if (entity['start'] !== undefined && entity['start'] !== null) {
+                    entity.start.call(entity);
+                }
+
+                this._pool.push(entity);
+            }
+
+            return this;
+        }
+    }, {
+        key: "pull",
+        value: function pull() {
+            if (this._pool.size === 0) {
+                console.warn("Pool.pull: Could not pull entity. The pool is empty");
+                return null;
+            }
+
+            var pooled = this._pool.popFront();
+
+            if (pooled !== undefined && pooled !== null) {
+
+                if ((0, _PreparePooledToGame2.default)(this, pooled, this.game) === true) {
+                    this._pooledEntities.push(pooled);
+                    return pooled;
+                } else {
+                    this._pool.push(pooled);
+                }
+            } else {
+                console.warn("Pool.pull: Could not pull entity. The pool is empty");
+            }
+
+            return null;
+        }
+    }, {
+        key: "push",
+        value: function push(entity) {
+            if (entity === undefined) return false;
+
+            //if (entity instanceof this._mergedBaseEntity) {
+
+            var index = this._pooledEntities.indexOf(entity);
+
+            if (index !== -1) {
+
+                (0, _RemovePooledFromGame2.default)(entity, this.game);
+                this._pooledEntities.eraseAt(index);
+                this._pool.push(entity);
+                return true;
+            } else {
+                return false;
+            }
+
+            /*} else {
+                console.warn("Pool.push: Could not push the entity back to the pool. The entity is not entity of type: " + this._baseEntity.name);
+                return false;
+            }*/
+        }
+    }, {
+        key: "remove",
+        value: function remove(entity) {
+            var index = this._pooledEntities.indexOf(entity);
+
+            if (index > -1) {
+                this._pooledEntities.eraseAt(index);
+                return true;
+            }
+
+            return false;
+        }
+    }, {
+        key: "clear",
+        value: function clear() {
+            this._pool.clear();
+            this._pooledEntities.clear();
+            return this;
+        }
+    }, {
+        key: "backAll",
+        value: function backAll() {
+            for (var i = 0; i < this._pooledEntities.length; i++) {
+
+                var entity = this._pooledEntities.at(i);
+                RemoveEntityFromGame(entity, this.game);
+                this._pool.push(entity);
+            }
+
+            this._pooledEntities.childs.length = 0;
+            return this;
+        }
+    }, {
+        key: "length",
+        get: function get() {
+            return this._pool.size;
+        }
+    }]);
+    return Pool;
+}();
+
+exports.default = Pool;
+
+/***/ }),
+
+/***/ "./entities/pool/PoolManager.js":
+/*!**************************************!*\
+  !*** ./entities/pool/PoolManager.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Map = __webpack_require__(/*! ../../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+var _Pool = __webpack_require__(/*! ./Pool */ "./entities/pool/Pool.js");
+
+var _Pool2 = _interopRequireDefault(_Pool);
+
+var _System = __webpack_require__(/*! ../../core/system/System */ "./core/system/System.js");
+
+var _System2 = _interopRequireDefault(_System);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var PoolManager = function () {
+  function PoolManager(game) {
+    (0, _classCallCheck3.default)(this, PoolManager);
+
+
+    this._poolsMap = new _Map2.default();
+    this.game = game;
+  }
+
+  (0, _createClass3.default)(PoolManager, [{
+    key: "get",
+    value: function get(pool) {
+      return this._poolsMap.get(pool);
+    }
+
+    // create objects pool
+
+  }, {
+    key: "create",
+    value: function create(poolName, entityBase, size) {
+
+      if (entityBase === undefined || entityBase === null) return null;
+      if (size === undefined) size = 1;
+
+      if (this._poolsMap.has(poolName)) {
+        console.warn('PoolManager.create: Could not create pool named \'' + poolName + '\'. There is already a pool registered with this name.');
+        return null;
+      }
+
+      var pool = new _Pool2.default(this.game, poolName, entityBase, size);
+      this._poolsMap.set(poolName, pool);
+
+      return pool;
+    }
+
+    // get a obj
+
+  }, {
+    key: "pull",
+    value: function pull(poolName) {
+
+      var pool = this._poolsMap.get(poolName);
+
+      if (pool !== null && pool !== undefined) {
+        return pool.pull();
+      } else {
+        console.warn("PoolManager.pull: The specified pool container don't exists: " + poolName);
+        return null;
+      }
+    }
+  }, {
+    key: "push",
+    value: function push(entity) {
+
+      if (entity.pool !== null) {
+
+        var pool = this._poolsMap.get(entity._pool);
+        if (pool !== null && pool !== undefined) {
+          pool.push(entity);
+          return true;
+        }
+      }
+
+      return false;
+    }
+  }, {
+    key: "clearAll",
+    value: function clearAll() {
+
+      this._poolsMap.each(function (key, value) {
+        value.clear();
+      });
+
+      return this;
+    }
+  }]);
+  return PoolManager;
+}();
+
+exports.default = PoolManager;
+
+
+_System2.default.register('PoolManager', PoolManager, 'pool');
+
+/***/ }),
+
+/***/ "./entities/pool/PreparePooledToGame.js":
+/*!**********************************************!*\
+  !*** ./entities/pool/PreparePooledToGame.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = PreparePooledToGame;
+function PreparePooledToGame(pool, entity, game) {
+    if (game.scene.currentScene === null || game.scene.currentScene === undefined) {
+        console.warn("Pool.pull: Could not pull entity. There is no active scene.");
+        return false;
+    }
+
+    entity.active = true;
+    entity._pool = pool.name;
+    entity.scene = game.scene.currentScene;
+    game.system.entityList.addInstance(entity);
+    return true;
+}
+
+/***/ }),
+
+/***/ "./entities/pool/RemovePooledFromGame.js":
+/*!***********************************************!*\
+  !*** ./entities/pool/RemovePooledFromGame.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = RemovePooledFromGame;
+function RemovePooledFromGame(entity, game) {
+
+    game.system.entityList.removeInstance(entity);
+    entity.active = false;
+    entity._pool = null;
+    entity.scene = null;
+}
+
+/***/ }),
+
+/***/ "./entities/pool/index.js":
+/*!********************************!*\
+  !*** ./entities/pool/index.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = {
+    Pool: __webpack_require__(/*! ./Pool */ "./entities/pool/Pool.js"),
+    PoolManager: __webpack_require__(/*! ./PoolManager */ "./entities/pool/PoolManager.js")
 };
 
 /***/ }),
@@ -6081,7 +6654,7 @@ var _freeze2 = _interopRequireDefault(_freeze);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // list of events
-var GameEvents = ['__render_depthsorting', '__render_layeridchange', 'transition_pause_end', 'transition_end'];
+var GameEvents = ['__render_depthsorting', '__render_layeridchange', 'asset_complete', 'transition_pause_end', 'transition_end'];
 
 (0, _freeze2.default)(GameEvents);
 
@@ -7519,6 +8092,12 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var AssetsType = {
     'none': 0,
     'image': 1,
@@ -7532,6 +8111,8 @@ var AssetsType = {
     'spritesheet': 9,
     'animMachine': 10
 };
+
+(0, _freeze2.default)(AssetsType);
 
 exports.default = AssetsType;
 
@@ -7687,7 +8268,7 @@ var File = function () {
         value: function onDone() {
             this.state = _LoaderState2.default.DONE;
 
-            this.loader.events.dispatch('oncomplete_' + this.tag);
+            this.loader.game.events.dispatch('file_complete_' + this.tag);
         }
     }, {
         key: 'onProcessing',
@@ -8217,17 +8798,26 @@ var AdditionalLoaderResource = function (_File) {
 exports.default = AdditionalLoaderResource;
 
 
-_AssetTypeHandler2.default.register('spritesheet', function (tag, imageTag, x, y, frameWidth, frameHeight, numberOfImages, framesPerRow, spacing) {
+_AssetTypeHandler2.default.register('spritesheet', function (tag, imageTag, config) {
 
-    var resource = new AdditionalLoaderResource(tag, _AssetsType2.default.spritesheet, {
+    var resource = void 0;
+    var options = config;
+
+    if (!Array.isArray(config)) {
+
+        options = Array.prototype.slice.call(arguments, 2, arguments.length - 2);
+    }
+
+    resource = new AdditionalLoaderResource(tag, _AssetsType2.default.spritesheet, {
         imageTag: imageTag,
-        x: x || 0,
-        y: y || 0,
-        frameWidth: frameWidth || 0,
-        frameHeight: frameHeight || 0,
-        numberOfImages: numberOfImages || 0,
-        framesPerRow: framesPerRow,
-        spacing: spacing
+        x: options[0] || 0,
+        y: options[1] || 0,
+        frameWidth: options[2] || 0,
+        frameHeight: options[3] || 0,
+        numberOfImages: options[4] || 0,
+        framesPerRow: options[5] || undefined,
+        spacing: options[6] || undefined,
+        duration: options[7] || arguments[3]
     });
 
     _AddAsset2.default.call(this, resource);
@@ -8998,7 +9588,7 @@ var ScriptFile = function (_File) {
                         // append to html document
                         document.head.appendChild(this.data);
 
-                        this.loader.events.dispatch('onpostload_' + this.tag);
+                        this.loader.game.events.dispatch('file_postload_' + this.tag);
 
                         //this.onDone();
 
@@ -9528,7 +10118,7 @@ function AddAsset(asset, check) {
         this._filesQueue.set(this.webFontLoader);
         this._filesQueueCount++;
 
-        this.events.create('onpostload_webFontLoader').subscribeOnce(function () {
+        this.game.events.create('file_postload_webFontLoader').subscribeOnce(function () {
             asset.fontLoad();
         });
     }
@@ -9659,7 +10249,7 @@ function InitializeLoader() {
     this._successFiles = new _Set2.default();
     this._failedFiles = new _Set2.default();
     this._processedFiles = new _Set2.default();
-    this.events = new _EventManager2.default();
+    //this.events = new EventManager();
 
     this._filesQueueCount = 0;
     this._loadedFilesCount = 0;
@@ -9859,8 +10449,12 @@ function ProcessDoneAssets() {
       return a.type > b.type;
     });
 
+    var self = this;
+
     // add assets to cache
     this._processedFiles.each(function (file) {
+
+      var asset = void 0;
 
       switch (file.type) {
         default:
@@ -9869,39 +10463,41 @@ function ProcessDoneAssets() {
         case _AssetsType2.default.svg:
         case _AssetsType2.default.image:
           {
-            cache.image.add(file.tag, file.data);
+            asset = cache.image.add(file.tag, file.data);
             break;
           }
 
         case _AssetsType2.default.audio:
           {
-            cache.audio.add(file.tag, file.data);
+            asset = cache.audio.add(file.tag, file.data);
             break;
           }
         case _AssetsType2.default.json:
           {
-            cache.json.add(file.tag, file.data);
+            asset = cache.json.add(file.tag, file.data);
             break;
           }
 
         case _AssetsType2.default.tilemapJSON:
           {
-            cache.tilemap.add(file.tag, file.data);
+            asset = cache.tilemap.add(file.tag, file.data);
             break;
           }
 
         case _AssetsType2.default.spritesheet:
           {
-            cache.animation.add(file.tag, file.data);
+            asset = cache.animation.add(file.tag, file.data);
             break;
           }
 
         case _AssetsType2.default.animMachine:
           {
-            cache.animMachine.add(file.tag, file.data);
+            asset = cache.animMachine.add(file.tag, file.data);
             break;
           }
       }
+
+      if (asset !== undefined) self.game.events.dispatch('asset_complete', asset, file.type);
     });
 
     //
@@ -10245,6 +10841,10 @@ exports.default = BoundingBox;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
 
 var _freeze2 = _interopRequireDefault(_freeze);
@@ -10278,16 +10878,6 @@ var MathUtils = {
 
   clamp: function clamp(value, min, max) {
     return value > min ? value < max ? value : max : min;
-  },
-
-  randomRange: function randomRange(min, max) {
-
-    return Math.random() * (max - min) + min;
-  },
-
-  irandomRange: function irandomRange(min, max) {
-
-    return MathUtils.floor(Math.random() * (max - min + 1)) + min;
   },
 
   lerp: function lerp(fromValue, toValue, t) {
@@ -10360,9 +10950,9 @@ var MathUtils = {
 
 (0, _freeze2.default)(MathUtils);
 
-module.exports = MathUtils;
+//module.exports = MathUtils;
 
-//export default MathUtils;
+exports.default = MathUtils;
 
 /***/ }),
 
@@ -10691,6 +11281,68 @@ var Matrix = function () {
 }();
 
 module.exports = Matrix;
+
+/***/ }),
+
+/***/ "./math/Random.js":
+/*!************************!*\
+  !*** ./math/Random.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _seal = __webpack_require__(/*! babel-runtime/core-js/object/seal */ "../node_modules/babel-runtime/core-js/object/seal.js");
+
+var _seal2 = _interopRequireDefault(_seal);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _MathUtils = __webpack_require__(/*! ./MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var LCG = function () {
+    function LCG() {
+        (0, _classCallCheck3.default)(this, LCG);
+
+        /// TODO
+        this.seed = 0;
+    }
+
+    (0, _createClass3.default)(LCG, [{
+        key: "range",
+        value: function range(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+    }, {
+        key: "integerRange",
+        value: function integerRange(min, max) {
+            return _MathUtils2.default.floor(Math.random() * (max - min)) + min; //  + 1
+        }
+    }]);
+    return LCG;
+}();
+
+var Random = new LCG();
+
+(0, _seal2.default)(Random);
+
+exports.default = Random;
 
 /***/ }),
 
@@ -11060,7 +11712,7 @@ var Vector = function () {
     key: "normal",
     get: function get() {
       var mag = this.magnitude;
-      var vec = new tobiJS.Vector(this.x / mag, this.y / mag);
+      var vec = new Vector(this.x / mag, this.y / mag);
       return vec;
     }
   }], [{
@@ -12011,8 +12663,8 @@ var ModuleAttacher = function () {
 
     (0, _createClass3.default)(ModuleAttacher, [{
         key: "sprite",
-        value: function sprite(tag) {
-            return _ModuleProvider2.default.attach(this.moduleManager, 'sprite', tag);
+        value: function sprite(tag, frameX, frameY, frameWidth, frameHeight) {
+            return _ModuleProvider2.default.attach(this.moduleManager, 'sprite', [tag, frameX, frameY, frameWidth, frameHeight]);
         }
     }, {
         key: "tilemap",
@@ -12031,7 +12683,7 @@ var ModuleAttacher = function () {
 
             var spriteModule = (0, _GetRenderModule2.default)(this.moduleManager, 'spritesheet', "SpriteSheet");
 
-            if (spriteModule !== null) return _ModuleProvider2.default.attach(this.moduleManager, 'spritesheet', [spriteModule, tag]);else return null;
+            if (spriteModule === null) return null;else return _ModuleProvider2.default.attach(this.moduleManager, 'spritesheet', [spriteModule, tag]);
         }
     }, {
         key: "animMachine",
@@ -12039,7 +12691,7 @@ var ModuleAttacher = function () {
 
             var spriteModule = (0, _GetRenderModule2.default)(this.moduleManager, 'animMachine', "AnimationMachine");
 
-            if (spriteModule !== null) return _ModuleProvider2.default.attach(this.moduleManager, 'animMachine', [spriteModule, tag]);else return null;
+            if (spriteModule === null) return null;else return _ModuleProvider2.default.attach(this.moduleManager, 'animMachine', [spriteModule, tag]);
         }
     }]);
     return ModuleAttacher;
@@ -12204,8 +12856,10 @@ var ModuleProviderManager = function () {
             // attach the new module to manager
             attached.set(newModule.type, newModule);
 
-            // add to pending initialization list
-            moduleManager._pendingModulesInitialization.push(newModule);
+            // add to pending initialization list only modules that require this option
+            if (newModule.type === 'render') {
+                moduleManager._pendingModulesInitialization.push(newModule);
+            }
 
             return newModule;
         }
@@ -12289,6 +12943,14 @@ var AnimationBaseModule = function (_Module) {
   }
 
   (0, _createClass3.default)(AnimationBaseModule, [{
+    key: "setDuration",
+    value: function setDuration(value) {
+
+      if (this._resource === null) return;
+
+      this._resource.duration = value;
+    }
+  }, {
     key: "play",
     value: function play() {
 
@@ -12323,8 +12985,6 @@ var AnimationBaseModule = function (_Module) {
     value: function restart() {
       this.stop();
       this.isPlaying = true;
-      this.currentFrame = 0;
-      this._timer = 0;
       return this;
     }
   }]);
@@ -12365,6 +13025,10 @@ var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
+var _get2 = __webpack_require__(/*! babel-runtime/helpers/get */ "../node_modules/babel-runtime/helpers/get.js");
+
+var _get3 = _interopRequireDefault(_get2);
+
 var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
 
 var _inherits3 = _interopRequireDefault(_inherits2);
@@ -12389,6 +13053,14 @@ var _InitializeAnimationModule = __webpack_require__(/*! ./components/Initialize
 
 var _InitializeAnimationModule2 = _interopRequireDefault(_InitializeAnimationModule);
 
+var _ResourceType = __webpack_require__(/*! ../../resources/ResourceType */ "./resources/ResourceType.js");
+
+var _ResourceType2 = _interopRequireDefault(_ResourceType);
+
+var _SetSpritesheetFrame = __webpack_require__(/*! ./components/SetSpritesheetFrame */ "./modules/animation/components/SetSpritesheetFrame.js");
+
+var _SetSpritesheetFrame2 = _interopRequireDefault(_SetSpritesheetFrame);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var AnimationControl = function (_AnimationBaseModule) {
@@ -12407,6 +13079,18 @@ var AnimationControl = function (_AnimationBaseModule) {
   }
 
   (0, _createClass3.default)(AnimationControl, [{
+    key: "stop",
+    value: function stop() {
+
+      (0, _get3.default)(AnimationControl.prototype.__proto__ || (0, _getPrototypeOf2.default)(AnimationControl.prototype), "stop", this).call(this);
+
+      if (this._resource === null) return;
+
+      if (this._resource.type === _ResourceType2.default.Spritesheet) {
+        (0, _SetSpritesheetFrame2.default)(this._spriteModule, this._resource.get(0));
+      }
+    }
+  }, {
     key: "trackPosition",
     get: function get() {
       return this._position;
@@ -12414,21 +13098,24 @@ var AnimationControl = function (_AnimationBaseModule) {
   }, {
     key: "animation",
     get: function get() {
-      return this._animation;
+      return this._resource;
     },
     set: function set(animation) {
 
       var animResource = void 0;
 
       if (typeof animation === 'string') {
-        animResource = this.entity.game.cache.animation.get(animation);
+        if (this._resource.name === animation) {
+          return;
+        }
+        animResource = this.entity.game.system.cache.animation.get(animation);
       } else if (animation instanceof AnimationResource) {
         animResource = animation;
       }
 
       if (animResource !== undefined) {
         this._resource = animResource;
-        this.loop = animation.loop;
+        //this.loop = animation.loop;
       } else {
         console.warn("AnimationControl.setAnimation: Could not set animation. The animation is undefined.");
       }
@@ -12444,9 +13131,9 @@ _ModuleProvider2.default.register('spritesheet', function (moduleManager, args) 
 
   var asset = args[1];
 
-  if (asset !== undefined) {
+  if (args[1] !== undefined) {
     // this.entity.game.system.cache.image.get(tag);
-    asset = moduleManager.entity.game.system.cache.animation.get(tag);
+    asset = moduleManager.entity.game.system.cache.animation.get(asset);
   }
 
   var config = {
@@ -12491,6 +13178,10 @@ var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
 
+var _get2 = __webpack_require__(/*! babel-runtime/helpers/get */ "../node_modules/babel-runtime/helpers/get.js");
+
+var _get3 = _interopRequireDefault(_get2);
+
 var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
 
 var _inherits3 = _interopRequireDefault(_inherits2);
@@ -12510,6 +13201,18 @@ var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
 var _InitializeAnimationModule = __webpack_require__(/*! ./components/InitializeAnimationModule */ "./modules/animation/components/InitializeAnimationModule.js");
 
 var _InitializeAnimationModule2 = _interopRequireDefault(_InitializeAnimationModule);
+
+var _ResourceType = __webpack_require__(/*! ../../resources/ResourceType */ "./resources/ResourceType.js");
+
+var _ResourceType2 = _interopRequireDefault(_ResourceType);
+
+var _SetSpritesheetFrame = __webpack_require__(/*! ./components/SetSpritesheetFrame */ "./modules/animation/components/SetSpritesheetFrame.js");
+
+var _SetSpritesheetFrame2 = _interopRequireDefault(_SetSpritesheetFrame);
+
+var _AnimationMachineResource = __webpack_require__(/*! ../../resources/animation/AnimationMachineResource */ "./resources/animation/AnimationMachineResource.js");
+
+var _AnimationMachineResource2 = _interopRequireDefault(_AnimationMachineResource);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12533,9 +13236,9 @@ var AnimationMachine = function (_AnimationBaseModule) {
     value: function setState(stateName) {
       if (this.resource === null) return;
 
-      var animation = this.resource.get(stateName);
+      var animation = this._resource.get(stateName);
 
-      if (animation !== null || animation !== undefined) {
+      if (animation !== null && animation !== undefined) {
         this._currentState = animation;
         //this._currentStateName = animation.name;
         this.restart();
@@ -12544,6 +13247,18 @@ var AnimationMachine = function (_AnimationBaseModule) {
       }
 
       return this;
+    }
+  }, {
+    key: 'stop',
+    value: function stop() {
+
+      (0, _get3.default)(AnimationMachine.prototype.__proto__ || (0, _getPrototypeOf2.default)(AnimationMachine.prototype), 'stop', this).call(this);
+
+      if (this._currentState === null) return;
+
+      if (this._currentState.type === _ResourceType2.default.Spritesheet) {
+        (0, _SetSpritesheetFrame2.default)(this._spriteModule, this._currentState.get(0));
+      }
     }
   }, {
     key: 'setFrame',
@@ -12596,6 +13311,35 @@ var AnimationMachine = function (_AnimationBaseModule) {
     value: function remove(name) {
 
       if (this.animations[name]) delete this.animations[name];
+    }
+  }, {
+    key: 'machine',
+    set: function set(animMachine) {
+
+      var resource = void 0;
+
+      if (typeof animMachine === 'string') {
+
+        if (this._resource !== null) {
+          if (this._resource.name === animMachine) {
+            return;
+          }
+        }
+
+        resource = this.entity.game.system.cache.animMachine.get(animMachine);
+      } else if (animMachine instanceof _AnimationMachineResource2.default) {
+        resource = animMachine;
+      }
+
+      if (resource !== undefined) {
+        this._resource = resource;
+        (0, _InitializeAnimationModule2.default)(this);
+      } else {
+        console.warn("AnimationControl.setAnimation: Could not set animation. The animation is undefined.");
+      }
+    },
+    get: function get() {
+      return this._resource;
     }
   }, {
     key: 'currentState',
@@ -12720,7 +13464,7 @@ function SetSpritesheetFrame(spriteModule, keyFrame) {
 
 
 Object.defineProperty(exports, "__esModule", {
-      value: true
+  value: true
 });
 exports.default = UpdateAnimationModule;
 
@@ -12732,58 +13476,67 @@ var _ResourceType = __webpack_require__(/*! ../../../resources/ResourceType */ "
 
 var _ResourceType2 = _interopRequireDefault(_ResourceType);
 
+var _WrapMode = __webpack_require__(/*! ../../../resources/animation/WrapMode */ "./resources/animation/WrapMode.js");
+
+var _WrapMode2 = _interopRequireDefault(_WrapMode);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function UpdateAnimationModule(animationModule, resource, deltaTime) {
 
-      if (resource === undefined || resource === null) return;
+  if (resource === undefined || resource === null) return;
 
-      // if not paused and we have a valid animation
-      if (animationModule.isPlaying === true) {
+  // if not paused and we have a valid animation
+  if (animationModule.isPlaying === true) {
 
-            // add delta time
-            animationModule._timer += deltaTime; // * this.frameSpeed;
+    // add delta time
+    animationModule._timer += deltaTime; // * this.frameSpeed;
 
-            var duration = void 0;
-            var currentKeyFrame = resource.get(animationModule.currentFrame);
+    var duration = void 0;
+    var currentKeyFrame = resource.get(animationModule.currentFrame);
 
-            if (resource.uniformDuration) {
-                  duration = resource.duration;
-            } else {
-                  duration = currentKeyFrame.duration;
-            }
+    if (resource.uniformDuration) {
+      duration = resource.duration;
+    } else {
+      duration = currentKeyFrame.duration;
+    }
 
-            animationModule._position = animationModule._timer / duration;
+    animationModule._position = animationModule._timer / duration;
 
-            // if current time is bigger then the frame time advance one frame
-            if (animationModule._timer >= duration) {
+    // if current time is bigger then the frame time advance one frame
+    if (animationModule._timer >= duration) {
 
-                  console.log('hello');
+      // reset time, but keep the remainder
+      animationModule._timer = 0;
+      animationModule._position = 0;
 
-                  // reset time, but keep the remainder
-                  animationModule._timer = 0;
-                  animationModule._position = 0;
+      // get next Frame index
+      if (animationModule.currentFrame + 1 < resource.size) {
+        animationModule.currentFrame++;
+      } else {
 
-                  // get next Frame index
-                  if (animationModule.currentFrame + 1 < resource.size) {
-                        animationModule.currentFrame++;
-                  } else {
+        var last = animationModule.currentFrame;
+        animationModule.currentFrame = 0;
 
-                        // animation has ended
-                        animationModule.currentFrame = 0; // reset to start
+        // reset to start
+        if (resource.wrapMode === _WrapMode2.default.Once || animationModule.loop === false) {
+          animationModule.stop();
+          animationModule.currentFrame = last;
+        }
 
-                        if (animationModule.loop !== undefined && animationModule.loop === false) {
-                              animationModule.pause();
-                        }
-                  }
-
-                  // set the current frame, not reseting the time
-                  if (resource.type === _ResourceType2.default.Spritesheet) {
-                        currentKeyFrame = resource.get(animationModule.currentFrame);
-                        (0, _SetSpritesheetFrame2.default)(animationModule._spriteModule, currentKeyFrame);
-                  }
-            }
+        // animation has ended
+        if (animationModule['onAnimationEnd'] !== undefined) {
+          animationModule.onAnimationEnd.call(animationModule.entity);
+        }
       }
+
+      // set the current frame, not reseting the time
+      if (resource.type === _ResourceType2.default.Spritesheet) {
+        currentKeyFrame = resource.get(animationModule.currentFrame);
+        (0, _SetSpritesheetFrame2.default)(animationModule._spriteModule, currentKeyFrame);
+      }
+    }
+  }
 }
 
 /***/ }),
@@ -12806,10 +13559,10 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./modules/components/AttachModuleInGame.js":
-/*!**************************************************!*\
-  !*** ./modules/components/AttachModuleInGame.js ***!
-  \**************************************************/
+/***/ "./modules/components/AttachModules.js":
+/*!*********************************************!*\
+  !*** ./modules/components/AttachModules.js ***!
+  \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12819,7 +13572,7 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = AttachModuleInGame;
+exports.default = AttachModules;
 
 var _Renderable = __webpack_require__(/*! ../renderables/Renderable */ "./modules/renderables/Renderable.js");
 
@@ -12835,16 +13588,24 @@ var _Sprite2 = _interopRequireDefault(_Sprite);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function AttachModuleInGame(entityModule, modulesManager, game) {
+function AttachModules(moduleManager, game) {
 
     // RENDERABLES
-    if (entityModule instanceof _Sprite2.default) {
-        game.system.render.layer.renderLayers.at(0).add(entityModule);
-    } else if (entityModule instanceof _Tilemap2.default) {
-        for (var i = 0; i < entityModule.layers.length; i++) {
-            game.system.render.layer.renderLayers.at(0).add(entityModule.layers[i]);
+
+
+    moduleManager._pendingModulesInitialization.each(function (entityModule) {
+
+        if (entityModule instanceof _Sprite2.default) {
+            game.system.render.layer.addRenderable(entityModule, entityModule.layerID || 0);
+        } else if (entityModule instanceof _Tilemap2.default) {
+
+            for (var i = 0; i < entityModule.layers.length; i++) {
+                game.system.render.layer.addRenderable(entityModule.layers[i], entityModule.layerID || 0);
+            }
         }
-    }
+    });
+
+    moduleManager._pendingModulesInitialization.clear();
 }
 
 /***/ }),
@@ -12863,15 +13624,62 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = ClearModules;
-function ClearModules(modulesManager) {
 
-    modulesManager.attached.each(function (key, value) {
+var _DestroyRenderable = __webpack_require__(/*! ../renderables/components/DestroyRenderable */ "./modules/renderables/components/DestroyRenderable.js");
+
+var _DestroyRenderable2 = _interopRequireDefault(_DestroyRenderable);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ClearModules(moduleManager, game) {
+
+    moduleManager.attached.each(function (key, value) {
+
+        if (value.type === 'render') {
+            (0, _DestroyRenderable2.default)(value, game.render);
+        }
 
         value.entity = null;
         value.moduleManager = null;
     });
 
-    modulesManager.attached.clear();
+    moduleManager.attached.clear();
+}
+
+/***/ }),
+
+/***/ "./modules/components/DetachModules.js":
+/*!*********************************************!*\
+  !*** ./modules/components/DetachModules.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DetachModules;
+
+var _Renderable = __webpack_require__(/*! ../renderables/Renderable */ "./modules/renderables/Renderable.js");
+
+var _Renderable2 = _interopRequireDefault(_Renderable);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DetachModules(moduleManager, game) {
+
+    var manager = moduleManager;
+
+    moduleManager.attached.each(function (key, entityModule) {
+        if (entityModule instanceof _Renderable2.default) {
+
+            game.system.render.layer.removeRenderable(entityModule);
+            manager._pendingModulesInitialization.push(entityModule);
+        }
+    });
 }
 
 /***/ }),
@@ -12962,10 +13770,6 @@ var _RenderableUpdate = __webpack_require__(/*! ../renderables/components/Render
 
 var _RenderableUpdate2 = _interopRequireDefault(_RenderableUpdate);
 
-var _AttachModuleInGame = __webpack_require__(/*! ./AttachModuleInGame */ "./modules/components/AttachModuleInGame.js");
-
-var _AttachModuleInGame2 = _interopRequireDefault(_AttachModuleInGame);
-
 var _UpdateAnimationModule = __webpack_require__(/*! ../animation/components/UpdateAnimationModule */ "./modules/animation/components/UpdateAnimationModule.js");
 
 var _UpdateAnimationModule2 = _interopRequireDefault(_UpdateAnimationModule);
@@ -12973,29 +13777,20 @@ var _UpdateAnimationModule2 = _interopRequireDefault(_UpdateAnimationModule);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ModulesUpdater(modulesManager, game) {
-    var size = modulesManager._pendingModulesInitialization.size;
+
     var entity = modulesManager.entity;
 
-    if (size > 0) {
-        // add pending modules
-        modulesManager._pendingModulesInitialization.each(function (mod) {
-            (0, _AttachModuleInGame2.default)(mod, modulesManager, game);
-        });
-
-        modulesManager._pendingModulesInitialization.clear();
-    }
-
-    var anim = modulesManager.attached.get('animation');
-    if (anim !== undefined || anim !== null) {
+    var animationModule = modulesManager.attached.get('animation');
+    if (animationModule !== undefined && animationModule !== null) {
         var resource = void 0;
-        if (anim.name === 'animationControl') {
-            resource = anim._resource;
-        } else if (anim.name === 'animMachine') {
-            resource = anim._currentState;
+        if (animationModule.name === 'animationControl') {
+            resource = animationModule._resource;
+        } else if (animationModule.name === 'animMachine') {
+            resource = animationModule._currentState;
         }
 
         if (resource !== undefined) {
-            (0, _UpdateAnimationModule2.default)(anim, resource, game.system.loop.updateStep.hiDeltaTime);
+            (0, _UpdateAnimationModule2.default)(animationModule, resource, game.system.loop.updateStep.hiDeltaTime);
         }
     }
 
@@ -13256,7 +14051,7 @@ var Sprite = function (_Renderable) {
 
             if (this.resource !== image) this.resource = image;
 
-            if (fullFrame === true && resource !== null) {
+            if (fullFrame === true && image !== null) {
                 this.setFrame(0, 0, this.resource.width, this.resource.height);
             }
 
@@ -13290,12 +14085,23 @@ var Sprite = function (_Renderable) {
 exports.default = Sprite;
 
 
-_ModuleProvider2.default.register('sprite', function (moduleManager, tag) {
+_ModuleProvider2.default.register('sprite', function (moduleManager, config) {
 
     var spr = new Sprite(moduleManager);
 
-    if (tag !== undefined) {
-        spr.setSprite(tag);
+    if (config !== undefined) {
+        if (config[0] !== undefined) {
+            spr.setSprite(config[0]);
+
+            if (spr.resource !== null) {
+                if (config[1] === undefined) config[1] = 0; // framex
+                if (config[2] === undefined) config[2] = 0; // framey
+                if (config[2] === undefined) config[3] = spr.resource.width; // framew
+                if (config[4] === undefined) config[4] = spr.resource.height; // frameh
+
+                spr.setFrame(config[1], config[2], config[3], config[4]);
+            }
+        }
     }
 
     return spr;
@@ -13448,6 +14254,31 @@ var CullingMethod = {
 };
 
 exports.default = CullingMethod;
+
+/***/ }),
+
+/***/ "./modules/renderables/components/DestroyRenderable.js":
+/*!*************************************************************!*\
+  !*** ./modules/renderables/components/DestroyRenderable.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DestroyRenderable;
+function DestroyRenderable(renderable, render) {
+
+    render.layer.removeRenderable(renderable);
+
+    renderable._bounds = null;
+    renderable.resource = null;
+    renderable.frame = null;
+}
 
 /***/ }),
 
@@ -13726,6 +14557,10 @@ var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCh
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
 var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
 
 var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -13780,12 +14615,13 @@ var Tilemap = function (_Renderable) {
         _this.floorTiles = false;
         _this.tilesets = resource.tilesets;
         _this.layers = [];
+        _this.objectLayers = resource.objectLayers;
 
         var animations = false;
-        var layersSize = resource.layers.length;
+        var layersSize = resource.tileLayers.length;
 
         for (var i = layersSize - 1; i >= 0; i--) {
-            var layer = resource.layers.at(i);
+            var layer = resource.tileLayers.at(i);
 
             if (layer.hasAnimatedTiles) animations = true;
 
@@ -13799,6 +14635,14 @@ var Tilemap = function (_Renderable) {
         return _this;
     }
 
+    (0, _createClass3.default)(Tilemap, [{
+        key: "getObjectsLayer",
+        value: function getObjectsLayer(name) {
+            return this.objectLayers.find(function (a) {
+                if (a.name === name) return a;
+            });
+        }
+    }]);
     return Tilemap;
 }(_Renderable3.default);
 
@@ -13860,9 +14704,9 @@ var TilemapAnimator = function () {
 
         for (var i = 0; i < layers.length; i++) {
 
-            if (!layers[i].layerData.hasAnimatedTiles) continue;
+            if (!layers[i].data.hasAnimatedTiles) continue;
 
-            var animatedSet = layers[i].layerData.animatedTiles;
+            var animatedSet = layers[i].data.animatedTiles;
 
             var _loop = function _loop(j) {
 
@@ -13870,8 +14714,8 @@ var TilemapAnimator = function () {
 
                 var tileGID = tilemap.resource.getTileGID(animID);
 
-                var hasGid = _this.animatedTiles.find(function (a) {
-                    return a.tileGID.gid === tileGID.gid;
+                var hasGid = _this.animatedTiles.find(function (tileData) {
+                    return tileData.tileGID.gid === tileGID.gid;
                 });
 
                 if (hasGid !== null) return "continue";
@@ -13955,7 +14799,7 @@ var TilemapLayer = function (_Renderable) {
         var _this = (0, _possibleConstructorReturn3.default)(this, (TilemapLayer.__proto__ || (0, _getPrototypeOf2.default)(TilemapLayer)).call(this, 'tilemapLayer', tilemap.moduleManager));
 
         _this.tilemap = tilemap;
-        _this.layerData = layerData;
+        _this.data = layerData;
         return _this;
     }
 
@@ -13965,17 +14809,22 @@ var TilemapLayer = function (_Renderable) {
 
             if (!this._enabled && !this.tilemap._enabled) return false;
 
-            return (0, _DrawTilemapLayer2.default)(context, this.tilemap, this.layerData, this.tilemap.moduleManager.entity.transform);
+            return (0, _DrawTilemapLayer2.default)(context, this.tilemap, this.data, this.tilemap.moduleManager.entity.transform);
+        }
+    }, {
+        key: "getTile",
+        value: function getTile(x, y) {
+            return this.data.getTile(x, y);
         }
     }, {
         key: "width",
         get: function get() {
-            return this.layerData.width * this.tilemap.tileWidth;
+            return this.data.width * this.tilemap.tileWidth;
         }
     }, {
         key: "height",
         get: function get() {
-            return this.layerData.height * this.tilemap.tileHeight;
+            return this.data.height * this.tilemap.tileHeight;
         }
     }]);
     return TilemapLayer;
@@ -15755,6 +16604,10 @@ var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.
 
 var _List2 = _interopRequireDefault(_List);
 
+var _Renderable = __webpack_require__(/*! ../../modules/renderables/Renderable */ "./modules/renderables/Renderable.js");
+
+var _Renderable2 = _interopRequireDefault(_Renderable);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var RenderLayersManagement = function () {
@@ -15777,7 +16630,7 @@ var RenderLayersManagement = function () {
         value: function add(name) {
 
             if (this.contains(name)) {
-                throw new Error("Render.add: There is already a RenderLayer called: \"" + name + "\".");
+                throw new Error("RenderLayerManagement.add: There is already a RenderLayer called: \"" + name + "\".");
             }
 
             //this.__renderLayersMap.set(name, this.__renderLayers.length);
@@ -15786,11 +16639,11 @@ var RenderLayersManagement = function () {
     }, {
         key: 'remove',
         value: function remove(name) {
-            if (typeof name !== 'string') throw new Error("Render.remove: The value name is not a string.");
+            if (typeof name !== 'string') throw new Error("RenderLayerManagement.remove: The value name is not a string.");
 
-            if (name === "default") throw new Error("Render.remove: You can not remove the \"default\" layer.");
+            if (name === "default") throw new Error("RenderLayerManagement.remove: You can not remove the \"default\" layer.");
 
-            if (!this.__renderLayersMap.has(name)) throw new Error("Render.remove: Could not remove layer. There is no layer named \"" + name + "\".");
+            if (!this.__renderLayersMap.has(name)) throw new Error("RenderLayerManagement.remove: Could not remove layer. There is no layer named \"" + name + "\".");
 
             var index = this.__renderLayersMap.get(name);
 
@@ -15799,7 +16652,7 @@ var RenderLayersManagement = function () {
     }, {
         key: 'contains',
         value: function contains(layerName) {
-            if (typeof layerName !== 'string') throw new Error("Render.contains: The value name is not a string.");
+            if (typeof layerName !== 'string') throw new Error("RenderLayerManagement.contains: The value name is not a string.");
 
             var val = this.renderLayers.each(function (layer) {
 
@@ -15815,7 +16668,50 @@ var RenderLayersManagement = function () {
         value: function findRenderableLayer(renderable) {
             return this.renderLayers.each(function (layer) {
                 if (layer.has(renderable)) return layer;
-            });
+            }) || null;
+        }
+    }, {
+        key: 'findRenderableAtLayer',
+        value: function findRenderableAtLayer(renderable, layerIndex) {
+
+            if (layerIndex === undefined) layerIndex = 0;
+
+            return this.renderLayers.at(layerIndex).has(renderable);
+        }
+    }, {
+        key: 'removeRenderable',
+        value: function removeRenderable(renderable) {
+            return this.renderLayers.each(function (layer) {
+                var idx = layer.renderList.indexOf(renderable);
+
+                if (idx !== -1) {
+                    return layer.removeAt(idx);
+                }
+            }) || null;
+        }
+    }, {
+        key: 'addRenderable',
+        value: function addRenderable(renderable, layerIndex) {
+
+            if (layerIndex === undefined) layerIndex = 0;
+
+            if (layerIndex >= this.renderLayers.size) layerIndex = this.renderLayers.size - 1;else if (layerIndex < 0) layerIndex = 0;
+
+            if (renderable instanceof _Renderable2.default) {
+
+                var layer = this.findRenderableLayer(renderable);
+
+                if (layer !== null) {
+                    console.warn("RenderLayerManagement.addRenderable: Could not add renderable. The renderable is already in the layer \'" + layer.name + "\'.");
+                    return false;
+                } else {
+                    this.renderLayers.at(layerIndex).add(renderable);
+                    return true;
+                }
+            } else {
+                console.warn("RenderLayerManagement.addRenderable: Could not add renderable. It is not a instance of Renderable module.");
+                return false;
+            }
         }
     }]);
     return RenderLayersManagement;
@@ -16872,6 +17768,11 @@ var UIDrawer = function () {
       return this;
     }
   }, {
+    key: 'defaultComposite',
+    value: function defaultComposite() {
+      this.context.globalCompositeOperation = 'source-over';
+    }
+  }, {
     key: 'transformPosition',
     value: function transformPosition(x, y, w, h) {
 
@@ -17092,6 +17993,11 @@ var UIDrawer = function () {
     set: function set(value) {
       this.context.textAlign = value;
       this.currentTextAlign = this.context.textAlign;
+    }
+  }, {
+    key: 'composite',
+    set: function set(value) {
+      this.context.globalCompositeOperation = value;
     }
   }]);
   return UIDrawer;
@@ -17397,6 +18303,14 @@ var AnimationMachineResource = function (_Resource) {
         value: function at(index) {
             return this.states.at(index);
         }
+    }, {
+        key: "duration",
+        set: function set(miliSeconds) {
+            this.states.each(function (key, value) {
+
+                value.duration = miliSeconds;
+            });
+        }
     }]);
     return AnimationMachineResource;
 }(_Resource3.default);
@@ -17463,6 +18377,10 @@ var _ComputeTotalDuration = __webpack_require__(/*! ./components/ComputeTotalDur
 
 var _ComputeTotalDuration2 = _interopRequireDefault(_ComputeTotalDuration);
 
+var _WrapMode = __webpack_require__(/*! ./WrapMode */ "./resources/animation/WrapMode.js");
+
+var _WrapMode2 = _interopRequireDefault(_WrapMode);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // storage of animation state
@@ -17474,12 +18392,13 @@ var Animation = function (_Resource) {
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (Animation.__proto__ || (0, _getPrototypeOf2.default)(Animation)).call(this, name, _ResourceType2.default.Animation));
 
-    _this.keyFrames = new _List2.default();
+    _this.keyFrames = new _List2.default(null, false);
     //this._duration = 1;
     _this._totalDuration = 1;
     _this._frameRate = 30;
     _this._secondsPerFrame = 1;
-    _this.loop = true;
+    //this.loop = true;
+    _this._wrapMode = _WrapMode2.default.Loop;
     _this.uniformDuration = true;
 
     _AnimationUpdateFrameRate2.default.call(_this, 30, null, 1);
@@ -17512,6 +18431,18 @@ var Animation = function (_Resource) {
       var frame = this.keyFrames.eraseAt(frameIndex);
       _AnimationUpdateFrameRate2.default.call(this, this._frameRate, null);
       return frame;
+    }
+  }, {
+    key: "wrapMode",
+    get: function get() {
+      return this._wrapMode;
+    }
+  }, {
+    key: "loop",
+    set: function set(value) {
+      if (value === true) {
+        this._wrapMode = _WrapMode2.default.Loop;
+      }
     }
   }, {
     key: "duration",
@@ -17810,6 +18741,38 @@ exports.default = SpritesheetResource;
 
 /***/ }),
 
+/***/ "./resources/animation/WrapMode.js":
+/*!*****************************************!*\
+  !*** ./resources/animation/WrapMode.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var WrapMode = {
+    Once: 0,
+    Loop: 1,
+    PingPong: 2
+};
+
+(0, _freeze2.default)(WrapMode);
+
+exports.default = WrapMode;
+
+/***/ }),
+
 /***/ "./resources/animation/components/AnimationUpdateFrameRate.js":
 /*!********************************************************************!*\
   !*** ./resources/animation/components/AnimationUpdateFrameRate.js ***!
@@ -17860,14 +18823,14 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = ComputeTotalDuration;
 function ComputeTotalDuration(keyFrames) {
 
-  var size = this.keyFrames.size;
+  var size = keyFrames.size;
 
   if (size === 0) return 0;else {
 
     var dur = 0;
 
     for (var i = 0; i < size; i++) {
-      dur += this.keyFrames.at(i).duration || 0;
+      dur += keyFrames.at(i).duration || 0;
     }
 
     return dur;
@@ -17959,13 +18922,17 @@ var _ParseTileset = __webpack_require__(/*! ./parser/ParseTileset */ "./resource
 
 var _ParseTileset2 = _interopRequireDefault(_ParseTileset);
 
-var _ParseLayers = __webpack_require__(/*! ./parser/ParseLayers */ "./resources/tilemap/parser/ParseLayers.js");
-
-var _ParseLayers2 = _interopRequireDefault(_ParseLayers);
-
 var _ResourceType = __webpack_require__(/*! ../ResourceType */ "./resources/ResourceType.js");
 
 var _ResourceType2 = _interopRequireDefault(_ResourceType);
+
+var _ParseTileLayers = __webpack_require__(/*! ./parser/ParseTileLayers */ "./resources/tilemap/parser/ParseTileLayers.js");
+
+var _ParseTileLayers2 = _interopRequireDefault(_ParseTileLayers);
+
+var _ParseObjectsLayers = __webpack_require__(/*! ./parser/ParseObjectsLayers */ "./resources/tilemap/parser/ParseObjectsLayers.js");
+
+var _ParseObjectsLayers2 = _interopRequireDefault(_ParseObjectsLayers);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17987,7 +18954,9 @@ var TilemapResource = function (_Resource) {
         });
 
         _this.tilesets = (0, _ParseTileset2.default)(source, cache);
-        _this.layers = (0, _ParseLayers2.default)(source, _this);
+        _this.tileLayers = (0, _ParseTileLayers2.default)(source, _this);
+        _this.objectLayers = (0, _ParseObjectsLayers2.default)(source);
+
         return _this;
     }
 
@@ -18021,6 +18990,41 @@ exports.default = TilemapResource;
 
 /***/ }),
 
+/***/ "./resources/tilemap/data/ObjectType.js":
+/*!**********************************************!*\
+  !*** ./resources/tilemap/data/ObjectType.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ObjectType = {
+    None: 0,
+    Point: 1,
+    Rect: 2,
+    Ellipse: 3,
+    Polygon: 4,
+    Polyline: 5
+};
+
+(0, _freeze2.default)(ObjectType);
+
+exports.default = ObjectType;
+
+/***/ }),
+
 /***/ "./resources/tilemap/data/Tile.js":
 /*!****************************************!*\
   !*** ./resources/tilemap/data/Tile.js ***!
@@ -18050,6 +19054,7 @@ var Tile = function Tile(layer, tileData, tileX, tileY, id) {
     this.tileY = tileY;
     this.id = id;
     this.frame = tileData.st;
+
     // pixels positions
     this.x = Math.round(tileX * tileData.st.width);
     this.y = Math.round(tileY * tileData.st.height);
@@ -18093,16 +19098,17 @@ var TileGID = function TileGID(tileset, gid, tileID, u, v, umax, vmax) {
     this.keyFrames = undefined;
     this.isAnimated = false;
     this.currentFrame = 0;
+    this.properties = null;
 };
 
 exports.default = TileGID;
 
 /***/ }),
 
-/***/ "./resources/tilemap/data/TilemapLayerData.js":
-/*!****************************************************!*\
-  !*** ./resources/tilemap/data/TilemapLayerData.js ***!
-  \****************************************************/
+/***/ "./resources/tilemap/data/TileLayerData.js":
+/*!*************************************************!*\
+  !*** ./resources/tilemap/data/TileLayerData.js ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18117,28 +19123,44 @@ var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCh
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
 var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var TilemapLayerData = function TilemapLayerData(config) {
-    (0, _classCallCheck3.default)(this, TilemapLayerData);
+var TileLayerData = function () {
+    function TileLayerData(config) {
+        (0, _classCallCheck3.default)(this, TileLayerData);
 
-    this.width = _ObjectGet2.default.value(config, 'width', 0);
-    this.height = _ObjectGet2.default.value(config, 'height', 0);
-    this.x = _ObjectGet2.default.value(config, 'x', 0);
-    this.y = _ObjectGet2.default.value(config, 'y', 0);
-    this.name = _ObjectGet2.default.value(config, 'name', 'tilemaplayer');
-    this.alpha = _ObjectGet2.default.value(config, 'alpha', 1);
-    //this.type ="tilelayer";
-    this.visible = _ObjectGet2.default.value(config, 'visible', true);
-    this.tiles = _ObjectGet2.default.value(config, 'tiles', []);
-    this.hasAnimatedTiles = false;
-};
+        this.width = _ObjectGet2.default.value(config, 'width', 0);
+        this.height = _ObjectGet2.default.value(config, 'height', 0);
+        this.x = _ObjectGet2.default.value(config, 'x', 0);
+        this.y = _ObjectGet2.default.value(config, 'y', 0);
+        this.name = _ObjectGet2.default.value(config, 'name', 'tilemaplayer');
+        this.alpha = _ObjectGet2.default.value(config, 'alpha', 1);
+        //this.type ="tilelayer";
+        this.visible = _ObjectGet2.default.value(config, 'visible', true);
+        this.tiles = _ObjectGet2.default.value(config, 'tiles', []);
+        this.hasAnimatedTiles = false;
+    }
 
-exports.default = TilemapLayerData;
+    (0, _createClass3.default)(TileLayerData, [{
+        key: 'getTile',
+        value: function getTile(x, y) {
+            var index = x + y * this.width;
+
+            return this.tiles[index];
+        }
+    }]);
+    return TileLayerData;
+}();
+
+exports.default = TileLayerData;
 
 /***/ }),
 
@@ -18181,6 +19203,65 @@ var TilemapMetadata = function TilemapMetadata(config) {
 };
 
 exports.default = TilemapMetadata;
+
+/***/ }),
+
+/***/ "./resources/tilemap/data/TilemapObject.js":
+/*!*************************************************!*\
+  !*** ./resources/tilemap/data/TilemapObject.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
+
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
+
+var _ObjectType = __webpack_require__(/*! ./ObjectType */ "./resources/tilemap/data/ObjectType.js");
+
+var _ObjectType2 = _interopRequireDefault(_ObjectType);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TilemapObject = function TilemapObject(config) {
+    (0, _classCallCheck3.default)(this, TilemapObject);
+
+
+    this.x = _ObjectGet2.default.value(config, 'x', 0);
+    this.y = _ObjectGet2.default.value(config, 'y', 0);
+    this.width = _ObjectGet2.default.value(config, 'width', 0);
+    this.height = _ObjectGet2.default.value(config, 'height', 0);
+    this.rotation = _ObjectGet2.default.value(config, 'rotation', 0);
+    this.name = _ObjectGet2.default.value(config, 'name', "");
+    this.id = _ObjectGet2.default.value(config, 'id', null);
+    this.visible = _ObjectGet2.default.value(config, 'visible', true);
+    this.type = _ObjectGet2.default.value(config, 'type', "");
+
+    this.objectType = _ObjectType2.default.Rect;
+
+    if (config['ellipse'] === true) {
+        this.objectType = _ObjectType2.default.Ellipse;
+    } else if (config['point'] === true) {
+        this.objectType = _ObjectType2.default.Point;
+    } else if (config['polygon'] === true) {
+        this.objectType = _ObjectType2.default.Polygon;
+    } else if (config['polyline'] === true) {
+        this.objectType = _ObjectType2.default.Polyline;
+    }
+};
+
+exports.default = TilemapObject;
 
 /***/ }),
 
@@ -18362,10 +19443,71 @@ function ParseGID(global_tile_id) {
 
 /***/ }),
 
-/***/ "./resources/tilemap/parser/ParseLayers.js":
-/*!*************************************************!*\
-  !*** ./resources/tilemap/parser/ParseLayers.js ***!
-  \*************************************************/
+/***/ "./resources/tilemap/parser/ParseObjectsLayers.js":
+/*!********************************************************!*\
+  !*** ./resources/tilemap/parser/ParseObjectsLayers.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+exports.default = ParseObjectLayers;
+
+var _TilemapObject = __webpack_require__(/*! ../data/TilemapObject */ "./resources/tilemap/data/TilemapObject.js");
+
+var _TilemapObject2 = _interopRequireDefault(_TilemapObject);
+
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ParseObjectLayers(json, map) {
+
+        var size = json.layers.length;
+        var layers = new _List2.default();
+
+        if (size <= 0) return layers;
+
+        for (var i = 0; i < size; i++) {
+
+                var jsonLayer = json.layers[i];
+
+                if (jsonLayer.type !== "objectgroup") continue;
+
+                if (jsonLayer.objects === undefined) continue;
+
+                var newLayer = {
+                        name: jsonLayer.name || "",
+                        objects: []
+                };
+
+                var objectsSize = jsonLayer.objects.length;
+
+                for (var j = 0; j < objectsSize; j++) {
+
+                        var obj = new _TilemapObject2.default(jsonLayer.objects[j]);
+                        newLayer.objects.push(obj);
+                }
+
+                layers.push(newLayer);
+        }
+
+        return layers;
+}
+
+/***/ }),
+
+/***/ "./resources/tilemap/parser/ParseTileLayers.js":
+/*!*****************************************************!*\
+  !*** ./resources/tilemap/parser/ParseTileLayers.js ***!
+  \*****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18375,7 +19517,7 @@ function ParseGID(global_tile_id) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = ParseLayers;
+exports.default = ParseTileLayers;
 
 var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
@@ -18397,9 +19539,9 @@ var _ParseGID = __webpack_require__(/*! ./ParseGID */ "./resources/tilemap/parse
 
 var _ParseGID2 = _interopRequireDefault(_ParseGID);
 
-var _TilemapLayerData = __webpack_require__(/*! ../data/TilemapLayerData */ "./resources/tilemap/data/TilemapLayerData.js");
+var _TileLayerData = __webpack_require__(/*! ../data/TileLayerData */ "./resources/tilemap/data/TileLayerData.js");
 
-var _TilemapLayerData2 = _interopRequireDefault(_TilemapLayerData);
+var _TileLayerData2 = _interopRequireDefault(_TileLayerData);
 
 var _Tile = __webpack_require__(/*! ../data/Tile */ "./resources/tilemap/data/Tile.js");
 
@@ -18407,12 +19549,12 @@ var _Tile2 = _interopRequireDefault(_Tile);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function ParseLayers(json, map) {
+function ParseTileLayers(json, map) {
 
     var size = json.layers.length;
-    var tileLayers = new _List2.default();
+    var layers = new _List2.default();
 
-    if (size <= 0) return tileLayers;
+    if (size <= 0) return layers;
 
     for (var i = size - 1; i >= 0; i--) {
 
@@ -18428,7 +19570,7 @@ function ParseLayers(json, map) {
             }
         }
 
-        var newLayer = new _TilemapLayerData2.default({
+        var newLayer = new _TileLayerData2.default({
             name: jsonLayer.name,
             x: _ObjectGet2.default.value(jsonLayer, 'offsetx', 0) + jsonLayer.x,
             y: _ObjectGet2.default.value(jsonLayer, 'offsety', 0) + jsonLayer.y,
@@ -18481,18 +19623,18 @@ function ParseLayers(json, map) {
         newLayer.hasAnimatedTiles = hasAnimatedTiles;
         newLayer.animatedTiles = animatedTilesGID.size > 0 ? animatedTilesGID : undefined;
 
-        tileLayers.push(newLayer);
+        layers.push(newLayer);
     }
 
-    return tileLayers;
+    return layers;
 }
 
 /***/ }),
 
-/***/ "./resources/tilemap/parser/ParseTilesProperties.js":
-/*!**********************************************************!*\
-  !*** ./resources/tilemap/parser/ParseTilesProperties.js ***!
-  \**********************************************************/
+/***/ "./resources/tilemap/parser/ParseTilesConfig.js":
+/*!******************************************************!*\
+  !*** ./resources/tilemap/parser/ParseTilesConfig.js ***!
+  \******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -18502,16 +19644,16 @@ function ParseLayers(json, map) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = ParseTilesProperties;
-function ParseTilesProperties(tileset, tilesetTilesProperties) {
+exports.default = ParseTilesConfig;
+function ParseTilesConfig(tileset, tilesetTilesConfig) {
 
-    for (var tileIndex in tilesetTilesProperties) {
+    for (var tileIndex in tilesetTilesConfig) {
 
         var tileData = tileset.getTile(tileIndex);
 
         if (tileData === null || tileData === undefined) continue;
 
-        var tileProperties = tilesetTilesProperties[tileIndex];
+        var tileProperties = tilesetTilesConfig[tileIndex];
 
         // check properties
         for (var property in tileProperties) {
@@ -18544,6 +19686,42 @@ function ParseTilesProperties(tileset, tilesetTilesProperties) {
 
 /***/ }),
 
+/***/ "./resources/tilemap/parser/ParseTilesProperties.js":
+/*!**********************************************************!*\
+  !*** ./resources/tilemap/parser/ParseTilesProperties.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+        value: true
+});
+exports.default = ParseTileProperties;
+function ParseTileProperties(tileset, tileProperties) {
+
+        for (var tileIndex in tileProperties) {
+
+                var tileData = tileset.getTile(tileIndex);
+
+                if (tileData === null || tileData === undefined) continue;
+
+                var props = tileProperties[tileIndex];
+                tileData.properties = props;
+
+                // check properties
+                /*for (let property in props) {
+                
+                    let propertyContent = tileProperties[property];
+                    tileData.properties = propertyContent;
+                }*/
+        }
+}
+
+/***/ }),
+
 /***/ "./resources/tilemap/parser/ParseTileset.js":
 /*!**************************************************!*\
   !*** ./resources/tilemap/parser/ParseTileset.js ***!
@@ -18571,6 +19749,10 @@ var _Path = __webpack_require__(/*! ../../../utils/Path */ "./utils/Path.js");
 
 var _Path2 = _interopRequireDefault(_Path);
 
+var _ParseTilesConfig = __webpack_require__(/*! ./ParseTilesConfig */ "./resources/tilemap/parser/ParseTilesConfig.js");
+
+var _ParseTilesConfig2 = _interopRequireDefault(_ParseTilesConfig);
+
 var _ParseTilesProperties = __webpack_require__(/*! ./ParseTilesProperties */ "./resources/tilemap/parser/ParseTilesProperties.js");
 
 var _ParseTilesProperties2 = _interopRequireDefault(_ParseTilesProperties);
@@ -18596,7 +19778,13 @@ function ParseTilesets(json, cache) {
             newTileSet.updateData(jsonTileset.imagewidth, jsonTileset.imageheight);
 
             // check tile properties
-            if (jsonTileset.tiles !== undefined) (0, _ParseTilesProperties2.default)(newTileSet, jsonTileset.tiles);
+            if (jsonTileset.tiles !== undefined) {
+                (0, _ParseTilesConfig2.default)(newTileSet, jsonTileset.tiles);
+            }
+
+            if (jsonTileset.tileproperties !== undefined) {
+                (0, _ParseTilesProperties2.default)(newTileSet, jsonTileset.tileproperties);
+            }
 
             tileSets.push(newTileSet);
         }
@@ -19143,7 +20331,7 @@ function ClearScene(game, sceneManager) {
             game.cache.clear();
         }
 
-        _ClearEntities2.default.call(game.system.entityList);
+        (0, _ClearEntities2.default)(game.system.entityList, game);
         _ResetKeyboard2.default.call(game.input.keyboard);
         _ClearAudioSources2.default.call(game.audio);
     }
@@ -19770,12 +20958,12 @@ var DataList = function () {
     }, {
         key: 'pop',
         value: function pop() {
-            /// TODO
+            return this.childs.pop();
         }
     }, {
         key: 'popFront',
         value: function popFront() {
-            /// TODO
+            return this.childs.shift();
         }
     }, {
         key: 'has',
@@ -20464,6 +21652,14 @@ function DetectAudioFeatures(browser) {
     audioFeatures.webAudio = !!(window['AudioContext'] || window['webkitAudioContext']);
 
     // test if we can play audio in the current document
+    // Edge:
+    // dolby: true
+    // m4a: true
+    // mp3: true
+    // ogg: false
+    // opus: false
+    // wav: true
+    // webm: false
 
     var element = document.createElement('audio');
     var result = !!element.canPlayType;

@@ -11,6 +11,14 @@ export default class AnimationMachineResource extends Resource {
 
     }
 
+    set duration(miliSeconds) {
+        this.states.each((key, value) => {
+
+            value.duration = miliSeconds;
+
+        });
+    }
+
     add(state, animation) {
 
         if (this.states.has(state)) {

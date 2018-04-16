@@ -21,8 +21,7 @@ export default function ClearScene(game, sceneManager) {
         game.cache.clear();
       }
 
-     
-      ClearEntities.call(game.system.entityList);
+      ClearEntities(game.system.entityList, game);
       ResetKeyboard.call(game.input.keyboard);
       ClearAudioSources.call(game.audio);
 

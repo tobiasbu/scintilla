@@ -93,14 +93,20 @@ export default class AudioManager {
 
     play(tag, volume, loop) {
 
-        if (this._noAudio)
+        if (this._noAudio) {
             return null;
+        }
 
         let sound = this.add(tag, volume, loop);
 
-        sound.play();
+        if (sound !== undefined && sound !== null) {
+            sound.play();
+            return sound;
+        }
 
-        return sound;
+        
+        return null;
+       
 
     }
 

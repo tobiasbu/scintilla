@@ -11,8 +11,9 @@ export default function StartBufferSource(webAudioSource, position) {
 
     let buffer = webAudioSource.buffer;
 
-    if (webAudioSource.loop) 
-        buffer.loop = true;
+    if (buffer.loop !== undefined) { 
+        buffer.loop = webAudioSource.loop;
+    }
        
 
     buffer.start(Math.max(0, start), Math.max(0, delay), Math.max(0, duration));

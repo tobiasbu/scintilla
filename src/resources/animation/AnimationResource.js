@@ -4,6 +4,7 @@ import ResourceType from "../ResourceType";
 import Validate from '../../utils/Validate';
 import AnimationUpdateFrameRate from "./components/AnimationUpdateFrameRate";
 import ComputeTotalDuration from "./components/ComputeTotalDuration";
+import WrapMode from "./WrapMode";
 
 // storage of animation state
 export default class Animation extends Resource {
@@ -13,17 +14,27 @@ export default class Animation extends Resource {
 
     super(name, ResourceType.Animation);
 
-    this.keyFrames = new DataList();
+    this.keyFrames = new DataList(null, false);
     //this._duration = 1;
     this._totalDuration = 1;
     this._frameRate = 30;
     this._secondsPerFrame = 1;
-    this.loop = true;
+    //this.loop = true;
+    this._wrapMode = WrapMode.Loop;
     this.uniformDuration = true;
 
     AnimationUpdateFrameRate.call(this, 30, null, 1);
   }
 
+  get wrapMode() {
+    return this._wrapMode; 
+  }
+
+  set loop(value) {
+    if (value === true) {
+      this._wrapMode = WrapMode.Loop;
+    }
+  }
 
  
   set duration(value) {

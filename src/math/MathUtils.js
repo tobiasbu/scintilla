@@ -1,7 +1,4 @@
 
-
-
-
 const MathUtils = {
 
 
@@ -33,18 +30,7 @@ const MathUtils = {
     return (value > min) ? (value < max) ? value : max : min;
   },
 
-  randomRange : function(min, max) {
-
-    return Math.random() * (max - min) + min;
-
-  },
-
-  irandomRange : function(min, max) {
-
-    return MathUtils.floor(Math.random() * (max - min + 1)) + min;
-
-  },
-
+  
   lerp : function(fromValue, toValue, t) {
     return (1.0 - t) * fromValue + t * toValue;
   },
@@ -124,9 +110,9 @@ const MathUtils = {
 
 Object.freeze(MathUtils);
 
-module.exports = MathUtils;
+//module.exports = MathUtils;
 
-//export default MathUtils;
+export default MathUtils;
 
 
 

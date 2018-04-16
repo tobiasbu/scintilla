@@ -1,25 +1,33 @@
 import ClearModules from "../../modules/components/ClearModules";
+import DestroyEntity from "./DestroyEntity";
 
-export default function ClearEntities() {
+export default function ClearEntities(entityList, game) {
 
-    for (let i = 0; i < this._instances.length; i++) {
+    for (let i = 0; i < entityList._instances.length; i++) {
 
-        let element = this._instances.at(i);
+        let instance = entityList._instances.at(i);
 
-        if (element['destroy'] !== undefined && element['destroy'] !== null) {
-            element.destroy();
+        if (instance.isPooled) {
+            game.system.pool.pull(instance);
+        } else {
+            DestroyEntity(instance, game, true);
         }
-
-        if (element.persistent === false)
-        {
-            ClearModules(element.modulesManager);
-            element.transform = null;
-            element.modulesManager = null;
-            element = null;
-            this._instances.splice(i,1);
-        }
-
 
     }
+
+    for (let i = 0; i < entityList._pendingInstances.length; i++) {
+
+        let instance = entityList._instances.at(i);
+
+        if (instance.isPooled) {
+            game.system.pool.pull(instance);
+        } else {
+            DestroyEntity(instance, game, true);
+        }
+    }
+
+    entityList._pendingInstances.childs.length = 0;
+    entityList._destroyInstances.childs.length = 0;
+    entityList._instances.childs.length = 0;
 
 }

@@ -30,8 +30,10 @@ class ModuleProviderManager
         // attach the new module to manager
         attached.set(newModule.type, newModule);
 
-        // add to pending initialization list
-        moduleManager._pendingModulesInitialization.push(newModule);
+        // add to pending initialization list only modules that require this option
+        if (newModule.type === 'render') {
+            moduleManager._pendingModulesInitialization.push(newModule);
+        }
 
         return newModule;
     }

@@ -9,7 +9,8 @@ const SceneSystem = [
     'SceneManager',
     'UserInterface',
     'Transition',
-    'EventManager'
+    'EventManager',
+    'PoolManager'
 ];
 
 Object.freeze(SceneSystem);

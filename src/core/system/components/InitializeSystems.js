@@ -17,6 +17,7 @@ export default function InitializeSystems(game, render) {
     game.system = systems;
     game.scene = systems.scene;
     game.render = render;
+    game.events = systems.events;
     systems.render = render;
 
     // initialize systems

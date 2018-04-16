@@ -6,7 +6,7 @@ import MathUtils from "../math/MathUtils";
 
 export default function UpdateCamera(camera, canvas) {
     
-  if (!camera.transform._isDirty)
+  if (camera.transform._isDirty === false)
     return;
 
   let t = camera.transform;
@@ -43,7 +43,7 @@ export default function UpdateCamera(camera, canvas) {
   t.matrix.setIdentity()
   .scale(camera._pixelUnit.x, camera._pixelUnit.y) // resolution
   .translate(pos.x , pos.y)
-  .scale(t.scale.x, t.scale.x)
+  .scale(t.scale.x, t.scale.x);
   
   // bounds should not be rotated
   ComputeBounds(

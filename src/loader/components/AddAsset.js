@@ -17,7 +17,7 @@ export default function AddAsset(asset, check) {
 
 
 
-      this.events.create('onpostload_webFontLoader').subscribeOnce(
+      this.game.events.create('file_postload_webFontLoader').subscribeOnce(
         () => {
         asset.fontLoad();
         });

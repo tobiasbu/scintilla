@@ -155,11 +155,11 @@ export default class DataList
     }
 
     pop() {
-        /// TODO
+        return this.childs.pop();
     }
 
     popFront() {
-        /// TODO
+        return this.childs.shift();
     }
 
     has(child) {

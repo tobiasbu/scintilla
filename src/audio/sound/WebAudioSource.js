@@ -20,6 +20,7 @@ export default class WebAudioSource extends AudioSource {
         this.loop = loop || false;
 
 
+
     }
 
     get volume() {

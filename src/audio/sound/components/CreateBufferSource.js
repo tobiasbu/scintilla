@@ -9,10 +9,10 @@ export default function CreateBufferSource(webAudioSource) {
     bufferSource.connect(webAudioSource.gainNode);
 
     bufferSource.onended = function(event) {
-        if (event.target === self.source)
+        if (event.target === self.buffer)
         {
                 // sound ended
-                self.hasEnded = true;     
+                self._ended = true;     
         }
     };
 

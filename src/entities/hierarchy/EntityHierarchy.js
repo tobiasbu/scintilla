@@ -1,6 +1,7 @@
 import Entity from "../Entity";
 import System from "../../core/system/System";
 import CreateEntityFrom from "./CreateEntityFrom";
+import InitializeEntity from "./InitializeEntity";
 
 export default class EntityHierarchy {
 
@@ -57,29 +58,20 @@ export default class EntityHierarchy {
     create(entityBase, count) {
 
         let entity = CreateEntityFrom(entityBase, this.game);
-
-        
-        if (entity['start'] !== undefined && entity['start'] !== null) {
-            entity.start.call(entity);
-        }
-
-        this._entityList.add(entity);
-
-
-
+        InitializeEntity(entity, this.game);
         return entity;
     }
 
     destroy(entity) {
-
+        return this._entityList.destroyInstance(entity);
     }
 
     destroyAt(index) {
-
+        /// TODO
     }
 
     clear() {
-
+        /// TODO
     }
 
 }

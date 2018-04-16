@@ -42,6 +42,14 @@ export default class UIDrawer {
     this.currentTextAlign = this.context.textAlign;
   }
 
+  set composite(value) {
+    this.context.globalCompositeOperation = value;
+  }
+
+  defaultComposite() {
+    this.context.globalCompositeOperation = 'source-over';
+  }
+
   transformPosition(x, y, w, h) {
 
     if (this.disablePointTransform) {

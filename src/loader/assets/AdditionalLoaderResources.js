@@ -48,18 +48,29 @@ export default class AdditionalLoaderResource extends File {
 }
 
 
-AssetTypeHandler.register('spritesheet', function (tag, imageTag, x, y, frameWidth, frameHeight, numberOfImages, framesPerRow, spacing) {
+AssetTypeHandler.register('spritesheet', function (tag, imageTag, config) {
 
-    let resource = new AdditionalLoaderResource(tag, AssetsType.spritesheet, {
-        imageTag: imageTag,
-        x: x || 0,
-        y: y || 0,
-        frameWidth: frameWidth || 0,
-        frameHeight: frameHeight || 0,
-        numberOfImages: numberOfImages || 0,
-        framesPerRow: framesPerRow,
-        spacing: spacing
-    });
+    let resource;
+    let options = config;
+
+    if (!Array.isArray(config)) {
+
+        options = Array.prototype.slice.call(arguments, 2, arguments.length - 2);
+
+    }
+
+        resource = new AdditionalLoaderResource(tag, AssetsType.spritesheet, {
+            imageTag: imageTag,
+            x: options[0] || 0,
+            y: options[1] || 0,
+            frameWidth: options[2] || 0,
+            frameHeight: options[3] || 0,
+            numberOfImages: options[4] || 0,
+            framesPerRow: options[5] || undefined,
+            spacing: options[6] || undefined,
+            duration: options[7] || arguments[3],
+        });
+
 
     AddAsset.call(this, resource);
 
