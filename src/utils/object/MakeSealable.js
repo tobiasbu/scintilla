@@ -1,5 +1,5 @@
 
-export default function MakeSealeble(value) {
+export default function MakeSealable(value) {
 
     if (Array.isArray(value))
     {

@@ -46,8 +46,7 @@ export default class Renderable extends Module
     }   
 
     set alpha(value) {
-        this._alpha = alpha;
-        return this;
+        this._alpha = value;
     }
 
 

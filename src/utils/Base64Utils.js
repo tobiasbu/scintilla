@@ -31,4 +31,4 @@ const Base64Utils = {
 
 Object.freeze(Base64Utils);
 
-module.exports = Base64Utils;
+export default Base64Utils;

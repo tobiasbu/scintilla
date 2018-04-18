@@ -2683,7 +2683,7 @@ var scintilla = scintilla || {
   Core: __webpack_require__(/*! ./core */ "./core/index.js"),
 
   // DATA STRUCTURES
-  Structures: __webpack_require__(/*! ./structures */ "./structures/index.js"),
+  Structure: __webpack_require__(/*! ./structures */ "./structures/index.js"),
 
   // RENDER
   Render: __webpack_require__(/*! ./render */ "./render/index.js"),
@@ -3981,6 +3981,10 @@ var _ResizeCamera = __webpack_require__(/*! ./ResizeCamera */ "./camera/ResizeCa
 
 var _ResizeCamera2 = _interopRequireDefault(_ResizeCamera);
 
+var _Renderable = __webpack_require__(/*! ../modules/renderables/Renderable */ "./modules/renderables/Renderable.js");
+
+var _Renderable2 = _interopRequireDefault(_Renderable);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Camera = function () {
@@ -4064,6 +4068,23 @@ var Camera = function () {
       this.transform.reset();
     }
   }, {
+    key: 'isCulled',
+    value: function isCulled(entity) {
+
+      if (entity === undefined || entity === null) return false;
+
+      if (entity instanceof _Renderable2.default) {
+        return this.bounds.intersects(entity.bounds);
+      } else {
+        var render = entity.modules.get('render');
+        if (render !== null || render !== undefined) {
+          return this.bounds.intersects(render.bounds);
+        } else {
+          return this.bounds.contains(entity.x, entity.y);
+        }
+      }
+    }
+  }, {
     key: 'position',
     get: function get() {
       return {
@@ -4114,7 +4135,7 @@ var Camera = function () {
     },
     set: function set(value) {
       this.transform.angle = value;
-      this.transform.rotation = value * _MathUtils2.default.degToRad;
+      this.transform.rotation = value * _MathUtils2.default.toRadian;
       this.transform._isDirty = true;
       return this;
     }
@@ -5239,9 +5260,17 @@ var Entity = function () {
         this._name = name || 'New Entity';
         this._active = true;
         this._pool = null;
+        // this._priority = 0;
         this.game = game || undefined;
         this.persistent = false;
     }
+
+    /*set priority(value) {
+        this._priority = value;
+    }
+      get priority() {
+        return this._priority;
+    }*/
 
     (0, _createClass3.default)(Entity, [{
         key: 'destroy',
@@ -5332,10 +5361,10 @@ var EntityFactory = function () {
         }
     }, {
         key: "sprite",
-        value: function sprite(tag, entityName) {
+        value: function sprite(tag, entityName, config) {
 
             var entity = this.entity(entityName);
-            entity.modules.attach.sprite(tag);
+            var spr = entity.modules.attach.sprite(tag, config.x, config.y, config.width, config.height);
 
             if (this.scene.current_scene !== null) {
                 (0, _InitializeEntity2.default)(entity, this.game);
@@ -5435,6 +5464,10 @@ var _AttachModules = __webpack_require__(/*! ../modules/components/AttachModules
 
 var _AttachModules2 = _interopRequireDefault(_AttachModules);
 
+var _PrioritySorting = __webpack_require__(/*! ./hierarchy/PrioritySorting */ "./entities/hierarchy/PrioritySorting.js");
+
+var _PrioritySorting2 = _interopRequireDefault(_PrioritySorting);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var EntityUpdateList = function () {
@@ -5447,6 +5480,7 @@ var EntityUpdateList = function () {
         this._removalInstances = new _List2.default();
         this._pendingInstances = new _List2.default();
         this._camera = null;
+        this._requirePrioritySorting = false;
     }
 
     (0, _createClass3.default)(EntityUpdateList, [{
@@ -5454,6 +5488,9 @@ var EntityUpdateList = function () {
         value: function addInstance(instance) {
             if (this._instances.indexOf(instance) === -1 && this._pendingInstances.indexOf(instance) === -1) {
                 this._pendingInstances.push(instance);
+                //if (instance._priority !== 0) {
+                //this._requirePrioritySorting = true;
+                //}
             }
             return instance;
         }
@@ -5499,10 +5536,10 @@ var EntityUpdateList = function () {
 
                 (0, _UpdateTransform2.default)(element.transform, this._camera.transform);
 
+                (0, _ModulesUpdater2.default)(element.modules, this.game);
+
                 if (element.update !== undefined) element.update.call(element, dt); //update(dt);
 
-
-                (0, _ModulesUpdater2.default)(element.modules, this.game);
 
                 if (element.transform._isDirty) element.transform._isDirty = false;
             }
@@ -5542,7 +5579,7 @@ var EntityUpdateList = function () {
                 this._destroyInstances.childs.length = 0;
             }
 
-            if (removalSize !== 0) {
+            if (removalSize > 0) {
                 for (var _i = 0; _i < removalSize; _i++) {
                     var _instance = this._removalInstances.at(_i);
 
@@ -5567,13 +5604,18 @@ var EntityUpdateList = function () {
             if (insertSize !== 0) {
                 for (var _i2 = 0; _i2 < insertSize; _i2++) {
 
-                    var _instance2 = this._pendingInstances.at(_i2);
+                    var _instance2 = content[_i2];
                     (0, _AttachModules2.default)(_instance2.modules, this.game);
                     this._instances.push(_instance2);
                     //this._pendingInstances.eraseAt(i);
                 }
+
+                /* if (this._requirePrioritySorting) {
+                     this._instances.sort(PrioritySorting);
+                 }*/
                 //this._instances.concat(this._pendingInstances);
-                this._pendingInstances.childs.length = 0;
+                //this._pendingInstances.childs.length = 0;
+                content.length = 0;
             }
         }
     }, {
@@ -6094,6 +6136,26 @@ function InitializeEntity(entity, game) {
     game.system.entityList.addInstance(entity);
 
     return entity;
+}
+
+/***/ }),
+
+/***/ "./entities/hierarchy/PrioritySorting.js":
+/*!***********************************************!*\
+  !*** ./entities/hierarchy/PrioritySorting.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = PrioritySorting;
+function PrioritySorting(a, b) {
+    return a._priority < b._priority;
 }
 
 /***/ }),
@@ -10853,8 +10915,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var MathUtils = {
 
-  degToRad: Math.PI / 180,
-  radToDeg: 180 / Math.PI,
+  toRadian: Math.PI / 180,
+  toDegree: 180 / Math.PI,
   TAU: Math.PI * 2,
   //HALFPI : Math.PI / 2,
   EPSILON: Math.pow(2, -52),
@@ -10865,15 +10927,29 @@ var MathUtils = {
   },
 
   round: function round(value) {
-
     // With a bitwise or.
     //let rounded = (0.5 + value) | 0;
-
     // FASTEST - A double bitwise not.
     return ~~(0.5 + value);
 
     // Finally, a left bitwise shift.
     //rounded = (0.5 + value) << 0;
+  },
+
+  abs: function abs(value) {
+    return value < 0 ? -value : value;
+  },
+
+  max: function max(a, b) {
+    return a < b ? b : a;
+  },
+
+  min: function min(a, b) {
+    return !(b < a) ? a : b;
+  },
+
+  sign: function sign(value) {
+    return value < 0 ? -1 : value > 0 ? 1 : 0;
   },
 
   clamp: function clamp(value, min, max) {
@@ -10885,14 +10961,71 @@ var MathUtils = {
   },
 
   clampedLerp: function clampedLerp(fromValue, toValue, t) {
-
     t = MathUtils.clamp(t, 0.0, 1.0);
-
     return MathUtils.lerp(fromValue, toValue, t);
   },
 
   impreciseLerp: function impreciseLerp(fromValue, toValue, t) {
     return fromValue + t * (toValue - fromValue);
+  },
+
+  distance: function distance(x0, y0, x1, y1) {
+    return Math.sqrt((x0 -= x1) * x0 + (y0 -= y1) * y0);
+  },
+
+  angleBetween: function angleBetween(x0, y0, x1, y1) {
+    var angle = this.toDegree(Math.atan2(y1 - y0, x1 - x0));
+
+    if (angle < 0 && angle >= -180) angle = 360 + angle;
+
+    return angle;
+  },
+
+  radianToDegree: function radianToDegree(radians) {
+    return radians * MathUtils.toDegree;
+  },
+
+  degreeToRadian: function degreeToRadian(degrees) {
+    return degrees * MathUtils.toRadian;
+  },
+
+  manhattan: function manhattan(from_x, from_y, to_x, to_y) {
+    return {
+      x: MathUtils.abs(to_x - from_x),
+      y: MathUtils.abs(to_y - from_y)
+    };
+  },
+
+  inManhattanRadius: function inManhattanRadius(from_x, from_y, to_x, to_y, radius, radius_y) {
+    if (radius_y === undefined) radius_y = radius;
+    var dist = this.manhattan(from_x, from_y, to_x, to_y);
+    if (dist.x <= radius_x && dist.y <= radius_y) return true;else return false;
+  },
+
+  average: function average() {
+    var length = arguments.length;
+    if (length === 0) return 0;
+    return this.sum.apply(this, arguments) / length;
+  },
+
+  sum: function sum() {
+    var length = arguments.length;
+    if (length === 0) return 0;
+    var r = arguments[0];
+    for (var i = 1; i < length; i++) {
+      r += arguments[i];
+    }
+    return r;
+  },
+
+  sub: function sub() {
+    var length = arguments.length;
+    if (length === 0) return 0;
+    var r = arguments[0];
+    for (var i = 1; i < length; i++) {
+      r -= arguments[i];
+    }
+    return r;
   },
 
   lerpAngle: function lerpAngle(fromValue, toValue, t) {
@@ -10924,33 +11057,11 @@ var MathUtils = {
     if (value >= 0 && value <= 360) return value;
 
     return value % rangeZero;
-  },
-
-  distance: function distance(x0, y0, x1, y1) {
-    return Math.sqrt((x0 -= x1) * x0 + (y0 -= y1) * y0);
-  },
-
-  angleBetween: function angleBetween(x0, y0, x1, y1) {
-    var angle = this.toDegree(Math.atan2(y1 - y0, x1 - x0));
-
-    if (angle < 0 && angle >= -180) angle = 360 + angle;
-
-    return angle;
-  },
-
-  toDegree: function toDegree(radians) {
-    return radians * MathUtils.radToDeg;
-  },
-
-  toRadian: function toRadian(degrees) {
-    return degrees * MathUtils.degToRad;
   }
 
 };
 
 (0, _freeze2.default)(MathUtils);
-
-//module.exports = MathUtils;
 
 exports.default = MathUtils;
 
@@ -10965,6 +11076,10 @@ exports.default = MathUtils;
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
@@ -11280,7 +11395,7 @@ var Matrix = function () {
   return Matrix;
 }();
 
-module.exports = Matrix;
+exports.default = Matrix;
 
 /***/ }),
 
@@ -13929,8 +14044,7 @@ var Renderable = function (_Module) {
             return this._alpha;
         },
         set: function set(value) {
-            this._alpha = alpha;
-            return this;
+            this._alpha = value;
         }
     }]);
     return Renderable;
@@ -16196,6 +16310,9 @@ function DrawRenderLayer(layer, camera, context) {
         var element = layer.renderList.at(i);
 
         if (camera.bounds.intersects(element.bounds)) {
+
+            context.globalAlpha = element.alpha;
+
             drawCalls += element.render(context);
 
             //camera.game.system.draw.bounds(element.bounds);
@@ -17938,6 +18055,86 @@ var UIDrawer = function () {
       }
     }
   }, {
+    key: 'spriteAskew',
+    value: function spriteAskew(tag, x, y, skewX, skewY, halign, valign) {
+      var source = this.cache.image.get(tag);
+
+      if (source !== null) {
+
+        if (halign === undefined) halign = 0;
+        if (valign === undefined) valign = 0;
+
+        var pos = this.transformPosition(x, y);
+        var dx = source.width * halign;
+        var dy = source.height * valign;
+
+        this.context.save();
+        this.context.transform(1, Math.atan(skewX), 0, 1, x, y);
+        this.context.transform(1, 0, Math.atan(skewY), 1, 0, 0);
+        this.context.drawImage(source.data, 0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height);
+        this.context.restore();
+      }
+    }
+  }, {
+    key: 'spriteRskew',
+    value: function spriteRskew(tag, x, y, skewX, skewY, halign, valign) {
+      var source = this.cache.image.get(tag);
+
+      if (source !== null) {
+
+        if (halign === undefined) halign = 0;
+        if (valign === undefined) valign = 0;
+
+        var pos = this.transformPosition(x, y);
+        var dx = source.width * halign;
+        var dy = source.height * valign;
+
+        this.context.save();
+        this.context.transform(1, skewX, 0, 1, x, y);
+        this.context.transform(1, 0, skewY, 1, 0, 0);
+        this.context.drawImage(source.data, 0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height);
+        this.context.restore();
+      }
+    }
+  }, {
+    key: 'spritePart',
+    value: function spritePart(tag, x, y, frameX, frameY, frameWidth, frameHeight, halign, valign) {
+      var source = this.cache.image.get(tag);
+
+      if (source !== null) {
+
+        if (halign === undefined) halign = 0;
+        if (valign === undefined) valign = 0;
+
+        var pos = this.transformPosition(x, y);
+        var dx = frameWidth * halign;
+        var dy = frameHeight * valign;
+
+        this.context.save();
+        this.context.translate(pos.x, pos.y);
+        this.context.drawImage(source.data, frameX, // sx - pos crop x 
+        frameY, // sy - pos crop y
+        frameWidth, // sWidth - crop width
+        frameHeight, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        frameWidth, frameHeight);
+        this.context.restore();
+      }
+    }
+  }, {
     key: 'rect',
     value: function rect(x, y, width, height, color) {
 
@@ -19224,6 +19421,10 @@ var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCh
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
 var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
 var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
@@ -19234,32 +19435,53 @@ var _ObjectType2 = _interopRequireDefault(_ObjectType);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var TilemapObject = function TilemapObject(config) {
-    (0, _classCallCheck3.default)(this, TilemapObject);
+var TilemapObject = function () {
+    function TilemapObject(config) {
+        (0, _classCallCheck3.default)(this, TilemapObject);
 
 
-    this.x = _ObjectGet2.default.value(config, 'x', 0);
-    this.y = _ObjectGet2.default.value(config, 'y', 0);
-    this.width = _ObjectGet2.default.value(config, 'width', 0);
-    this.height = _ObjectGet2.default.value(config, 'height', 0);
-    this.rotation = _ObjectGet2.default.value(config, 'rotation', 0);
-    this.name = _ObjectGet2.default.value(config, 'name', "");
-    this.id = _ObjectGet2.default.value(config, 'id', null);
-    this.visible = _ObjectGet2.default.value(config, 'visible', true);
-    this.type = _ObjectGet2.default.value(config, 'type', "");
+        this.x = _ObjectGet2.default.value(config, 'x', 0);
+        this.y = _ObjectGet2.default.value(config, 'y', 0);
+        this.width = _ObjectGet2.default.value(config, 'width', 0);
+        this.height = _ObjectGet2.default.value(config, 'height', 0);
+        this.rotation = _ObjectGet2.default.value(config, 'rotation', 0);
+        this.name = _ObjectGet2.default.value(config, 'name', "");
+        this.id = _ObjectGet2.default.value(config, 'id', null);
+        this.visible = _ObjectGet2.default.value(config, 'visible', true);
+        this.type = _ObjectGet2.default.value(config, 'type', "");
 
-    this.objectType = _ObjectType2.default.Rect;
+        this.objectType = _ObjectType2.default.Rect;
 
-    if (config['ellipse'] === true) {
-        this.objectType = _ObjectType2.default.Ellipse;
-    } else if (config['point'] === true) {
-        this.objectType = _ObjectType2.default.Point;
-    } else if (config['polygon'] === true) {
-        this.objectType = _ObjectType2.default.Polygon;
-    } else if (config['polyline'] === true) {
-        this.objectType = _ObjectType2.default.Polyline;
+        if (config['ellipse'] === true) {
+            this.objectType = _ObjectType2.default.Ellipse;
+        } else if (config['point'] === true) {
+            this.objectType = _ObjectType2.default.Point;
+        } else if (config['polygon'] === true) {
+            this.objectType = _ObjectType2.default.Polygon;
+        } else if (config['polyline'] === true) {
+            this.objectType = _ObjectType2.default.Polyline;
+        }
     }
-};
+
+    (0, _createClass3.default)(TilemapObject, [{
+        key: 'contains',
+        value: function contains(x, y) {
+
+            if (this.width <= 0 && this.height <= 0) return false;
+
+            return x > this.x && x < this.x + this.width && y >= this.y && y < this.y + this.height;
+        }
+    }, {
+        key: 'intersects',
+        value: function intersects(x, y, width, height) {
+
+            if (width <= 0 || height <= 0 || this.width <= 0 || this.height <= 0) return false;
+
+            return !(x > this.x + this.width || x + width < this.x || y > this.y + this.height || y + height < this.y);
+        }
+    }]);
+    return TilemapObject;
+}();
 
 exports.default = TilemapObject;
 
@@ -20835,7 +21057,7 @@ var DataList = function () {
         this.unique = unique || true;
         this.childs = [];
 
-        if (Array.isArray(elements)) {
+        if (elements !== null && Array.isArray(elements)) {
             for (var i = 0; i < elements.length; i++) {
                 this.push(elements[i]);
             }
@@ -20843,6 +21065,19 @@ var DataList = function () {
     }
 
     (0, _createClass3.default)(DataList, [{
+        key: 'first',
+        value: function first() {
+            if (this.childs.length > 0) return this.childs[0];else return null;
+        }
+    }, {
+        key: 'last',
+        value: function last() {
+            if (this.childs.length > 0) {
+                var idx = this.childs.length - 1;
+                return this.childs[idx];
+            } else return null;
+        }
+    }, {
         key: 'push',
         value: function push(child) {
 
@@ -20978,7 +21213,7 @@ var DataList = function () {
     }, {
         key: 'empty',
         value: function empty() {
-            return this.childs.length == 0;
+            return this.childs.length === 0;
         }
     }, {
         key: 'clear',
@@ -20988,6 +21223,8 @@ var DataList = function () {
             while (i--) {
                 this.erase(this.childs[i]);
             }
+
+            this.childs.length = 0;
 
             return this;
         }
@@ -21114,19 +21351,6 @@ var DataList = function () {
         key: 'length',
         get: function get() {
             return this.childs.length;
-        }
-    }, {
-        key: 'first',
-        get: function get() {
-            if (this.list.length > 0) return this.childs[0];else return null;
-        }
-    }, {
-        key: 'last',
-        get: function get() {
-            if (this.childs.length > 0) {
-                var idx = this.childs.length - 1;
-                return this.childs[idx];
-            } else return null;
         }
     }]);
     return DataList;
@@ -21503,12 +21727,13 @@ exports.default = DataSet;
 "use strict";
 
 
-module.exports = {
-    Utils: __webpack_require__(/*! ./useful */ "./structures/useful/index.js"),
-    Set: __webpack_require__(/*! ./Set */ "./structures/Set.js"),
-    Map: __webpack_require__(/*! ./Map */ "./structures/Map.js"),
-    List: __webpack_require__(/*! ./List */ "./structures/List.js")
-};
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var Utils = exports.Utils = __webpack_require__(/*! ./useful */ "./structures/useful/index.js");
+var Set = exports.Set = __webpack_require__(/*! ./Set */ "./structures/Set.js").default;
+var Map = exports.Map = __webpack_require__(/*! ./Map */ "./structures/Map.js").default;
+var List = exports.List = __webpack_require__(/*! ./List */ "./structures/List.js").default;
 
 /***/ }),
 
@@ -22657,7 +22882,7 @@ function UpdateTransform(transform, parentTransform) {
     //if (parentMatrix === undefined) parentMatrix = null;
     if (!transform._isDirty && !parentTransform._isDirty) return;
 
-    transform.rotation = transform.angle * _MathUtils2.default.degToRad;
+    transform.rotation = transform.angle * _MathUtils2.default.toRadian;
 
     // if (transform.rotation % MathUtils.TAU) {
 
@@ -22877,6 +23102,10 @@ setByShape(shape,position) {
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
 
 var _freeze2 = _interopRequireDefault(_freeze);
@@ -22907,7 +23136,7 @@ var Base64Utils = {
 
 (0, _freeze2.default)(Base64Utils);
 
-module.exports = Base64Utils;
+exports.default = Base64Utils;
 
 /***/ }),
 
@@ -22971,9 +23200,6 @@ var Path = {
 
 exports.default = Path;
 
-
-module.exports = Path;
-
 /***/ }),
 
 /***/ "./utils/Validate.js":
@@ -22985,6 +23211,10 @@ module.exports = Path;
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
 
@@ -23015,7 +23245,7 @@ var Validate = {
 
 //export default Validate;
 
-module.exports = Validate;
+exports.default = Validate;
 
 /***/ }),
 
@@ -23315,12 +23545,12 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ObjectGettter = function () {
-    function ObjectGettter() {
-        (0, _classCallCheck3.default)(this, ObjectGettter);
+var ObjectGetter = function () {
+    function ObjectGetter() {
+        (0, _classCallCheck3.default)(this, ObjectGetter);
     }
 
-    (0, _createClass3.default)(ObjectGettter, [{
+    (0, _createClass3.default)(ObjectGetter, [{
         key: 'value',
         value: function value(obj, key, defaultValue) {
             var type = typeof obj === 'undefined' ? 'undefined' : (0, _typeof3.default)(obj);
@@ -23354,12 +23584,12 @@ var ObjectGettter = function () {
             }
         }
     }]);
-    return ObjectGettter;
+    return ObjectGetter;
 }();
 
 ;
 
-var ObjectGet = new ObjectGettter();
+var ObjectGet = new ObjectGetter();
 
 (0, _freeze2.default)(ObjectGet);
 

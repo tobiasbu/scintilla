@@ -1,10 +1,11 @@
 import System from '../core/system/System';
 import BoundingBox from '../math/BoundingBox';
 import Transform  from '../transform/Transform';
-import Color from '../render/color/Color'
-import MathUtils from '../math/MathUtils'
-import Vector from '../math/Vector'
+import Color from '../render/color/Color';
+import MathUtils from '../math/MathUtils';
+import Vector from '../math/Vector';
 import ResizeCamera from './ResizeCamera';
+import Renderable from '../modules/renderables/Renderable';
 
 
 export default class Camera {
@@ -71,7 +72,7 @@ export default class Camera {
   get angle() { return this.transform.angle; }
   set angle(value) { 
     this.transform.angle = value; 
-    this.transform.rotation = value * MathUtils.degToRad;
+    this.transform.rotation = value * MathUtils.toRadian;
     this.transform._isDirty = true;
     return this;
   }
@@ -143,6 +144,24 @@ export default class Camera {
 
   reset() {
     this.transform.reset();
+  }
+
+  isCulled(entity) {
+
+      if (entity === undefined || entity === null)
+        return false;
+
+      if (entity instanceof Renderable) {
+        return this.bounds.intersects(entity.bounds);
+      } else {
+        let render = entity.modules.get('render');
+        if (render !== null || render !== undefined) {
+          return this.bounds.intersects(render.bounds);
+        } else {
+          return this.bounds.contains(entity.x, entity.y);
+        }
+      }
+
   }
 
 }

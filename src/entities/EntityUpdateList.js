@@ -6,6 +6,7 @@ import ModulesUpdater from "../modules/components/ModulesUpdater";
 import DestroyEntity from "./hierarchy/DestroyEntity";
 import DetachModules from "../modules/components/DetachModules";
 import AttachModules from "../modules/components/AttachModules";
+import PrioritySorting from "./hierarchy/PrioritySorting";
 
 
 export default class EntityUpdateList {
@@ -18,6 +19,7 @@ export default class EntityUpdateList {
         this._removalInstances = new DataList();
         this._pendingInstances = new DataList();
         this._camera = null;
+        this._requirePrioritySorting = false;
     }
 
     get length() {return this._instances.size;}
@@ -25,6 +27,9 @@ export default class EntityUpdateList {
     addInstance(instance) {
         if (this._instances.indexOf(instance) === -1 && this._pendingInstances.indexOf(instance) === -1) {
             this._pendingInstances.push(instance);
+            //if (instance._priority !== 0) {
+                //this._requirePrioritySorting = true;
+            //}
         }
         return instance;
     }
@@ -65,17 +70,15 @@ export default class EntityUpdateList {
 
             if (!element.active)
                 continue;
-            
 
                 UpdateTransform(element.transform, this._camera.transform);
+
+                ModulesUpdater(element.modules, this.game);
 
                 if (element.update !== undefined)
                     element.update.call(element, dt); //update(dt);
 
-                
-
-                ModulesUpdater(element.modules, this.game);
-
+       
                 if (element.transform._isDirty)
                     element.transform._isDirty = false;
             
@@ -122,7 +125,7 @@ export default class EntityUpdateList {
             this._destroyInstances.childs.length = 0;
         }
 
-        if (removalSize !== 0) {
+        if (removalSize > 0) {
             for (let i = 0; i < removalSize; i++) {
                 let instance = this._removalInstances.at(i);
         
@@ -151,14 +154,19 @@ export default class EntityUpdateList {
         if (insertSize !== 0) {
             for (let i = 0; i < insertSize; i++) {
 
-                let instance =  this._pendingInstances.at(i);
+                let instance =  content[i];
                 AttachModules(instance.modules, this.game);
                 this._instances.push(instance);
                 //this._pendingInstances.eraseAt(i);
             }
+
+ 
+           /* if (this._requirePrioritySorting) {
+                this._instances.sort(PrioritySorting);
+            }*/
             //this._instances.concat(this._pendingInstances);
-            this._pendingInstances.childs.length = 0;
-            
+            //this._pendingInstances.childs.length = 0;
+            content.length = 0;
         }        
 
     }

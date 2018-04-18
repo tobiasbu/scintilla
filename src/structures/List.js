@@ -8,7 +8,7 @@ export default class DataList
         this.unique = unique || true;
         this.childs = [];
 
-        if (Array.isArray(elements))
+        if (elements !== null && Array.isArray(elements))
         {
             for (let i = 0; i < elements.length; i++)
                 this.push(elements[i]);
@@ -19,15 +19,15 @@ export default class DataList
     get size() {return this.childs.length;}
     get length() {return this.childs.length;}
 
-    get first() {
-        if (this.list.length > 0) 
+    first() {
+        if (this.childs.length > 0) 
             return this.childs[0];
         else
             return null;
         
     }
 
-    get last() {
+    last() {
           if (this.childs.length > 0) {
             let idx = this.childs.length - 1;
             return this.childs[idx];
@@ -171,7 +171,7 @@ export default class DataList
     }
 
     empty() {
-        return (this.childs.length == 0)
+        return (this.childs.length === 0);
     }
 
     clear() {
@@ -180,6 +180,8 @@ export default class DataList
         while(i--) {
             this.erase(this.childs[i]);
         }
+
+        this.childs.length = 0;
 
         return this;
     }

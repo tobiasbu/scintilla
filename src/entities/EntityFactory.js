@@ -16,14 +16,16 @@ export default class EntityFactory {
         return new SceneEntity(entityName, this.game);
     }
 
-    sprite(tag, entityName) {
+    sprite(tag, entityName, config) {
 
         let entity = this.entity(entityName);
-        entity.modules.attach.sprite(tag);
+        let spr = entity.modules.attach.sprite(tag, config.x, config.y, config.width, config.height);
 
         if (this.scene.current_scene !== null) {
             InitializeEntity(entity, this.game);
         }
+
+
 
         return entity;
     }

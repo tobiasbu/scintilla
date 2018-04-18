@@ -25,6 +25,9 @@ export default function DrawRenderLayer(layer, camera, context)
 
         if (camera.bounds.intersects(element.bounds))
         {
+            
+            context.globalAlpha = element.alpha;
+            
             drawCalls += element.render(context);
 
         //camera.game.system.draw.bounds(element.bounds);

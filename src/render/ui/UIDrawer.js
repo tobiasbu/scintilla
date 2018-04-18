@@ -234,6 +234,95 @@ export default class UIDrawer {
     }
   }
 
+  spriteAskew(tag, x, y, skewX, skewY, halign, valign) {
+    let source = this.cache.image.get(tag);
+
+    if (source !== null) {
+
+      if (halign === undefined) halign = 0;
+      if (valign === undefined) valign = 0;
+
+      let pos = this.transformPosition(x, y);
+      let dx = source.width * halign;
+      let dy = source.height * valign;
+
+      this.context.save();
+      this.context.transform(1, Math.atan(skewX), 0, 1, x, y);
+      this.context.transform(1, 0, Math.atan(skewY), 1, 0, 0);
+      this.context.drawImage(
+        source.data,
+        0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height
+      );
+      this.context.restore();
+
+    }
+  }
+
+  spriteRskew(tag, x, y, skewX, skewY, halign, valign) {
+    let source = this.cache.image.get(tag);
+
+    if (source !== null) {
+
+      if (halign === undefined) halign = 0;
+      if (valign === undefined) valign = 0;
+
+      let pos = this.transformPosition(x, y);
+      let dx = source.width * halign;
+      let dy = source.height * valign;
+
+      this.context.save();
+      this.context.transform(1, skewX, 0, 1, x, y);
+      this.context.transform(1, 0, skewY, 1, 0, 0);
+      this.context.drawImage(
+        source.data,
+        0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height
+      );
+      this.context.restore();
+
+    }
+  }
+
+  spritePart(tag, x, y, frameX, frameY, frameWidth, frameHeight, halign, valign) {
+    let source = this.cache.image.get(tag);
+
+    if (source !== null) {
+
+      if (halign === undefined) halign = 0;
+      if (valign === undefined) valign = 0;
+
+      let pos = this.transformPosition(x, y);
+      let dx = frameWidth * halign;
+      let dy = frameHeight * valign;
+
+      this.context.save();
+      this.context.translate(pos.x, pos.y);
+      this.context.drawImage(
+        source.data,
+        frameX, // sx - pos crop x 
+        frameY, // sy - pos crop y
+        frameWidth, // sWidth - crop width
+        frameHeight, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        frameWidth, frameHeight
+      );
+      this.context.restore();
+
+    }
+  }
+
   rect(x, y, width, height, color) {
 
 

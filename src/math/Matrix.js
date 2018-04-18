@@ -22,7 +22,7 @@ HTML5/CSS3 uses matrices in column-major order based.
 
 */
 
-class Matrix {
+export default class Matrix {
   
   /*
   * Constructor is identity only
@@ -247,7 +247,7 @@ class Matrix {
   return this.setAll(
     mat.a[0], mat.a[3], mat.a[6],
     mat.a[1], mat.a[4], mat.a[7],
-    mat.a[2], mat.a[5], mat.a[8],
+    mat.a[2], mat.a[5], mat.a[8]
   );
  }
 
@@ -277,7 +277,7 @@ class Matrix {
   return copy.setAll(
     mat.a[0], mat.a[3], mat.a[6],
     mat.a[1], mat.a[4], mat.a[7],
-    mat.a[2], mat.a[5], mat.a[8],
+    mat.a[2], mat.a[5], mat.a[8]
   );
 
  }
@@ -304,4 +304,3 @@ class Matrix {
 
 }
 
-module.exports = Matrix;

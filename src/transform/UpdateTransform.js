@@ -1,6 +1,6 @@
 
-import MathUtils from '../math/MathUtils'
-import Matrix from '../math/Matrix'
+import MathUtils from '../math/MathUtils';
+import Matrix from '../math/Matrix';
 
 /*
 
@@ -21,7 +21,7 @@ export default function UpdateTransform(transform, parentTransform) {
         return;
 
 
-    transform.rotation = transform.angle * MathUtils.degToRad;
+    transform.rotation = transform.angle * MathUtils.toRadian;
 
      // if (transform.rotation % MathUtils.TAU) {
       

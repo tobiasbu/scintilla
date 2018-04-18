@@ -1,5 +1,5 @@
 
-class ObjectGettter {
+class ObjectGetter {
 
   value(obj, key, defaultValue)
   {
@@ -53,7 +53,7 @@ class ObjectGettter {
 
 };
 
-var ObjectGet = new ObjectGettter();
+var ObjectGet = new ObjectGetter();
 
 Object.freeze(ObjectGet);
 

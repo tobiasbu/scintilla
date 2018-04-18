@@ -1,5 +1,3 @@
-
-
 /*
 *
 * Base class for Entities
@@ -12,9 +10,18 @@ export default class Entity {
         this._name = name || 'New Entity';
         this._active = true;
         this._pool = null;
+       // this._priority = 0;
         this.game = game || undefined; 
         this.persistent = false;
     }
+
+    /*set priority(value) {
+        this._priority = value;
+    }
+
+    get priority() {
+        return this._priority;
+    }*/
 
     get active() {return this._active;}
     set active(value)

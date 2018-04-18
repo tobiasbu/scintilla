@@ -28,4 +28,4 @@ Object.freeze(Validate);
 
 //export default Validate;
 
-module.exports = Validate;
+export default Validate;

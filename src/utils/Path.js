@@ -56,5 +56,3 @@ const Path = {
 Object.freeze(Path);
 
 export default Path;
-
-module.exports = Path;
