@@ -29,12 +29,10 @@ const EasingType = {
     BOUNCE : 14,
     
     
-}
+};
 
 export const EASE_BACK_CONST = 1.70158;
 
 Object.freeze(EasingType);
 
 export default EasingType;
-
-module.exports = EasingType;

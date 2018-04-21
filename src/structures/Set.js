@@ -10,7 +10,7 @@ export default class DataSet {
         if (Array.isArray(elements))
         {
             for (let i = 0; i < elements.length; i++)
-                this.set(elements[i]);
+                this.insert(elements[i]);
         }
 
     }
@@ -18,7 +18,7 @@ export default class DataSet {
     get size () { return this._content.length; }
     get length () { return this._content.length; }
 
-    set(value) {
+    insert(value) {
         if (this._content.indexOf(value) === -1)
             this._content.push(value);
 
@@ -43,7 +43,7 @@ export default class DataSet {
         return (this._content.indexOf(value) > -1);
     }
 
-    delete(value) {
+    erase(value) {
         var idx = this._content.indexOf(value);
 
         if (idx > -1)
@@ -85,7 +85,7 @@ export default class DataSet {
         return MergeSort(this._content, predicate);
     }
 
-   values() {
+   content() {
        return this._content;
    }
 

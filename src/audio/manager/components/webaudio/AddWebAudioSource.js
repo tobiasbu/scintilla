@@ -1,6 +1,6 @@
 import WebAudioSource from "../../../sound/WebAudioSource";
 
-export default function AddWebAudioSource(tag, volume, loop) {
+export default function AddWebAudioSource(tag, volume, loop, name) {
 
     let soundResource = this._soundCache.get(tag);
 
@@ -9,7 +9,7 @@ export default function AddWebAudioSource(tag, volume, loop) {
         return;
     }
 
-    let audioSource = new WebAudioSource(this, soundResource, volume, loop);
+    let audioSource = new WebAudioSource(this, soundResource, volume, loop, name);
     this._sounds.push(audioSource);
 
     return audioSource;

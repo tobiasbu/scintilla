@@ -85,16 +85,16 @@ export default class UIDrawer {
 
     if (color !== undefined)
       this.color = color;
-    if (align !== undefined) 
+    if (align !== undefined)
       this.align = align;
 
     let pos = this.transformPosition(x, y);
-    
+
     this.context.textAlign = align;
 
     //this.context.save();
     //this.context.translate(x, y);
-    this.context.fillText(text, pos.x , pos.y);
+    this.context.fillText(text, pos.x, pos.y);
     //this.context.restore();
 
   }
@@ -321,6 +321,53 @@ export default class UIDrawer {
       this.context.restore();
 
     }
+  }
+
+  spritesheet(tag, x, y, frameNumber, halign, valign, scale, scale_y) {
+
+    let source = this.cache.animation.get(tag);
+
+    if (source === null)
+      return false;
+
+    let key = source.get(frameNumber);
+
+    if (key === null || key === undefined)
+      return false;
+
+    if (key.image === null)
+      return false;
+
+    let frame = key.frame;
+
+    if (scale === undefined) scale = 1;
+    if (scale_y === undefined) scale_y = scale;
+    if (halign === undefined) halign = 0;
+    if (valign === undefined) valign = 0;
+
+    let pos = this.transformPosition(x, y);
+    let dx = frame.width * halign;
+    let dy = frame.height * valign;
+
+
+    this.context.save();
+    this.context.translate(pos.x, pos.y);
+    this.context.scale(scale, scale_y);
+    this.context.drawImage(
+      key.image.data,
+      frame.x, // sx - pos crop x 
+      frame.y, // sy - pos crop y
+      frame.width, // sWidth - crop width
+      frame.height, // sHeight - crop height
+      -dx, // destination x
+      -dy, // destination y
+      frame.width, frame.height
+    );
+    this.context.restore();
+
+    return true;
+
+
   }
 
   rect(x, y, width, height, color) {

@@ -5,6 +5,7 @@ import InitializeSystems from "./system/components/InitializeSystems";
 import AppendDOM from "../dom/AppendDOM";
 import InitializeAudioSystemManager from "../audio/manager/components/InitializeAudioSystemManager";
 import InitializeRender from "../render/components/InitializeRender";
+import Random from "../math/random/RandomGenerator";
 
   /**
     * Initialize engine
@@ -32,6 +33,8 @@ export default function GameInitialize(game) {
     game.physics = new Physics(game);
     game.input = new Input(game);
     game.time = new GameTime(game);
+
+    Random.reset([(Date.now() * Math.random()).toString()]);
   
 
     InitializeSystems(game, render);

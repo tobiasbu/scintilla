@@ -15,7 +15,7 @@ export default function AttachModules(moduleManager, game) {
         } else if (entityModule instanceof Tilemap) {
 
             for (let i = 0; i < entityModule.layers.length; i++) {
-                game.system.render.layer.addRenderable(entityModule.layers[i], entityModule.layerID || 0);
+                game.system.render.layer.addRenderable(entityModule.layers.at(i), entityModule.layerID || 0);
             }
         }
     });

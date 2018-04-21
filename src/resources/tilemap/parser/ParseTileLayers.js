@@ -62,7 +62,7 @@ export default function ParseTileLayers(json, map) {
                 let tileData = tileset.getTileGID(gid);
 
                 if (tileData.isAnimated) {
-                    animatedTilesGID.set(gid);
+                    animatedTilesGID.insert(gid);
                     hasAnimatedTiles = true;
 
                 }

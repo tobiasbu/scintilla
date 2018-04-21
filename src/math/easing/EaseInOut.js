@@ -168,7 +168,7 @@ class EaseInOutFunctions {
 
 }
 
-var EaseInOut = new EaseInOutFunctions();
+const EaseInOut = new EaseInOutFunctions();
 
 Object.freeze(EaseInOut);
 

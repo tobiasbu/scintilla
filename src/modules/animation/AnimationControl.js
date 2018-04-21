@@ -48,6 +48,13 @@ export default class AnimationControl extends AnimationBaseModule {
     }
   }
 
+  getKeyFrame(frameIndex) {
+    if (this._resource === null)
+      return null;
+
+    return this._resource.get(frameIndex);
+  } 
+
   stop() {
 
     super.stop();

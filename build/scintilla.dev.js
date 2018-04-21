@@ -2697,9 +2697,10 @@ var scintilla = scintilla || {
 
   // MATH
   Math: __webpack_require__(/*! ./math/MathUtils */ "./math/MathUtils.js").default,
-  Random: __webpack_require__(/*! ./math/Random */ "./math/Random.js").default,
+  Random: __webpack_require__(/*! ./math/random/RandomGenerator */ "./math/random/RandomGenerator.js").default,
   Matrix: __webpack_require__(/*! ./math/Matrix */ "./math/Matrix.js"),
-  Ease: __webpack_require__(/*! ./math/easing */ "./math/easing/index.js"),
+  Ease: __webpack_require__(/*! ./math/easing */ "./math/easing/index.js").Ease,
+  //Ease : require('./math/easing').Type,
 
   // ENTITIES
   Scene: __webpack_require__(/*! ./scene/ */ "./scene/index.js"),
@@ -2854,13 +2855,13 @@ var AudioManager = function () {
 
     }, {
         key: "play",
-        value: function play(tag, volume, loop) {
+        value: function play(tag, volume, loop, name) {
 
             if (this._noAudio) {
                 return null;
             }
 
-            var sound = this.add(tag, volume, loop);
+            var sound = this.add(tag, volume, loop, name);
 
             if (sound !== undefined && sound !== null) {
                 sound.play();
@@ -2871,9 +2872,9 @@ var AudioManager = function () {
         }
     }, {
         key: "playPersistent",
-        value: function playPersistent(tag, volume, loop) {
+        value: function playPersistent(tag, volume, loop, name) {
 
-            var sound = this.play(tag, volume, loop);
+            var sound = this.play(tag, volume, loop, name);
 
             if (sound !== null) sound.persistent = true;
 
@@ -2881,12 +2882,23 @@ var AudioManager = function () {
         }
     }, {
         key: "playOnce",
-        value: function playOnce(tag, volume, loop) {
-            var sound = this.play(tag, volume, loop);
+        value: function playOnce(tag, volume, loop, name) {
+            var sound = this.play(tag, volume, loop, name);
 
             if (sound !== null) sound.once = true;
 
             return sound;
+        }
+    }, {
+        key: "get",
+        value: function get(name) {
+
+            return this._sounds.each(function (source) {
+
+                if (source.name === name) {
+                    return source;
+                }
+            }) || null;
         }
     }, {
         key: "remove",
@@ -3184,7 +3196,7 @@ var _WebAudioSource2 = _interopRequireDefault(_WebAudioSource);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function AddWebAudioSource(tag, volume, loop) {
+function AddWebAudioSource(tag, volume, loop, name) {
 
     var soundResource = this._soundCache.get(tag);
 
@@ -3193,7 +3205,7 @@ function AddWebAudioSource(tag, volume, loop) {
         return;
     }
 
-    var audioSource = new _WebAudioSource2.default(this, soundResource, volume, loop);
+    var audioSource = new _WebAudioSource2.default(this, soundResource, volume, loop, name);
     this._sounds.push(audioSource);
 
     return audioSource;
@@ -3325,10 +3337,11 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var AudioSource = function () {
-    function AudioSource(manager, resource) {
+    function AudioSource(manager, resource, name) {
         (0, _classCallCheck3.default)(this, AudioSource);
 
 
+        this.name = name || '';
         this.manager = manager;
         this._system = manager._system;
         this.resource = resource;
@@ -3353,7 +3366,7 @@ var AudioSource = function () {
     }
 
     (0, _createClass3.default)(AudioSource, [{
-        key: "play",
+        key: 'play',
         value: function play() {
 
             if (this.isPlaying) return;
@@ -3365,7 +3378,7 @@ var AudioSource = function () {
             return this;
         }
     }, {
-        key: "pause",
+        key: 'pause',
         value: function pause() {
             if (this.isPaused || !this.isPlaying) {
                 return this;
@@ -3377,7 +3390,7 @@ var AudioSource = function () {
             return this;
         }
     }, {
-        key: "stop",
+        key: 'stop',
         value: function stop() {
             if (!this.isPaused && !this.isPlaying) {
                 return this;
@@ -3389,7 +3402,7 @@ var AudioSource = function () {
             return this;
         }
     }, {
-        key: "destroy",
+        key: 'destroy',
         value: function destroy() {
             this._requireRemoval = true;
             this.isPlaying = false;
@@ -3463,10 +3476,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var WebAudioSource = function (_AudioSource) {
     (0, _inherits3.default)(WebAudioSource, _AudioSource);
 
-    function WebAudioSource(manager, resource, volume, loop) {
+    function WebAudioSource(manager, resource, volume, loop, name) {
         (0, _classCallCheck3.default)(this, WebAudioSource);
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (WebAudioSource.__proto__ || (0, _getPrototypeOf2.default)(WebAudioSource)).call(this, manager, resource));
+        var _this = (0, _possibleConstructorReturn3.default)(this, (WebAudioSource.__proto__ || (0, _getPrototypeOf2.default)(WebAudioSource)).call(this, manager, resource, name));
 
         _this.buffer = null;
         _this.duration = resource.duration;
@@ -4559,6 +4572,10 @@ var _InitializeRender = __webpack_require__(/*! ../render/components/InitializeR
 
 var _InitializeRender2 = _interopRequireDefault(_InitializeRender);
 
+var _RandomGenerator = __webpack_require__(/*! ../math/random/RandomGenerator */ "./math/random/RandomGenerator.js");
+
+var _RandomGenerator2 = _interopRequireDefault(_RandomGenerator);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -4585,6 +4602,8 @@ function GameInitialize(game) {
     game.physics = new _physics2.default(game);
     game.input = new _Input2.default(game);
     game.time = new _GameTime2.default(game);
+
+    _RandomGenerator2.default.reset([(Date.now() * Math.random()).toString()]);
 
     (0, _InitializeSystems2.default)(game, render);
 
@@ -5959,7 +5978,7 @@ function DestroyEntity(instance, game, verifyPersistance) {
     var completelyDestroy = true;
 
     if (verifyPersistance) {
-        completelyDestroy = element.persistent === false;
+        completelyDestroy = instance.persistent === false;
     }
 
     if (completelyDestroy) {
@@ -6395,6 +6414,11 @@ var PoolManager = function () {
   }
 
   (0, _createClass3.default)(PoolManager, [{
+    key: "has",
+    value: function has(poolName) {
+      return this._poolsMap.has(poolName);
+    }
+  }, {
     key: "get",
     value: function get(pool) {
       return this._poolsMap.get(pool);
@@ -10177,7 +10201,7 @@ function AddAsset(asset, check) {
     if (asset.type === _AssetsType2.default.webFont && this.webFontLoader === undefined) {
 
         this.webFontLoader = new _ScriptFile2.default('webFontLoader', "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
-        this._filesQueue.set(this.webFontLoader);
+        this._filesQueue.insert(this.webFontLoader);
         this._filesQueueCount++;
 
         this.game.events.create('file_postload_webFontLoader').subscribeOnce(function () {
@@ -10186,7 +10210,7 @@ function AddAsset(asset, check) {
     }
 
     asset.path = this.path;
-    this._filesQueue.set(asset);
+    this._filesQueue.insert(asset);
     this._filesQueueCount++;
     return asset;
 }
@@ -10221,7 +10245,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function AssetProcessingUpdate(file) {
 
     if (file.state === _LoaderState2.default.ERROR) {
-        this._failedFiles.set(file);
+        this._failedFiles.insert(file);
 
         /*if (file.linkFile)
         {
@@ -10232,7 +10256,7 @@ function AssetProcessingUpdate(file) {
         return _DeleteSucceedQueuedAsset2.default.call(this, file);
     }
 
-    this._processedFiles.set(file);
+    this._processedFiles.insert(file);
 
     return _DeleteSucceedQueuedAsset2.default.call(this, file); //this.deleteFromSuccessQueue(file);
 }
@@ -10266,7 +10290,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function DeleteSucceedQueuedAsset(file) {
 
-    this._successFiles.delete(file);
+    this._successFiles.erase(file);
 
     if (this._successFiles.size === 0 && this.state === _LoaderState2.default.PROCESSING) _ProcessDoneAssets2.default.call(this);
 }
@@ -10406,9 +10430,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function NextAsset(concludedFile, hasError) {
 
-    if (hasError) this._failedFiles.set(concludedFile);else this._successFiles.set(concludedFile);
+    if (hasError) this._failedFiles.insert(concludedFile);else this._successFiles.insert(concludedFile);
 
-    this._filesLoading.delete(concludedFile);
+    this._filesLoading.erase(concludedFile);
     this._loadedFilesCount++;
 
     //this.updateProgress();
@@ -10457,9 +10481,9 @@ function ProcessAssetsQueue() {
         if (file.state === _LoaderState2.default.FINISHED || file.state === _LoaderState2.default.PENDING) //  && this.inflight.size < this.maxParallelDownloads))
             {
 
-                self._filesLoading.set(file);
+                self._filesLoading.insert(file);
 
-                self._filesQueue.delete(file);
+                self._filesQueue.erase(file);
 
                 self.loadAsset(file);
             }
@@ -10999,7 +11023,7 @@ var MathUtils = {
   inManhattanRadius: function inManhattanRadius(from_x, from_y, to_x, to_y, radius, radius_y) {
     if (radius_y === undefined) radius_y = radius;
     var dist = this.manhattan(from_x, from_y, to_x, to_y);
-    if (dist.x <= radius_x && dist.y <= radius_y) return true;else return false;
+    if (dist.x <= radius && dist.y <= radius_y) return true;else return false;
   },
 
   average: function average() {
@@ -11396,68 +11420,6 @@ var Matrix = function () {
 }();
 
 exports.default = Matrix;
-
-/***/ }),
-
-/***/ "./math/Random.js":
-/*!************************!*\
-  !*** ./math/Random.js ***!
-  \************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _seal = __webpack_require__(/*! babel-runtime/core-js/object/seal */ "../node_modules/babel-runtime/core-js/object/seal.js");
-
-var _seal2 = _interopRequireDefault(_seal);
-
-var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _MathUtils = __webpack_require__(/*! ./MathUtils */ "./math/MathUtils.js");
-
-var _MathUtils2 = _interopRequireDefault(_MathUtils);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var LCG = function () {
-    function LCG() {
-        (0, _classCallCheck3.default)(this, LCG);
-
-        /// TODO
-        this.seed = 0;
-    }
-
-    (0, _createClass3.default)(LCG, [{
-        key: "range",
-        value: function range(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-    }, {
-        key: "integerRange",
-        value: function integerRange(min, max) {
-            return _MathUtils2.default.floor(Math.random() * (max - min)) + min; //  + 1
-        }
-    }]);
-    return LCG;
-}();
-
-var Random = new LCG();
-
-(0, _seal2.default)(Random);
-
-exports.default = Random;
 
 /***/ }),
 
@@ -11937,6 +11899,10 @@ var _EaseInOut = __webpack_require__(/*! ./EaseInOut */ "./math/easing/EaseInOut
 
 var _EaseInOut2 = _interopRequireDefault(_EaseInOut);
 
+var _EasingType = __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js");
+
+var _EasingType2 = _interopRequireDefault(_EasingType);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
@@ -11957,13 +11923,12 @@ var Ease = {
   /**
    * Ease-in-out functions
    */
-  inout: _EaseInOut2.default
+  inout: _EaseInOut2.default,
 
+  Type: _EasingType2.default
 };
 
 (0, _freeze2.default)(Ease);
-
-module.exports = Ease;
 
 exports.default = Ease;
 
@@ -12571,8 +12536,7 @@ var EaseOut = new EaseOutFunction();
 
 exports.default = EaseOut;
 
-
-module.exports = EaseOut;
+//module.exports = EaseOut;
 
 /***/ }),
 
@@ -12634,9 +12598,6 @@ var EASE_BACK_CONST = exports.EASE_BACK_CONST = 1.70158;
 
 exports.default = EasingType;
 
-
-module.exports = EasingType;
-
 /***/ }),
 
 /***/ "./math/easing/index.js":
@@ -12651,10 +12612,191 @@ module.exports = EasingType;
 
 module.exports = {
 
-    Ease: __webpack_require__(/*! ./Ease */ "./math/easing/Ease.js"),
-    Type: __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js")
+    Ease: __webpack_require__(/*! ./Ease */ "./math/easing/Ease.js").default,
+    Type: __webpack_require__(/*! ./EasingType */ "./math/easing/EasingType.js").default
 
 };
+
+/***/ }),
+
+/***/ "./math/random/Mash.js":
+/*!*****************************!*\
+  !*** ./math/random/Mash.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Mash;
+
+// From http://baagoe.com/en/RandomMusings/javascript/
+// Johannes BaagÃ¸e <baagoe@baagoe.com>, 2010
+function Mash() {
+  var n = 0xefc8249d;
+
+  var mash = function mash(data) {
+    data = data.toString();
+    for (var i = 0; i < data.length; i++) {
+      n += data.charCodeAt(i);
+      var h = 0.02519603282416938 * n;
+      n = h >>> 0;
+      h -= n;
+      h *= n;
+      n = h >>> 0;
+      h -= n;
+      n += h * 0x100000000; // 2^32
+    }
+    return (n >>> 0) * 2.3283064365386963e-10; // 2^-32
+  };
+
+  mash.version = 'Mash 0.9';
+  return mash;
+}
+
+/***/ }),
+
+/***/ "./math/random/RandomGenerator.js":
+/*!****************************************!*\
+  !*** ./math/random/RandomGenerator.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _seal = __webpack_require__(/*! babel-runtime/core-js/object/seal */ "../node_modules/babel-runtime/core-js/object/seal.js");
+
+var _seal2 = _interopRequireDefault(_seal);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Mash = __webpack_require__(/*! ./Mash */ "./math/random/Mash.js");
+
+var _Mash2 = _interopRequireDefault(_Mash);
+
+var _MathUtils = __webpack_require__(/*! ../MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// ms
+//const uint32 a = 214013;
+//const uint32 c = 2531011;
+// b
+//const RNG_A = 8253729;
+//const RNG_B = 2396403;
+// Alea
+var RNG_A = 2091639;
+var RNG_B = 2.3283064365386963e-10; // 2^-32;
+
+
+// From http://baagoe.com/en/RandomMusings/javascript/
+
+var RandomGenerator = function () {
+    function RandomGenerator() {
+        (0, _classCallCheck3.default)(this, RandomGenerator);
+
+        this.c = 1;
+        this.s0 = 0;
+        this.s1 = 0;
+        this.s2 = 0;
+        this.n = 0xefc8249d;
+        this._mash = (0, _Mash2.default)();
+    }
+
+    (0, _createClass3.default)(RandomGenerator, [{
+        key: "rand",
+        value: function rand() {
+            // common lcg =  (a * seed + c);
+            var t = RNG_A * this.s0 + this.c * RNG_B; // 2^-32
+            this.s0 = this.s1;
+            this.s1 = this.s2;
+            this.c = t | 0;
+            this.s2 = t - this.c;
+            return this.s2;
+        }
+    }, {
+        key: "uint32",
+        value: function uint32() {
+            return this.rand() * 0x100000000; // ^32
+        }
+    }, {
+        key: "frac",
+        value: function frac() {
+            // 2^-53
+            return this.rand() + (this.rand() * 0x200000 | 0) * 1.1102230246251565e-16;
+        }
+
+        // 0...1
+
+    }, {
+        key: "real",
+        value: function real() {
+            return this.uint32() + this.frac();
+        }
+
+        // real range
+
+    }, {
+        key: "range",
+        value: function range(from, to) {
+            return this.frac() * (to - from) + from;
+        }
+
+        // integer
+
+    }, {
+        key: "irange",
+        value: function irange(from, to) {
+            return _MathUtils2.default.floor(this.range(0, to - from) + from);
+            //MathUtils.floor(Math.random() * (max - min)) + min;
+        }
+    }, {
+        key: "reset",
+        value: function reset(seeds) {
+            this.n = 0xefc8249d;
+            this.s0 = this._mash(' ');
+            this.s1 = this._mash(' ');
+            this.s2 = this._mash(' ');
+            this.c = 1;
+
+            for (var i = 0; i < seeds.length && seeds[i] != null; i++) {
+                var seed = seeds[i];
+
+                this.s0 -= this._mash(seed);
+                this.s0 += ~~(this.s0 < 0);
+                this.s1 -= this._mash(seed);
+                this.s1 += ~~(this.s1 < 0);
+                this.s2 -= this._mash(seed);
+                this.s2 += ~~(this.s2 < 0);
+            }
+        }
+    }]);
+    return RandomGenerator;
+}();
+
+var Random = new RandomGenerator();
+
+(0, _seal2.default)(Random);
+
+exports.default = Random;
 
 /***/ }),
 
@@ -13194,6 +13336,13 @@ var AnimationControl = function (_AnimationBaseModule) {
   }
 
   (0, _createClass3.default)(AnimationControl, [{
+    key: "getKeyFrame",
+    value: function getKeyFrame(frameIndex) {
+      if (this._resource === null) return null;
+
+      return this._resource.get(frameIndex);
+    }
+  }, {
     key: "stop",
     value: function stop() {
 
@@ -13715,7 +13864,7 @@ function AttachModules(moduleManager, game) {
         } else if (entityModule instanceof _Tilemap2.default) {
 
             for (var i = 0; i < entityModule.layers.length; i++) {
-                game.system.render.layer.addRenderable(entityModule.layers[i], entityModule.layerID || 0);
+                game.system.render.layer.addRenderable(entityModule.layers.at(i), entityModule.layerID || 0);
             }
         }
     });
@@ -14385,7 +14534,26 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = DestroyRenderable;
+
+var _TilemapLayer = __webpack_require__(/*! ../tilemap/TilemapLayer */ "./modules/renderables/tilemap/TilemapLayer.js");
+
+var _TilemapLayer2 = _interopRequireDefault(_TilemapLayer);
+
+var _Tilemap = __webpack_require__(/*! ../tilemap/Tilemap */ "./modules/renderables/tilemap/Tilemap.js");
+
+var _Tilemap2 = _interopRequireDefault(_Tilemap);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function DestroyRenderable(renderable, render) {
+
+    if (renderable instanceof _Tilemap2.default) {
+        for (var i = 0; i < renderable.layers.length; i++) {
+            var layer = renderable.layers.at(i);
+            DestroyRenderable(layer, render);
+        }
+        renderable.layers.clear();
+    }
 
     render.layer.removeRenderable(renderable);
 
@@ -14699,6 +14867,10 @@ var _TilemapAnimator = __webpack_require__(/*! ./TilemapAnimator */ "./modules/r
 
 var _TilemapAnimator2 = _interopRequireDefault(_TilemapAnimator);
 
+var _List = __webpack_require__(/*! ../../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Tilemap = function (_Renderable) {
@@ -14728,18 +14900,18 @@ var Tilemap = function (_Renderable) {
 
         _this.floorTiles = false;
         _this.tilesets = resource.tilesets;
-        _this.layers = [];
+        _this.layers = new _List2.default();
         _this.objectLayers = resource.objectLayers;
 
         var animations = false;
         var layersSize = resource.tileLayers.length;
 
         for (var i = layersSize - 1; i >= 0; i--) {
-            var layer = resource.tileLayers.at(i);
+            var layerData = resource.tileLayers.at(i);
 
-            if (layer.hasAnimatedTiles) animations = true;
+            if (layerData.hasAnimatedTiles) animations = true;
 
-            _this.layers.push(new _TilemapLayer2.default(_this, layer));
+            _this.layers.push(new _TilemapLayer2.default(_this, layerData));
         }
 
         if (animations === true) {
@@ -14755,6 +14927,13 @@ var Tilemap = function (_Renderable) {
             return this.objectLayers.find(function (a) {
                 if (a.name === name) return a;
             });
+        }
+    }, {
+        key: "getTileLayer",
+        value: function getTileLayer(name) {
+            return this.layers.find(function (layer) {
+                if (layer.data.name === name) return layer;
+            }) || null;
         }
     }]);
     return Tilemap;
@@ -14818,9 +14997,9 @@ var TilemapAnimator = function () {
 
         for (var i = 0; i < layers.length; i++) {
 
-            if (!layers[i].data.hasAnimatedTiles) continue;
+            if (!layers.at(i).data.hasAnimatedTiles) continue;
 
-            var animatedSet = layers[i].data.animatedTiles;
+            var animatedSet = layers.at(i).data.animatedTiles;
 
             var _loop = function _loop(j) {
 
@@ -18135,6 +18314,45 @@ var UIDrawer = function () {
       }
     }
   }, {
+    key: 'spritesheet',
+    value: function spritesheet(tag, x, y, frameNumber, halign, valign, scale, scale_y) {
+
+      var source = this.cache.animation.get(tag);
+
+      if (source === null) return false;
+
+      var key = source.get(frameNumber);
+
+      if (key === null || key === undefined) return false;
+
+      if (key.image === null) return false;
+
+      var frame = key.frame;
+
+      if (scale === undefined) scale = 1;
+      if (scale_y === undefined) scale_y = scale;
+      if (halign === undefined) halign = 0;
+      if (valign === undefined) valign = 0;
+
+      var pos = this.transformPosition(x, y);
+      var dx = frame.width * halign;
+      var dy = frame.height * valign;
+
+      this.context.save();
+      this.context.translate(pos.x, pos.y);
+      this.context.scale(scale, scale_y);
+      this.context.drawImage(key.image.data, frame.x, // sx - pos crop x 
+      frame.y, // sy - pos crop y
+      frame.width, // sWidth - crop width
+      frame.height, // sHeight - crop height
+      -dx, // destination x
+      -dy, // destination y
+      frame.width, frame.height);
+      this.context.restore();
+
+      return true;
+    }
+  }, {
     key: 'rect',
     value: function rect(x, y, width, height, color) {
 
@@ -19824,7 +20042,7 @@ function ParseTileLayers(json, map) {
                 var tileData = tileset.getTileGID(gid);
 
                 if (tileData.isAnimated) {
-                    animatedTilesGID.set(gid);
+                    animatedTilesGID.insert(gid);
                     hasAnimatedTiles = true;
                 }
 
@@ -21622,14 +21840,14 @@ var DataSet = function () {
 
         if (Array.isArray(elements)) {
             for (var i = 0; i < elements.length; i++) {
-                this.set(elements[i]);
+                this.insert(elements[i]);
             }
         }
     }
 
     (0, _createClass3.default)(DataSet, [{
-        key: "set",
-        value: function set(value) {
+        key: "insert",
+        value: function insert(value) {
             if (this._content.indexOf(value) === -1) this._content.push(value);
 
             return this;
@@ -21655,8 +21873,8 @@ var DataSet = function () {
             return this._content.indexOf(value) > -1;
         }
     }, {
-        key: "delete",
-        value: function _delete(value) {
+        key: "erase",
+        value: function erase(value) {
             var idx = this._content.indexOf(value);
 
             if (idx > -1) this._content.splice(idx, 1);
@@ -21695,8 +21913,8 @@ var DataSet = function () {
             return (0, _MergeSort2.default)(this._content, predicate);
         }
     }, {
-        key: "values",
-        value: function values() {
+        key: "content",
+        value: function content() {
             return this._content;
         }
     }, {

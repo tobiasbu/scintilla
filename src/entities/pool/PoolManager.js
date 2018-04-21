@@ -11,6 +11,10 @@ export default class PoolManager {
 
   }
 
+  has (poolName) {
+    return this._poolsMap.has(poolName);
+  }
+
 
   get(pool) {
     return this._poolsMap.get(pool);

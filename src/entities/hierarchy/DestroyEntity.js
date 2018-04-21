@@ -15,7 +15,7 @@ export default function DestroyEntity(instance, game, verifyPersistance) {
     let completelyDestroy = true;
 
     if (verifyPersistance) {
-        completelyDestroy = element.persistent === false;        
+        completelyDestroy = instance.persistent === false;        
     }
 
     if (completelyDestroy) {

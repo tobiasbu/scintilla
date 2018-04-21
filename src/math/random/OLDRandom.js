@@ -1,5 +1,6 @@
 import MathUtils from "./MathUtils";
 
+
 class LCG {
 
     constructor() {
@@ -11,14 +12,9 @@ class LCG {
         return Math.random() * (max - min) + min;
     }
     
-    integerRange(min, max) {
+    irange(min, max) {
         return MathUtils.floor(Math.random() * (max - min)) + min; //  + 1
     }
 
 }
 
-var Random = new LCG();
-
-Object.seal(Random);
-
-export default Random;

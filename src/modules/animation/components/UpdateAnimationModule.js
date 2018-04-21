@@ -24,11 +24,7 @@ export default function UpdateAnimationModule(animationModule, resource, deltaTi
         duration = currentKeyFrame.duration;
       }
 
-     
-
       animationModule._position = animationModule._timer / duration;
-
-      
 
       // if current time is bigger then the frame time advance one frame
       if (animationModule._timer >= duration) {
@@ -50,8 +46,6 @@ export default function UpdateAnimationModule(animationModule, resource, deltaTi
             animationModule.stop();
             animationModule.currentFrame = last;
           }
-           
-          
 
           // animation has ended
           if (animationModule['onAnimationEnd'] !== undefined) {

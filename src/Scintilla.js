@@ -41,9 +41,10 @@ var scintilla = scintilla || {
 
   // MATH
   Math : require('./math/MathUtils').default,
-  Random : require('./math/Random').default,
+  Random : require('./math/random/RandomGenerator').default,
   Matrix : require('./math/Matrix'),
-  Ease : require('./math/easing'),
+  Ease : require('./math/easing').Ease,
+  //Ease : require('./math/easing').Type,
 
   // ENTITIES
   Scene : require('./scene/'),

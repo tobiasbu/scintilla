@@ -91,13 +91,13 @@ export default class AudioManager {
 
     }*/
 
-    play(tag, volume, loop) {
+    play(tag, volume, loop, name) {
 
         if (this._noAudio) {
             return null;
         }
 
-        let sound = this.add(tag, volume, loop);
+        let sound = this.add(tag, volume, loop, name);
 
         if (sound !== undefined && sound !== null) {
             sound.play();
@@ -110,9 +110,9 @@ export default class AudioManager {
 
     }
 
-    playPersistent(tag, volume, loop) {
+    playPersistent(tag, volume, loop, name) {
 
-        let sound = this.play(tag, volume, loop);
+        let sound = this.play(tag, volume, loop, name);
 
         if (sound !== null)
             sound.persistent = true;
@@ -122,13 +122,25 @@ export default class AudioManager {
 
     }
 
-    playOnce(tag, volume, loop) {
-        let sound = this.play(tag, volume, loop);
+    playOnce(tag, volume, loop, name) {
+        let sound = this.play(tag, volume, loop, name);
 
         if (sound !== null)
             sound.once = true;
 
         return sound;
+    }
+
+    get(name) {
+
+        return this._sounds.each((source) => {
+
+            if (source.name === name) {
+                return source;
+            }
+
+        }) || null;
+
     }
 
 
@@ -150,8 +162,6 @@ export default class AudioManager {
         return false;
 
     }
-
-
 
 
     stopAll(destroy) {

@@ -1,8 +1,9 @@
 
 export default class AudioSource {
 
-    constructor(manager, resource) {
+    constructor(manager, resource, name) {
 
+        this.name = name || '';
         this.manager = manager;
         this._system = manager._system;
         this.resource = resource;

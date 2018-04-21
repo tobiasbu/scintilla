@@ -1,6 +1,7 @@
 import EaseIn from "./EaseIn";
 import EaseOut from './EaseOut';
 import EaseInOut from "./EaseInOut";
+import EasingType from "./EasingType";
 
 /**
  * Easing functions
@@ -21,14 +22,12 @@ const Ease = {
     /**
      * Ease-in-out functions
      */
-    inout: EaseInOut
+    inout: EaseInOut,
 
 
-
+    Type : EasingType,
 }
 
 Object.freeze(Ease);
-
-module.exports = Ease;
 
 export default Ease;

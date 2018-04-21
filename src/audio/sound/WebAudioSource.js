@@ -6,9 +6,9 @@ import StartBufferSource from "./components/StartBufferSource";
 
 export default class WebAudioSource extends AudioSource {
 
-    constructor(manager, resource, volume, loop) {
+    constructor(manager, resource, volume, loop, name) {
 
-        super(manager, resource);
+        super(manager, resource, name);
 
 
         this.buffer = null;

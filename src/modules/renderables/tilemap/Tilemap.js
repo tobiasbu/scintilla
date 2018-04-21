@@ -2,6 +2,7 @@ import Renderable from "../Renderable";
 import ModuleProvider from "../../ModuleProvider";
 import TilemapLayer from "./TilemapLayer";
 import TilemapAnimator from "./TilemapAnimator";
+import DataList from "../../../structures/List";
 
 export default class Tilemap extends Renderable {
     
@@ -28,7 +29,7 @@ export default class Tilemap extends Renderable {
 
         this.floorTiles = false;
         this.tilesets = resource.tilesets;
-        this.layers = [];
+        this.layers = new DataList();
         this.objectLayers = resource.objectLayers;
 
         let animations = false;
@@ -37,12 +38,12 @@ export default class Tilemap extends Renderable {
 
         for (let i = layersSize - 1; i >= 0; i--)
         {
-            let layer = resource.tileLayers.at(i);
+            let layerData = resource.tileLayers.at(i);
 
-            if (layer.hasAnimatedTiles)
+            if (layerData.hasAnimatedTiles)
                 animations = true;
 
-            this.layers.push(new TilemapLayer(this, layer));
+            this.layers.push(new TilemapLayer(this, layerData));
         }
 
         if (animations === true) {
@@ -56,6 +57,13 @@ export default class Tilemap extends Renderable {
             if (a.name === name) 
                 return a;
         });
+    }
+
+    getTileLayer(name) {
+        return this.layers.find(function(layer) {
+            if (layer.data.name === name) 
+                return layer;
+        }) || null;
     }
 
 }

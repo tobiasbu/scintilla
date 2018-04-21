@@ -135,7 +135,7 @@ class EaseInFunctions {
 
 };
 
-var EaseIn = new EaseInFunctions();
+const EaseIn = new EaseInFunctions();
 
 Object.freeze(EaseIn);
 

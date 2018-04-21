@@ -11,9 +11,9 @@ export default function ProcessAssetsQueue() {
       {
         
 
-        self._filesLoading.set(file);
+        self._filesLoading.insert(file);
 
-        self._filesQueue.delete(file);
+        self._filesQueue.erase(file);
 
         self.loadAsset(file);
       }

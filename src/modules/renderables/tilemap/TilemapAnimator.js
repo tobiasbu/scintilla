@@ -11,9 +11,9 @@ export default class TilemapAnimator {
 
         for (let i = 0; i < layers.length; i++) {
 
-            if (!layers[i].data.hasAnimatedTiles) continue;
+            if (!layers.at(i).data.hasAnimatedTiles) continue;
 
-            let animatedSet = layers[i].data.animatedTiles;
+            let animatedSet = layers.at(i).data.animatedTiles;
 
 
 

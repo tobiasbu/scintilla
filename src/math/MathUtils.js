@@ -50,6 +50,7 @@ const MathUtils = {
     t = MathUtils.clamp(t, 0.0, 1.0);
     return MathUtils.lerp(fromValue, toValue, t);
   },
+  
 
   impreciseLerp: function (fromValue, toValue, t) {
     return fromValue + t * (toValue - fromValue);
@@ -87,7 +88,7 @@ const MathUtils = {
   inManhattanRadius: function (from_x, from_y, to_x, to_y, radius, radius_y) {
     if (radius_y === undefined) radius_y = radius;
     var dist = this.manhattan(from_x, from_y, to_x, to_y);
-    if (dist.x <= radius_x && dist.y <= radius_y)
+    if (dist.x <= radius && dist.y <= radius_y)
       return true;
     else
       return false;

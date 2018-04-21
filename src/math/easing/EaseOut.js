@@ -122,10 +122,10 @@ class EaseOutFunction {
 
 }
 
-var EaseOut = new EaseOutFunction();
+const EaseOut = new EaseOutFunction();
 
 Object.freeze(EaseOut);
 
 export default EaseOut;
 
-module.exports = EaseOut;
+//module.exports = EaseOut;

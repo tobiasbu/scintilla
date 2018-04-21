@@ -1,7 +1,7 @@
 
 module.exports = {
 
-    Ease : require('./Ease'),
-    Type : require('./EasingType'),  
+    Ease : require('./Ease').default,
+    Type : require('./EasingType').default,  
     
-}
+};

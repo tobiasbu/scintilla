@@ -5,7 +5,7 @@ export default function AssetProcessingUpdate(file) {
     
     if (file.state === LoaderState.ERROR)
     {
-       this._failedFiles.set(file);
+       this._failedFiles.insert(file);
 
         /*if (file.linkFile)
         {
@@ -17,7 +17,7 @@ export default function AssetProcessingUpdate(file) {
     }
 
 
-    this._processedFiles.set(file);
+    this._processedFiles.insert(file);
 
     return  DeleteSucceedQueuedAsset.call(this, file);//this.deleteFromSuccessQueue(file);
 

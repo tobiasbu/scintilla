@@ -6,12 +6,12 @@ import UpdateProgress from "./UpdateProgress";
 export default function NextAsset(concludedFile, hasError) {
 
     if (hasError)
-        this._failedFiles.set(concludedFile);
+        this._failedFiles.insert(concludedFile);
     else 
-        this._successFiles.set(concludedFile);
+        this._successFiles.insert(concludedFile);
     
 
-    this._filesLoading.delete(concludedFile);
+    this._filesLoading.erase(concludedFile);
     this._loadedFilesCount++;
 
     //this.updateProgress();
