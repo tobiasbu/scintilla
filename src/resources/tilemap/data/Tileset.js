@@ -1,5 +1,5 @@
 import DataList from "../../../structures/List";
-import TileGID from './TileGID'
+import TileGID from './TileGID';
 
 
 

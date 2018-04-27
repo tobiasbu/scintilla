@@ -6,10 +6,10 @@ import MathUtils from "../math/MathUtils";
 
 export default function UpdateCamera(camera, canvas) {
     
-  if (camera.transform._isDirty === false)
+  if (camera._transform._isDirty === false)
     return;
 
-  let t = camera.transform;
+  let t = camera._transform;
 
 
   if (t.rotation != t._oldRotation) {
@@ -47,7 +47,7 @@ export default function UpdateCamera(camera, canvas) {
   
   // bounds should not be rotated
   ComputeBounds(
-    camera.bounds, camera.transform, 
+    camera.bounds, camera._transform, 
     camera.width, camera.height, 
     pos);
 

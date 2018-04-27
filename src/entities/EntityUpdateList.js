@@ -71,7 +71,7 @@ export default class EntityUpdateList {
             if (!element.active)
                 continue;
 
-                UpdateTransform(element.transform, this._camera.transform);
+                UpdateTransform(element._transform, this._camera._transform);
 
                 ModulesUpdater(element.modules, this.game);
 
@@ -79,26 +79,14 @@ export default class EntityUpdateList {
                     element.update.call(element, dt); //update(dt);
 
        
-                if (element.transform._isDirty)
-                    element.transform._isDirty = false;
+                if (element._transform._isDirty)
+                    element._transform._isDirty = false;
             
 
 
         }
 
     }
-
-    /*transformUpdate(camera) {
-        for (let i = 0; i < this._instances.length; i++) {
-
-            let element = this._instances.at(i);
-
-            if (!element.active)
-                continue;
-            
-                UpdateTransform(element.transform, camera.transform);
-        }
-    }*/
 
     beginUpdate()
     {

@@ -22,12 +22,8 @@ export default class Camera {
 
     this.bounds = new BoundingBox(); // render bounds
     this.viewBounds = new BoundingBox(0,0, this.width, this.height); // global bounds
-    this.transform = new Transform();
+    this._transform = new Transform();
    
-    
-    //this.transform.origin.set(0.5,0.5)
-    //this.centerView();
-    // this._resolution = 1;
     this._pixelUnit = {x:1,y:1};    
     this._aspectRatio = 1;
 
@@ -38,54 +34,54 @@ export default class Camera {
 
   get position() { 
     return { 
-      x : this.transform.position.x, 
-      y : this.transform.position.y
+      x : this._transform.position.x, 
+      y : this._transform.position.y
     }; 
   }
   set position(value) { 
-    this.transform.position.x = value.x;
-    this.transform.position.y = value.y; 
-    this.transform._isDirty = true;
+    this._transform.position.x = value.x;
+    this._transform.position.y = value.y; 
+    this._transform._isDirty = true;
     return this;
   }
-  get x() {return this.transform.position.x;}
+  get x() {return this._transform.position.x;}
   set x(value) { 
-    this.transform.position.x = value; 
-    this.transform._isDirty = true;
+    this._transform.position.x = value; 
+    this._transform._isDirty = true;
     return this;
   }
   
-  get y() {return this.transform.position.y;}
+  get y() {return this._transform.position.y;}
   set y(value) { 
-    this.transform.position.y = value; 
-    this.transform._isDirty = true;
+    this._transform.position.y = value; 
+    this._transform._isDirty = true;
     return this;
   }
 
-  get scale() { return this.transform.scale.x; }
+  get scale() { return this._transform.scale.x; }
   set scale(value) { 
-    this.transform.scale.x = value; 
-    this.transform._isDirty = true; 
+    this._transform.scale.x = value; 
+    this._transform._isDirty = true; 
     return this;
   }
 
-  get angle() { return this.transform.angle; }
+  get angle() { return this._transform.angle; }
   set angle(value) { 
-    this.transform.angle = value; 
-    this.transform.rotation = value * MathUtils.toRadian;
-    this.transform._isDirty = true;
+    this._transform.angle = value; 
+    this._transform.rotation = value * MathUtils.toRadian;
+    this._transform._isDirty = true;
     return this;
   }
 
-  get origin() { return this.transform.origin; }
+  get origin() { return this._transform.origin; }
   set origin(value) {
-    this.transform.x = value.x;
-    this.transform.y = value.y;
-    this.transform._isDirty = true;
+    this._transform.x = value.x;
+    this._transform.y = value.y;
+    this._transform._isDirty = true;
     return this;
   }
 
-  get rotation() { return this.transform.rotation; }
+  get rotation() { return this._transform.rotation; }
 
   set backgroundColor(color) {
     if (color === undefined) { color = 'rgba(0,0,0,0)'; }
@@ -98,9 +94,14 @@ export default class Camera {
 
   set roundPixels(flag) {
     this._roundPixels = flag;
-    this.transform._isDirty = true;
+    this._transform._isDirty = true;
     return this;
   }
+
+  get roundPixels() {
+    return this._roundPixels;
+  }
+
   get size() {
     return {x:this.width, y:this.height};
   }
@@ -108,14 +109,14 @@ export default class Camera {
   centerView() {
     this.x = this.width * 0.5;
     this.y = this.height * 0.5;
-    this.transform._isDirty = true;
+    this._transform._isDirty = true;
     return this;
   }
 
   centerToEntity(entity) {
     this.x = entity.position.x;
     this.y = entity.position.y;
-    this.transform._isDirty = true;
+    this._transform._isDirty = true;
     return this;
   }
 
@@ -130,20 +131,20 @@ export default class Camera {
 
   setSize(width, height) {
     ResizeCamera(this, this.canvas, width, height);
-    this.transform._isDirty = true;
+    this._transform._isDirty = true;
     return this;
   }
 
   setView(x, y, width, height) {
-    this.transform.position.x = x;
-    this.transform.position.y = y;
+    this._transform.position.x = x;
+    this._transform.position.y = y;
     ResizeCamera(width, height);
-    this.transform._isDirty = true;
+    this._transform._isDirty = true;
     return this;
   }
 
   reset() {
-    this.transform.reset();
+    this._transform.reset();
   }
 
   isCulled(entity) {

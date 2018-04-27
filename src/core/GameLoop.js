@@ -65,7 +65,7 @@ export default class GameLoop {
          
             this.entityUpdateList.beginUpdate(deltaTime);
 
-            let lastCameraState = this.camera.transform._isDirty;
+            let lastCameraState = this.camera._transform._isDirty;
 
             UpdateScene(this.game.scene, deltaTime);
             /*if (this.game.scene._setup)
@@ -86,7 +86,7 @@ export default class GameLoop {
 
             
             if (lastCameraState)
-                this.camera.transform._isDirty = false;
+                this.camera._transform._isDirty = false;
 
            
 

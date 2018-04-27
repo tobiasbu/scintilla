@@ -9,6 +9,7 @@ module.exports = {
 
     entry: {
         'scintilla.min' : './Scintilla.js',
+        'scintilla' : './Scintilla.js',
     },
 
     output: {
@@ -28,9 +29,9 @@ module.exports = {
             test: /\.js?$/,
             exclude: /(node_modules|bower_components)/,
             loader: "babel-loader",
-            options: {
+            /*options: {
                 presets: ["es2015"]
-            }
+            }*/
           }
         ]
     },

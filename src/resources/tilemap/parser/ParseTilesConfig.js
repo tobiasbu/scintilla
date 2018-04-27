@@ -3,7 +3,9 @@ export default function ParseTilesConfig(tileset, tilesetTilesConfig) {
 
     for (let tileIndex in tilesetTilesConfig) {
 
-        let tileData = tileset.getTile(tileIndex);
+        let index = parseInt(tileIndex);
+        let tileData = tileset.getTile(index);
+       
 
         if (tileData === null || tileData === undefined) continue;
 

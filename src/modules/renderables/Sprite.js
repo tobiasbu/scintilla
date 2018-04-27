@@ -2,7 +2,7 @@ import Renderable from "./Renderable";
 import Rect from "../../math/Rect";
 import DrawImage from "./components/DrawImage";
 import ModuleProvider from "../ModuleProvider";
-import UpdateTransformBounds from '../../transform/UpdateTransformBounds'
+import UpdateTransformBounds from "../../transform/UpdateTransformBounds";
 
 
 export default class Sprite extends Renderable {
@@ -78,7 +78,7 @@ export default class Sprite extends Renderable {
 
         DrawImage(context, 
             this.resource.data, this.frame,
-            this.entity.transform, this._originInPixels);
+            this.entity._transform, this._originInPixels);
    
        return true;
     }

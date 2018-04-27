@@ -3,12 +3,14 @@ import KeyEvent from "../KeyEvent";
 export default function ProcessKeyRelease(event, key) {
 
 
-  if (key.preventDefault) 
+  if (key.preventDefault === true) {
     event.preventDefault();
+  }
 
-  if (!key._enabled)
+  if (!key._enabled) {
     return;
-  
+  }
+
   // set key properties
   key.status = false;
   key.press = false;

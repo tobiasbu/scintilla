@@ -3,7 +3,8 @@ export default function ParseTileProperties(tileset, tileProperties) {
 
     for (let tileIndex in tileProperties) {
 
-        let tileData = tileset.getTile(tileIndex);
+        let index = parseInt(tileIndex);
+        let tileData = tileset.getTile(index);
 
         if (tileData === null || tileData === undefined) continue;
 

@@ -15,13 +15,13 @@ export default class Key {
         this.release = false;
 
         this.preventDefault = true;
-
         this._event = KeyEvent.NONE;
 
         this.pressTime = 0;
         this.pressDuration = -2500;
         this.releaseTime = 0;
         this.releaseDuration = -2500;
+      
 
     }
 

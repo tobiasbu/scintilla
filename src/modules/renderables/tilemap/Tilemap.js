@@ -12,13 +12,13 @@ export default class Tilemap extends Renderable {
 
         //this._type = "tilemap";
         this.resource = resource;
-        this.tileWidth = resource.metaData.tileWidth;
-        this.tileHeight = resource.metaData.tileHeight;
-        this.width = resource.metaData.width;
-        this.height = resource.metaData.height;
-        this.orientation = resource.metaData.orientation;
-        this.pixelsWidth = resource.metaData.pixelsWidth;
-        this.pixelsHeight = resource.metaData.pixelsHeight;
+        this.tileWidth = resource.metadata.tileWidth;
+        this.tileHeight = resource.metadata.tileHeight;
+        this.width = resource.metadata.width;
+        this.height = resource.metadata.height;
+        this.orientation = resource.metadata.orientation;
+        this.pixelsWidth = resource.metadata.pixelsWidth;
+        this.pixelsHeight = resource.metadata.pixelsHeight;
         this.animator = undefined;
 
         this.culling = {
@@ -53,17 +53,11 @@ export default class Tilemap extends Renderable {
     }
     
     getObjectsLayer(name) {
-        return this.objectLayers.find(function(a) {
-            if (a.name === name) 
-                return a;
-        });
+        return this.resource.getObjectsLayer(name);
     }
 
     getTileLayer(name) {
-        return this.layers.find(function(layer) {
-            if (layer.data.name === name) 
-                return layer;
-        }) || null;
+        return this.resource.getTileLayer(name);
     }
 
 }

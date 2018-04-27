@@ -175,15 +175,15 @@ export default class Matrix {
 
     return this;
     /*
-    a  =  transform._cosSin.x * transform.scale.x;
-    b  = transform._cosSin.y * transform.scale.x;
-    c  = -transform._cosSin.y * transform.scale.y;
-    d  =  transform._cosSin.x * transform.scale.y;
-    x =  transform.position.x;
-    y =  transform.position.y;
+    a  =  _transform._cosSin.x * _transform.scale.x;
+    b  = _transform._cosSin.y * _transform.scale.x;
+    c  = -_transform._cosSin.y * _transform.scale.y;
+    d  =  _transform._cosSin.x * _transform.scale.y;
+    x =  _transform.position.x;
+    y =  _transform.position.y;
 
-    x -= transform.origin.x * a + transform.origin.y * c;
-    y -= transform.origin.y * b + transform.origin.y * d;
+    x -= _transform.origin.x * a + _transform.origin.y * c;
+    y -= _transform.origin.y * b + _transform.origin.y * d;
     */
 
     

@@ -31,16 +31,21 @@ constructor(game) {
   let self = this;
 
   this.image = new Cache((tag, data) => {
-    return new ImageResource(tag, data)
+    return new ImageResource(tag, data);
   });
   
-  this.tilemap = new Cache((tag, data) => {
-    return new TilemapResource(tag, data, self);
-  });
+  this.tilemap = new Cache();
+
+  /*
+  /// TODO
+  this.tileset = new Cache((tag, data) => {
+    return new TilesetResource(tag, data, self);
+  });*/
 
   this.json = new Cache();
   this.text = new Cache();
   this.audio = new Cache();
+
   this.animation = new Cache((tag, data) => {
 
     let resource;

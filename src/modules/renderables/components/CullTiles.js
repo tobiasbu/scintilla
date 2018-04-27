@@ -21,8 +21,8 @@ function LimitCulling(culling, tilemap) {
 
 export default function CullTiles(tilemap, camera) {
     
-    let t = tilemap.entity.transform;
-    let rot = camera.transform.rotation + t.rotation;
+    let t = tilemap.entity._transform;
+    let rot = camera._transform.rotation + t.rotation;
 
     // 90 DEGREE ROTATION
     // We will use the linear culling that is faster

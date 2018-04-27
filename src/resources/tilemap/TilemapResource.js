@@ -1,30 +1,33 @@
 
 import Resource from "../Resource";
-import TilemapMetadata from "./data/TilemapMetadata";
-import ParseTilesets from "./parser/ParseTileset";
 import ResourceType from '../ResourceType';
-import ParseTileLayers from "./parser/ParseTileLayers";
-import ParseObjectLayers from "./parser/ParseObjectsLayers";
+import ObjectGet from "../../utils/object/ObjectGet";
 
 export default class TilemapResource extends Resource {
 
-    constructor(name, source, cache) {
+    constructor(name, metadata, config) {
 
         super(name, ResourceType.Tilemap);
 
-        this.metaData = new TilemapMetadata ({
-            name: source.name,
-            width: source.width,
-            height: source.height,
-            tileWidth: source.tilewidth,
-            tileHeight: source.tileheight,
-            orietation: source.orietation
-        });
-
-        this.tilesets = ParseTilesets(source, cache);
-        this.tileLayers = ParseTileLayers(source, this);
-        this.objectLayers = ParseObjectLayers(source);
+        this.metadata = metadata || null;
+        this.tilesets =  ObjectGet.value(config, 'tilesets', null);
+        this.tileLayers = ObjectGet.value(config, 'tilelayers', null);
+        this.objectLayers = ObjectGet.value(config, 'objectlayers', null);
         
+    }
+
+    getObjectsLayer(name) {
+        return this.objectLayers.find(function(a) {
+            if (a.name === name) 
+                return a;
+        }) || null;
+    }
+
+    getTileLayer(name) {
+        return this.tileLayers.find(function(layer) {
+            if (layer.name === name) 
+                return layer;
+        }) || null;
     }
 
     getTilesetByGID(gid) {

@@ -18,5 +18,6 @@ export default function ClearModules(moduleManager, game) {
 
     moduleManager.attached.clear();
     
+    
 
 }

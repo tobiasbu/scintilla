@@ -2,11 +2,13 @@ import KeyEvent from "../KeyEvent";
 
  export default function ProcessKeyPress(event, key) { 
 
-  if (key.preventDefault) 
+  if (key.preventDefault === true) {
       event.preventDefault();
+  }
   
-  if (!key._enabled)
+  if (!key._enabled) {
     return;
+  }
 
   if (key.press === false)
   {

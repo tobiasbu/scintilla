@@ -23,7 +23,7 @@ export default function ParseObjectLayers(json, map) {
 
         let newLayer = {
             name :  jsonLayer.name || "",
-            objects : []
+            objects : new DataList()
         };
 
         let objectsSize = jsonLayer.objects.length;

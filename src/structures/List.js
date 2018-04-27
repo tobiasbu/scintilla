@@ -84,6 +84,10 @@ export default class DataList
         return this.childs.indexOf(child);
     }
 
+    get(index) {
+        return  this.childs[index];
+    }
+
     at(index) {
         return this.childs[index];
     }
@@ -175,11 +179,11 @@ export default class DataList
     }
 
     clear() {
-        let i = this.childs.length;
+        /*let i = this.childs.length;
 
         while(i--) {
             this.erase(this.childs[i]);
-        }
+        }*/
 
         this.childs.length = 0;
 

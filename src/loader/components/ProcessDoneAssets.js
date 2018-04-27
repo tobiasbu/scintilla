@@ -1,6 +1,7 @@
 import PreloadSceneComplete from "../../scene/components/PreloadSceneComplete";
 import LoaderState from "../LoaderState";
 import AssetsType from "../AssetsType";
+import ParseTiledJSON from "../../resources/tilemap/parser/ParseTiledJSON";
 
 export default function ProcessDoneAssets() {
 
@@ -46,7 +47,8 @@ export default function ProcessDoneAssets() {
           }
           
           case AssetsType.tilemapJSON: {
-            asset = cache.tilemap.add(file.tag, file.data);
+            asset = ParseTiledJSON(file.tag, file.data, cache);
+            cache.tilemap.add(file.tag, asset);
             break;
           }
 

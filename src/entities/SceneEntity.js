@@ -11,7 +11,7 @@ export default class SceneEntity extends Entity //Hierarchy
     {
         name = name || 'New SceneEntity';
         super(name, game || null)
-        this.transform = new Transform();
+        this._transform = new Transform();
         this._pool = null;
         this.modules = new ModuleManager(this);
         this.scene = null;       
@@ -42,34 +42,34 @@ export default class SceneEntity extends Entity //Hierarchy
     }
 
     set x(value) {
-        this.transform.position.x = value;
-        this.transform.markDirty();
+        this._transform.position.x = value;
+        this._transform.markDirty();
     }
 
-    get x() { return this.transform.position.x; }
+    get x() { return this._transform.position.x; }
 
     set y(value) {
-        this.transform.position.y = value;
-        this.transform.markDirty();
+        this._transform.position.y = value;
+        this._transform.markDirty();
     }
 
-    get y() { return this.transform.position.y; }
+    get y() { return this._transform.position.y; }
 
-    get position() { return this.transform.position; }
-    set position(value) { this.transform.position = value; this.transform._isDirty = true; }
+    get position() { return this._transform.position; }
+    set position(value) { this._transform.position = value; this._transform._isDirty = true; }
 
-    get origin() { return this.transform.origin; }
-    set origin(value) { this.transform.origin = value; this.transform._isDirty = true; }
-    set ['origin.x'](value) { this.transform.origin.x = value; this.transform._isDirty = true;}
-    set ['origin.y'](value) { this.transform.origin.y = value; this.transform._isDirty = true;}
+    get origin() { return this._transform.origin; }
+    set origin(value) { this._transform.origin = value; this._transform._isDirty = true; }
+    set ['origin.x'](value) { this._transform.origin.x = value; this._transform._isDirty = true;}
+    set ['origin.y'](value) { this._transform.origin.y = value; this._transform._isDirty = true;}
 
-    get scale() { return this.transform.scale; }
-    set scale(value) { this.transform.scale = value; this.transform._isDirty = true; }
-    set ['scale.x'](value) { this.transform.scale.x = value; this.transform._isDirty = true;}
-    set ['scale.y'](value) { this.transform.scale.y = value; this.transform._isDirty = true;}
+    get scale() { return this._transform.scale; }
+    set scale(value) { this._transform.scale = value; this._transform._isDirty = true; }
+    set ['scale.x'](value) { this._transform.scale.x = value; this._transform._isDirty = true;}
+    set ['scale.y'](value) { this._transform.scale.y = value; this._transform._isDirty = true;}
 
-    get angle() { return this.transform.angle; }
-    set angle(value) { this.transform.angle = value; this.transform._isDirty = true; }
+    get angle() { return this._transform.angle; }
+    set angle(value) { this._transform.angle = value; this._transform._isDirty = true; }
    
     
 }

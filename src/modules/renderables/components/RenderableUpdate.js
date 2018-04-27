@@ -1,6 +1,6 @@
 
 import CullTiles from "./CullTiles";
-import AnimateTilemap from './AnimateTilemap'
+import AnimateTilemap from './AnimateTilemap';
 import RenderableBoundsUpdate from "./RenderableBoundsUpdate";
 
 
@@ -10,13 +10,13 @@ export default function RenderableUpdate(entity, renderable, camera, gameTime) {
 
         if (renderable._originIsDirty) {
             // destination
-            renderable._originInPixels.x = entity.transform.origin.x * renderable.pixelsWidth;
-            renderable._originInPixels.y = entity.transform.origin.y * renderable.pixelsHeight;
+            renderable._originInPixels.x = entity._transform.origin.x * renderable.pixelsWidth;
+            renderable._originInPixels.y = entity._transform.origin.y * renderable.pixelsHeight;
         }
 
         AnimateTilemap(renderable, gameTime);
 
-        if (!entity.transform._isDirty && !camera.transform._isDirty)
+        if (!entity._transform._isDirty && !camera._transform._isDirty)
             return;
 
         CullTiles(renderable, camera)

@@ -2716,7 +2716,7 @@ var scintilla = scintilla || {
   Audio: __webpack_require__(/*! ./audio */ "./audio/index.js"),
 
   // CACHE AND LOADER
-  Resources: __webpack_require__(/*! ./resources */ "./resources/index.js"),
+  Resource: __webpack_require__(/*! ./resources */ "./resources/index.js"),
   Cache: __webpack_require__(/*! ./cache/CacheManager */ "./cache/CacheManager.js"),
   AssetType: __webpack_require__(/*! ./loader/AssetsType */ "./loader/AssetsType.js"),
   Loader: __webpack_require__(/*! ./loader */ "./loader/index.js"),
@@ -3194,18 +3194,25 @@ var _WebAudioSource = __webpack_require__(/*! ../../../sound/WebAudioSource */ "
 
 var _WebAudioSource2 = _interopRequireDefault(_WebAudioSource);
 
+var _NullAudioSource = __webpack_require__(/*! ../../../sound/NullAudioSource */ "./audio/sound/NullAudioSource.js");
+
+var _NullAudioSource2 = _interopRequireDefault(_NullAudioSource);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function AddWebAudioSource(tag, volume, loop, name) {
 
     var soundResource = this._soundCache.get(tag);
+    var audioSource = void 0;
 
     if (soundResource === undefined || soundResource === null) {
         console.warn("AudioManager.add: Could not add audio source with tag: \'" + tag + "\.");
-        return;
+        audioSource = new _NullAudioSource2.default(this, null, tag);
+    } else {
+
+        audioSource = new _WebAudioSource2.default(this, soundResource, volume, loop, name);
     }
 
-    var audioSource = new _WebAudioSource2.default(this, soundResource, volume, loop, name);
     this._sounds.push(audioSource);
 
     return audioSource;
@@ -3414,6 +3421,99 @@ var AudioSource = function () {
 }();
 
 exports.default = AudioSource;
+
+/***/ }),
+
+/***/ "./audio/sound/NullAudioSource.js":
+/*!****************************************!*\
+  !*** ./audio/sound/NullAudioSource.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _get2 = __webpack_require__(/*! babel-runtime/helpers/get */ "../node_modules/babel-runtime/helpers/get.js");
+
+var _get3 = _interopRequireDefault(_get2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _AudioSource2 = __webpack_require__(/*! ./AudioSource */ "./audio/sound/AudioSource.js");
+
+var _AudioSource3 = _interopRequireDefault(_AudioSource2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var NullAudioSource = function (_AudioSource) {
+    (0, _inherits3.default)(NullAudioSource, _AudioSource);
+
+    function NullAudioSource() {
+        (0, _classCallCheck3.default)(this, NullAudioSource);
+        return (0, _possibleConstructorReturn3.default)(this, (NullAudioSource.__proto__ || (0, _getPrototypeOf2.default)(NullAudioSource)).apply(this, arguments));
+    }
+
+    (0, _createClass3.default)(NullAudioSource, [{
+        key: "setVolume",
+        value: function setVolume(value) {
+            this._volume = value;
+            return this;
+        }
+    }, {
+        key: "play",
+        value: function play() {
+            (0, _get3.default)(NullAudioSource.prototype.__proto__ || (0, _getPrototypeOf2.default)(NullAudioSource.prototype), "play", this).call(this);
+        }
+    }, {
+        key: "pause",
+        value: function pause() {}
+    }, {
+        key: "stop",
+        value: function stop() {
+            (0, _get3.default)(NullAudioSource.prototype.__proto__ || (0, _getPrototypeOf2.default)(NullAudioSource.prototype), "stop", this).call(this);
+        }
+    }, {
+        key: "destroy",
+        value: function destroy() {
+
+            (0, _get3.default)(NullAudioSource.prototype.__proto__ || (0, _getPrototypeOf2.default)(NullAudioSource.prototype), "destroy", this).call(this);
+        }
+    }, {
+        key: "volume",
+        get: function get() {
+            return 1;
+        },
+        set: function set(value) {
+            this._volume = value;
+        }
+    }]);
+    return NullAudioSource;
+}(_AudioSource3.default);
+
+exports.default = NullAudioSource;
 
 /***/ }),
 
@@ -3861,13 +3961,18 @@ var CacheManager = function () {
       return new _ImageResource2.default(tag, data);
     });
 
-    this.tilemap = new _Cache2.default(function (tag, data) {
-      return new _TilemapResource2.default(tag, data, self);
-    });
+    this.tilemap = new _Cache2.default();
+
+    /*
+    /// TODO
+    this.tileset = new Cache((tag, data) => {
+      return new TilesetResource(tag, data, self);
+    });*/
 
     this.json = new _Cache2.default();
     this.text = new _Cache2.default();
     this.audio = new _Cache2.default();
+
     this.animation = new _Cache2.default(function (tag, data) {
 
       var resource = void 0;
@@ -4013,11 +4118,8 @@ var Camera = function () {
 
     this.bounds = new _BoundingBox2.default(); // render bounds
     this.viewBounds = new _BoundingBox2.default(0, 0, this.width, this.height); // global bounds
-    this.transform = new _Transform2.default();
+    this._transform = new _Transform2.default();
 
-    //this.transform.origin.set(0.5,0.5)
-    //this.centerView();
-    // this._resolution = 1;
     this._pixelUnit = { x: 1, y: 1 };
     this._aspectRatio = 1;
 
@@ -4030,7 +4132,7 @@ var Camera = function () {
     value: function centerView() {
       this.x = this.width * 0.5;
       this.y = this.height * 0.5;
-      this.transform._isDirty = true;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
@@ -4038,7 +4140,7 @@ var Camera = function () {
     value: function centerToEntity(entity) {
       this.x = entity.position.x;
       this.y = entity.position.y;
-      this.transform._isDirty = true;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
@@ -4063,22 +4165,22 @@ var Camera = function () {
     key: 'setSize',
     value: function setSize(width, height) {
       (0, _ResizeCamera2.default)(this, this.canvas, width, height);
-      this.transform._isDirty = true;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
     key: 'setView',
     value: function setView(x, y, width, height) {
-      this.transform.position.x = x;
-      this.transform.position.y = y;
+      this._transform.position.x = x;
+      this._transform.position.y = y;
       (0, _ResizeCamera2.default)(width, height);
-      this.transform._isDirty = true;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
     key: 'reset',
     value: function reset() {
-      this.transform.reset();
+      this._transform.reset();
     }
   }, {
     key: 'isCulled',
@@ -4101,72 +4203,72 @@ var Camera = function () {
     key: 'position',
     get: function get() {
       return {
-        x: this.transform.position.x,
-        y: this.transform.position.y
+        x: this._transform.position.x,
+        y: this._transform.position.y
       };
     },
     set: function set(value) {
-      this.transform.position.x = value.x;
-      this.transform.position.y = value.y;
-      this.transform._isDirty = true;
+      this._transform.position.x = value.x;
+      this._transform.position.y = value.y;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
     key: 'x',
     get: function get() {
-      return this.transform.position.x;
+      return this._transform.position.x;
     },
     set: function set(value) {
-      this.transform.position.x = value;
-      this.transform._isDirty = true;
+      this._transform.position.x = value;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
     key: 'y',
     get: function get() {
-      return this.transform.position.y;
+      return this._transform.position.y;
     },
     set: function set(value) {
-      this.transform.position.y = value;
-      this.transform._isDirty = true;
+      this._transform.position.y = value;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
     key: 'scale',
     get: function get() {
-      return this.transform.scale.x;
+      return this._transform.scale.x;
     },
     set: function set(value) {
-      this.transform.scale.x = value;
-      this.transform._isDirty = true;
+      this._transform.scale.x = value;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
     key: 'angle',
     get: function get() {
-      return this.transform.angle;
+      return this._transform.angle;
     },
     set: function set(value) {
-      this.transform.angle = value;
-      this.transform.rotation = value * _MathUtils2.default.toRadian;
-      this.transform._isDirty = true;
+      this._transform.angle = value;
+      this._transform.rotation = value * _MathUtils2.default.toRadian;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
     key: 'origin',
     get: function get() {
-      return this.transform.origin;
+      return this._transform.origin;
     },
     set: function set(value) {
-      this.transform.x = value.x;
-      this.transform.y = value.y;
-      this.transform._isDirty = true;
+      this._transform.x = value.x;
+      this._transform.y = value.y;
+      this._transform._isDirty = true;
       return this;
     }
   }, {
     key: 'rotation',
     get: function get() {
-      return this.transform.rotation;
+      return this._transform.rotation;
     }
   }, {
     key: 'backgroundColor',
@@ -4184,8 +4286,11 @@ var Camera = function () {
     key: 'roundPixels',
     set: function set(flag) {
       this._roundPixels = flag;
-      this.transform._isDirty = true;
+      this._transform._isDirty = true;
       return this;
+    },
+    get: function get() {
+      return this._roundPixels;
     }
   }, {
     key: 'size',
@@ -4266,9 +4371,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function UpdateCamera(camera, canvas) {
 
-  if (camera.transform._isDirty === false) return;
+  if (camera._transform._isDirty === false) return;
 
-  var t = camera.transform;
+  var t = camera._transform;
 
   if (t.rotation != t._oldRotation) {
     t._oldRotation = t.rotation;
@@ -4300,7 +4405,7 @@ function UpdateCamera(camera, canvas) {
   .translate(pos.x, pos.y).scale(t.scale.x, t.scale.x);
 
   // bounds should not be rotated
-  (0, _ComputeBounds2.default)(camera.bounds, camera.transform, camera.width, camera.height, pos);
+  (0, _ComputeBounds2.default)(camera.bounds, camera._transform, camera.width, camera.height, pos);
 
   t.matrix.radianRotate(t._cosSin.x, t._cosSin.y).translate(-origin.x, -origin.y);
 }
@@ -4747,7 +4852,7 @@ var GameLoop = function () {
 
                                 this.entityUpdateList.beginUpdate(deltaTime);
 
-                                var lastCameraState = this.camera.transform._isDirty;
+                                var lastCameraState = this.camera._transform._isDirty;
 
                                 (0, _UpdateScene2.default)(this.game.scene, deltaTime);
                                 /*if (this.game.scene._setup)
@@ -4766,7 +4871,7 @@ var GameLoop = function () {
 
                                 this.entityUpdateList.update(deltaTime);
 
-                                if (lastCameraState) this.camera.transform._isDirty = false;
+                                if (lastCameraState) this.camera._transform._isDirty = false;
                         }
                 }
         }, {
@@ -5553,27 +5658,16 @@ var EntityUpdateList = function () {
 
                 if (!element.active) continue;
 
-                (0, _UpdateTransform2.default)(element.transform, this._camera.transform);
+                (0, _UpdateTransform2.default)(element._transform, this._camera._transform);
 
                 (0, _ModulesUpdater2.default)(element.modules, this.game);
 
                 if (element.update !== undefined) element.update.call(element, dt); //update(dt);
 
 
-                if (element.transform._isDirty) element.transform._isDirty = false;
+                if (element._transform._isDirty) element._transform._isDirty = false;
             }
         }
-
-        /*transformUpdate(camera) {
-            for (let i = 0; i < this._instances.length; i++) {
-                  let element = this._instances.at(i);
-                  if (!element.active)
-                    continue;
-                
-                    UpdateTransform(element.transform, camera.transform);
-            }
-        }*/
-
     }, {
         key: "beginUpdate",
         value: function beginUpdate() {
@@ -5719,7 +5813,7 @@ var SceneEntity = function (_Entity) {
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (SceneEntity.__proto__ || (0, _getPrototypeOf2.default)(SceneEntity)).call(this, name, game || null));
 
-        _this.transform = new _Transform2.default();
+        _this._transform = new _Transform2.default();
         _this._pool = null;
         _this.modules = new _ModuleManager2.default(_this);
         _this.scene = null;
@@ -5756,72 +5850,72 @@ var SceneEntity = function (_Entity) {
     }, {
         key: 'x',
         set: function set(value) {
-            this.transform.position.x = value;
-            this.transform.markDirty();
+            this._transform.position.x = value;
+            this._transform.markDirty();
         },
         get: function get() {
-            return this.transform.position.x;
+            return this._transform.position.x;
         }
     }, {
         key: 'y',
         set: function set(value) {
-            this.transform.position.y = value;
-            this.transform.markDirty();
+            this._transform.position.y = value;
+            this._transform.markDirty();
         },
         get: function get() {
-            return this.transform.position.y;
+            return this._transform.position.y;
         }
     }, {
         key: 'position',
         get: function get() {
-            return this.transform.position;
+            return this._transform.position;
         },
         set: function set(value) {
-            this.transform.position = value;this.transform._isDirty = true;
+            this._transform.position = value;this._transform._isDirty = true;
         }
     }, {
         key: 'origin',
         get: function get() {
-            return this.transform.origin;
+            return this._transform.origin;
         },
         set: function set(value) {
-            this.transform.origin = value;this.transform._isDirty = true;
+            this._transform.origin = value;this._transform._isDirty = true;
         }
     }, {
         key: 'origin.x',
         set: function set(value) {
-            this.transform.origin.x = value;this.transform._isDirty = true;
+            this._transform.origin.x = value;this._transform._isDirty = true;
         }
     }, {
         key: 'origin.y',
         set: function set(value) {
-            this.transform.origin.y = value;this.transform._isDirty = true;
+            this._transform.origin.y = value;this._transform._isDirty = true;
         }
     }, {
         key: 'scale',
         get: function get() {
-            return this.transform.scale;
+            return this._transform.scale;
         },
         set: function set(value) {
-            this.transform.scale = value;this.transform._isDirty = true;
+            this._transform.scale = value;this._transform._isDirty = true;
         }
     }, {
         key: 'scale.x',
         set: function set(value) {
-            this.transform.scale.x = value;this.transform._isDirty = true;
+            this._transform.scale.x = value;this._transform._isDirty = true;
         }
     }, {
         key: 'scale.y',
         set: function set(value) {
-            this.transform.scale.y = value;this.transform._isDirty = true;
+            this._transform.scale.y = value;this._transform._isDirty = true;
         }
     }, {
         key: 'angle',
         get: function get() {
-            return this.transform.angle;
+            return this._transform.angle;
         },
         set: function set(value) {
-            this.transform.angle = value;this.transform._isDirty = true;
+            this._transform.angle = value;this._transform._isDirty = true;
         }
     }]);
     return SceneEntity;
@@ -5863,8 +5957,8 @@ function ClearEntities(entityList, game) {
 
         var instance = entityList._instances.at(i);
 
-        if (instance.isPooled) {
-            game.system.pool.pull(instance);
+        if (instance.isPooled === true) {
+            game.system.pool.push(instance);
         } else {
             (0, _DestroyEntity2.default)(instance, game, true);
         }
@@ -5874,16 +5968,16 @@ function ClearEntities(entityList, game) {
 
         var _instance = entityList._instances.at(_i);
 
-        if (_instance.isPooled) {
-            game.system.pool.pull(_instance);
+        if (_instance.isPooled === true) {
+            game.system.pool.push(_instance);
         } else {
             (0, _DestroyEntity2.default)(_instance, game, true);
         }
     }
 
-    entityList._pendingInstances.childs.length = 0;
-    entityList._destroyInstances.childs.length = 0;
-    entityList._instances.childs.length = 0;
+    entityList._pendingInstances.destroy(); //.length = 0;
+    entityList._destroyInstances.destroy(); //.length = 0;
+    entityList._instances.destroy(); //.length = 0;
 }
 
 /***/ }),
@@ -5977,23 +6071,27 @@ function DestroyEntity(instance, game, verifyPersistance) {
 
     var completelyDestroy = true;
 
-    if (verifyPersistance) {
+    if (verifyPersistance === true) {
         completelyDestroy = instance.persistent === false;
     }
 
-    if (completelyDestroy) {
-        (0, _ClearModules2.default)(instance.modules, game);
+    if (completelyDestroy === false) return;
 
-        if (instance.isPooled === true) {
-            var pool = game.system.pool.get(instance._pool);
-            pool.remove(instance);
-        }
+    var pool = void 0;
 
-        instance.scene = null;
-        instance.transform = null;
-        instance.modulesManager = null;
-        instance = null;
+    if (instance.isPooled === true) {
+        pool = game.system.pool.get(instance._pool);
     }
+
+    if (pool !== undefined) {
+        pool.remove(instance);
+    }
+
+    (0, _ClearModules2.default)(instance.modules, game);
+    instance._transform = null;
+    instance.modules = null;
+    instance.scene = null;
+    instance = null;
 }
 
 /***/ }),
@@ -10519,6 +10617,10 @@ var _AssetsType = __webpack_require__(/*! ../AssetsType */ "./loader/AssetsType.
 
 var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
+var _ParseTiledJSON = __webpack_require__(/*! ../../resources/tilemap/parser/ParseTiledJSON */ "./resources/tilemap/parser/ParseTiledJSON.js");
+
+var _ParseTiledJSON2 = _interopRequireDefault(_ParseTiledJSON);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ProcessDoneAssets() {
@@ -10566,7 +10668,8 @@ function ProcessDoneAssets() {
 
         case _AssetsType2.default.tilemapJSON:
           {
-            asset = cache.tilemap.add(file.tag, file.data);
+            asset = (0, _ParseTiledJSON2.default)(file.tag, file.data, cache);
+            cache.tilemap.add(file.tag, asset);
             break;
           }
 
@@ -11294,14 +11397,14 @@ var Matrix = function () {
 
       return this;
       /*
-      a  =  transform._cosSin.x * transform.scale.x;
-      b  = transform._cosSin.y * transform.scale.x;
-      c  = -transform._cosSin.y * transform.scale.y;
-      d  =  transform._cosSin.x * transform.scale.y;
-      x =  transform.position.x;
-      y =  transform.position.y;
-        x -= transform.origin.x * a + transform.origin.y * c;
-      y -= transform.origin.y * b + transform.origin.y * d;
+      a  =  _transform._cosSin.x * _transform.scale.x;
+      b  = _transform._cosSin.y * _transform.scale.x;
+      c  = -_transform._cosSin.y * _transform.scale.y;
+      d  =  _transform._cosSin.x * _transform.scale.y;
+      x =  _transform.position.x;
+      y =  _transform.position.y;
+        x -= _transform.origin.x * a + _transform.origin.y * c;
+      y -= _transform.origin.y * b + _transform.origin.y * d;
       */
     }
   }, {
@@ -14327,7 +14430,7 @@ var Sprite = function (_Renderable) {
 
             if (!this.resource) return false;
 
-            (0, _DrawImage2.default)(context, this.resource.data, this.frame, this.entity.transform, this._originInPixels);
+            (0, _DrawImage2.default)(context, this.resource.data, this.frame, this.entity._transform, this._originInPixels);
 
             return true;
         }
@@ -14464,8 +14567,8 @@ function LimitCulling(culling, tilemap) {
 
 function CullTiles(tilemap, camera) {
 
-    var t = tilemap.entity.transform;
-    var rot = camera.transform.rotation + t.rotation;
+    var t = tilemap.entity._transform;
+    var rot = camera._transform.rotation + t.rotation;
 
     // 90 DEGREE ROTATION
     // We will use the linear culling that is faster
@@ -14729,16 +14832,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function RenderableBoundsUpdate(renderable, entity, camera) {
 
-    if (!entity.transform._isDirty && !camera.transform._isDirty) return;
+    if (!entity._transform._isDirty && !camera._transform._isDirty) return;
 
     if (renderable._originIsDirty) {
         // destination
-        renderable._originInPixels.x = entity.transform.origin.x * renderable.width;
-        renderable._originInPixels.y = entity.transform.origin.y * renderable.height;
+        renderable._originInPixels.x = entity._transform.origin.x * renderable.width;
+        renderable._originInPixels.y = entity._transform.origin.y * renderable.height;
         // renderable._originIsDirty = false;
     }
 
-    (0, _ComputeBounds2.default)(renderable._bounds, entity.transform, renderable.width, renderable.height, renderable._originInPixels);
+    (0, _ComputeBounds2.default)(renderable._bounds, entity._transform, renderable.width, renderable.height, renderable._originInPixels);
 }
 
 /***/ }),
@@ -14778,13 +14881,13 @@ function RenderableUpdate(entity, renderable, camera, gameTime) {
 
         if (renderable._originIsDirty) {
             // destination
-            renderable._originInPixels.x = entity.transform.origin.x * renderable.pixelsWidth;
-            renderable._originInPixels.y = entity.transform.origin.y * renderable.pixelsHeight;
+            renderable._originInPixels.x = entity._transform.origin.x * renderable.pixelsWidth;
+            renderable._originInPixels.y = entity._transform.origin.y * renderable.pixelsHeight;
         }
 
         (0, _AnimateTilemap2.default)(renderable, gameTime);
 
-        if (!entity.transform._isDirty && !camera.transform._isDirty) return;
+        if (!entity._transform._isDirty && !camera._transform._isDirty) return;
 
         (0, _CullTiles2.default)(renderable, camera);
 
@@ -14883,13 +14986,13 @@ var Tilemap = function (_Renderable) {
         var _this = (0, _possibleConstructorReturn3.default)(this, (Tilemap.__proto__ || (0, _getPrototypeOf2.default)(Tilemap)).call(this, 'tilemap', moduleManager));
 
         _this.resource = resource;
-        _this.tileWidth = resource.metaData.tileWidth;
-        _this.tileHeight = resource.metaData.tileHeight;
-        _this.width = resource.metaData.width;
-        _this.height = resource.metaData.height;
-        _this.orientation = resource.metaData.orientation;
-        _this.pixelsWidth = resource.metaData.pixelsWidth;
-        _this.pixelsHeight = resource.metaData.pixelsHeight;
+        _this.tileWidth = resource.metadata.tileWidth;
+        _this.tileHeight = resource.metadata.tileHeight;
+        _this.width = resource.metadata.width;
+        _this.height = resource.metadata.height;
+        _this.orientation = resource.metadata.orientation;
+        _this.pixelsWidth = resource.metadata.pixelsWidth;
+        _this.pixelsHeight = resource.metadata.pixelsHeight;
         _this.animator = undefined;
 
         _this.culling = {
@@ -14924,16 +15027,12 @@ var Tilemap = function (_Renderable) {
     (0, _createClass3.default)(Tilemap, [{
         key: "getObjectsLayer",
         value: function getObjectsLayer(name) {
-            return this.objectLayers.find(function (a) {
-                if (a.name === name) return a;
-            });
+            return this.resource.getObjectsLayer(name);
         }
     }, {
         key: "getTileLayer",
         value: function getTileLayer(name) {
-            return this.layers.find(function (layer) {
-                if (layer.data.name === name) return layer;
-            }) || null;
+            return this.resource.getTileLayer(name);
         }
     }]);
     return Tilemap;
@@ -15102,7 +15201,7 @@ var TilemapLayer = function (_Renderable) {
 
             if (!this._enabled && !this.tilemap._enabled) return false;
 
-            return (0, _DrawTilemapLayer2.default)(context, this.tilemap, this.data, this.tilemap.moduleManager.entity.transform);
+            return (0, _DrawTilemapLayer2.default)(context, this.tilemap, this.data, this.tilemap.moduleManager.entity._transform);
         }
     }, {
         key: "getTile",
@@ -19329,53 +19428,47 @@ var _Resource2 = __webpack_require__(/*! ../Resource */ "./resources/Resource.js
 
 var _Resource3 = _interopRequireDefault(_Resource2);
 
-var _TilemapMetadata = __webpack_require__(/*! ./data/TilemapMetadata */ "./resources/tilemap/data/TilemapMetadata.js");
-
-var _TilemapMetadata2 = _interopRequireDefault(_TilemapMetadata);
-
-var _ParseTileset = __webpack_require__(/*! ./parser/ParseTileset */ "./resources/tilemap/parser/ParseTileset.js");
-
-var _ParseTileset2 = _interopRequireDefault(_ParseTileset);
-
 var _ResourceType = __webpack_require__(/*! ../ResourceType */ "./resources/ResourceType.js");
 
 var _ResourceType2 = _interopRequireDefault(_ResourceType);
 
-var _ParseTileLayers = __webpack_require__(/*! ./parser/ParseTileLayers */ "./resources/tilemap/parser/ParseTileLayers.js");
+var _ObjectGet = __webpack_require__(/*! ../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _ParseTileLayers2 = _interopRequireDefault(_ParseTileLayers);
-
-var _ParseObjectsLayers = __webpack_require__(/*! ./parser/ParseObjectsLayers */ "./resources/tilemap/parser/ParseObjectsLayers.js");
-
-var _ParseObjectsLayers2 = _interopRequireDefault(_ParseObjectsLayers);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var TilemapResource = function (_Resource) {
     (0, _inherits3.default)(TilemapResource, _Resource);
 
-    function TilemapResource(name, source, cache) {
+    function TilemapResource(name, metadata, config) {
         (0, _classCallCheck3.default)(this, TilemapResource);
 
         var _this = (0, _possibleConstructorReturn3.default)(this, (TilemapResource.__proto__ || (0, _getPrototypeOf2.default)(TilemapResource)).call(this, name, _ResourceType2.default.Tilemap));
 
-        _this.metaData = new _TilemapMetadata2.default({
-            name: source.name,
-            width: source.width,
-            height: source.height,
-            tileWidth: source.tilewidth,
-            tileHeight: source.tileheight,
-            orietation: source.orietation
-        });
-
-        _this.tilesets = (0, _ParseTileset2.default)(source, cache);
-        _this.tileLayers = (0, _ParseTileLayers2.default)(source, _this);
-        _this.objectLayers = (0, _ParseObjectsLayers2.default)(source);
+        _this.metadata = metadata || null;
+        _this.tilesets = _ObjectGet2.default.value(config, 'tilesets', null);
+        _this.tileLayers = _ObjectGet2.default.value(config, 'tilelayers', null);
+        _this.objectLayers = _ObjectGet2.default.value(config, 'objectlayers', null);
 
         return _this;
     }
 
     (0, _createClass3.default)(TilemapResource, [{
+        key: "getObjectsLayer",
+        value: function getObjectsLayer(name) {
+            return this.objectLayers.find(function (a) {
+                if (a.name === name) return a;
+            }) || null;
+        }
+    }, {
+        key: "getTileLayer",
+        value: function getTileLayer(name) {
+            return this.tileLayers.find(function (layer) {
+                if (layer.name === name) return layer;
+            }) || null;
+        }
+    }, {
         key: "getTilesetByGID",
         value: function getTilesetByGID(gid) {
 
@@ -19556,7 +19649,7 @@ var TileLayerData = function () {
         this.height = _ObjectGet2.default.value(config, 'height', 0);
         this.x = _ObjectGet2.default.value(config, 'x', 0);
         this.y = _ObjectGet2.default.value(config, 'y', 0);
-        this.name = _ObjectGet2.default.value(config, 'name', 'tilemaplayer');
+        this.name = _ObjectGet2.default.value(config, 'name', '');
         this.alpha = _ObjectGet2.default.value(config, 'alpha', 1);
         //this.type ="tilelayer";
         this.visible = _ObjectGet2.default.value(config, 'visible', true);
@@ -19925,7 +20018,7 @@ function ParseObjectLayers(json, map) {
 
                 var newLayer = {
                         name: jsonLayer.name || "",
-                        objects: []
+                        objects: new _List2.default()
                 };
 
                 var objectsSize = jsonLayer.objects.length;
@@ -19989,7 +20082,16 @@ var _Tile2 = _interopRequireDefault(_Tile);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function ParseTileLayers(json, map) {
+function GetTilesetByGID(tilesets, gid) {
+
+    return tilesets.each(function (set) {
+        if (set.hasGID(gid)) {
+            return set;
+        }
+    }) || null;
+}
+
+function ParseTileLayers(json, tilesets) {
 
     var size = json.layers.length;
     var layers = new _List2.default();
@@ -20038,7 +20140,7 @@ function ParseTileLayers(json, map) {
             // The first tileset always has a firstgid value of 1. 
             if (gidProp.gid > 0) {
                 var gid = gidProp.gid;
-                var tileset = map.getTilesetByGID(gid);
+                var tileset = GetTilesetByGID(tilesets, gid); //map.getTilesetByGID(gid);
                 var tileData = tileset.getTileGID(gid);
 
                 if (tileData.isAnimated) {
@@ -20071,6 +20173,67 @@ function ParseTileLayers(json, map) {
 
 /***/ }),
 
+/***/ "./resources/tilemap/parser/ParseTiledJSON.js":
+/*!****************************************************!*\
+  !*** ./resources/tilemap/parser/ParseTiledJSON.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ParseTiledJSON;
+
+var _TilemapResource = __webpack_require__(/*! ../TilemapResource */ "./resources/tilemap/TilemapResource.js");
+
+var _TilemapResource2 = _interopRequireDefault(_TilemapResource);
+
+var _TilemapMetadata = __webpack_require__(/*! ../data/TilemapMetadata */ "./resources/tilemap/data/TilemapMetadata.js");
+
+var _TilemapMetadata2 = _interopRequireDefault(_TilemapMetadata);
+
+var _ParseTileset = __webpack_require__(/*! ./ParseTileset */ "./resources/tilemap/parser/ParseTileset.js");
+
+var _ParseTileset2 = _interopRequireDefault(_ParseTileset);
+
+var _ParseTileLayers = __webpack_require__(/*! ./ParseTileLayers */ "./resources/tilemap/parser/ParseTileLayers.js");
+
+var _ParseTileLayers2 = _interopRequireDefault(_ParseTileLayers);
+
+var _ParseObjectsLayers = __webpack_require__(/*! ./ParseObjectsLayers */ "./resources/tilemap/parser/ParseObjectsLayers.js");
+
+var _ParseObjectsLayers2 = _interopRequireDefault(_ParseObjectsLayers);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ParseTiledJSON(name, source, cache) {
+
+    var metadata = new _TilemapMetadata2.default({
+        name: source.name,
+        width: source.width,
+        height: source.height,
+        tileWidth: source.tilewidth,
+        tileHeight: source.tileheight,
+        orientation: source.orientation
+    });
+
+    var tilesets = (0, _ParseTileset2.default)(source, cache);
+
+    var config = {
+        tilesets: tilesets,
+        tilelayers: (0, _ParseTileLayers2.default)(source, tilesets),
+        objectlayers: (0, _ParseObjectsLayers2.default)(source)
+    };
+
+    return new _TilemapResource2.default(name, metadata, config);
+}
+
+/***/ }),
+
 /***/ "./resources/tilemap/parser/ParseTilesConfig.js":
 /*!******************************************************!*\
   !*** ./resources/tilemap/parser/ParseTilesConfig.js ***!
@@ -20089,7 +20252,8 @@ function ParseTilesConfig(tileset, tilesetTilesConfig) {
 
     for (var tileIndex in tilesetTilesConfig) {
 
-        var tileData = tileset.getTile(tileIndex);
+        var index = parseInt(tileIndex);
+        var tileData = tileset.getTile(index);
 
         if (tileData === null || tileData === undefined) continue;
 
@@ -20144,7 +20308,8 @@ function ParseTileProperties(tileset, tileProperties) {
 
         for (var tileIndex in tileProperties) {
 
-                var tileData = tileset.getTile(tileIndex);
+                var index = parseInt(tileIndex);
+                var tileData = tileset.getTile(index);
 
                 if (tileData === null || tileData === undefined) continue;
 
@@ -21342,6 +21507,11 @@ var DataList = function () {
             return this.childs.indexOf(child);
         }
     }, {
+        key: 'get',
+        value: function get(index) {
+            return this.childs[index];
+        }
+    }, {
         key: 'at',
         value: function at(index) {
             return this.childs[index];
@@ -21436,11 +21606,10 @@ var DataList = function () {
     }, {
         key: 'clear',
         value: function clear() {
-            var i = this.childs.length;
-
-            while (i--) {
+            /*let i = this.childs.length;
+              while(i--) {
                 this.erase(this.childs[i]);
-            }
+            }*/
 
             this.childs.length = 0;
 

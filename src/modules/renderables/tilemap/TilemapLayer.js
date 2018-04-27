@@ -20,7 +20,7 @@ export default class TilemapLayer extends Renderable {
         if (!this._enabled && !this.tilemap._enabled)
             return false;
 
-        return DrawTilemapLayer(context, this.tilemap, this.data, this.tilemap.moduleManager.entity.transform);
+        return DrawTilemapLayer(context, this.tilemap, this.data, this.tilemap.moduleManager.entity._transform);
 
     }
 

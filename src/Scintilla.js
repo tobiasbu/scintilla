@@ -61,7 +61,7 @@ var scintilla = scintilla || {
   Audio : require('./audio'),
 
   // CACHE AND LOADER
-  Resources : require('./resources'),
+  Resource : require('./resources'),
   Cache : require('./cache/CacheManager'),
   AssetType : require('./loader/AssetsType'),
   Loader : require('./loader'),

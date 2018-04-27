@@ -14,24 +14,27 @@ export default function DestroyEntity(instance, game, verifyPersistance) {
 
     let completelyDestroy = true;
 
-    if (verifyPersistance) {
-        completelyDestroy = instance.persistent === false;        
+    if (verifyPersistance === true) {
+        completelyDestroy = (instance.persistent === false);
     }
 
-    if (completelyDestroy) {
-        ClearModules(instance.modules, game);
+    if (completelyDestroy === false)
+        return;
 
-        if (instance.isPooled === true) {
-            let pool = game.system.pool.get(instance._pool);
-            pool.remove(instance);
-        }
+    let pool;
 
-        instance.scene = null;
-        instance.transform = null;
-        instance.modulesManager = null;
-        instance = null;
-
-       
+    if (instance.isPooled === true) {
+        pool = game.system.pool.get(instance._pool);
     }
+
+    if (pool !== undefined) {
+        pool.remove(instance);
+    }
+
+    ClearModules(instance.modules, game);
+    instance._transform = null;
+    instance.modules = null;
+    instance.scene = null;
+    instance = null;
 
 }

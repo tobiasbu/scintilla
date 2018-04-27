@@ -8,7 +8,7 @@ export default class TileLayerData {
         this.height = ObjectGet.value(config,'height',0);
         this.x = ObjectGet.value(config,'x', 0);
         this.y = ObjectGet.value(config,'y', 0);
-        this.name = ObjectGet.value(config, 'name', 'tilemaplayer');
+        this.name = ObjectGet.value(config, 'name', '');
         this.alpha = ObjectGet.value(config,'alpha', 1);
         //this.type ="tilelayer";
         this.visible = ObjectGet.value(config,'visible', true);

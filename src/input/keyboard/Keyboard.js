@@ -18,6 +18,7 @@ export default class Keyboard {
     this._keyMapping = new DataMap();
     this._keyWatch = new DataMap();
     this._keyGarbage = [];
+    this.preventDefault = true;
     this.lastKey = null;
 
   }
@@ -65,11 +66,15 @@ export default class Keyboard {
         return;
       }
 
+      if (self.preventDefault) {
+        event.preventDefault();
+      }
+
       self._eventQueue.push(event);
 
-      //event.preventDefault();
+      //
 
-    }
+    };
 
     this.eventHandler = handler;
 
@@ -132,7 +137,7 @@ export default class Keyboard {
       let keycode = event.keyCode;
 
       // check if is valid scintilla key
-      let key = this._keyMapping.get(keycode)
+      let key = this._keyMapping.get(keycode);
 
       if (key !== undefined && key !== null) {
 

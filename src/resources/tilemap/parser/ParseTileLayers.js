@@ -6,8 +6,17 @@ import ParseGID from './ParseGID';
 import TileLayerData from '../data/TileLayerData';
 import Tile from '../data/Tile';
 
+function GetTilesetByGID(tilesets, gid) {
 
-export default function ParseTileLayers(json, map) {
+    return tilesets.each((set)=>{
+        if (set.hasGID(gid)) {
+            return set;
+        }
+    }) || null;
+
+}
+
+export default function ParseTileLayers(json, tilesets) {
 
     let size = json.layers.length;
     let layers = new DataList();
@@ -58,7 +67,7 @@ export default function ParseTileLayers(json, map) {
             // The first tileset always has a firstgid value of 1. 
             if (gidProp.gid > 0) {
                 let gid = gidProp.gid;
-                let tileset = map.getTilesetByGID(gid);
+                let tileset = GetTilesetByGID(tilesets, gid); //map.getTilesetByGID(gid);
                 let tileData = tileset.getTileGID(gid);
 
                 if (tileData.isAnimated) {

@@ -7,8 +7,8 @@ export default function ClearEntities(entityList, game) {
 
         let instance = entityList._instances.at(i);
 
-        if (instance.isPooled) {
-            game.system.pool.pull(instance);
+        if (instance.isPooled === true) {
+            game.system.pool.push(instance);
         } else {
             DestroyEntity(instance, game, true);
         }
@@ -19,15 +19,15 @@ export default function ClearEntities(entityList, game) {
 
         let instance = entityList._instances.at(i);
 
-        if (instance.isPooled) {
-            game.system.pool.pull(instance);
+        if (instance.isPooled === true) {
+            game.system.pool.push(instance);
         } else {
             DestroyEntity(instance, game, true);
         }
     }
 
-    entityList._pendingInstances.childs.length = 0;
-    entityList._destroyInstances.childs.length = 0;
-    entityList._instances.childs.length = 0;
+    entityList._pendingInstances.destroy();//.length = 0;
+    entityList._destroyInstances.destroy();//.length = 0;
+    entityList._instances.destroy();//.length = 0;
 
 }
