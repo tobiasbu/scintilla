@@ -16,11 +16,13 @@ export default class Config {
         this.height = callback(config, 'height', 480);
         this.parent = callback(config, 'parent', null);
         this.debug =  callback(config, 'debug', false);
+
+        // render
         this.pixelated = callback(config, 'pixelated', false);
         this.doubleBuffer = callback(config, 'doubleBuffer', true);
-
         this.roundPixels = callback(config, 'roundPixels', false);
         this.floorTiles = callback(config, 'floorTiles', false),
+        this.autoResize = callback(config, 'autoResize', false),
 
         // loader
         this.loader = {
