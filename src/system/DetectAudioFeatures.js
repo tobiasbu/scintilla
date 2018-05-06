@@ -11,7 +11,7 @@ export default function DetectAudioFeatures(browser) {
             dolby: false,
             opus: false,
         }
-    }
+    };
 
     audioFeatures.audioData = !!(window['Audio']);
     audioFeatures.webAudio = !!(window['AudioContext'] || window['webkitAudioContext']);

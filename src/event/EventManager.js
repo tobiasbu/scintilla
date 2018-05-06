@@ -65,7 +65,7 @@ export default class EventManager {
     }
 
     /**
-    * Dispatch to subscribed Signal
+    * Dispatch a event to subscribed Signal
     * @param {String} eventName The subscribed Signal name.
     * @param {...*} [params] Parameters that should be passed to each handler.
     */
@@ -104,4 +104,4 @@ function BulkEventCreation(manager, events) {
 
 System.register('EventManager', EventManager, 'events', function() {
     BulkEventCreation(this, GameEvents);
-})
+});

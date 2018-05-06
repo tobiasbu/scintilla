@@ -5,8 +5,8 @@
  * Version: ::VERSION_NUMBER:: - Build: ::BUILD_NUMBER:: (::BUILD_DATE::)
 */
 
-import DataList from '../structures/List'
-import SignalBinding from './SignalBinding'
+import DataList from '../structures/List';
+import SignalBinding from './SignalBinding';
 import IndexOfListener from './components/IndexOfListener';
 import ValidateListener from './components/ValidateListener';
 import RegisterListener from './components/RegisterListener';

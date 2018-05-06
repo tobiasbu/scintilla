@@ -10,20 +10,37 @@ export default class AudioManager {
         this._noAudio = game.config.audio.noAudio;
         this._sounds = null;
 
-        if (!this._noAudio) 
-            this._sounds = new DataList();
-
+        //if (!this._noAudio) 
+        this._sounds = new DataList();  
+        this._removalList = [];
         this._system = null;
-
         this.add = null;
 
         this.volume = 1;
         this.mute = false;
-        this.pauseOnBlur = true;
-        this.masterVolume = null;
-        
-        this._removalList = [];
-        
+        this.muteOnBlur = true;
+
+        if (this._noAudio === false) {
+            this.game.system.events.subscribe('blur', function () {
+
+                if (this.muteOnBlur === false)
+                    return;
+
+                this._system.onBlur();
+
+            }, this, 0);
+
+            this.game.system.events.subscribe('focus', function () {
+
+                if (this.muteOnBlur === false)
+                    return;
+
+                this._system.onFocus();
+
+            }, this, 0);
+        }
+
+
     }
 
 
@@ -104,9 +121,9 @@ export default class AudioManager {
             return sound;
         }
 
-        
+
         return null;
-       
+
 
     }
 
@@ -180,7 +197,7 @@ export default class AudioManager {
                 source.stop();
                 if (destroy === true) {
                     source.destroy();
-                } 
+                }
             }
         }
 
@@ -219,7 +236,7 @@ export default class AudioManager {
         if (this._system === null)
             return;
 
-        this._system.destroy(); 
+        this._system.destroy();
 
         this.stopAll();
 
@@ -236,4 +253,3 @@ export default class AudioManager {
     }
 
 }
-

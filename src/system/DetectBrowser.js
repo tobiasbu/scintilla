@@ -14,7 +14,7 @@ export default function DetectBrowser(userAgent) {
             safari : false,
             silk : false
         }
-    }
+    };
 
     /// MAYBE IS BETTER TODO WITH REGEX
 

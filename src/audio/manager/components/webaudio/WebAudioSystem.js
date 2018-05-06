@@ -13,8 +13,17 @@ export default class WebAudioSystem {
         this.locked = null;
         this.type = AudioSystemType.WEBAUDIO;
 
+        
 
         CreateWebAudioContext(this);
+    }
+
+    onFocus() {
+        this.context.resume();
+    }
+
+    onBlur() {
+        this.context.suspend();
     }
 
     destroy() {

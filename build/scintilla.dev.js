@@ -2792,18 +2792,31 @@ var AudioManager = function () {
         this._noAudio = game.config.audio.noAudio;
         this._sounds = null;
 
-        if (!this._noAudio) this._sounds = new _List2.default();
-
+        //if (!this._noAudio) 
+        this._sounds = new _List2.default();
+        this._removalList = [];
         this._system = null;
-
         this.add = null;
 
         this.volume = 1;
         this.mute = false;
-        this.pauseOnBlur = true;
-        this.masterVolume = null;
+        this.muteOnBlur = true;
 
-        this._removalList = [];
+        if (this._noAudio === false) {
+            this.game.system.events.subscribe('blur', function () {
+
+                if (this.muteOnBlur === false) return;
+
+                this._system.onBlur();
+            }, this, 0);
+
+            this.game.system.events.subscribe('focus', function () {
+
+                if (this.muteOnBlur === false) return;
+
+                this._system.onFocus();
+            }, this, 0);
+        }
     }
 
     /*decode(tag, sound) {
@@ -2843,7 +2856,7 @@ var AudioManager = function () {
       }*/
 
     (0, _createClass3.default)(AudioManager, [{
-        key: "at",
+        key: 'at',
         value: function at(index) {
             if (this._noAudio) return null;
 
@@ -2854,7 +2867,7 @@ var AudioManager = function () {
           }*/
 
     }, {
-        key: "play",
+        key: 'play',
         value: function play(tag, volume, loop, name) {
 
             if (this._noAudio) {
@@ -2871,7 +2884,7 @@ var AudioManager = function () {
             return null;
         }
     }, {
-        key: "playPersistent",
+        key: 'playPersistent',
         value: function playPersistent(tag, volume, loop, name) {
 
             var sound = this.play(tag, volume, loop, name);
@@ -2881,7 +2894,7 @@ var AudioManager = function () {
             return sound;
         }
     }, {
-        key: "playOnce",
+        key: 'playOnce',
         value: function playOnce(tag, volume, loop, name) {
             var sound = this.play(tag, volume, loop, name);
 
@@ -2890,7 +2903,7 @@ var AudioManager = function () {
             return sound;
         }
     }, {
-        key: "get",
+        key: 'get',
         value: function get(name) {
 
             return this._sounds.each(function (source) {
@@ -2901,7 +2914,7 @@ var AudioManager = function () {
             }) || null;
         }
     }, {
-        key: "remove",
+        key: 'remove',
         value: function remove(sound) {
 
             if (this._noAudio) return false;
@@ -2919,7 +2932,7 @@ var AudioManager = function () {
             return false;
         }
     }, {
-        key: "stopAll",
+        key: 'stopAll',
         value: function stopAll(destroy) {
 
             if (this._noAudio) {
@@ -2941,7 +2954,7 @@ var AudioManager = function () {
             }
         }
     }, {
-        key: "pauseAll",
+        key: 'pauseAll',
         value: function pauseAll() {
 
             if (this._noAudio) {
@@ -2955,7 +2968,7 @@ var AudioManager = function () {
             }
         }
     }, {
-        key: "resumeAll",
+        key: 'resumeAll',
         value: function resumeAll() {
 
             if (this._noAudio) {
@@ -2969,7 +2982,7 @@ var AudioManager = function () {
             }
         }
     }, {
-        key: "destroy",
+        key: 'destroy',
         value: function destroy() {
 
             if (this._system === null) return;
@@ -3302,6 +3315,16 @@ var WebAudioSystem = function () {
     }
 
     (0, _createClass3.default)(WebAudioSystem, [{
+        key: "onFocus",
+        value: function onFocus() {
+            this.context.resume();
+        }
+    }, {
+        key: "onBlur",
+        value: function onBlur() {
+            this.context.suspend();
+        }
+    }, {
         key: "destroy",
         value: function destroy() {
             this.destination = null;
@@ -5040,6 +5063,10 @@ var _RequestRenderableLayerIDChange = __webpack_require__(/*! ../../../render/co
 
 var _RequestRenderableLayerIDChange2 = _interopRequireDefault(_RequestRenderableLayerIDChange);
 
+var _RegisterFocusChangeEvent = __webpack_require__(/*! ../../../event/engine/RegisterFocusChangeEvent */ "./event/engine/RegisterFocusChangeEvent.js");
+
+var _RegisterFocusChangeEvent2 = _interopRequireDefault(_RegisterFocusChangeEvent);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function InitializeSystems(game, render) {
@@ -5070,6 +5097,11 @@ function InitializeSystems(game, render) {
 
         InitializeSystemFunction.call(systems[_registered.name]);
     }
+
+    // register engine events
+
+    // window and document blur
+    (0, _RegisterFocusChangeEvent2.default)(game.events);
 
     // render events callbacks
     systems.events.subscribe('__render_depthsorting', _RequestDepthSorting2.default, render);
@@ -6771,7 +6803,7 @@ var EventManager = function () {
         }
 
         /**
-        * Dispatch to subscribed Signal
+        * Dispatch a event to subscribed Signal
         * @param {String} eventName The subscribed Signal name.
         * @param {...*} [params] Parameters that should be passed to each handler.
         */
@@ -6839,7 +6871,9 @@ var _freeze2 = _interopRequireDefault(_freeze);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // list of events
-var GameEvents = ['__render_depthsorting', '__render_layeridchange', 'asset_complete', 'transition_pause_end', 'transition_end'];
+var GameEvents = ['__render_depthsorting', '__render_layeridchange', 'asset_complete', 'transition_pause_end', 'transition_end',
+// window events
+'hidden', 'visible', 'focus', 'blur'];
 
 (0, _freeze2.default)(GameEvents);
 
@@ -7266,6 +7300,66 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = ValidateListener;
 function ValidateListener(listener, func) {
     if (typeof listener !== 'function') throw new Error('Signal.{fn}: Listener should be a function.'.replace('{fn}', func));
+}
+
+/***/ }),
+
+/***/ "./event/engine/RegisterFocusChangeEvent.js":
+/*!**************************************************!*\
+  !*** ./event/engine/RegisterFocusChangeEvent.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = RegisterFocusChangeEvent;
+function RegisterFocusChangeEvent(eventManager) {
+
+    /* The visibilitychange event is fired when the content of a tab has become visible or has been hidden.*/
+    var visibilitychange = void 0;
+
+    // check if have visibility change
+    if (document.hidden !== undefined) {
+        visibilitychange = 'visibilitychange';
+    } else {
+        var vendors = ['webkit', 'moz', 'ms'];
+
+        vendors.forEach(function (prefix) {
+            if (document[prefix + 'Hidden'] !== undefined) {
+                document.hidden = function () {
+                    return document[prefix + 'Hidden'];
+                };
+
+                visibilitychange = prefix + 'visibilitychange';
+            }
+        });
+    }
+
+    // register event listener
+    var onVisibilityChange = function onVisibilityChange(event) {
+        if (document.hidden || event.type === 'pause') {
+            eventManager.dispatch('hidden');
+        } else {
+            eventManager.dispatch('visible');
+        }
+    };
+
+    if (visibilitychange) {
+        document.addEventListener(visibilitychange, onVisibilityChange, false);
+    }
+
+    window.onblur = function () {
+        eventManager.dispatch('blur');
+    };
+
+    window.onfocus = function () {
+        eventManager.dispatch('focus');
+    };
 }
 
 /***/ }),

@@ -3,6 +3,7 @@ import DetectBrowser from "./DetectBrowser";
 import FeatureDetection from "./FeatureDetection";
 import DetectAudioFeatures from "./DetectAudioFeatures";
 import DeepFreeze from "../utils/object/DeepFreeze";
+import DetectFullscreen from "./DetectFullscreen";
 
 
 class PlatformEnvironment {
@@ -14,7 +15,7 @@ class PlatformEnvironment {
         this._browser = DetectBrowser(this._userAgent);
         this._features = FeatureDetection(this._osInfo);
         this._audio = DetectAudioFeatures(this._browser);
-
+        this._fullscreen = DetectFullscreen();
 
     }
 
@@ -54,6 +55,14 @@ class PlatformEnvironment {
         return this._features;
     }
 
+    get fullscreenInfo() {
+        return this._fullscreen;
+    }
+
+    get supportFullscreen() {
+        return this._fullscreen.available;
+    }
+
     get supportAudio() {
         return this._audio.audioData;
     }
@@ -74,4 +83,4 @@ let Environment = new PlatformEnvironment();
 
 DeepFreeze(Environment);
 
-module.exports = Environment;
+export default Environment;

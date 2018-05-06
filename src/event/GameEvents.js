@@ -5,7 +5,12 @@ const GameEvents = [
     '__render_layeridchange',
     'asset_complete',
     'transition_pause_end',
-    'transition_end'
+    'transition_end',
+    // window events
+    'hidden',
+    'visible',
+    'focus',
+    'blur'
 ];
 
 Object.freeze(GameEvents);

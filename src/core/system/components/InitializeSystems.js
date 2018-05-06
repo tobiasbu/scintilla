@@ -1,6 +1,7 @@
 import { GameSystems } from "../System";
 import RequestDepthSorting from "../../../render/components/RequestDepthSorting";
 import RequestRenderableLayerIDChange from "../../../render/components/RequestRenderableLayerIDChange";
+import RegisterFocusChangeEvent from "../../../event/engine/RegisterFocusChangeEvent";
 
 export default function InitializeSystems(game, render) {
     
@@ -31,6 +32,11 @@ export default function InitializeSystems(game, render) {
 
         InitializeSystemFunction.call(systems[registered.name]);
     }
+
+    // register engine events
+
+    // window and document blur
+    RegisterFocusChangeEvent(game.events);
 
     // render events callbacks
     systems.events.subscribe('__render_depthsorting', RequestDepthSorting, render);
