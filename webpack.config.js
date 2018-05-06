@@ -1,17 +1,15 @@
 'use strict';
 
 const webpack = require('webpack');
-
-const privatePlugin = require('babel-plugin-transform-private');
-//privatePlugin.pattern = "^_";
-
+const uglify = require('uglifyjs-webpack-plugin');
 
 module.exports = {
 
     context: `${__dirname}/src/`,
 
     entry: {
-        'scintilla.dev' : './Scintilla.js'
+        'scintilla.min' : './Scintilla.js',
+        'scintilla' : './Scintilla.js',
     },
 
     output: {
@@ -19,10 +17,7 @@ module.exports = {
         filename: '[name].js',
         library: 'Scintilla',
         libraryTarget: 'umd',
-        sourceMapFilename: '[file].map',
-        devtoolModuleFilenameTemplate: "webpack:///[resource-path]", // string
-        devtoolFallbackModuleFilenameTemplate: "webpack:///[resource-path]?[hash]", // string
-        umdNamedDefine: false,
+        umdNamedDefine: true,
     },
 
     module: {
@@ -35,14 +30,30 @@ module.exports = {
             exclude: /(node_modules|bower_components)/,
             loader: "babel-loader",
             /*options: {
-                presets: ['env'],
-                plugins: ['transform-runtime']
+                presets: ["es2015"]
             }*/
           }
         ]
     },
-    
 
-    devtool: 'source-map'
+    plugins: [
+
+        new uglify({
+            include: /\.min\.js$/,
+            parallel: true,
+            sourceMap: false,
+            uglifyOptions: {
+                compress: true,
+                ie8: false,
+                ecma: 5,
+                output: {
+                    comments: false
+                },
+                warnings: false
+                },
+                warningsFilter: (src) => false
+        })
+
+    ]
 
 }

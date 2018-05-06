@@ -4423,7 +4423,7 @@ function UpdateCamera(camera, canvas) {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+        value: true
 });
 
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
@@ -4437,55 +4437,56 @@ var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Config = function Config(config) {
-    (0, _classCallCheck3.default)(this, Config);
+        (0, _classCallCheck3.default)(this, Config);
 
-    if (config === undefined) config = {};
+        if (config === undefined) config = {};
 
-    var callback = _ObjectGet2.default.value;
-    var callback_2 = _ObjectGet2.default.propertyValue;
+        var callback = _ObjectGet2.default.value;
+        var callback_2 = _ObjectGet2.default.propertyValue;
 
-    // view and canvas
-    this.width = callback(config, 'width', 640);
-    this.height = callback(config, 'height', 480);
-    this.parent = callback(config, 'parent', null);
-    this.debug = callback(config, 'debug', false);
-    this.pixelated = callback(config, 'pixelated', false);
-    this.doubleBuffer = callback(config, 'doubleBuffer', true);
+        // view and canvas
+        this.width = callback(config, 'width', 640);
+        this.height = callback(config, 'height', 480);
+        this.parent = callback(config, 'parent', null);
+        this.debug = callback(config, 'debug', false);
 
-    this.roundPixels = callback(config, 'roundPixels', false);
-    this.floorTiles = callback(config, 'floorTiles', false),
+        // render
+        this.pixelated = callback(config, 'pixelated', false);
+        this.doubleBuffer = callback(config, 'doubleBuffer', true);
+        this.roundPixels = callback(config, 'roundPixels', false);
+        this.floorTiles = callback(config, 'floorTiles', false), this.autoResize = callback(config, 'autoResize', false),
 
-    // loader
-    this.loader = {
-        baseURL: callback_2(config, 'loader.baseURL', ''),
-        path: callback_2(config, 'loader.path', ''),
-        responseType: callback_2(config, 'loader.responseType', ''),
-        async: callback_2(config, 'loader.async', true)
-    };
+        // loader
+        this.loader = {
+                baseURL: callback_2(config, 'loader.baseURL', ''),
+                path: callback_2(config, 'loader.path', ''),
+                responseType: callback_2(config, 'loader.responseType', ''),
+                async: callback_2(config, 'loader.async', true)
+        };
 
-    this.audio = {
-        noAudio: callback_2(config, 'audio.noAudio', false),
-        context: callback_2(config, 'audio.context', null),
-        webAudio: callback_2(config, 'audio.webAudio', true)
-    };
+        this.audio = {
+                noAudio: callback_2(config, 'audio.noAudio', false),
+                context: callback_2(config, 'audio.context', null),
+                webAudio: callback_2(config, 'audio.webAudio', true)
+        };
 
-    this.fps = callback(config, 'fps', 60);
-    this.time = {
-        timeoutMode: callback_2(config, 'time.timeOutMode', false)
-    };
+        this.fps = callback(config, 'fps', 60);
+        this.time = {
+                timeoutMode: callback_2(config, 'time.timeOutMode', false)
+        };
 
-    this.camera = {
-        width: callback_2(config, 'camera.width', this.width),
-        height: callback_2(config, 'camera.height', this.height)
-    };
+        this.camera = {
+                width: callback_2(config, 'camera.width', this.width),
+                height: callback_2(config, 'camera.height', this.height)
+        };
 
-    /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
-        this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
-        this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
-        
-        this.loaderUser = GetValue(config, 'loader.user', '');
-        this.loaderPassword = GetValue(config, 'loader.password', '');
-    this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
+        /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
+            this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);
+            this.loaderCrossOrigin = GetValue(config, 'loader.crossOrigin', undefined);
+            
+            this.loaderUser = GetValue(config, 'loader.user', '');
+            this.loaderPassword = GetValue(config, 'loader.password', '');
+        this.loaderTimeout = GetValue(config, 'loader.timeout', 0);*/
 };
 
 exports.default = Config;
@@ -7422,7 +7423,6 @@ var Key = function () {
         this.release = false;
 
         this.preventDefault = true;
-
         this._event = _KeyEvent2.default.NONE;
 
         this.pressTime = 0;
@@ -7718,6 +7718,7 @@ var Keyboard = function () {
     this._keyMapping = new _Map2.default();
     this._keyWatch = new _Map2.default();
     this._keyGarbage = [];
+    this.preventDefault = true;
     this.lastKey = null;
   }
 
@@ -7752,9 +7753,13 @@ var Keyboard = function () {
           return;
         }
 
+        if (self.preventDefault) {
+          event.preventDefault();
+        }
+
         self._eventQueue.push(event);
 
-        //event.preventDefault();
+        //
       };
 
       this.eventHandler = handler;
@@ -7914,9 +7919,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function ProcessKeyPress(event, key) {
 
-    if (key.preventDefault) event.preventDefault();
+    if (key.preventDefault === true) {
+        event.preventDefault();
+    }
 
-    if (!key._enabled) return;
+    if (!key._enabled) {
+        return;
+    }
 
     if (key.press === false) {
 
@@ -7978,9 +7987,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function ProcessKeyRelease(event, key) {
 
-  if (key.preventDefault) event.preventDefault();
+  if (key.preventDefault === true) {
+    event.preventDefault();
+  }
 
-  if (!key._enabled) return;
+  if (!key._enabled) {
+    return;
+  }
 
   // set key properties
   key.status = false;
