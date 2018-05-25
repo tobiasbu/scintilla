@@ -1,8 +1,8 @@
 import Color from "../Color";
 
-export default function IntToColor(value) {
+export default function IntToColor(value, source) {
 
-    let color = new Color();
+    let color = source || new Color();
     let r, g, b, a;
 
     if (value >= 16777216) // 256 ^ 3
@@ -15,7 +15,7 @@ export default function IntToColor(value) {
     g = color >> 8 & 0xFF;
     b = color & 0xFF;
 
-    color.set(r, g, b, a);
+    color.setRGBA(r, g, b, a);
 
     return color;
 

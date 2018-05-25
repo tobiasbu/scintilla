@@ -35,17 +35,17 @@ const XHR = {
         if (timeout === undefined)
             timeout = 0;
 
-        var settings = {
+        let settings = {
             responseType: type,
             timeout: timeout,
             async: doAsync,
-        }
+        };
 
         return settings;
     },
 
     merge(a, b) {
-        var out = {};
+        let out = {};
 
         if (a === undefined)
             out = XHR.createSettings(); // : Extend(global);

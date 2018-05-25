@@ -11,14 +11,14 @@ export default class EntityFactory {
         this.entityList = null;
     }
 
-    entity(entityName) {
+    empty(entityName) {
         entityName = entityName || 'Scene Entity ' + this.entityList.length;
         return new SceneEntity(entityName, this.game);
     }
 
     sprite(tag, entityName, config) {
 
-        let entity = this.entity(entityName);
+        let entity = this.empty(entityName);
         let spr = entity.modules.attach.sprite(tag, config.x, config.y, config.width, config.height);
 
         if (this.scene.current_scene !== null) {
@@ -31,7 +31,7 @@ export default class EntityFactory {
     }
 
     tilemap(tag, entityName) {
-        let entity = this.entity(entityName);
+        let entity = this.empty(entityName);
         entity.modules.attach.tilemap(tag);
 
         if (this.scene.current_scene !== null) {
@@ -42,8 +42,19 @@ export default class EntityFactory {
     }
 
     spritesheet(tag, entityName) {
-        let entity = this.entity(entityName);
+        let entity = this.empty(entityName);
         entity.modules.attach.spritesheet(tag);
+
+        if (this.scene.current_scene !== null) {
+            InitializeEntity(entity, this.game);
+        }
+
+        return entity;
+    }
+
+    rectangle(width, height, entityName) {
+        let entity = this.empty(entityName);
+        entity.modules.attach.rectangle(width, height);
 
         if (this.scene.current_scene !== null) {
             InitializeEntity(entity, this.game);

@@ -1,15 +1,18 @@
 'use strict';
 
 const webpack = require('webpack');
-const uglify = require('uglifyjs-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
+
+
+    mode: 'production',
 
     context: `${__dirname}/src/`,
 
     entry: {
-        'scintilla.min' : './Scintilla.js',
-        'scintilla' : './Scintilla.js',
+        'scintilla.min': './Scintilla.js',
+        'scintilla': './Scintilla.js',
     },
 
     output: {
@@ -22,23 +25,27 @@ module.exports = {
 
     module: {
         // configuration regarding modules
-    
+
         rules: [
-          // rules for modules (configure loaders, parser options, etc.)
-          {
-            test: /\.js?$/,
-            exclude: /(node_modules|bower_components)/,
-            loader: "babel-loader",
-            /*options: {
-                presets: ["es2015"]
-            }*/
-          }
+            // rules for modules (configure loaders, parser options, etc.)
+            {
+                test: /\.js?$/,
+                exclude: /(node_modules)/,
+                loader: "babel-loader",
+                options: {
+                    presets: ["env"],
+                    plugins: [
+                        ["transform-runtime"]
+                    ]
+                }
+            }
         ]
     },
 
-    plugins: [
+    performance: { hints: false },
 
-        new uglify({
+    optimization: {
+        minimizer: [new UglifyJSPlugin({
             include: /\.min\.js$/,
             parallel: true,
             sourceMap: false,
@@ -50,10 +57,9 @@ module.exports = {
                     comments: false
                 },
                 warnings: false
-                },
-                warningsFilter: (src) => false
-        })
-
-    ]
+            },
+            warningsFilter: (src) => false
+        })]
+    }
 
 }

@@ -150,6 +150,13 @@ export default class File {
         }
     }
 
+    destroy() {
+        this.loader = null;
+        this.cache = null;
+        this.xhrSettings = null;
+        this.data = null;
+    }
+
 
 }
 

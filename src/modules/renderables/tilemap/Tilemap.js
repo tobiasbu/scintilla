@@ -70,7 +70,7 @@ ModuleProvider.register('tilemap', function(moduleManager, tag) {
     if (cache !== undefined)
         res = cache.tilemap.get(tag);
 
-    var tilemap = new Tilemap(moduleManager, res);
+    let tilemap = new Tilemap(moduleManager, res);
     tilemap.floorTiles = moduleManager.entity.game.config.floorTiles || false;
 
     return tilemap;

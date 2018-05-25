@@ -1,28 +1,23 @@
 'use strict';
 
 const webpack = require('webpack');
-
-const privatePlugin = require('babel-plugin-transform-private');
-//privatePlugin.pattern = "^_";
-
+const MinifyPlugin = require('babel-minify-webpack-plugin');
 
 module.exports = {
 
     context: `${__dirname}/src/`,
 
     entry: {
-        'scintilla.dev' : './Scintilla.js'
+        'scintilla.node.dev' : './Scintilla.js',
+        'scintilla.node.dev.min' : './Scintilla.js',
     },
 
     output: {
         path: `${__dirname}/build/`,
         filename: '[name].js',
         library: 'Scintilla',
-        libraryTarget: 'umd',
-        sourceMapFilename: '[file].map',
-        devtoolModuleFilenameTemplate: "webpack:///[resource-path]", // string
-        devtoolFallbackModuleFilenameTemplate: "webpack:///[resource-path]?[hash]", // string
-        umdNamedDefine: false,
+        libraryTarget: 'commonjs2',
+        umdNamedDefine: true,
     },
 
     module: {
@@ -32,16 +27,24 @@ module.exports = {
           // rules for modules (configure loaders, parser options, etc.)
           {
             test: /\.js?$/,
-            exclude: /(node_modules|bower_components)/,
+            exclude: /(node_modules)/,
             loader: "babel-loader",
-            /*options: {
+           /* options: {
                 presets: ['env'],
                 plugins: ['transform-runtime']
             }*/
           }
         ]
     },
-    
+
+    plugins: [
+
+        new MinifyPlugin({},{
+            include: /\\dev.min\.js$/,
+            comments: true,
+            sourceMap: true})
+
+    ],
 
     devtool: 'source-map'
 

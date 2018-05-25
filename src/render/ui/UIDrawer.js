@@ -379,7 +379,7 @@ export default class UIDrawer {
     this.context.fillStyle = color || this.currentColor;
     this.context.translate(pos.x, pos.y);
 
-    this.context.fillRect(0, 0, pos.w, pos.h)
+    this.context.fillRect(0, 0, pos.w, pos.h);
     this.context.restore();
 
   }

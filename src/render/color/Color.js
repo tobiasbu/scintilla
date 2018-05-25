@@ -1,32 +1,31 @@
-
 import MathUtils from '../../math/MathUtils'
 import ParseColor from './components/ParseColor';
 import Ease from '../../math/easing/Ease';
 import EasingType from '../../math/easing/EasingType';
 import MakeImmutable from '../../utils/object/MakeImmutable';
+import SetColor from './components/SetColor';
 
 
 function ColorNormUpdate(color) {
-    color._css = 'rgba(' + 
-    MathUtils.floor(color.r * 255) + ',' + 
-    MathUtils.floor(color.g * 255) + ',' +
-    MathUtils.floor(color.b * 255) + ',' +
-    color.a + ')';
+    color._css = 'rgba(' +
+        MathUtils.floor(color.r * 255) + ',' +
+        MathUtils.floor(color.g * 255) + ',' +
+        MathUtils.floor(color.b * 255) + ',' +
+        color.a + ')';
 }
 
 function ColorUpdate(color) {
-    color._css = 'rgba(' + 
-    color._r + ',' + 
-    color._g + ',' +
-    color._b + ',' +
-    color._a + ')';
+    color._css = 'rgba(' +
+        color._r + ',' +
+        color._g + ',' +
+        color._b + ',' +
+        color._a + ')';
 }
 
 class Color {
 
     constructor(r, g, b, a) {
         this._r = r || 0;
-
         this._g = g || 0;
         this._b = b || 0;
         this._a = a || 1;
@@ -36,19 +35,58 @@ class Color {
     }
 
 
-    get rgba() {return this._css;}
-    get r() {return this._r;}
-    get g() {return this._g;}
-    get b() {return this._b;}
-    get a() {return this._a;}
-
-        
+    get rgba() {
+        return this._css;
+    }
+    get r() {
+        return this._r;
+    }
+    get g() {
+        return this._g;
+    }
+    get b() {
+        return this._b;
+    }
+    get a() {
+        return this._a;
+    }
     set a(value) {
         this._a = value;
         ColorUpdate(this);
     }
 
-    set(r, g, b, a) {
+    set(color) {
+
+        SetColor(this, color);
+
+        ColorUpdate(this);
+
+        return this;
+    }
+
+    setNorm(r, g, b, a) {
+        if (r === undefined)
+            return;
+
+        this._r = Math.round(r * 255.0);
+        this._g = Math.round(g * 255.0);
+        this._b = Math.round(b * 255.0);
+
+        if (a !== undefined)
+            this._a = Math.round(a * 255.0);
+
+        ColorUpdate(this);
+
+        return this;
+    }
+
+    setRGB(r, g, b) {
+        return this.setRGBA(r, g, b, 255);
+    }
+
+    setRGBA(r, g, b, a) {
+        if (r === undefined)
+            return this;
 
         this._r = r || 0;    
         this._g = g || 0;
@@ -56,22 +94,6 @@ class Color {
 
         if (a !== undefined)
             this._a = a;
-
-        ColorUpdate(this);
-
-        return this;
-    }
-
-    setRGBA(r, g, b, a) {
-        if (r === undefined)
-            return;
-
-        this._r = Math.round(r / 255.0);
-        this._g = Math.round(g / 255.0);
-        this._b = Math.round(b / 255.0);
-
-        if (a !== undefined)
-            this._a = Math.round(a / 255.0);
 
         ColorUpdate(this);
 
@@ -163,23 +185,25 @@ class Color {
         if (easingArg === undefined) easingArg = 3;
 
 
-       let easer = Ease.in;
+        let easer = Ease.in;
 
         switch (easingMode) {
-            case 1: {
-               easer = Ease.out;
-               break;
-            }
-            case 2: {
-               easer = Ease.inout;
-               break;
-            }
+            case 1:
+                {
+                    easer = Ease.out;
+                    break;
+                }
+            case 2:
+                {
+                    easer = Ease.inout;
+                    break;
+                }
         }
 
         if (destinationColor === undefined)
             destinationColor = new Color();
 
-            destinationColor.set(
+        destinationColor.set(
             easer.by(easingType, from.r, to.r, t, easingArg),
             easer.by(easingType, from.g, to.g, t, easingArg),
             easer.by(easingType, from.b, to.b, t, easingArg),
@@ -188,18 +212,38 @@ class Color {
         return destinationColor;
     }
 
-    static get red() {return new Color(255, 0, 0);}
-    static get green() {return new Color(0, 255, 0);}
-    static get blue() {return new Color(0, 0, 255);}
-    static get cyan() {return new Color(0, 255, 255);}
-    static get magenta() {return new Color(255, 0, 255);}
-    static get yellow() {return new Color(255, 255, 0);}
-    static get black() {return new Color(0);}
-    static get white() {return new Color(255);}
-    static get gray() {return new Color(255/2.0);}
-    static get transparent() {return new Color(0, 0, 0, 0);}
+    static get red() {
+        return new Color(255, 0, 0);
+    }
+    static get green() {
+        return new Color(0, 255, 0);
+    }
+    static get blue() {
+        return new Color(0, 0, 255);
+    }
+    static get cyan() {
+        return new Color(0, 255, 255);
+    }
+    static get magenta() {
+        return new Color(255, 0, 255);
+    }
+    static get yellow() {
+        return new Color(255, 255, 0);
+    }
+    static get black() {
+        return new Color(0);
+    }
+    static get white() {
+        return new Color(255);
+    }
+    static get gray() {
+        return new Color(255 / 2.0);
+    }
+    static get transparent() {
+        return new Color(0, 0, 0, 0);
+    }
 
-    
+
 
 }
 
@@ -229,4 +273,3 @@ Color.black = new Color(0),
 Color.white = new Color(255),
 Color.gray = new Color(255/2.0),
 Color.transparent = new Color(0, 0, 0, 0),], true);*/
-

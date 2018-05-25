@@ -2679,7 +2679,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var scintilla = scintilla || {
 
-  Environment: __webpack_require__(/*! ./system/PlatformEnvironment */ "./system/PlatformEnvironment.js"),
+  Environment: __webpack_require__(/*! ./system/PlatformEnvironment */ "./system/PlatformEnvironment.js").default,
   Core: __webpack_require__(/*! ./core */ "./core/index.js"),
 
   // DATA STRUCTURES
@@ -4225,10 +4225,7 @@ var Camera = function () {
   }, {
     key: 'position',
     get: function get() {
-      return {
-        x: this._transform.position.x,
-        y: this._transform.position.y
-      };
+      return this._transform.position;
     },
     set: function set(value) {
       this._transform.position.x = value.x;
@@ -5511,8 +5508,8 @@ var EntityFactory = function () {
     }
 
     (0, _createClass3.default)(EntityFactory, [{
-        key: "entity",
-        value: function entity(entityName) {
+        key: "empty",
+        value: function empty(entityName) {
             entityName = entityName || 'Scene Entity ' + this.entityList.length;
             return new _SceneEntity2.default(entityName, this.game);
         }
@@ -5520,7 +5517,7 @@ var EntityFactory = function () {
         key: "sprite",
         value: function sprite(tag, entityName, config) {
 
-            var entity = this.entity(entityName);
+            var entity = this.empty(entityName);
             var spr = entity.modules.attach.sprite(tag, config.x, config.y, config.width, config.height);
 
             if (this.scene.current_scene !== null) {
@@ -5532,7 +5529,7 @@ var EntityFactory = function () {
     }, {
         key: "tilemap",
         value: function tilemap(tag, entityName) {
-            var entity = this.entity(entityName);
+            var entity = this.empty(entityName);
             entity.modules.attach.tilemap(tag);
 
             if (this.scene.current_scene !== null) {
@@ -5544,8 +5541,20 @@ var EntityFactory = function () {
     }, {
         key: "spritesheet",
         value: function spritesheet(tag, entityName) {
-            var entity = this.entity(entityName);
+            var entity = this.empty(entityName);
             entity.modules.attach.spritesheet(tag);
+
+            if (this.scene.current_scene !== null) {
+                (0, _InitializeEntity2.default)(entity, this.game);
+            }
+
+            return entity;
+        }
+    }, {
+        key: "rectangle",
+        value: function rectangle(width, height, entityName) {
+            var entity = this.empty(entityName);
+            entity.modules.attach.rectangle(width, height);
 
             if (this.scene.current_scene !== null) {
                 (0, _InitializeEntity2.default)(entity, this.game);
@@ -8580,6 +8589,14 @@ var File = function () {
                 //this.xhrRequest.onreadystatechange = undefined;
             }
         }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            this.loader = null;
+            this.cache = null;
+            this.xhrSettings = null;
+            this.data = null;
+        }
     }]);
     return File;
 }();
@@ -8741,6 +8758,9 @@ var LoadManager = function () {
     }*/
 
     value: function setPath(path) {
+
+      if (path === undefined) path = '';
+
       if (path !== '' && path.substr(-1) !== '/') path = path.concat('/');
 
       this.path = path;
@@ -8750,11 +8770,14 @@ var LoadManager = function () {
   }, {
     key: 'setBaseURL',
     value: function setBaseURL(baseUrl) {
+
+      if (baseURL === undefined) baseUrl = '';
+
       if (baseUrl !== '' && baseUrl.substr(-1) !== '/') {
         baseUrl = baseUrl.concat('/');
       }
 
-      this.baseURL = baseUrl || '';
+      this.baseURL = baseUrl;
 
       return this;
     }
@@ -8853,6 +8876,12 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var LoaderState = {
     NONE: 0,
     IDLE: 1,
@@ -8863,6 +8892,8 @@ var LoaderState = {
     FINISHED: 6,
     DONE: 7
 };
+
+(0, _freeze2.default)(LoaderState);
 
 exports.default = LoaderState;
 
@@ -10396,6 +10427,23 @@ var _ScriptFile2 = _interopRequireDefault(_ScriptFile);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var webFontLoader = null;
+
+var webFontLoaderChecker = function webFontLoaderChecker(loader, asset) {
+
+    if (asset.type !== _AssetsType2.default.webFont) return;
+
+    if (webFontLoader !== null) return;
+
+    webFontLoader = new _ScriptFile2.default('webFontLoader', "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
+    loader._filesQueue.insert(webFontLoader);
+    loader._filesQueueCount++;
+
+    loader.game.events.create('file_postload_webFontLoader').subscribeOnce(function () {
+        asset.fontLoad();
+    });
+};
+
 function AddAsset(asset, check) {
 
     if (check === undefined) check = true;
@@ -10403,16 +10451,7 @@ function AddAsset(asset, check) {
     if (!this.isOK() && check) return -1;
 
     // is if web font, we should load the WebFontLoader
-    if (asset.type === _AssetsType2.default.webFont && this.webFontLoader === undefined) {
-
-        this.webFontLoader = new _ScriptFile2.default('webFontLoader', "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
-        this._filesQueue.insert(this.webFontLoader);
-        this._filesQueueCount++;
-
-        this.game.events.create('file_postload_webFontLoader').subscribeOnce(function () {
-            asset.fontLoad();
-        });
-    }
+    webFontLoaderChecker(this, asset);
 
     asset.path = this.path;
     this._filesQueue.insert(asset);
@@ -13160,6 +13199,11 @@ var ModuleAttacher = function () {
 
             if (spriteModule === null) return null;else return _ModuleProvider2.default.attach(this.moduleManager, 'animMachine', [spriteModule, tag]);
         }
+    }, {
+        key: "rectangle",
+        value: function rectangle(width, height, color) {
+            return _ModuleProvider2.default.attach(this.moduleManager, 'rectangle', [width, height, color]);
+        }
     }]);
     return ModuleAttacher;
 }();
@@ -14069,13 +14113,14 @@ function AttachModules(moduleManager, game) {
 
     moduleManager._pendingModulesInitialization.each(function (entityModule) {
 
-        if (entityModule instanceof _Sprite2.default) {
-            game.system.render.layer.addRenderable(entityModule, entityModule.layerID || 0);
-        } else if (entityModule instanceof _Tilemap2.default) {
+        if (entityModule instanceof _Tilemap2.default) {
 
             for (var i = 0; i < entityModule.layers.length; i++) {
                 game.system.render.layer.addRenderable(entityModule.layers.at(i), entityModule.layerID || 0);
             }
+        } else {
+
+            game.system.render.layer.addRenderable(entityModule, entityModule.layerID || 0);
         }
     });
 
@@ -14984,7 +15029,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function RenderableUpdate(entity, renderable, camera, gameTime) {
 
-    if (renderable.name == 'tilemap') {
+    if (renderable.name === 'tilemap') {
 
         if (renderable._originIsDirty) {
             // destination
@@ -15019,11 +15064,200 @@ function RenderableUpdate(entity, renderable, camera, gameTime) {
 "use strict";
 
 
-module.exports = {
-    Renderable: __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js"),
-    Sprite: __webpack_require__(/*! ./Sprite */ "./modules/renderables/Sprite.js"),
-    Tilemap: __webpack_require__(/*! ./tilemap/Tilemap */ "./modules/renderables/tilemap/Tilemap.js")
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var Renderable = exports.Renderable = __webpack_require__(/*! ./Renderable */ "./modules/renderables/Renderable.js");
+var Primitives = exports.Primitives = __webpack_require__(/*! ./primitives */ "./modules/renderables/primitives/index.js");
+var Sprite = exports.Sprite = __webpack_require__(/*! ./Sprite */ "./modules/renderables/Sprite.js");
+var Tilemap = exports.Tilemap = __webpack_require__(/*! ./tilemap/Tilemap */ "./modules/renderables/tilemap/Tilemap.js");
+
+/***/ }),
+
+/***/ "./modules/renderables/primitives/index.js":
+/*!*************************************************!*\
+  !*** ./modules/renderables/primitives/index.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Rectangle = __webpack_require__(/*! ./rectangle/Rectangle */ "./modules/renderables/primitives/rectangle/Rectangle.js");
+
+var _Rectangle2 = _interopRequireDefault(_Rectangle);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+    Rectangle: _Rectangle2.default
 };
+
+/***/ }),
+
+/***/ "./modules/renderables/primitives/rectangle/DrawRectangle.js":
+/*!*******************************************************************!*\
+  !*** ./modules/renderables/primitives/rectangle/DrawRectangle.js ***!
+  \*******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DrawRectangle;
+function DrawRectangle(context, transform, rectangle) {
+
+    if (context === undefined) return false;
+
+    var matrix = transform.matrix;
+
+    context.setTransform(matrix.a[0], matrix.a[1], // 2
+    matrix.a[3], matrix.a[4], // 5
+    matrix.a[6], matrix.a[7]);
+
+    /* if (rectangle.outlineWidth > 0) {
+         context.lineWidth = rectangle.outlineWidth;
+         context.strokeStyle = rectangle.outlineColor;
+         context.strokeRect(0, 0, rectangle.width, rectangle.height);
+     }*/
+
+    context.fillStyle = rectangle.color._css;
+    context.fillRect(0, 0, rectangle.width, rectangle.height);
+
+    return true;
+}
+
+/***/ }),
+
+/***/ "./modules/renderables/primitives/rectangle/Rectangle.js":
+/*!***************************************************************!*\
+  !*** ./modules/renderables/primitives/rectangle/Rectangle.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _Renderable2 = __webpack_require__(/*! ./../../Renderable */ "./modules/renderables/Renderable.js");
+
+var _Renderable3 = _interopRequireDefault(_Renderable2);
+
+var _Color = __webpack_require__(/*! ../../../../render/color/Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+var _ModuleProvider = __webpack_require__(/*! ../../../ModuleProvider */ "./modules/ModuleProvider.js");
+
+var _ModuleProvider2 = _interopRequireDefault(_ModuleProvider);
+
+var _DrawRectangle = __webpack_require__(/*! ./DrawRectangle */ "./modules/renderables/primitives/rectangle/DrawRectangle.js");
+
+var _DrawRectangle2 = _interopRequireDefault(_DrawRectangle);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Rectangle = function (_Renderable) {
+    (0, _inherits3.default)(Rectangle, _Renderable);
+
+    function Rectangle(moduleManager, width, height) {
+        (0, _classCallCheck3.default)(this, Rectangle);
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (Rectangle.__proto__ || (0, _getPrototypeOf2.default)(Rectangle)).call(this, 'rectangle', moduleManager));
+
+        _this._width = width || 100;
+        _this._height = height || 100;
+        _this._color = _Color2.default.magenta;
+
+        return _this;
+    }
+
+    (0, _createClass3.default)(Rectangle, [{
+        key: 'render',
+        value: function render(context) {
+
+            if (!this._enabled) return false;
+
+            return (0, _DrawRectangle2.default)(context, this.entity._transform, this);
+        }
+    }, {
+        key: 'width',
+        set: function set(value) {
+            this._width = value;
+        },
+        get: function get() {
+            return this._width;
+        }
+    }, {
+        key: 'height',
+        set: function set(value) {
+            this._height = value;
+        },
+        get: function get() {
+            return this._height;
+        }
+    }, {
+        key: 'color',
+        set: function set(value) {
+            this._color.set(value);
+        },
+        get: function get() {
+            return this._color;
+        }
+    }, {
+        key: 'outlineColor',
+        get: function get() {
+            return -1;
+        }
+    }, {
+        key: 'outlineWidth',
+        get: function get() {
+            return -1;
+        }
+    }]);
+    return Rectangle;
+}(_Renderable3.default);
+
+exports.default = Rectangle;
+
+
+_ModuleProvider2.default.register('rectangle', function (moduleManager, config) {
+
+    return new Rectangle(moduleManager, config[0], config[1]);
+});
 
 /***/ }),
 
@@ -15733,10 +15967,10 @@ var Render = function () {
 
         this.game = game;
         this.doubleBuffer = false;
-        this.smoothing = undefined;
-        this.imageRendering = undefined;
-        this.canvas = undefined;
-        this.context = undefined;
+        this.smoothing = null;
+        this.imageRendering = null;
+        this.canvas = null;
+        this.context = null;
         this.layer = new _RenderLayersManagement2.default(this.game);
         this._backgroundColor = '#000';
         this._alpha = 1;
@@ -15746,6 +15980,15 @@ var Render = function () {
     }
 
     (0, _createClass3.default)(Render, [{
+        key: 'domCanvas',
+        get: function get() {
+            if (this.doubleBuffer) {
+                return this._domCanvas;
+            } else {
+                return this.canvas;
+            }
+        }
+    }, {
         key: 'backgroundColor',
         get: function get() {
             return this._backgroundColor;
@@ -16074,6 +16317,10 @@ var _MakeImmutable = __webpack_require__(/*! ../../utils/object/MakeImmutable */
 
 var _MakeImmutable2 = _interopRequireDefault(_MakeImmutable);
 
+var _SetColor = __webpack_require__(/*! ./components/SetColor */ "./render/color/components/SetColor.js");
+
+var _SetColor2 = _interopRequireDefault(_SetColor);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function ColorNormUpdate(color) {
@@ -16089,7 +16336,6 @@ var Color = function () {
         (0, _classCallCheck3.default)(this, Color);
 
         this._r = r || 0;
-
         this._g = g || 0;
         this._b = b || 0;
         this._a = a || 1;
@@ -16100,28 +16346,44 @@ var Color = function () {
 
     (0, _createClass3.default)(Color, [{
         key: 'set',
-        value: function set(r, g, b, a) {
+        value: function set(color) {
 
-            this._r = r || 0;
-            this._g = g || 0;
-            this._b = b || 0;
-
-            if (a !== undefined) this._a = a;
+            (0, _SetColor2.default)(this, color);
 
             ColorUpdate(this);
 
             return this;
         }
     }, {
-        key: 'setRGBA',
-        value: function setRGBA(r, g, b, a) {
+        key: 'setNorm',
+        value: function setNorm(r, g, b, a) {
             if (r === undefined) return;
 
-            this._r = Math.round(r / 255.0);
-            this._g = Math.round(g / 255.0);
-            this._b = Math.round(b / 255.0);
+            this._r = Math.round(r * 255.0);
+            this._g = Math.round(g * 255.0);
+            this._b = Math.round(b * 255.0);
 
-            if (a !== undefined) this._a = Math.round(a / 255.0);
+            if (a !== undefined) this._a = Math.round(a * 255.0);
+
+            ColorUpdate(this);
+
+            return this;
+        }
+    }, {
+        key: 'setRGB',
+        value: function setRGB(r, g, b) {
+            return this.setRGBA(r, g, b, 255);
+        }
+    }, {
+        key: 'setRGBA',
+        value: function setRGBA(r, g, b, a) {
+            if (r === undefined) return this;
+
+            this._r = r || 0;
+            this._g = g || 0;
+            this._b = b || 0;
+
+            if (a !== undefined) this._a = a;
 
             ColorUpdate(this);
 
@@ -16370,9 +16632,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var CSS_REGEX_PATTERN = /^(?:\w*|rgba?)\(?\s*(\d+)\s*\,?(?:\s*(\d+)\s*)?\,?(?:\s*(\d+)\s*)?\,?(?:\s*(\d+(?:\.\d+)?))?\s*\)?$/;
 
-function CSSToColor(value) {
+function CSSToColor(value, source) {
 
-    var color = new _Color2.default();
+    var color = void 0;
+
+    if (source === undefined) color = new _Color2.default();else color = source;
 
     var regex = CSS_REGEX_PATTERN.exec(value.toLowerCase());
 
@@ -16384,7 +16648,7 @@ function CSSToColor(value) {
 
         if (regex[4] !== undefined) a = parseFloat(regex[4], 10) || 1;
 
-        color.set(r, g, b, a);
+        color.setRGBA(r, g, b, a);
     }
 
     return color;
@@ -16417,9 +16681,11 @@ var HEX_SHORTHAND_REGEX_PATTERN = /^#?([a-f\d])([a-f\d])([a-f\d])([a-f\d])?$/i;
 var HEX_REGEX_PATTERN = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i;
 
 // Source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-function HexToColor(value) {
+function HexToColor(value, source) {
 
-    var color = new _Color2.default();
+    var color = void 0;
+
+    if (source === undefined) color = new _Color2.default();else color = source;
 
     // Hexadecimal can contains alpha in short '#f00e' or full '#F00eaecd'
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -16433,7 +16699,7 @@ function HexToColor(value) {
     var result = HEX_REGEX_PATTERN.exec(hex);
 
     if (result) {
-        color.set(parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), result[4] === undefined ? 1 : parseInt(result[4], 16));
+        color.setRGBA(parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16), result[4] === undefined ? 1 : parseInt(result[4], 16));
     }
 
     return color;
@@ -16462,9 +16728,9 @@ var _Color2 = _interopRequireDefault(_Color);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function IntToColor(value) {
+function IntToColor(value, source) {
 
-    var color = new _Color2.default();
+    var color = source || new _Color2.default();
     var r = void 0,
         g = void 0,
         b = void 0,
@@ -16477,7 +16743,7 @@ function IntToColor(value) {
     g = color >> 8 & 0xFF;
     b = color & 0xFF;
 
-    color.set(r, g, b, a);
+    color.setRGBA(r, g, b, a);
 
     return color;
 }
@@ -16498,9 +16764,20 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = ObjectToColor;
+
+var _Color = __webpack_require__(/*! ../Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function ObjectToColor(value) {
 
-    return new Color(value.r, value.g, value.b, value.a);
+    if (source === undefined) {
+        return new _Color2.default(value.r, value.g, value.b, value.a);
+    } else {
+        source.setRGBA(value.r, value.g, value.b, value.a);
+    }
 }
 
 /***/ }),
@@ -16560,6 +16837,58 @@ function ParseColor(value) {
   } else if (type === 'object') {
 
     return (0, _ObjectToColor2.default)(value);
+  }
+}
+
+/***/ }),
+
+/***/ "./render/color/components/SetColor.js":
+/*!*********************************************!*\
+  !*** ./render/color/components/SetColor.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "../node_modules/babel-runtime/helpers/typeof.js");
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+exports.default = SetColor;
+
+var _Color = __webpack_require__(/*! ../Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function SetColor(source, value) {
+
+  /*if ((source instanceof Color) === false) {
+      source = new Color();
+  }*/
+
+  var type = typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value);
+
+  if (type === 'number') {
+
+    return IntToColor(value, source);
+  } else if (type === 'string') {
+
+    if (value.substr(0, 3).toLowerCase() === 'rgb') {
+      return CSSToColor(value, source);
+    } else {
+      return HexToColor(value, source);
+    }
+  } else if (type === 'object') {
+
+    return ObjectToColor(value, source);
   }
 }
 
@@ -22452,11 +22781,12 @@ function DetectBrowser(userAgent) {
             safari: false,
             silk: false
         }
+    };
 
-        /// MAYBE IS BETTER TODO WITH REGEX
+    /// MAYBE IS BETTER TODO WITH REGEX
 
-        // Opera 8.0+
-    };browser.manufacturer.opera = !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+    // Opera 8.0+
+    browser.manufacturer.opera = !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 
     // Firefox 1.0+
     browser.manufacturer.firefox = typeof InstallTrigger !== 'undefined';
@@ -22491,6 +22821,61 @@ function DetectBrowser(userAgent) {
     browser.version = version;
 
     return browser;
+}
+
+/***/ }),
+
+/***/ "./system/DetectFullscreen.js":
+/*!************************************!*\
+  !*** ./system/DetectFullscreen.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DetectFullscreen;
+function DetectFullscreen() {
+
+    // https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
+
+
+    var fullscreenFeature = {
+        available: false,
+        cancel: '',
+        //keyboard: false,
+        request: ''
+    };
+
+    var vendorsActiveFullscreen = ['requestFullscreen', 'requestFullScreen', 'webkitRequestFullscreen', 'webkitRequestFullScreen', 'msRequestFullscreen', 'msRequestFullScreen', 'mozRequestFullScreen', 'mozRequestFullscreen'];
+
+    var tempElement = document.createElement('div');
+
+    for (var i = 0; i < vendorsActiveFullscreen.length; i++) {
+        if (tempElement[vendorsActiveFullscreen[i]]) {
+            fullscreenFeature.available = true;
+            fullscreenFeature.request = vendorsActiveFullscreen[i];
+            break;
+        }
+    }
+
+    if (fullscreenFeature.available) {
+
+        var vendorsCancelFullscreen = ['cancelFullScreen', 'exitFullscreen', 'webkitCancelFullScreen', 'webkitExitFullscreen', 'msCancelFullScreen', 'msExitFullscreen', 'mozCancelFullScreen', 'mozExitFullscreen'];
+
+        for (var _i = 0; _i < vendorsCancelFullscreen.length; _i++) {
+            if (document[vendorsCancelFullscreen[_i]]) {
+                fullscreenFeature.cancel = vendorsCancelFullscreen[_i];
+                break;
+            }
+        }
+    }
+
+    return fullscreenFeature;
 }
 
 /***/ }),
@@ -22690,6 +23075,10 @@ function FeatureDetection(os) {
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -22718,6 +23107,10 @@ var _DeepFreeze = __webpack_require__(/*! ../utils/object/DeepFreeze */ "./utils
 
 var _DeepFreeze2 = _interopRequireDefault(_DeepFreeze);
 
+var _DetectFullscreen = __webpack_require__(/*! ./DetectFullscreen */ "./system/DetectFullscreen.js");
+
+var _DetectFullscreen2 = _interopRequireDefault(_DetectFullscreen);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var PlatformEnvironment = function () {
@@ -22730,6 +23123,7 @@ var PlatformEnvironment = function () {
         this._browser = (0, _DetectBrowser2.default)(this._userAgent);
         this._features = (0, _FeatureDetection2.default)(this._osInfo);
         this._audio = (0, _DetectAudioFeatures2.default)(this._browser);
+        this._fullscreen = (0, _DetectFullscreen2.default)();
     }
 
     (0, _createClass3.default)(PlatformEnvironment, [{
@@ -22778,6 +23172,16 @@ var PlatformEnvironment = function () {
             return this._features;
         }
     }, {
+        key: "fullscreenInfo",
+        get: function get() {
+            return this._fullscreen;
+        }
+    }, {
+        key: "supportFullscreen",
+        get: function get() {
+            return this._fullscreen.available;
+        }
+    }, {
         key: "supportAudio",
         get: function get() {
             return this._audio.audioData;
@@ -22800,7 +23204,7 @@ var Environment = new PlatformEnvironment();
 
 (0, _DeepFreeze2.default)(Environment);
 
-module.exports = Environment;
+exports.default = Environment;
 
 /***/ }),
 

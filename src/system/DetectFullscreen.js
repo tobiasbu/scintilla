@@ -25,7 +25,7 @@ export default function DetectFullscreen() {
     let tempElement = document.createElement('div');
 
     for (let i = 0; i < vendorsActiveFullscreen.length; i++) {
-        if (element[vendorsActiveFullscreen[i]]) {
+        if (tempElement[vendorsActiveFullscreen[i]]) {
             fullscreenFeature.available = true;
             fullscreenFeature.request = vendorsActiveFullscreen[i];
             break;
@@ -47,7 +47,7 @@ export default function DetectFullscreen() {
 
         for (let i = 0; i < vendorsCancelFullscreen.length; i++) {
             if (document[vendorsCancelFullscreen[i]]) {
-                Fullscreen.cancel = vendorsCancelFullscreen[i];
+                fullscreenFeature.cancel = vendorsCancelFullscreen[i];
                 break;
             }
         }

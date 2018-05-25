@@ -45,4 +45,8 @@ export default class ModuleAttacher
         else
             return ModuleProvider.attach(this.moduleManager,'animMachine', [spriteModule, tag]);
     }
+
+    rectangle(width, height, color) {
+        return ModuleProvider.attach(this.moduleManager, 'rectangle', [width, height, color]);
+    }
 }

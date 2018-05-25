@@ -4,9 +4,14 @@ const HEX_SHORTHAND_REGEX_PATTERN = /^#?([a-f\d])([a-f\d])([a-f\d])([a-f\d])?$/i
 const HEX_REGEX_PATTERN = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i;
 
 // Source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-export default function HexToColor(value) {
+export default function HexToColor(value, source) {
 
-    let color = new Color();
+    let color;
+
+    if (source === undefined)
+        color = new Color();
+    else
+        color = source;
 
     // Hexadecimal can contains alpha in short '#f00e' or full '#F00eaecd'
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -22,7 +27,7 @@ export default function HexToColor(value) {
     let result = HEX_REGEX_PATTERN.exec(hex);
 
     if (result) {
-        color.set(
+        color.setRGBA(
             parseInt(result[1], 16),
             parseInt(result[2], 16),
             parseInt(result[3], 16),

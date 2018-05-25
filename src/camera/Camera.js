@@ -33,10 +33,7 @@ export default class Camera {
   }
 
   get position() { 
-    return { 
-      x : this._transform.position.x, 
-      y : this._transform.position.y
-    }; 
+    return this._transform.position; 
   }
   set position(value) { 
     this._transform.position.x = value.x;

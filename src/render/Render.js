@@ -7,16 +7,24 @@ export default class Render {
         
         this.game = game;
         this.doubleBuffer = false;
-        this.smoothing = undefined;
-        this.imageRendering = undefined;
-        this.canvas = undefined;
-        this.context = undefined;
+        this.smoothing = null;
+        this.imageRendering = null;
+        this.canvas = null;
+        this.context = null;
         this.layer = new RenderLayerManagment(this.game);
         this._backgroundColor = '#000';     
         this._alpha = 1;
         this._enable = true;
         this.clear = true;
         this.drawCalls = 0;
+    }
+
+    get domCanvas() {
+        if (this.doubleBuffer) {
+            return this._domCanvas;
+        } else {
+            return this.canvas;
+        }
     }
 
     get backgroundColor() {return this._backgroundColor;}

@@ -62,6 +62,9 @@ export default class LoadManager {
 
 
   setPath(path) {
+
+    if (path === undefined) path = '';
+
     if (path !== '' && path.substr(-1) !== '/')
         path = path.concat('/');
 
@@ -71,12 +74,15 @@ export default class LoadManager {
   }
 
   setBaseURL(baseUrl) {
+
+    if (baseURL === undefined) baseUrl = '';
+
     if (baseUrl !== '' && baseUrl.substr(-1) !== '/')
     {
       baseUrl = baseUrl.concat('/');
     }
 
-    this.baseURL = baseUrl || '';
+    this.baseURL = baseUrl;
 
     return this;
   }
@@ -97,7 +103,7 @@ export default class LoadManager {
     this._filesQueueCount = 0;
     this._loadedFilesCount = 0;
 
-    this.progress = 0
+    this.progress = 0;
     this.state = LoaderState.IDLE;
 
   }

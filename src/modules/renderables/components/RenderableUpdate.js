@@ -6,7 +6,7 @@ import RenderableBoundsUpdate from "./RenderableBoundsUpdate";
 
 export default function RenderableUpdate(entity, renderable, camera, gameTime) {
 
-    if (renderable.name == 'tilemap') {
+    if (renderable.name === 'tilemap') {
 
         if (renderable._originIsDirty) {
             // destination
@@ -19,7 +19,7 @@ export default function RenderableUpdate(entity, renderable, camera, gameTime) {
         if (!entity._transform._isDirty && !camera._transform._isDirty)
             return;
 
-        CullTiles(renderable, camera)
+        CullTiles(renderable, camera);
 
         for (let i = 0; i < renderable.layers.length; i++) {
             RenderableBoundsUpdate(renderable, entity, camera);

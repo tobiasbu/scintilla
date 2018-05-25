@@ -10,4 +10,6 @@ const LoaderState = {
     DONE : 7, 
 };
 
+Object.freeze(LoaderState);
+
 export default LoaderState;

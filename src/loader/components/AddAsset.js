@@ -1,6 +1,28 @@
 import AssetsType from "../AssetsType";
 import ScriptFile from "../assets/ScriptFile";
 
+let webFontLoader = null;
+
+const webFontLoaderChecker = function(loader, asset) {
+
+    if (asset.type !== AssetsType.webFont)
+        return;
+
+    if (webFontLoader !== null)
+        return;
+
+    webFontLoader = new ScriptFile('webFontLoader',"https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
+    loader._filesQueue.insert(webFontLoader);
+    loader._filesQueueCount++;
+
+    loader.game.events.create('file_postload_webFontLoader').subscribeOnce(
+        () => {
+        asset.fontLoad();
+        });
+
+
+};
+
 export default function AddAsset(asset, check) {
 
     if (check === undefined) check = true;
@@ -9,20 +31,7 @@ export default function AddAsset(asset, check) {
         return -1;
 
     // is if web font, we should load the WebFontLoader
-    if (asset.type === AssetsType.webFont && this.webFontLoader === undefined) {
-
-      this.webFontLoader = new ScriptFile('webFontLoader',"https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
-      this._filesQueue.insert(this.webFontLoader);
-      this._filesQueueCount++;
-
-
-
-      this.game.events.create('file_postload_webFontLoader').subscribeOnce(
-        () => {
-        asset.fontLoad();
-        });
-      
-    }
+    webFontLoaderChecker(this, asset);
 
 
     asset.path = this.path;
