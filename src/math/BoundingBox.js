@@ -1,41 +1,51 @@
-
-import Vector from './Vector'
-import Rect from './Rect'
+import Vector2 from './Vector2';
+import Rect from './Rect';
 
 export default class BoundingBox {
-  
+
   constructor(x, y, width, height) {
 
-    x = x || Infinity;
-    y = y || Infinity;
-    width = width || -Infinity;
-    height = height || -Infinity;
-    this.min = new Vector(x,y);
-    this.max = new Vector(x+width,y+height);
-    //this.box = new Rect(xx,yy,w,h);
+    this.min = new Vector2();
+    this.max = new Vector2();
 
+    if (x instanceof BoundingBox) {
+
+      this.min.copy(x.min);
+      this.max.copy(x.max);
+
+    } else {
+      x = x || Infinity;
+      y = y || Infinity;
+      width = width || -Infinity;
+      height = height || -Infinity;
+
+      this.min.x = x;
+      this.min.y = y;
+      this.max.x = width;
+      this.max.y = height;
+    }
   }
 
-  
+
   get center() {
-    return new Vector(
+    return new Vector2(
       (this.max.x - this.min.x) / 2,
       (this.max.y - this.min.y) / 2
     );
   }
 
   get size() {
-    return new Vector(
+    return new Vector2(
       (this.max.x - this.min.x),
       (this.max.y - this.min.y)
     );
   }
 
-  
+
   set(minX, minY, maxX, maxY) {
 
-    this.min.set(minX,minY);
-    this.max.set(maxX,maxY);
+    this.min.set(minX, minY);
+    this.max.set(maxX, maxY);
     //this.box.set(this.min.x,this.min.y,this.max.x-this.min.x,this.max.y-this.min.y);
     return this;
 
@@ -62,15 +72,15 @@ export default class BoundingBox {
 
   intersects(bounds) {
     return (
-      (this.max.x >= bounds.min.x && 
-      this.max.y >= bounds.min.y &&
-      this.min.x <= bounds.max.x && 
-      this.min.y <= bounds.max.y) ||
+      (this.max.x >= bounds.min.x &&
+        this.max.y >= bounds.min.y &&
+        this.min.x <= bounds.max.x &&
+        this.min.y <= bounds.max.y) ||
 
       (this.min.x >= bounds.max.x &&
-      this.min.y >= bounds.max.y &&
-      this.max.x <= bounds.min.x &&
-      this.max.y <= bounds.min.y));
+        this.min.y >= bounds.max.y &&
+        this.max.x <= bounds.min.x &&
+        this.max.y <= bounds.min.y));
   }
 
   contains(x, y) {
@@ -85,27 +95,26 @@ export default class BoundingBox {
 
     yRadius = yRadius || xRadius;
 
-    if (this.max.x > this.min.x)
-		{
-			this.min.x -= xRadius;
-			this.max.x += xRadius;
-		}
-		else
-		{
-			this.min.x += xRadius;
-			this.max.x -= xRadius;
-		}
+    if (this.max.x > this.min.x) {
+      this.min.x -= xRadius;
+      this.max.x += xRadius;
+    } else {
+      this.min.x += xRadius;
+      this.max.x -= xRadius;
+    }
 
-		if (this.max.y > this.min.y)
-		{
-			this.min.y -= yRadius;
-			this.max.y += yRadius;
-		}
-		else
-		{
-			this.min.y += yRadius;
-			this.max.y -= yRadius;
-		}
+    if (this.max.y > this.min.y) {
+      this.min.y -= yRadius;
+      this.max.y += yRadius;
+    } else {
+      this.min.y += yRadius;
+      this.max.y -= yRadius;
+    }
+    return this;
+  }
+
+  decrease(xRadius, yRadius) {
+    return this.expand(-xRadius, -yRadius);
   }
 
   merge(value) {
@@ -117,8 +126,7 @@ export default class BoundingBox {
       this.max.x = Math.max(this.max.x, value.max.x);
       this.max.y = Math.max(this.max.y, value.max.y);
       return this;
-    } 
-    else if (value instanceof Vector) {
+    } else if (value instanceof Vector2) {
       return this.mergeWithPoint(value.x, value.y);
     } else {
       this.min.x = Math.min(this.min.x, value);
@@ -144,7 +152,7 @@ export default class BoundingBox {
 
     if (bounds.min.y < this.min.y)
       this.min.y = bounds.min.y;
-      
+
     // max merge
     if (bounds.max.x > this.max.x)
       this.max.x = bounds.max.x;
@@ -157,38 +165,41 @@ export default class BoundingBox {
 
   extendByPoint(x, y) {
     if (x < this.min.x) this.min.x = x;
-		if (y < this.min.y) this.min.y = y;
-		if (x > this.max.x) this.max.x = x;
-		if (y > this.max.y) this.max.y = y;
+    if (y < this.min.y) this.min.y = y;
+    if (x > this.max.x) this.max.x = x;
+    if (y > this.max.y) this.max.y = y;
 
-		return this;
+    return this;
   }
 
   limit(xmin, ymin, xmax, ymax) {
-		if (this.min.x < xmin)
+    if (this.min.x < xmin)
       this.min.x = xmin;
 
-		if (this.min.y < ymin)
+    if (this.min.y < ymin)
       this.min.y = ymin;
 
-		if (this.max.x > xmax)
+    if (this.max.x > xmax)
       this.max.x = xmax;
 
-		if (this.max.y > ymax)
+    if (this.max.y > ymax)
       this.max.y = ymax;
   }
 
   offset(x, y) {
-    let o = {x:x, y:y};
-     o.x -= this.min.x;
-     o.y -= this.min.y;
+    let o = {
+      x: x,
+      y: y
+    };
+    o.x -= this.min.x;
+    o.y -= this.min.y;
 
-		if (this.max.x > this.min.x)
-			o.x /= this.max.x - this.min.x;
+    if (this.max.x > this.min.x)
+      o.x /= this.max.x - this.min.x;
 
-		if (this.max.y > this.min.y)
+    if (this.max.y > this.min.y)
       o.y /= this.max.y - this.min.y;
-      
+
     return o;
   }
 
@@ -196,6 +207,10 @@ export default class BoundingBox {
     return "{ min: " + this.min.toString() + ", max: " + this.max.toString() + " }";
   }
 
-  
+  copy(bounds) {
+    this.min.copy(bounds.min);
+    this.max.copy(bounds.max);
+    return this;
+  }
 
 }

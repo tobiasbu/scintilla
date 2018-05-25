@@ -10,8 +10,8 @@ import MathUtils from "../MathUtils";
 //const RNG_B = 2396403;
 // Alea
 const RNG_A = 2091639;
-const RNG_B = 2.3283064365386963e-10 // 2^-32;
-
+const RNG_B = 2.3283064365386963e-10; // 2^-32;
+const FRAC = 1.1102230246251565e-16; // 2^-53
 
 
 // From http://baagoe.com/en/RandomMusings/javascript/
@@ -41,8 +41,7 @@ class RandomGenerator {
     }
 
     frac() {
-        // 2^-53
-        return this.rand() + (this.rand() * 0x200000 | 0) * 1.1102230246251565e-16;
+        return this.rand() + (this.rand() * 0x200000 | 0) * FRAC;
     }
 
     // 0...1

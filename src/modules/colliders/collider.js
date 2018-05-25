@@ -1,6 +1,6 @@
 import Module from "../Module";
-import Vector from '../../math/Vector'
-import BoundingBox from '../../math/BoundingBox'
+import Vector2 from '../../math/Vector2';
+import BoundingBox from '../../math/BoundingBox';
 
 export default class Collider extends Module {
   
@@ -17,25 +17,25 @@ export default class Collider extends Module {
     //this.offset = null
     //this._gameObject = null;
     //this.position = null;
-    //var _oldScale = new scintilla.Vector(1,1);
+    //var _oldScale = new scintilla.Vector2(1,1);
     //var _oldRotation = 0;
 
-    //this.position = new scintilla.Vector();
+    //this.position = new scintilla.Vector2();
     this.isTrigger = false;
-    this._offset = new Vector();
+    this._offset = new Vector2();
     this._bounds = new BoundingBox(0,0,1,1);
     this.setShape(shape);
   }
 
 
-  setShape = function(shape) {
+  setShape(shape) {
 
     this.shape = shape;
     this._updateBounds();
 
   }
 
-  setPosition = function(position) {
+  setPosition(position) {
 
     this.position.x = position.x - this.shape.centroid.x + this.offset.x;
     this.position.y = position.y - this.shape.centroid.y + this.offset.y;
@@ -44,7 +44,7 @@ export default class Collider extends Module {
 
   }
 
-  scale = function(scale) {
+  scale(scale) {
 
     if (this.shape.getType() == "Polygon") {
 
@@ -62,7 +62,7 @@ export default class Collider extends Module {
 
   }
 
-  rotate = function(radians) {
+  rotate(radians) {
 
     if (this.shape.getType() == "Polygon") {
 
@@ -85,16 +85,16 @@ export default class Collider extends Module {
 
   }
 
-  _updateBounds = function() {
+  _updateBounds() {
 
     this.bounds.setByShape(this.shape);
 
     //this.bounds.box.x = this.bounds.min.x + this.position.x;
     //this.bounds.box.y = this.bounds.min.y + this.position.y;
 
-  };
+  }
 
-  update = function() {
+  update() {
 
     var calc = false;
 
@@ -118,7 +118,7 @@ export default class Collider extends Module {
 
   }
 
-debugDraw = function(context, color) {
+debugDraw(context, color) {
 
   if (color === undefined) color = 'red';
 
@@ -159,4 +159,4 @@ debugDraw = function(context, color) {
 }
 
 
-};
+}

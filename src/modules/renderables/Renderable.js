@@ -1,6 +1,6 @@
 
 import BoundingBox from '../../math/BoundingBox';
-import Vector from '../../math/Vector'
+import Vector2 from '../../math/Vector2'
 import Module from '../Module';
 
 export default class Renderable extends Module

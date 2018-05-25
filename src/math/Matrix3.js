@@ -22,7 +22,7 @@ HTML5/CSS3 uses matrices in column-major order based.
 
 */
 
-export default class Matrix {
+export default class Matrix3 {
   
   /*
   * Constructor is identity only
@@ -268,12 +268,12 @@ export default class Matrix {
  }
  
  
- static identity() { return new Matrix(1); }
+ static identity() { return new Matrix3(1); }
 
- static zero() { return new Matrix(0); }
+ static zero() { return new Matrix3(0); }
 
  static transpose(mat) {
-  let copy = Matrix.zero;
+  let copy = Matrix3.zero;
   return copy.setAll(
     mat.a[0], mat.a[3], mat.a[6],
     mat.a[1], mat.a[4], mat.a[7],
@@ -283,7 +283,7 @@ export default class Matrix {
  }
 
  static multiplySlow(a, b) {
-    var mat = Matrix.zero(); // zeroes
+    var mat = Matrix3.zero(); // zeroes
     let val;
 
     for (let i = 0; i < 3; ++i)

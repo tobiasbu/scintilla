@@ -5,8 +5,8 @@ export default class SATResponse {
     {
         this.a = null;
         this.b = null;
-        this.overlapN = new Vector();
-        this.overlapV = new Vector();
+        this.overlapN = new Vector2();
+        this.overlapV = new Vector2();
         this.aInB = true;
         this.bInA = true;
         this.overlap = Number.MAX_VALUE;

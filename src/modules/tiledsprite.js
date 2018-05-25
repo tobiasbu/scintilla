@@ -11,9 +11,9 @@ this.constructor = function(source,width,height) {
 this.source = source;
 this.setFrame(0,0,width,height);
 
-this.tilePosition = new scintilla.Vector(0,0);
-this.tileScale = new scintilla.Vector(1,1);
-this.offset = new scintilla.Vector(1,1);
+this.tilePosition = new scintilla.Vector2(0,0);
+this.tileScale = new scintilla.Vector2(1,1);
+this.offset = new scintilla.Vector2(1,1);
 
 this.tilePattern = null;
 

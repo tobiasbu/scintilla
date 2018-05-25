@@ -2,7 +2,7 @@
 import System from '../../core/system/System';
 import Rect from '../../math/Rect'
 import AspectRatio from './AspectRatio';
-import Matrix from '../../math/Matrix'
+import Matrix3 from '../../math/Matrix3';
 import GUIResize from './UIResize';
 import Debug from './Debug';
 import MathUtils from '../../math/MathUtils';
@@ -24,10 +24,10 @@ export default class UI {
         this.aspectRatio = this.width / this.height;
         this.pixelUnit = {x:1,y:1};
         this._isDirty = true;
-        this.matrix = new Matrix(1);
+        this.matrix = new Matrix3(1);
         this.context = null;
         this._alpha = 1;
-        this.backgroundColor = '#000'
+        this.backgroundColor = '#000';
         this.backgroundAlpha = 0;
         this.debug = null;
         this.draw = new UIDrawer(game, this);

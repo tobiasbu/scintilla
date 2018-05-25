@@ -3,7 +3,7 @@ import BoundingBox from '../math/BoundingBox';
 import Transform  from '../transform/Transform';
 import Color from '../render/color/Color';
 import MathUtils from '../math/MathUtils';
-import Vector from '../math/Vector';
+import Vector2 from '../math/Vector2';
 import ResizeCamera from './ResizeCamera';
 import Renderable from '../modules/renderables/Renderable';
 

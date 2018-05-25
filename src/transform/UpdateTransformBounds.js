@@ -1,6 +1,6 @@
 
 import MathUtils from '../math/MathUtils';
-import Vector from '../math/Vector';
+import Vector2 from '../math/Vector2';
 import ComputeDelimiterPoint from './ComputeDelimiterPoint';
 
 
@@ -8,7 +8,7 @@ import ComputeDelimiterPoint from './ComputeDelimiterPoint';
 export default function UpdateTransformBounds(bounds, frame, transform) {
     
   let coords = [];
- /* let scale = Vector.abs(transform.scale);
+ /* let scale = Vector2.abs(transform.scale);
   let pos = transform.position;
   let anchor = transform.origin;
   let size = {
@@ -72,7 +72,7 @@ export default function UpdateTransformBounds(bounds, frame, transform) {
 
     var callback = null;
 
-    if (rotation instanceof  scintilla.Vector)
+    if (rotation instanceof  scintilla.Vector2)
         callback = this['calcCoordsCosSin'];
       else
         callback = this['calcCoords'];

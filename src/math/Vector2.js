@@ -4,10 +4,10 @@ import MathUtils from './MathUtils';
 
 /**
 * Class for points and vectors.
-* @class Vector
+* @class Vector2
 * @constructor
 */
-export default class Vector {
+export default class Vector2 {
   
   constructor(x,y, managed) {
 
@@ -16,22 +16,10 @@ export default class Vector {
     this.managed = managed || undefined;
   }
 
-  /*
-  set x(value) {
-    this.x = value;
-    return this.x;
-  }
-  get x() {return this.x;}
-  set y(value) {
-    this.y = value;
-    return this.y;
-  }
-  get y() {return this.y;}*/
-
   set(x,y) {
 
     this.x = x;
-    this.y = y || x
+    this.y = y || x;
 
     if (this.managed !== undefined)
       this.managed.markDirty();
@@ -179,15 +167,15 @@ export default class Vector {
   
 
   dot(other) {
-    return Vector.dot(this,other);
+    return Vector2.dot(this,other);
   }
 
   project(other) {
-    return Vector.project(this,other);
+    return Vector2.project(this,other);
   }
 
   clone() {
-    return new Vector(this.x,this.y);
+    return new Vector2(this.x,this.y);
   }
 
   length() {
@@ -199,11 +187,11 @@ export default class Vector {
   }
 
   squaredLenght() {
-    return Vector.dot(this,this);
+    return Vector2.dot(this,this);
   }
 
   static abs(vector) {
-    return new Vector(Math.abs(vector.x), Math.abs(vector.y));
+    return new Vector2(Math.abs(vector.x), Math.abs(vector.y));
   }
 
   static scalar(a, b) {
@@ -223,8 +211,8 @@ export default class Vector {
   }
 
   static project(a,b) {
-    let dp = Vector.dot(a,b);
-    var proj = new Vector(
+    let dp = Vector2.dot(a,b);
+    var proj = new Vector2(
       ( dp / (b.x*b.x + b.y*b.y) ) * b.x,
       ( dp / (b.x*b.x + b.y*b.y) ) * b.y
     );
@@ -233,14 +221,14 @@ export default class Vector {
 
   // project for unit vector
   static projectNormal(a,b) {
-    let dp = Vector.dot(a,b);
-    let proj = new Vector(   dp / b.x,   dp / b.y );
+    let dp = Vector2.dot(a,b);
+    let proj = new Vector2(   dp / b.x,   dp / b.y );
     return proj;
   };
 
   static reflect(vec,axis) {
 
-    let r = Vector.project(vec,axis);
+    let r = Vector2.project(vec,axis);
     r.scale(2);
     r.sub(vec);
     return r;
@@ -249,7 +237,7 @@ export default class Vector {
 
   static reflectNormal(vec,axis) {
 
-    let r = Vector.projectNormal(vec,axis);
+    let r = Vector2.projectNormal(vec,axis);
     r.scale(2);
     r.sub(vec);
     return r;
@@ -258,7 +246,7 @@ export default class Vector {
 
 
   static lerp(a, b, t) {
-    let vec = new Vector(
+    let vec = new Vector2(
       MathUtils.lerp(a.x,b.x,t),
       MathUtils.lerp(a.y,b.y,t)
     );
@@ -268,10 +256,9 @@ export default class Vector {
   get magnitude() {return Math.sqrt((this.x * this.x) + (this.y * this.y));}
   get normal() {
     let mag = this.magnitude;
-    let vec = new Vector(this.x / mag,this.y / mag);
+    let vec = new Vector2(this.x / mag,this.y / mag);
     return vec;
   }
 
 }
 
-module.exports = Vector;

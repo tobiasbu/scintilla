@@ -1,5 +1,5 @@
 
-import Vector from '../../math/Vector' 
+import Vector2 from '../../math/Vector2' 
 
 export default class SAT {
 
@@ -8,7 +8,7 @@ export default class SAT {
 
     this.VECTORS = [];
     for (var v = 0; v < 10; v++) { 
-      VECTORS.push(new Vector()); 
+      VECTORS.push(new Vector2()); 
     }
 
     this.ARRAYS = [];

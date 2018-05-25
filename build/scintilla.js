@@ -2337,12 +2337,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
 * Class for points and vectors.
-* @class Vector
+* @class Vector2
 * @constructor
 */
-var Vector = function () {
-  function Vector(x, y, managed) {
-    (0, _classCallCheck3.default)(this, Vector);
+var Vector2 = function () {
+  function Vector2(x, y, managed) {
+    (0, _classCallCheck3.default)(this, Vector2);
 
 
     this.x = x || 0;
@@ -2362,7 +2362,7 @@ var Vector = function () {
   }
   get y() {return this.y;}*/
 
-  (0, _createClass3.default)(Vector, [{
+  (0, _createClass3.default)(Vector2, [{
     key: "set",
     value: function set(x, y) {
 
@@ -2507,17 +2507,17 @@ var Vector = function () {
   }, {
     key: "dot",
     value: function dot(other) {
-      return Vector.dot(this, other);
+      return Vector2.dot(this, other);
     }
   }, {
     key: "project",
     value: function project(other) {
-      return Vector.project(this, other);
+      return Vector2.project(this, other);
     }
   }, {
     key: "clone",
     value: function clone() {
-      return new Vector(this.x, this.y);
+      return new Vector2(this.x, this.y);
     }
   }, {
     key: "length",
@@ -2532,7 +2532,7 @@ var Vector = function () {
   }, {
     key: "squaredLenght",
     value: function squaredLenght() {
-      return Vector.dot(this, this);
+      return Vector2.dot(this, this);
     }
   }, {
     key: "magnitude",
@@ -2543,13 +2543,13 @@ var Vector = function () {
     key: "normal",
     get: function get() {
       var mag = this.magnitude;
-      var vec = new Vector(this.x / mag, this.y / mag);
+      var vec = new Vector2(this.x / mag, this.y / mag);
       return vec;
     }
   }], [{
     key: "abs",
     value: function abs(vector) {
-      return new Vector(Math.abs(vector.x), Math.abs(vector.y));
+      return new Vector2(Math.abs(vector.x), Math.abs(vector.y));
     }
   }, {
     key: "scalar",
@@ -2574,8 +2574,8 @@ var Vector = function () {
   }, {
     key: "project",
     value: function project(a, b) {
-      var dp = Vector.dot(a, b);
-      var proj = new Vector(dp / (b.x * b.x + b.y * b.y) * b.x, dp / (b.x * b.x + b.y * b.y) * b.y);
+      var dp = Vector2.dot(a, b);
+      var proj = new Vector2(dp / (b.x * b.x + b.y * b.y) * b.x, dp / (b.x * b.x + b.y * b.y) * b.y);
       return proj;
     }
   }, {
@@ -2584,15 +2584,15 @@ var Vector = function () {
 
     // project for unit vector
     value: function projectNormal(a, b) {
-      var dp = Vector.dot(a, b);
-      var proj = new Vector(dp / b.x, dp / b.y);
+      var dp = Vector2.dot(a, b);
+      var proj = new Vector2(dp / b.x, dp / b.y);
       return proj;
     }
   }, {
     key: "reflect",
     value: function reflect(vec, axis) {
 
-      var r = Vector.project(vec, axis);
+      var r = Vector2.project(vec, axis);
       r.scale(2);
       r.sub(vec);
       return r;
@@ -2601,7 +2601,7 @@ var Vector = function () {
     key: "reflectNormal",
     value: function reflectNormal(vec, axis) {
 
-      var r = Vector.projectNormal(vec, axis);
+      var r = Vector2.projectNormal(vec, axis);
       r.scale(2);
       r.sub(vec);
       return r;
@@ -2609,17 +2609,17 @@ var Vector = function () {
   }, {
     key: "lerp",
     value: function lerp(a, b, t) {
-      var vec = new Vector(_MathUtils2.default.lerp(a.x, b.x, t), _MathUtils2.default.lerp(a.y, b.y, t));
+      var vec = new Vector2(_MathUtils2.default.lerp(a.x, b.x, t), _MathUtils2.default.lerp(a.y, b.y, t));
       return vec;
     }
   }]);
-  return Vector;
+  return Vector2;
 }();
 
-exports.default = Vector;
+exports.default = Vector2;
 
 
-module.exports = Vector;
+module.exports = Vector2;
 
 /***/ }),
 /* 34 */
@@ -2780,13 +2780,13 @@ HTML5/CSS3 uses matrices in column-major order based.
 
 */
 
-var Matrix = function () {
+var Matrix3 = function () {
 
   /*
   * Constructor is identity only
   */
-  function Matrix(a, b) {
-    (0, _classCallCheck3.default)(this, Matrix);
+  function Matrix3(a, b) {
+    (0, _classCallCheck3.default)(this, Matrix3);
 
 
     /*a = a || i;
@@ -2816,7 +2816,7 @@ var Matrix = function () {
     //this.at = null;
   }
 
-  (0, _createClass3.default)(Matrix, [{
+  (0, _createClass3.default)(Matrix3, [{
     key: "at",
     value: function at(i, j) {
       return this.a[i + j * 3];
@@ -3026,23 +3026,23 @@ var Matrix = function () {
   }], [{
     key: "identity",
     value: function identity() {
-      return new Matrix(1);
+      return new Matrix3(1);
     }
   }, {
     key: "zero",
     value: function zero() {
-      return new Matrix(0);
+      return new Matrix3(0);
     }
   }, {
     key: "transpose",
     value: function transpose(mat) {
-      var copy = Matrix.zero;
+      var copy = Matrix3.zero;
       return copy.setAll(mat.a[0], mat.a[3], mat.a[6], mat.a[1], mat.a[4], mat.a[7], mat.a[2], mat.a[5], mat.a[8]);
     }
   }, {
     key: "multiplySlow",
     value: function multiplySlow(a, b) {
-      var mat = Matrix.zero(); // zeroes
+      var mat = Matrix3.zero(); // zeroes
       var val = void 0;
 
       for (var i = 0; i < 3; ++i) {
@@ -3058,10 +3058,10 @@ var Matrix = function () {
       return mat;
     }
   }]);
-  return Matrix;
+  return Matrix3;
 }();
 
-exports.default = Matrix;
+exports.default = Matrix3;
 
 /***/ }),
 /* 39 */
@@ -7465,8 +7465,8 @@ var Transform = function () {
     this._cosSin = { x: 1, y: 0 };
     this._oldRotation = -1;
     this._isDirty = true;
-    //this.worldPosition = new Vector(0,0);
-    //this.worldScale =  new Vector(1,1);
+    //this.worldPosition = new Vector2(0,0);
+    //this.worldScale =  new Vector2(1,1);
     //this.worldRotation = 0;
     //this.bounds = new BoundingBox(0,0,1,1); // the full bounds of the node - defined by render
     //this.globalBounds = new BoundingBox(0,0,1,1); // defined by render
@@ -11283,8 +11283,8 @@ var SATResponse = function () {
 
         this.a = null;
         this.b = null;
-        this.overlapN = new Vector();
-        this.overlapV = new Vector();
+        this.overlapN = new Vector2();
+        this.overlapV = new Vector2();
         this.aInB = true;
         this.bInA = true;
         this.overlap = Number.MAX_VALUE;
@@ -15409,7 +15409,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function UpdateTransformBounds(bounds, frame, transform) {
 
     var coords = [];
-    /* let scale = Vector.abs(transform.scale);
+    /* let scale = Vector2.abs(transform.scale);
      let pos = transform.position;
      let anchor = transform.origin;
      let size = {
@@ -15462,7 +15462,7 @@ setup(pos, scale, rotation, anchor, width, height) {
   anchor.x += pos.x;
   anchor.y += pos.y;
     var callback = null;
-    if (rotation instanceof  scintilla.Vector)
+    if (rotation instanceof  scintilla.Vector2)
       callback = this['calcCoordsCosSin'];
     else
       callback = this['calcCoords'];
@@ -22600,7 +22600,7 @@ var scintilla = scintilla || {
   // MATH
   Math: __webpack_require__(8).default,
   Random: __webpack_require__(107).default,
-  Matrix: __webpack_require__(38),
+  Matrix3: __webpack_require__(38),
   Ease: __webpack_require__(240).Ease,
   //Ease : require('./math/easing').Type,
 

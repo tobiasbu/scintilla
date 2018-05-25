@@ -34,7 +34,7 @@ export default function UpdateCamera(camera, canvas) {
   // update camera view
   camera.viewBounds
   .setMin(pos.x, pos.y)
-  .setMax(pos.x + camera.width, pos.y + camera.height)
+  .setMax(pos.x + camera.width, pos.y + camera.height);
 
   pos.x = -pos.x;
   pos.y = -pos.y;

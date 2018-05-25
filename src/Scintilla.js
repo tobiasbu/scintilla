@@ -42,9 +42,10 @@ var scintilla = scintilla || {
   // MATH
   Math : require('./math/MathUtils').default,
   Random : require('./math/random/RandomGenerator').default,
-  Matrix : require('./math/Matrix'),
+  BoundingBox : require('./math/BoundingBox').default,
+  Matrix3 : require('./math/Matrix3').default,
+  Vector2 : require('./math/Vector2').default,
   Ease : require('./math/easing').Ease,
-  //Ease : require('./math/easing').Type,
 
   // ENTITIES
   Scene : require('./scene/'),
