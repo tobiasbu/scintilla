@@ -22,7 +22,7 @@ Coming soon...
 - Simple transition effect;
 - Math and Utilities functions (Easing, object validation...);
 - Data structures (List, Map, Set);
-- Input: keyboard and mouse;
+- Input support: keyboard and mouse;
 
 ## Building Scintilla
 
@@ -33,7 +33,7 @@ To build **Scintilla** follow the steps below.
 You have two options:
 
 1. Clone this repository via https, ssh using [Git](https://git-scm.com/) or [Github Desktop](https://desktop.github.com/);
-2. Download this repo as [zip](https://github.com/tobiasbu/scintilla/archive/master.zip);
+2. Download this repository as [zip](https://github.com/tobiasbu/scintilla/archive/master.zip);
 
 ### Dependencies:
 
@@ -41,7 +41,12 @@ You also need to install the dependencies:
 
 1. Make sure to install [node.js](https://nodejs.org/en/) 8.11.1 LTS version. This will guarantee that you will have [npm](https://www.npmjs.com/) installed. 
 2. Under you favorite command prompt (such *Git Bash*, Terminal (under Linux), [cmder](http://cmder.net/) and others...) navigate to the Scintilla project directory;
-3. On the Scintilla directory run `npm install`. This command will install [Babel](https://babeljs.io/) compiler, [webpack](https://webpack.js.org/) and related plugins.
+3. On the Scintilla directory run:
+
+```bash
+npm install
+```
+This command will install [Babel](https://babeljs.io/) compiler, [webpack](https://webpack.js.org/) and related plugins.
 
 
 ### Building
@@ -56,14 +61,18 @@ Using a command prompt to run the following commands  will reproduce the Scintil
 
 #### Debug: 
 
-`npm run debug`
+```bash
+npm run debug
+```
 
 Will reproduce **`scintilla.dev.js`**. 
 The debug mode is recommend to use while you are developing your game.
 
 #### Release: 
 
-`npm run build`: 
+```bash
+npm run build
+``` 
 
 Will reproduce **`scintilla.js`** and the minimified version **`scintilla.min.js`**.
 The release mode is recommend to use when your game is finished. 
@@ -75,6 +84,7 @@ Version 0.0.1 - **Baby Steps** - _Work in progress._
 - 06/12/16 - First release of _'tobiJS'_;
 - 03/06/18 - Back to development and refactoring everything to new engine;
 - 04/20/18 - Initial scratch version to work in a first game.
+- 05/28/18 - Including mouse support and minor fixes.
 
 ## About
 
