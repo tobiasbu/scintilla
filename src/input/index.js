@@ -1,9 +1,5 @@
 
-module.exports = {
-
-    Key : require('./keyboard/Key'),
-    Keyboard : require('./keyboard/Keyboard'),
-    Mouse : require('./mouse/Mouse'),
-    Input : require('./Input')
-    
-}
+export const Button = require('./button/Button');
+export const Keyboard = require('./keyboard/Keyboard');
+export const Mouse = require('./mouse/Mouse');
+export const Input = require('./Input');

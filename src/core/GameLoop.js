@@ -34,13 +34,13 @@ export default class GameLoop {
         this.renderer = null;
     }
 
-    loop(deltaTime) {
+    loop(deltaTime, timeStamp) {
 
          // Core Managers
 
         UpdateAudioManager.call(this.game.audio);
 
-         this.game.input.update();
+         this.game.input.update(timeStamp);
         
          UpdateTransition(this.game.system.transition, deltaTime);
 

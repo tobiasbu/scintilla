@@ -28,7 +28,7 @@ class ModuleProviderManager
         InitializeModuleBase(newModule, moduleManager.entity);
 
         // attach the new module to manager
-        attached.set(newModule.type, newModule);
+        attached.insert(newModule.type, newModule);
 
         // add to pending initialization list only modules that require this option
         if (newModule.type === 'render') {
@@ -41,7 +41,7 @@ class ModuleProviderManager
     register(moduleName, func)
     {
         if (!ModuleProvider.proxyModules.has(moduleName))
-        ModuleProvider.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
+        ModuleProvider.proxyModules.insert(moduleName, func); // { type: moduleType, func: func }
         
     }    
 }

@@ -54,7 +54,7 @@ export default class SceneManager {
     }
 
     let newScene = CreateSceneFrom(scene, sceneName);
-    this._scenes.set(sceneName, newScene);
+    this._scenes.insert(sceneName, newScene);
     return this;
   }
 
@@ -66,7 +66,7 @@ export default class SceneManager {
     }
 
     var newScene = new Scene(this.game, sceneName);
-    this._scenes.set(sceneName,newScene);
+    this._scenes.insert(sceneName,newScene);
 
     return newScene;
 

@@ -1,15 +1,14 @@
-
-
-
 // DataMap simple class
 export default class DataMap {
-  
+
   constructor() {
     this._content = {};
     this._size = 0;
   }
 
-  get size() {return this._size;}
+  get size() {
+    return this._size;
+  }
 
   /* 
   Add or set value to the map
@@ -17,37 +16,35 @@ export default class DataMap {
   value = value
   */
   set(key, value) {
+    return this.insert(key, value);
 
-    if (!this.has(key))
-    {
-        this._size++;
+  }
+
+  insert(key, value) {
+     if (!this.has(key)) {
+      this._size++;
     }
 
     this._content[key] = value;
-    
-    return this;
 
+    return this;
   }
 
   get(key) {
 
     if (key === undefined) return null;
 
-      if (this.has(key))
-      {
-        return this._content[key];
-      }
-      else
-      {
-        return null;
-      }
+    if (this.has(key)) {
+      return this._content[key];
+    } else {
+      return null;
+    }
   }
 
   at(index) {
     let n = 0;
-    for (let key in this._content)
-    {
-      if (index === n){
+    for (let key in this._content) {
+      if (index === n) {
         return this._content[key];
       }
       n++;
@@ -61,10 +58,8 @@ export default class DataMap {
   }
 
   contains(value) {
-    for (let key in this._content)
-    {
-      if (entries[key] === value)
-      {
+    for (let key in this._content) {
+      if (entries[key] === value) {
         return true;
       } else
         continue;
@@ -83,7 +78,7 @@ export default class DataMap {
 
     for (var key in content)
       values.push(entries[key]);
-        
+
     return values;
   }
 
@@ -92,7 +87,7 @@ export default class DataMap {
     if (!this.has(key))
       return null;
 
-    var prop =  this._content[key];
+    var prop = this._content[key];
     delete this._content[key];
     this._size--;
     return prop;
@@ -104,10 +99,10 @@ export default class DataMap {
     if (!this.has(key))
       return false;
 
-      delete this._content[key];
-      this._size--;
+    delete this._content[key];
+    this._size--;
 
-      return true;
+    return true;
   }
 
   /*eraseAt(key) {
@@ -126,13 +121,12 @@ export default class DataMap {
     let size = listToRemove.length;
 
     if (Array.isArray(listToRemove)) {
-        
-        for (let i = 0; i < size; i++)
-        {
-            let index = listToRemove[i];
-            this.erase(index);   
-        }
+
+      for (let i = 0; i < size; i++) {
+        let index = listToRemove[i];
+        this.erase(index);
       }
+    }
 
     return this;
   }
@@ -147,9 +141,9 @@ export default class DataMap {
 
   clear() {
 
-    for (let property in this._content) 
+    for (let property in this._content)
       delete this._content[property];
-    
+
 
     this._size = 0;
 
@@ -161,17 +155,24 @@ export default class DataMap {
     return Object.keys(_contents).length;
   }
 
-  each(callback) {
+  each(callback, context) {
     let content = this._content;
-
-    for (let property in content) {
-
-      if (callback(property, content[property]) === false)
+    let r;
+    if (context === undefined) {
+      for (let property in content) {
+        r = callback(property, content[property]);
+        if (r !== undefined)
           break;
-      
+      }
+    } else {
+      for (let property in content) {
+        r = callback.call(context, property, content[property]);
+        if (r !== undefined)
+          break;
+      }
     }
 
-    return this;
+    return r;
   }
 
   find(predicate) {
@@ -186,7 +187,7 @@ export default class DataMap {
       if (predicate(property, content[property])) {
         return content[property];
       }
-          
+
     }
 
     return null;
@@ -195,4 +196,3 @@ export default class DataMap {
 
 
 }
-

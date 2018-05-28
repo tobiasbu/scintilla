@@ -1,15 +1,20 @@
+import Keyboard from "../Keyboard";
 
-export default function ResetKeyboard() {
+/**
+ * 
+ * @param {Keyboard} keyboard 
+ */
+export default function ResetKeyboard(keyboard) {
 
-    this._keyWatch.each(function (code, key) {
-          key._event = KeyEvent.NONE;
-          key.status = false;
+    if (!keyboard)
+        return;
+
+    keyboard._keyMapping.each(function (code, key) {
+          key.reset();         
     });
 
-    
-    this._keyWatch.clear();
-    this._keyGarbage.splice(0, this._keyGarbage.length);
-    this._eventQueue.splice(0, this._eventQueue.length);
+    keyboard.clear();
+
 
 
 }

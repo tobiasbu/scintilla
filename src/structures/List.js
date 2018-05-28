@@ -216,17 +216,24 @@ export default class DataList
         return this;
     }
 
-    each(callback) {
-        let params = [];
+    each(callback, context, ...args) {
+        //let params = [];
 
         let content = this.childs;
         let r;
+        // let istart = (context === undefined) ? 1 : 2;
 
-        for (let i = 1; i < arguments.length; i++)
-            params.push(arguments[i]);
+        // for (let i = istart; i < arguments.length; i++)
+        //     params.push(arguments[i]);
 
         for (let i = 0; i < content.length; i++) {
-            r = callback(content[i], i, params);
+
+            if (context === undefined) {
+                r = callback(content[i], i, args);
+            } else { 
+                r = callback.call(context, content[i], i, args);
+            }
+
             if (r !== undefined) {
                 return r;
             }

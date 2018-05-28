@@ -74,7 +74,7 @@ export default class UpdateStep {
          this.previousTime = timeStamp;
 
          // game loop
-        this.accumalatorMethod(this.hiDeltaTime);
+        this.accumalatorMethod(this.hiDeltaTime, timeStamp);
 
         // game render
         this.render(this.hiDeltaTime);
@@ -98,7 +98,7 @@ export default class UpdateStep {
 
 
 
-    accumalatorMethod(deltaTime) {
+    accumalatorMethod(deltaTime, timeStamp) {
 
         if ((++this.frameCounter % this.frameRate) === 0) {
 
@@ -116,7 +116,7 @@ export default class UpdateStep {
                 let updateStart = window.performance.now();
 
                 // UPDATE GAME
-                this.loop(deltaUpdate / 1000.0);
+                this.loop(deltaUpdate / 1000.0, timeStamp);
 
                 let updateLast = window.performance.now();
                 this.updateAverageDelta = updateLast - updateStart;

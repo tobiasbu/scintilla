@@ -35,8 +35,8 @@ var scintilla = scintilla || {
   Transition : require('./render/transition'),
 
   // INPUT
-  KeyCode : require('./input/keyboard/KeyCode'),
-  MouseButton : require('./input/mouse/MouseButton'),
+  KeyCode : require('./input/keyboard/KeyCode').default,
+  MouseButton : require('./input/mouse/MouseButton').default,
   Input : require('./input'),
 
   // MATH

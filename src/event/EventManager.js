@@ -19,7 +19,7 @@ export default class EventManager {
 
         let signal = new Signal();
 
-        this._signalsMap.set(eventName, signal);
+        this._signalsMap.insert(eventName, signal);
 
         return signal;
     }

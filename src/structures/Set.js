@@ -57,16 +57,16 @@ export default class DataSet {
         return this;
     }
 
-    each(callback, scope) {
+    each(callback, context) {
         var content = this._content.slice();
         var size = content.length;
         var i;
 
-        if (scope)
+        if (context)
         {
             for (i = 0; i < size; i++)
             {
-                if (callback.call(scope, content[i], i) === false)
+                if (callback.call(context, content[i], i) === false)
                     break;                
             }
         } else {

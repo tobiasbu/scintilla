@@ -32,7 +32,7 @@ export default class PoolManager {
     }
 
     let pool = new Pool(this.game, poolName, entityBase, size);
-    this._poolsMap.set(poolName, pool);
+    this._poolsMap.insert(poolName, pool);
 
     return pool;
 

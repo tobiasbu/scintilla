@@ -10,6 +10,7 @@ export default class UIDrawer {
     this.game = game;
     this.cache = null;
     this.context = null;
+    this.canvas = null;
     this.ui = ui;
     this.lastAlpha = 1;
     this.lastColor = '#000';
@@ -22,6 +23,7 @@ export default class UIDrawer {
 
     this.cache = this.game.system.cache;
     this.context = this.game.system.render.context;
+    this.canvas = this.game.system.render.canvas;
 
     return this;
   }

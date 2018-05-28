@@ -100,4 +100,4 @@ const KeyCode = {
     Quote: 222,
 };
     
-module.exports = KeyCode;
+export default KeyCode;

@@ -14,7 +14,7 @@ export default class Cache {
         if (this.adderWrapper !== undefined)
             resource = this.adderWrapper(tag, asset);
 
-        this.resources.set(tag, resource);
+        this.resources.insert(tag, resource);
 
         return resource;
     }

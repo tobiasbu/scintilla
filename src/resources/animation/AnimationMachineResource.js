@@ -28,7 +28,7 @@ export default class AnimationMachineResource extends Resource {
 
         //let anim = this._cache.get(animationTag);
         if (animation !== undefined) {
-            this.states.set(state, animation);
+            this.states.insert(state, animation);
         } else {
             Console.warn("AnimationMachineResource.add: Could not add state with undefined animation.");
         }

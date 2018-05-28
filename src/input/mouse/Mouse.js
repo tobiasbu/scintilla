@@ -1,7 +1,12 @@
 
 
-import MouseButton from './MouseButton'
-  
+import MouseButton, { LogicalMouseButton } from './MouseButton';
+import DataList from '../../structures/List';
+import Vector2 from '../../math/Vector2';
+import DataMap from '../../structures/Map';
+import InputSystem from '../InputSystem';
+
+
   export const MouseEvent = {
   NONE : 0,
   PRESS : 1,
@@ -10,72 +15,55 @@ import MouseButton from './MouseButton'
   };
 
 
-  
-
-export default class Mouse {
+export default class Mouse extends InputSystem {
   
   constructor(game) {
 
-    this.x = 0;
-    this.y = 0;
-    this.game = game;
-    this.canvas = game.system.render.canvas;
-    this.button = 0;
-    this.wheelDelta = 0;
-    this.active = true;
+    super(game);
 
-    this._mouseButtons = [];
-    this._mouseButtonsLocks = [];
-    this._mouseButtonsLocksPressed = [];
-    this._mouseDownDuration = [];
+    this._buttonsList = new DataList();
+    this._isDirty = false;
 
-    //callbacks
-    this._onMouseDown = null;
-    this._onMouseMove = null;
+    this.event = null;
+    this.moved = false;
+    this.buttons = 0;
+    this.down = false;
+    
 
-    this.reset();
-  }
-
-  reset() {
-
-    for (var i = 0; i < 3; i++){
-
-
-            this._mouseButtons[i] = false;
-            this._mouseButtonsLocks[i] = MouseEvent.NONE;
-            this._mouseButtonsLocksPressed[i] = MouseEvent.NONE;
-            this._mouseDownDuration[i] = 0;
-
-    }
+    this.clientPosition = new Vector2();
+    this.position = new Vector2();
 
   }
 
-  init() {
-
-
-    var self = this;
-
-    this._onMouseDown = function (event) {
-            return self.onMouseDown(event);
-    };
-
-    this._onMouseUp = function (event) {
-            return self.onMouseUp(event);
-    };
-
-    this._onMouseMove = function (event) {
-            return self.onMouseMove(event);
-    };
-
-    this.canvas.addEventListener('mousedown', this._onMouseDown, true);
-    this.canvas.addEventListener('mousemove', this._onMouseMove, true);
-    this.canvas.addEventListener('mouseup', this._onMouseUp, true);
-    this.canvas.addEventListener('mouseover', this._onMouseOver, true);
-    this.canvas.addEventListener('mouseout', this._onMouseOut, true);
-
+  get x() {
+    return this.position.x;
   }
 
-  onMouseMove(event) {
+  set x(value) {
+    this.position.x = value;
+  }
+
+  get y() {
+    return this.position.y;
+  }
+
+  set y(value) {
+    this.position.y = value;
+  }
+
+ 
+  stop() {
+
+    let target = this.eventTarget;
+
+    target.removeEventListener('mousemove', this.handler);
+    target.removeEventListener('mousedown', this.handler);
+    target.removeEventListener('mouseup', this.handler);
+    target.removeEventListener('mouseenter', this.handler);
+    target.removeEventListener('mouseleave', this.handler);
+  }
+
+  /*onMouseMove(event) {
 
     if (!this.active)
       return;
@@ -126,60 +114,61 @@ export default class Mouse {
     event.preventDefault();
 
 
-  }
+  }*/
 
   pressed(button) {
 
-    var buttonLock = false;
+    // var buttonLock = false;
 
-    if (this._mouseButtonsLocksPressed[button] == MouseEvent.PRESSED) {
-      buttonLock = true;
-      this._mouseButtonsLocksPressed[button] = MouseEvent.PRESS;
-    }
+    // if (this._mouseButtonsLocksPressed[button] == MouseEvent.PRESSED) {
+    //   buttonLock = true;
+    //   this._mouseButtonsLocksPressed[button] = MouseEvent.PRESS;
+    // }
 
-    var hit = this._mouseButtons[button] && buttonLock;
+    // var hit = this._mouseButtons[button] && buttonLock;
 
-    return hit;
+    // return hit;
+    
+    let mouseButton = this._buttonsList.get(button);
+
+    if (mouseButton)
+      return mouseButton.isPressed();
+
+    return null;
 
   }
 
   release(button) {
 
-    var buttonLock = false;
+    
+    
+    // var buttonLock = false;
 
-  	if (this._mouseButtonsLocks[button] ==  MouseEvent.PRESSED ||
-        this._mouseButtonsLocks[button] ==  MouseEvent.PRESS ||
-        this._mouseButtonsLocks[button] ==  MouseEvent.NONE)
-  		buttonLock = false;
-  	else
-  		buttonLock = true;
+  	// if (this._mouseButtonsLocks[button] ==  MouseEvent.PRESSED ||
+    //     this._mouseButtonsLocks[button] ==  MouseEvent.PRESS ||
+    //     this._mouseButtonsLocks[button] ==  MouseEvent.NONE)
+  	// 	buttonLock = false;
+  	// else
+  	// 	buttonLock = true;
 
-  	var hit = !this._mouseButtons[button] && buttonLock;
+  	// var hit = !this._mouseButtons[button] && buttonLock;
 
-  	this._mouseButtonsLocks[button] = MouseEvent.NONE;
+  	// this._mouseButtonsLocks[button] = MouseEvent.NONE;
 
-  	return hit;
+  	// return hit;
 
   }
 
+  /**
+   * Check if a Mouse button is pressing.
+   * 
+   * @param {MouseButton} button 
+   */
   press(button) {
-
-    var buttonLock = false;
-
-    if (this._mouseButtonsLocks[button] ==  MouseEvent.RELEASE ||
-      this._mouseButtonsLocks[button] ==  MouseEvent.NONE)
-      buttonLock = false;
-    else
-      buttonLock = true;
-
-    var hit = this._mouseButtons[button] && buttonLock;
-
-    return hit;
-
-
+    return (this.buttons & (LogicalMouseButton[button] || 0));
   }
 
-  update() {
+  /*update() {
 
     for (var i = 0; i < this._mouseButtons.length; i++) {
 
@@ -194,7 +183,7 @@ export default class Mouse {
 
     }
 
-  }
+  }*/
 
   posRelativeTo(object) {
 
@@ -206,6 +195,11 @@ export default class Mouse {
 
     return vec2;
 
+  }
+
+  destroy() {
+    this.stop();
+    this.game = null;
   }
 
 

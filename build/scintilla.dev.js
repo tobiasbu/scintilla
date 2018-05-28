@@ -2691,8 +2691,8 @@ var scintilla = scintilla || {
   Transition: __webpack_require__(/*! ./render/transition */ "./render/transition/index.js"),
 
   // INPUT
-  KeyCode: __webpack_require__(/*! ./input/keyboard/KeyCode */ "./input/keyboard/KeyCode.js"),
-  MouseButton: __webpack_require__(/*! ./input/mouse/MouseButton */ "./input/mouse/MouseButton.js"),
+  KeyCode: __webpack_require__(/*! ./input/keyboard/KeyCode */ "./input/keyboard/KeyCode.js").default,
+  MouseButton: __webpack_require__(/*! ./input/mouse/MouseButton */ "./input/mouse/MouseButton.js").default,
   Input: __webpack_require__(/*! ./input */ "./input/index.js"),
 
   // MATH
@@ -3870,7 +3870,7 @@ var Cache = function () {
 
             if (this.adderWrapper !== undefined) resource = this.adderWrapper(tag, asset);
 
-            this.resources.set(tag, resource);
+            this.resources.insert(tag, resource);
 
             return resource;
         }
@@ -4475,7 +4475,8 @@ var Config = function Config(config) {
         this.pixelated = callback(config, 'pixelated', false);
         this.doubleBuffer = callback(config, 'doubleBuffer', true);
         this.roundPixels = callback(config, 'roundPixels', false);
-        this.floorTiles = callback(config, 'floorTiles', false), this.autoResize = callback(config, 'autoResize', false),
+        this.floorTiles = callback(config, 'floorTiles', false);
+        this.autoResize = callback(config, 'autoResize', false);
 
         // loader
         this.loader = {
@@ -4489,6 +4490,42 @@ var Config = function Config(config) {
                 noAudio: callback_2(config, 'audio.noAudio', false),
                 context: callback_2(config, 'audio.context', null),
                 webAudio: callback_2(config, 'audio.webAudio', true)
+        };
+
+        var createKeyboard = callback(config, 'keyboard', true);
+
+        if (createKeyboard === null) {
+                createKeyboard = false;
+        }
+
+        // input
+        this.keyboard = {
+                active: callback_2(config, 'keyboard.active', createKeyboard),
+                enable: callback_2(config, 'keyboard.enable', true),
+                target: callback_2(config, 'keyboard.target', window)
+        };
+
+        var createMouse = callback(config, 'mouse', true);
+
+        if (createMouse === null) {
+                createMouse = false;
+        }
+
+        this.mouse = {
+                active: callback_2(config, 'mouse.active', createMouse),
+                enable: callback_2(config, 'mouse.enable', true),
+                target: callback_2(config, 'mouse.target', null)
+        };
+
+        var disableContextMenu = callback(config, 'disableContextMenu', null);
+
+        if (disableContextMenu === null) {
+                disableContextMenu = callback_2(config, 'contextMenu.disable', false);
+        }
+
+        this.contextMenu = {
+                disable: disableContextMenu,
+                target: callback_2(config, 'contextMenu.target', null)
         };
 
         this.fps = callback(config, 'fps', 60);
@@ -4847,13 +4884,13 @@ var GameLoop = function () {
 
         (0, _createClass3.default)(GameLoop, [{
                 key: "loop",
-                value: function loop(deltaTime) {
+                value: function loop(deltaTime, timeStamp) {
 
                         // Core Managers
 
                         _UpdateAudioManager2.default.call(this.game.audio);
 
-                        this.game.input.update();
+                        this.game.input.update(timeStamp);
 
                         (0, _UpdateTransition2.default)(this.game.system.transition, deltaTime);
 
@@ -6576,7 +6613,7 @@ var PoolManager = function () {
       }
 
       var pool = new _Pool2.default(this.game, poolName, entityBase, size);
-      this._poolsMap.set(poolName, pool);
+      this._poolsMap.insert(poolName, pool);
 
       return pool;
     }
@@ -6763,7 +6800,7 @@ var EventManager = function () {
 
             var signal = new _Signal2.default();
 
-            this._signalsMap.set(eventName, signal);
+            this._signalsMap.insert(eventName, signal);
 
             return signal;
         }
@@ -7398,7 +7435,7 @@ module.exports = {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
@@ -7417,74 +7454,105 @@ var _Mouse = __webpack_require__(/*! ./mouse/Mouse */ "./input/mouse/Mouse.js");
 
 var _Mouse2 = _interopRequireDefault(_Mouse);
 
+var _InitializeMouse = __webpack_require__(/*! ./mouse/components/InitializeMouse */ "./input/mouse/components/InitializeMouse.js");
+
+var _InitializeMouse2 = _interopRequireDefault(_InitializeMouse);
+
+var _InitializeKeyboard = __webpack_require__(/*! ./keyboard/components/InitializeKeyboard */ "./input/keyboard/components/InitializeKeyboard.js");
+
+var _InitializeKeyboard2 = _interopRequireDefault(_InitializeKeyboard);
+
+var _UpdateKeyboard = __webpack_require__(/*! ./keyboard/components/UpdateKeyboard */ "./input/keyboard/components/UpdateKeyboard.js");
+
+var _UpdateKeyboard2 = _interopRequireDefault(_UpdateKeyboard);
+
+var _UpdateMouse = __webpack_require__(/*! ./mouse/components/UpdateMouse */ "./input/mouse/components/UpdateMouse.js");
+
+var _UpdateMouse2 = _interopRequireDefault(_UpdateMouse);
+
+var _InputData = __webpack_require__(/*! ./InputData */ "./input/InputData.js");
+
+var _InputData2 = _interopRequireDefault(_InputData);
+
+var _ObjectGet = __webpack_require__(/*! ../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
+
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
+
+var _ResetKeyboard = __webpack_require__(/*! ./keyboard/components/ResetKeyboard */ "./input/keyboard/components/ResetKeyboard.js");
+
+var _ResetKeyboard2 = _interopRequireDefault(_ResetKeyboard);
+
+var _DisableContextMenu = __webpack_require__(/*! ./mouse/components/DisableContextMenu */ "./input/mouse/components/DisableContextMenu.js");
+
+var _DisableContextMenu2 = _interopRequireDefault(_DisableContextMenu);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Input = function () {
-  function Input(game) {
-    (0, _classCallCheck3.default)(this, Input);
+    function Input(game) {
+        (0, _classCallCheck3.default)(this, Input);
 
 
-    this.game = game;
-    this.mouse = null;
-    this.keyboard = null;
-  }
-
-  (0, _createClass3.default)(Input, [{
-    key: "init",
-    value: function init() {
-
-      //this.mouse = new tobiJS.Mouse(this.game);
-      this.keyboard = new _Keyboard2.default(this.game);
-      this.mouse = new _Mouse2.default(this.game);
-      this.keyboard.init();
-      this.mouse.init();
+        this.game = game;
+        this.mouse = null;
+        this.keyboard = null;
+        this.data = null;
     }
-  }, {
-    key: "update",
-    value: function update() {
 
-      this.keyboard.update();
-      this.mouse.update();
-    }
-  }, {
-    key: "reset",
-    value: function reset() {
-      this.keyboard.reset();
-      this.mouse.reset();
-    }
-  }]);
-  return Input;
+    (0, _createClass3.default)(Input, [{
+        key: "init",
+        value: function init() {
+
+            var gameConfig = this.game.config;
+
+            if (gameConfig.keyboard.active) {
+                this.keyboard = new _Keyboard2.default(this.game);
+            }
+
+            if (gameConfig.mouse.active) {
+                this.mouse = new _Mouse2.default(this.game);
+            }
+
+            this.data = new _InputData2.default(this);
+
+            (0, _InitializeKeyboard2.default)(this.keyboard, this.game);
+
+            (0, _InitializeMouse2.default)(this.mouse, this.game);
+
+            if (gameConfig.contextMenu.disable) {
+                (0, _DisableContextMenu2.default)(this.game, gameConfig.contextMenu.target);
+            }
+        }
+    }, {
+        key: "update",
+        value: function update(timeStamp) {
+
+            (0, _UpdateKeyboard2.default)(this.keyboard);
+
+            this.data.updateClientRect();
+
+            (0, _UpdateMouse2.default)(this.mouse, this.data, timeStamp);
+        }
+    }, {
+        key: "reset",
+        value: function reset() {
+
+            (0, _ResetKeyboard2.default)(this.keyboard);
+
+            if (this.mouse) this.mouse.reset();
+        }
+    }]);
+    return Input;
 }();
 
 exports.default = Input;
 
 /***/ }),
 
-/***/ "./input/index.js":
-/*!************************!*\
-  !*** ./input/index.js ***!
-  \************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = {
-
-    Key: __webpack_require__(/*! ./keyboard/Key */ "./input/keyboard/Key.js"),
-    Keyboard: __webpack_require__(/*! ./keyboard/Keyboard */ "./input/keyboard/Keyboard.js"),
-    Mouse: __webpack_require__(/*! ./mouse/Mouse */ "./input/mouse/Mouse.js"),
-    Input: __webpack_require__(/*! ./Input */ "./input/Input.js")
-
-};
-
-/***/ }),
-
-/***/ "./input/keyboard/Key.js":
-/*!*******************************!*\
-  !*** ./input/keyboard/Key.js ***!
-  \*******************************/
+/***/ "./input/InputData.js":
+/*!****************************!*\
+  !*** ./input/InputData.js ***!
+  \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7503,94 +7571,136 @@ var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/keyboard/KeyEvent.js");
+var _Rect = __webpack_require__(/*! ../math/Rect */ "./math/Rect.js");
 
-var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
+var _Rect2 = _interopRequireDefault(_Rect);
+
+var _Vector = __webpack_require__(/*! ../math/Vector2 */ "./math/Vector2.js");
+
+var _Vector2 = _interopRequireDefault(_Vector);
+
+var _MathUtils = __webpack_require__(/*! ../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Key = function () {
-    function Key(keycode, game) {
-        (0, _classCallCheck3.default)(this, Key);
+var InputData = function () {
+    function InputData(manager) {
+        (0, _classCallCheck3.default)(this, InputData);
 
-
-        this.game = game;
-        this.keyCode = keycode;
-
-        this._enabled = true;
-        this.status = false;
-        this.press = false;
-        this.release = false;
-
-        this.preventDefault = true;
-        this._event = _KeyEvent2.default.NONE;
-
-        this.pressTime = 0;
-        this.pressDuration = -2500;
-        this.releaseTime = 0;
-        this.releaseDuration = -2500;
+        this.manager = manager;
+        this.canvas = manager.game.system.render.domCanvas;
+        this.clientRect = new _Rect2.default();
+        this.boundingClientRect = null;
+        this.scale = new _Vector2.default(1, 1);
     }
 
-    (0, _createClass3.default)(Key, [{
-        key: 'isPressing',
+    (0, _createClass3.default)(InputData, [{
+        key: "updateClientRect",
+        value: function updateClientRect() {
 
+            var rect = this.clientRect;
+            var clientRect = this.canvas.getBoundingClientRect();
+            this.boundingClientRect = clientRect;
 
-        /*update() {
-            if (!this._enabled)
-                return;
-              if (this.press) {
-                this.pressDuration = this.game.time.time - this.pressTime;
-                
-            } else {
-                this.releaseDuration = this.game.time.time - this.releaseTime;
-            }
-                if (this.press) {
-                if (this.pressDuration == 0) {
-                    this._event = KeyEvent.PRESSED;
-                }
-              } else {
-                  if (this.releaseDuration == 0) {
-                    this._event = KeyEvent.RELEASED;
-                } else {
-                    this._event = KeyEvent.IDLE;
-                }
-              }
-          }*/
-
-        value: function isPressing() {
-            return this.status;
+            rect.x = clientRect.left + window.pageXOffset - document.documentElement.clientLeft;
+            rect.y = clientRect.top + window.pageYOffset - document.documentElement.clientTop;
+            rect.width = clientRect.width;
+            rect.height = clientRect.height;
         }
     }, {
-        key: 'isPressed',
-        value: function isPressed() {
+        key: "transformX",
+        value: function transformX(x) {
+            var rect = this.boundingClientRect;
+            return _MathUtils2.default.floor((x - rect.left) / (rect.right - rect.left) * this.canvas.width);
+        }
+    }, {
+        key: "transformY",
+        value: function transformY(y) {
+            var rect = this.boundingClientRect;
+            return _MathUtils2.default.floor((y - rect.top) / (rect.bottom - rect.top) * this.canvas.height);
+        }
+    }, {
+        key: "clientRectTransformX",
+        value: function clientRectTransformX(x) {
+            return (x - this.clientRect.x) * this.scale.x;
+        }
+    }, {
+        key: "clientRectTransformY",
+        value: function clientRectTransformY(y) {
+            return (y - this.clientRect.y) * this.scale.y;
+        }
+    }]);
+    return InputData;
+}();
 
-            return this.press && this._event === _KeyEvent2.default.PRESSED;
-        }
-    }, {
-        key: 'isReleased',
-        value: function isReleased() {
-            return !this.press && this.releaseDuration === 0;
-        }
-    }, {
-        key: 'reset',
-        value: function reset() {
-            this.status = false;
-            this._event = _KeyEvent2.default.NONE;
-            this.press = false;
-            this.release = false;
+exports.default = InputData;
 
-            this.pressTime = 0;
-            this.pressDuration = -2500;
-            this.releaseTime = 0;
-            this.releaseDuration = -2500;
+/***/ }),
+
+/***/ "./input/InputSystem.js":
+/*!******************************!*\
+  !*** ./input/InputSystem.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _List = __webpack_require__(/*! ../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+var _Map = __webpack_require__(/*! ../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var InputSystem = function () {
+    function InputSystem(game) {
+        (0, _classCallCheck3.default)(this, InputSystem);
+
+        this.game = game;
+
+        this._enabled = true;
+
+        this._eventQueue = new _List2.default();
+        this._buttonWatcher = new _Map2.default();
+        this._buttonGarbage = [];
+
+        this.eventTarget = null;
+        this.eventHandler = null;
+
+        this.preventDefault = true;
+    }
+
+    (0, _createClass3.default)(InputSystem, [{
+        key: "clear",
+        value: function clear() {
+            this._buttonWatcher.clear();
+            this._buttonGarbage.splice(0, this._buttonGarbage.length);
+            this._eventQueue.clear();
         }
     }, {
-        key: 'event',
-        get: function get() {
-            return this._event;
-        }
+        key: "reset",
+        value: function reset() {}
     }, {
-        key: 'enabled',
+        key: "enabled",
         get: function get() {
             return this._enabled;
         },
@@ -7604,11 +7714,347 @@ var Key = function () {
             }
         }
     }]);
-    return Key;
+    return InputSystem;
 }();
 
-exports.default = Key;
-;
+exports.default = InputSystem;
+
+/***/ }),
+
+/***/ "./input/button/Button.js":
+/*!********************************!*\
+  !*** ./input/button/Button.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _ButtonStatus = __webpack_require__(/*! ./ButtonStatus */ "./input/button/ButtonStatus.js");
+
+var _ButtonStatus2 = _interopRequireDefault(_ButtonStatus);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Button = function () {
+    function Button(code, game) {
+        (0, _classCallCheck3.default)(this, Button);
+
+
+        this.game = game;
+        this.code = code;
+
+        this._enabled = true;
+        this.status = _ButtonStatus2.default.NONE;
+
+        this.press = false;
+        this.down = false;
+        this.up = false;
+
+        this.preventDefault = true;
+
+        this.downTime = 0;
+        this.downDuration = -2500;
+        this.upTime = 0;
+        this.upDuration = -2500;
+    }
+
+    (0, _createClass3.default)(Button, [{
+        key: "isPressing",
+        value: function isPressing() {
+            return this.press;
+        }
+    }, {
+        key: "isPressed",
+        value: function isPressed() {
+            return this.down && this.status === _ButtonStatus2.default.PRESSED;
+        }
+    }, {
+        key: "isReleased",
+        value: function isReleased() {
+            return !this.down && this.upDuration === 0;
+        }
+    }, {
+        key: "reset",
+        value: function reset() {
+            this.press = false;
+            this._event = _ButtonStatus2.default.NONE;
+            this.down = false;
+            this.up = false;
+
+            this.downTime = 0;
+            this.downDuration = -2500;
+            this.upTime = 0;
+            this.upDuration = -2500;
+        }
+    }, {
+        key: "enabled",
+        get: function get() {
+            return this._enabled;
+        },
+        set: function set(value) {
+            value = !!value;
+
+            if (value !== this._enabled) {
+                if (!value) this.reset();
+
+                this._enabled = value;
+            }
+        }
+    }]);
+    return Button;
+}();
+
+exports.default = Button;
+
+/***/ }),
+
+/***/ "./input/button/ButtonStatus.js":
+/*!**************************************!*\
+  !*** ./input/button/ButtonStatus.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var ButtonStatus = {
+  /**
+   * No key/button status
+   * @param {number} 0
+   */
+  NONE: 0,
+
+  /**
+   * 
+   */
+  IDLE: 1,
+  /**
+   * Key/button is pressed
+   * @param {number} 2
+   */
+  PRESSED: 2,
+  /**
+  * Key/button was pressed
+  * @param {number} 3
+  */
+  POST_PRESSED: 3,
+  /**
+   * Key/button is released
+   * @param {number} 4
+   */
+  RELEASED: 4
+};
+
+//Object.freeze(ButtonEvent);
+
+exports.default = ButtonStatus;
+
+/***/ }),
+
+/***/ "./input/button/components/ProcessButtonDown.js":
+/*!******************************************************!*\
+  !*** ./input/button/components/ProcessButtonDown.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ProcessButtonDown;
+
+var _ButtonStatus = __webpack_require__(/*! ../ButtonStatus */ "./input/button/ButtonStatus.js");
+
+var _ButtonStatus2 = _interopRequireDefault(_ButtonStatus);
+
+var _Button = __webpack_require__(/*! ../Button */ "./input/button/Button.js");
+
+var _Button2 = _interopRequireDefault(_Button);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {KeyboardEvent|MouseEvent} event 
+ * @param {Button} button 
+ */
+function ProcessButtonDown(event, button) {
+
+    if (button.preventDefault === true) {
+        event.preventDefault();
+    }
+
+    if (!button.enabled) {
+        return;
+    }
+
+    if (button.down === true) {
+        return;
+    }
+
+    // set key properties
+    button.press = true;
+    button.down = true;
+    button.up = false;
+
+    // set press time duration
+    button.downTime = event.timeStamp;
+    button.downDuration = 0;
+    button.upDuration = button.downTime - button.upTime;
+
+    button.status = _ButtonStatus2.default.PRESSED;
+}
+
+/***/ }),
+
+/***/ "./input/button/components/ProcessButtonUp.js":
+/*!****************************************************!*\
+  !*** ./input/button/components/ProcessButtonUp.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ProcessButtonUp;
+
+var _Button = __webpack_require__(/*! ../Button */ "./input/button/Button.js");
+
+var _Button2 = _interopRequireDefault(_Button);
+
+var _ButtonStatus = __webpack_require__(/*! ../ButtonStatus */ "./input/button/ButtonStatus.js");
+
+var _ButtonStatus2 = _interopRequireDefault(_ButtonStatus);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {KeyboardEvent|MouseEvent} event 
+ * @param {Button} button 
+ */
+function ProcessButtonUp(event, button) {
+
+    if (button.preventDefault === true) {
+        event.preventDefault();
+    }
+
+    if (!button.enabled) {
+        return;
+    }
+
+    // set key properties
+    button.press = false;
+    button.down = false;
+    button.up = true;
+
+    // set press time duration
+    button.upTime = event.timeStamp;
+    button.downDuration = button.upTime - button.downTime;
+    button.upDuration = 0;
+    button.downTime = 0;
+
+    button.status = _ButtonStatus2.default.RELEASED;
+}
+
+/***/ }),
+
+/***/ "./input/components/WatchButtons.js":
+/*!******************************************!*\
+  !*** ./input/components/WatchButtons.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = WatchButtons;
+
+var _ButtonStatus = __webpack_require__(/*! ../button/ButtonStatus */ "./input/button/ButtonStatus.js");
+
+var _ButtonStatus2 = _interopRequireDefault(_ButtonStatus);
+
+var _Map = __webpack_require__(/*! ../../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {DataMap} watcher 
+ * @param {Array} garbage 
+ *
+ */
+function WatchButtons(watcher, garbage) {
+
+    if (watcher.length === 0) return;
+
+    watcher.each(function (code, button) {
+
+        if (button.status === _ButtonStatus2.default.PRESSED) {
+            button.status = _ButtonStatus2.default.POST_PRESSED;
+        } else if (button.status === _ButtonStatus2.default.RELEASED) {
+            button.status = _ButtonStatus2.default.NONE;
+            garbage.push(code);
+        }
+    });
+
+    if (garbage.length !== 0) {
+        watcher.eraseList(garbage);
+        garbage.splice(0, garbage.length);
+    }
+}
+
+/***/ }),
+
+/***/ "./input/index.js":
+/*!************************!*\
+  !*** ./input/index.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var Button = exports.Button = __webpack_require__(/*! ./button/Button */ "./input/button/Button.js");
+var Keyboard = exports.Keyboard = __webpack_require__(/*! ./keyboard/Keyboard */ "./input/keyboard/Keyboard.js");
+var Mouse = exports.Mouse = __webpack_require__(/*! ./mouse/Mouse */ "./input/mouse/Mouse.js");
+var Input = exports.Input = __webpack_require__(/*! ./Input */ "./input/Input.js");
 
 /***/ }),
 
@@ -7621,6 +8067,10 @@ exports.default = Key;
 
 "use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var KeyCode = {
     Backspace: 8,
@@ -7723,33 +8173,7 @@ var KeyCode = {
     Quote: 222
 };
 
-module.exports = KeyCode;
-
-/***/ }),
-
-/***/ "./input/keyboard/KeyEvent.js":
-/*!************************************!*\
-  !*** ./input/keyboard/KeyEvent.js ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var KeyEvent = {
-    NONE: 0,
-    IDLE: 1,
-    PRESSED: 2,
-    IDLEPRESSED: 3,
-    RELEASED: 4
-};
-
-exports.default = KeyEvent;
+exports.default = KeyCode;
 
 /***/ }),
 
@@ -7767,6 +8191,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -7774,6 +8202,14 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */ "../node_modules/babel-runtime/helpers/createClass.js");
 
 var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
 
 var _Map = __webpack_require__(/*! ../../structures/Map */ "./structures/Map.js");
 
@@ -7783,167 +8219,56 @@ var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.
 
 var _List2 = _interopRequireDefault(_List);
 
-var _Key = __webpack_require__(/*! ./Key */ "./input/keyboard/Key.js");
+var _ResetKeyboard = __webpack_require__(/*! ./components/ResetKeyboard */ "./input/keyboard/components/ResetKeyboard.js");
 
-var _Key2 = _interopRequireDefault(_Key);
+var _ResetKeyboard2 = _interopRequireDefault(_ResetKeyboard);
 
-var _KeyCode = __webpack_require__(/*! ./KeyCode */ "./input/keyboard/KeyCode.js");
+var _InputSystem2 = __webpack_require__(/*! ../InputSystem */ "./input/InputSystem.js");
 
-var _KeyCode2 = _interopRequireDefault(_KeyCode);
-
-var _KeyEvent = __webpack_require__(/*! ./KeyEvent */ "./input/keyboard/KeyEvent.js");
-
-var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
-
-var _ProcessKeyPress = __webpack_require__(/*! ./components/ProcessKeyPress */ "./input/keyboard/components/ProcessKeyPress.js");
-
-var _ProcessKeyPress2 = _interopRequireDefault(_ProcessKeyPress);
-
-var _ProcessKeyRelease = __webpack_require__(/*! ./components/ProcessKeyRelease */ "./input/keyboard/components/ProcessKeyRelease.js");
-
-var _ProcessKeyRelease2 = _interopRequireDefault(_ProcessKeyRelease);
+var _InputSystem3 = _interopRequireDefault(_InputSystem2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Keyboard = function () {
+var Keyboard = function (_InputSystem) {
+  (0, _inherits3.default)(Keyboard, _InputSystem);
+
   function Keyboard(game) {
     (0, _classCallCheck3.default)(this, Keyboard);
 
+    var _this = (0, _possibleConstructorReturn3.default)(this, (Keyboard.__proto__ || (0, _getPrototypeOf2.default)(Keyboard)).call(this, game));
 
-    this.game = game;
-    this._enabled = true;
-    this.eventTarget = null;
-    this.eventHandler = null;
-    this._eventQueue = new _List2.default();
-    this._keyMapping = new _Map2.default();
-    this._keyWatch = new _Map2.default();
-    this._keyGarbage = [];
-    this.preventDefault = true;
-    this.lastKey = null;
+    _this._keyMapping = new _Map2.default();
+    _this.lastKey = null;
+
+    return _this;
   }
 
   (0, _createClass3.default)(Keyboard, [{
     key: 'reset',
     value: function reset() {
-
-      this._keyMapping.clear();
-      for (var prop in _KeyCode2.default) {
-
-        if (_KeyCode2.default.hasOwnProperty(prop)) {
-          var value = _KeyCode2.default[prop];
-          this._keyMapping.set(value, new _Key2.default(value, this.game));
-        }
-      }
-    }
-  }, {
-    key: 'init',
-    value: function init() {
-
-      this.reset();
-
-      // window;
-      this.eventTarget = document; //this.game.system.render.canvas;
-
-      var self = this;
-
-      // key event handler
-      var handler = function handler(event) {
-
-        if (event.defaultPrevented) {
-          return;
-        }
-
-        if (self.preventDefault) {
-          event.preventDefault();
-        }
-
-        self._eventQueue.push(event);
-
-        //
-      };
-
-      this.eventHandler = handler;
-
-      this.eventTarget.addEventListener('keydown', handler, false);
-      this.eventTarget.addEventListener('keyup', handler, false);
+      (0, _ResetKeyboard2.default)(this);
+      return this;
     }
   }, {
     key: 'stop',
     value: function stop() {
 
-      this.eventTarget.removeEventListener('keydown', this.eventHandler);
-      this.eventTarget.removeEventListener('keyup', this.eventHandler);
-      this._onKeyDown = null;
-      this._onKeyUp = null;
-      this._onKeyPress = null;
+      var target = this.eventTarget;
+
+      target.removeEventListener('keydown', this.eventHandler);
+      target.removeEventListener('keyup', this.eventHandler);
 
       this._keyMapping.clear();
-    }
-  }, {
-    key: 'update',
-    value: function update() {
-
-      if (!this._enabled) return;
-
-      if (this._keyWatch.length !== 0) {
-
-        var self = this;
-
-        this._keyWatch.each(function (code, key) {
-
-          if (key.event === _KeyEvent2.default.PRESSED) {
-
-            key._event = _KeyEvent2.default.IDLEPRESSED;
-          } else if (key.event === _KeyEvent2.default.RELEASED) {
-            key._event = _KeyEvent2.default.NONE;
-            self._keyGarbage.push(code);
-          }
-        });
-
-        if (this._keyGarbage.length !== 0) {
-          this._keyWatch.eraseList(this._keyGarbage);
-          this._keyGarbage.splice(0, this._keyGarbage.length);
-        }
-      }
-
-      var eventSize = this._eventQueue.size;
-
-      if (eventSize === 0) return;
-
-      // clear and copy queue
-      var queue = this._eventQueue.splice(0, eventSize);
-
-      // process key events
-      for (var i = 0; i < eventSize; i++) {
-        var event = queue[i];
-        var keycode = event.keyCode;
-
-        // check if is valid scintilla key
-        var key = this._keyMapping.get(keycode);
-
-        if (key !== undefined && key !== null) {
-
-          if (event.type === 'keydown') {
-
-            // /*&& (this._keyMapping.at(keycode) === undefined || this._keyMapping[keycode].press === false)*/
-            if (key.status === false) {
-              if (key.event === _KeyEvent2.default.NONE) {
-                this._keyWatch.set(keycode, key);
-              }
-
-              (0, _ProcessKeyPress2.default)(event, key);
-            }
-          } else {
-            // if (event.type === 'keyup') {
-            (0, _ProcessKeyRelease2.default)(event, key);
-          }
-        }
-      }
+      (0, _ResetKeyboard2.default)(this);
+      return this;
     }
   }, {
     key: 'pressed',
     value: function pressed(keycode) {
-      return this._keyMapping.get(keycode).isPressed();
+
+      var key = this._keyMapping.get(keycode);
+
+      return key.isPressed();
     }
   }, {
     key: 'release',
@@ -7955,51 +8280,18 @@ var Keyboard = function () {
     value: function press(keycode) {
       return this._keyMapping.get(keycode).status;
     }
-  }, {
-    key: 'enabled',
-    get: function get() {
-      return this._enabled;
-    },
-    set: function set(value) {
-      value = !!value;
-
-      if (value !== this._enabled) {
-        if (!value) this.reset();
-
-        this._enabled = value;
-      }
-    }
   }]);
   return Keyboard;
-}();
-
-/* this._keyWatch.each(function (key, value) {
-     //var value = this._keyWatch.get(key);
-     value.update();
-
-     //console.log(value);
-
-     if (value.event == KeyEvent.IDLE)
-     {
-         self._keyGarbage.push(key);
-     }
- });
-
-   if (this._keyGarbage.length > 0)
-   {
-     this._keyWatch.deleteByIndexedArray(this._keyGarbage);
-     this._keyGarbage.splice(0, this._keyGarbage.length)
-   }*/
-
+}(_InputSystem3.default);
 
 exports.default = Keyboard;
 
 /***/ }),
 
-/***/ "./input/keyboard/components/ProcessKeyPress.js":
-/*!******************************************************!*\
-  !*** ./input/keyboard/components/ProcessKeyPress.js ***!
-  \******************************************************/
+/***/ "./input/keyboard/components/InitializeKeyboard.js":
+/*!*********************************************************!*\
+  !*** ./input/keyboard/components/InitializeKeyboard.js ***!
+  \*********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8009,104 +8301,53 @@ exports.default = Keyboard;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = ProcessKeyPress;
+exports.default = InitializeKeyboard;
 
-var _KeyEvent = __webpack_require__(/*! ../KeyEvent */ "./input/keyboard/KeyEvent.js");
+var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
 
-var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _Button = __webpack_require__(/*! ../../button/Button */ "./input/button/Button.js");
 
-function ProcessKeyPress(event, key) {
+var _Button2 = _interopRequireDefault(_Button);
 
-    if (key.preventDefault === true) {
-        event.preventDefault();
-    }
+var _KeyCode = __webpack_require__(/*! ./../KeyCode */ "./input/keyboard/KeyCode.js");
 
-    if (!key._enabled) {
-        return;
-    }
+var _KeyCode2 = _interopRequireDefault(_KeyCode);
 
-    if (key.press === false) {
+var _StartKeyboardListeners = __webpack_require__(/*! ./StartKeyboardListeners */ "./input/keyboard/components/StartKeyboardListeners.js");
 
-        // set key properties
-        key.status = true;
-        key.press = true;
-        key.release = false;
-        // set press time duration
-        key.pressTime = event.timeStamp; //this.game.time.time;
-        key.pressDuration = 0;
-        key.releaseDuration = key.pressTime - key.releaseTime;
+var _StartKeyboardListeners2 = _interopRequireDefault(_StartKeyboardListeners);
 
-        key._event = _KeyEvent2.default.PRESSED;
-    }
+var _ResetKeyboard = __webpack_require__(/*! ./ResetKeyboard */ "./input/keyboard/components/ResetKeyboard.js");
 
-    //this.lastKey = key;
-
-
-    /*var keyObj = this._keyMapping.get(key);
-    keyObj.onKeyDown();
-      if (!this._keyWatch.has(key))
-    {
-      this._keyWatch.set(key, keyObj);
-    }*/
-
-    //_keyMapping[]
-    //this._keys[key] = true;
-    /* if (this._keyLockPressed[key] != scintilla.KeyEvent.PRESSED && this._keyLockPressed[key] != scintilla.KeyEvent.PRESS) {
-      this._keyLockPressed[key] = scintilla.KeyEvent.PRESSED;
-      this._keyDownDuration[key] = 1;
-    }
-      this._keyLock[key] = scintilla.KeyEvent.PRESS;
-    this._keys[key] = true;
-    */
-}
-
-/***/ }),
-
-/***/ "./input/keyboard/components/ProcessKeyRelease.js":
-/*!********************************************************!*\
-  !*** ./input/keyboard/components/ProcessKeyRelease.js ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = ProcessKeyRelease;
-
-var _KeyEvent = __webpack_require__(/*! ../KeyEvent */ "./input/keyboard/KeyEvent.js");
-
-var _KeyEvent2 = _interopRequireDefault(_KeyEvent);
+var _ResetKeyboard2 = _interopRequireDefault(_ResetKeyboard);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function ProcessKeyRelease(event, key) {
+function InitializeKeyboard(keyboard, game) {
 
-  if (key.preventDefault === true) {
-    event.preventDefault();
-  }
+    if (!keyboard) return;
 
-  if (!key._enabled) {
-    return;
-  }
+    var keyMapping = keyboard._keyMapping;
 
-  // set key properties
-  key.status = false;
-  key.press = false;
-  key.release = true;
+    for (var prop in _KeyCode2.default) {
 
-  // set press time duration
-  key.releaseTime = event.timeStamp;
-  key.pressDuration = key.releaseTime - key.pressTime;
-  key.releaseDuration = 0;
-  key.pressTime = 0;
+        if (_KeyCode2.default.hasOwnProperty(prop)) {
+            var value = _KeyCode2.default[prop];
+            var key = new _Button2.default(value, game);
+            keyMapping.insert(value, key);
+        }
+    }
 
-  key._event = _KeyEvent2.default.RELEASED;
+    //ResetKeyboard(keyboard);
+
+    var config = game.config.keyboard;
+    var target = _ObjectGet2.default.value(config, 'target', window);
+    keyboard._enabled = _ObjectGet2.default.value(config, 'enable', true);
+
+    keyboard.eventTarget = target;
+    keyboard.eventHandler = (0, _StartKeyboardListeners2.default)(keyboard, target);
 }
 
 /***/ }),
@@ -8125,16 +8366,164 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = ResetKeyboard;
-function ResetKeyboard() {
 
-    this._keyWatch.each(function (code, key) {
-        key._event = KeyEvent.NONE;
-        key.status = false;
+var _Keyboard = __webpack_require__(/*! ../Keyboard */ "./input/keyboard/Keyboard.js");
+
+var _Keyboard2 = _interopRequireDefault(_Keyboard);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {Keyboard} keyboard 
+ */
+function ResetKeyboard(keyboard) {
+
+    if (!keyboard) return;
+
+    keyboard._keyMapping.each(function (code, key) {
+        key.reset();
     });
 
-    this._keyWatch.clear();
-    this._keyGarbage.splice(0, this._keyGarbage.length);
-    this._eventQueue.splice(0, this._eventQueue.length);
+    keyboard.clear();
+}
+
+/***/ }),
+
+/***/ "./input/keyboard/components/StartKeyboardListeners.js":
+/*!*************************************************************!*\
+  !*** ./input/keyboard/components/StartKeyboardListeners.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = StartKeyboardListeners;
+
+var _Keyboard = __webpack_require__(/*! ../Keyboard */ "./input/keyboard/Keyboard.js");
+
+var _Keyboard2 = _interopRequireDefault(_Keyboard);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {Keyboard} keyboard 
+ * @param {HTMLElement} target 
+ */
+function StartKeyboardListeners(keyboard, target) {
+
+    var eventQueue = keyboard._eventQueue;
+
+    // key event handler
+    var handler = function handler(event) {
+
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        if (keyboard.preventDefault) {
+            event.preventDefault();
+        }
+
+        eventQueue.push(event);
+    };
+
+    target.addEventListener('keydown', handler, false);
+    target.addEventListener('keyup', handler, false);
+
+    return handler;
+}
+
+/***/ }),
+
+/***/ "./input/keyboard/components/UpdateKeyboard.js":
+/*!*****************************************************!*\
+  !*** ./input/keyboard/components/UpdateKeyboard.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateKeyboard;
+
+var _ProcessButtonDown = __webpack_require__(/*! ../../button/components/ProcessButtonDown */ "./input/button/components/ProcessButtonDown.js");
+
+var _ProcessButtonDown2 = _interopRequireDefault(_ProcessButtonDown);
+
+var _ProcessButtonUp = __webpack_require__(/*! ../../button/components/ProcessButtonUp */ "./input/button/components/ProcessButtonUp.js");
+
+var _ProcessButtonUp2 = _interopRequireDefault(_ProcessButtonUp);
+
+var _WatchButtons = __webpack_require__(/*! ../../components/WatchButtons */ "./input/components/WatchButtons.js");
+
+var _WatchButtons2 = _interopRequireDefault(_WatchButtons);
+
+var _ButtonStatus = __webpack_require__(/*! ../../button/ButtonStatus */ "./input/button/ButtonStatus.js");
+
+var _ButtonStatus2 = _interopRequireDefault(_ButtonStatus);
+
+var _Keyboard = __webpack_require__(/*! ../Keyboard */ "./input/keyboard/Keyboard.js");
+
+var _Keyboard2 = _interopRequireDefault(_Keyboard);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Updates Keyboard logic
+ * 
+ * @param {Keyboard} keyboard Keyboard Manager
+ */
+function UpdateKeyboard(keyboard) {
+
+    if (!keyboard) return;
+
+    if (!keyboard.enabled) return;
+
+    (0, _WatchButtons2.default)(keyboard._buttonWatcher, keyboard._buttonGarbage);
+
+    var eventSize = keyboard._eventQueue.size;
+
+    if (eventSize === 0) return;
+
+    // clear and copy queue
+    var queue = keyboard._eventQueue.splice(0, eventSize);
+
+    // process key events
+    for (var i = 0; i < eventSize; i++) {
+        var event = queue[i];
+        var code = event.keyCode;
+
+        // check if is valid scintilla key
+        var key = keyboard._keyMapping.get(code);
+
+        if (key === undefined || key === null) {
+            continue;
+        }
+
+        if (event.type === 'keydown') {
+
+            if (key.press === false) {
+                if (key.status === _ButtonStatus2.default.NONE) {
+                    keyboard._buttonWatcher.insert(code, key);
+                }
+
+                (0, _ProcessButtonDown2.default)(event, key);
+            }
+        } else {
+            (0, _ProcessButtonUp2.default)(event, key);
+        }
+    }
 }
 
 /***/ }),
@@ -8150,9 +8539,13 @@ function ResetKeyboard() {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.MouseEvent = undefined;
+
+var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "../node_modules/babel-runtime/core-js/object/get-prototype-of.js");
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
 var _classCallCheck2 = __webpack_require__(/*! babel-runtime/helpers/classCallCheck */ "../node_modules/babel-runtime/helpers/classCallCheck.js");
 
@@ -8162,191 +8555,214 @@ var _createClass2 = __webpack_require__(/*! babel-runtime/helpers/createClass */
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
+var _possibleConstructorReturn2 = __webpack_require__(/*! babel-runtime/helpers/possibleConstructorReturn */ "../node_modules/babel-runtime/helpers/possibleConstructorReturn.js");
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = __webpack_require__(/*! babel-runtime/helpers/inherits */ "../node_modules/babel-runtime/helpers/inherits.js");
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
 var _MouseButton = __webpack_require__(/*! ./MouseButton */ "./input/mouse/MouseButton.js");
 
 var _MouseButton2 = _interopRequireDefault(_MouseButton);
 
+var _List = __webpack_require__(/*! ../../structures/List */ "./structures/List.js");
+
+var _List2 = _interopRequireDefault(_List);
+
+var _Vector = __webpack_require__(/*! ../../math/Vector2 */ "./math/Vector2.js");
+
+var _Vector2 = _interopRequireDefault(_Vector);
+
+var _Map = __webpack_require__(/*! ../../structures/Map */ "./structures/Map.js");
+
+var _Map2 = _interopRequireDefault(_Map);
+
+var _InputSystem2 = __webpack_require__(/*! ../InputSystem */ "./input/InputSystem.js");
+
+var _InputSystem3 = _interopRequireDefault(_InputSystem2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var MouseEvent = exports.MouseEvent = {
-    NONE: 0,
-    PRESS: 1,
-    PRESSED: 2,
-    RELEASE: 3
+  NONE: 0,
+  PRESS: 1,
+  PRESSED: 2,
+  RELEASE: 3
 };
 
-var Mouse = function () {
-    function Mouse(game) {
-        (0, _classCallCheck3.default)(this, Mouse);
+var Mouse = function (_InputSystem) {
+  (0, _inherits3.default)(Mouse, _InputSystem);
 
+  function Mouse(game) {
+    (0, _classCallCheck3.default)(this, Mouse);
 
-        this.x = 0;
-        this.y = 0;
-        this.game = game;
-        this.canvas = game.system.render.canvas;
-        this.button = 0;
-        this.wheelDelta = 0;
-        this.active = true;
+    var _this = (0, _possibleConstructorReturn3.default)(this, (Mouse.__proto__ || (0, _getPrototypeOf2.default)(Mouse)).call(this, game));
 
-        this._mouseButtons = [];
-        this._mouseButtonsLocks = [];
-        this._mouseButtonsLocksPressed = [];
-        this._mouseDownDuration = [];
+    _this._buttonsList = new _List2.default();
+    _this._isDirty = false;
 
-        //callbacks
-        this._onMouseDown = null;
-        this._onMouseMove = null;
+    _this.event = null;
+    _this.moved = false;
+    _this.buttons = 0;
+    _this.down = false;
 
-        this.reset();
+    _this.clientPosition = new _Vector2.default();
+    _this.position = new _Vector2.default();
+
+    return _this;
+  }
+
+  (0, _createClass3.default)(Mouse, [{
+    key: 'stop',
+    value: function stop() {
+
+      var target = this.eventTarget;
+
+      target.removeEventListener('mousemove', this.handler);
+      target.removeEventListener('mousedown', this.handler);
+      target.removeEventListener('mouseup', this.handler);
+      target.removeEventListener('mouseenter', this.handler);
+      target.removeEventListener('mouseleave', this.handler);
     }
 
-    (0, _createClass3.default)(Mouse, [{
-        key: 'reset',
-        value: function reset() {
+    /*onMouseMove(event) {
+        if (!this.active)
+        return;
+    
+      var rect = this.canvas.getBoundingClientRect();
+    
+      this.x = Math.floor((event.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
+      this.y = Math.floor((event.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height);
+      //this.x = event.clientX - rect.left;
+      //this.y = event.clientY - rect.top;
+      }
+      onMouseDown(event) {
+        if (!this.active)
+        return;
+    
+        var value = event.button;
+        if (this._mouseButtonsLocksPressed[value] != MouseEvent.PRESSED && this._mouseButtonsLocksPressed[value] != MouseEvent.PRESS) {
+        this._mouseButtonsLocksPressed[value] = MouseEvent.PRESSED;
+        this._mouseDownDuration[value] = 1;
+      }
+        this._mouseButtons[value] = true;
+      this._mouseButtonsLocks[value] = MouseEvent.PRESS;
+        event.preventDefault();
+      }
+      onMouseUp(event) {
+        if (!this.active)
+        return;
+        var value = event.button;
+        this._mouseButtons[value] = false;
+      this._mouseButtonsLocks[value] = MouseEvent.RELEASE;
+      this._mouseButtonsLocksPressed[value] = MouseEvent.NONE;
+        event.preventDefault();
+    
+    }*/
 
-            for (var i = 0; i < 3; i++) {
+  }, {
+    key: 'pressed',
+    value: function pressed(button) {
 
-                this._mouseButtons[i] = false;
-                this._mouseButtonsLocks[i] = MouseEvent.NONE;
-                this._mouseButtonsLocksPressed[i] = MouseEvent.NONE;
-                this._mouseDownDuration[i] = 0;
-            }
-        }
-    }, {
-        key: 'init',
-        value: function init() {
+      // var buttonLock = false;
 
-            var self = this;
+      // if (this._mouseButtonsLocksPressed[button] == MouseEvent.PRESSED) {
+      //   buttonLock = true;
+      //   this._mouseButtonsLocksPressed[button] = MouseEvent.PRESS;
+      // }
 
-            this._onMouseDown = function (event) {
-                return self.onMouseDown(event);
-            };
+      // var hit = this._mouseButtons[button] && buttonLock;
 
-            this._onMouseUp = function (event) {
-                return self.onMouseUp(event);
-            };
+      // return hit;
 
-            this._onMouseMove = function (event) {
-                return self.onMouseMove(event);
-            };
+      var mouseButton = this._buttonsList.get(button);
 
-            this.canvas.addEventListener('mousedown', this._onMouseDown, true);
-            this.canvas.addEventListener('mousemove', this._onMouseMove, true);
-            this.canvas.addEventListener('mouseup', this._onMouseUp, true);
-            this.canvas.addEventListener('mouseover', this._onMouseOver, true);
-            this.canvas.addEventListener('mouseout', this._onMouseOut, true);
-        }
-    }, {
-        key: 'onMouseMove',
-        value: function onMouseMove(event) {
+      if (mouseButton) return mouseButton.isPressed();
 
-            if (!this.active) return;
+      return null;
+    }
+  }, {
+    key: 'release',
+    value: function release(button) {}
 
-            var rect = this.canvas.getBoundingClientRect();
+    // var buttonLock = false;
 
-            this.x = Math.floor((event.clientX - rect.left) / (rect.right - rect.left) * this.canvas.width);
-            this.y = Math.floor((event.clientY - rect.top) / (rect.bottom - rect.top) * this.canvas.height);
-            //this.x = event.clientX - rect.left;
-            //this.y = event.clientY - rect.top;
-        }
-    }, {
-        key: 'onMouseDown',
-        value: function onMouseDown(event) {
+    // if (this._mouseButtonsLocks[button] ==  MouseEvent.PRESSED ||
+    //     this._mouseButtonsLocks[button] ==  MouseEvent.PRESS ||
+    //     this._mouseButtonsLocks[button] ==  MouseEvent.NONE)
+    // 	buttonLock = false;
+    // else
+    // 	buttonLock = true;
 
-            if (!this.active) return;
+    // var hit = !this._mouseButtons[button] && buttonLock;
 
-            var value = event.button;
+    // this._mouseButtonsLocks[button] = MouseEvent.NONE;
 
-            if (this._mouseButtonsLocksPressed[value] != MouseEvent.PRESSED && this._mouseButtonsLocksPressed[value] != MouseEvent.PRESS) {
-                this._mouseButtonsLocksPressed[value] = MouseEvent.PRESSED;
-                this._mouseDownDuration[value] = 1;
-            }
+    // return hit;
 
-            this._mouseButtons[value] = true;
-            this._mouseButtonsLocks[value] = MouseEvent.PRESS;
+    /**
+     * Check if a Mouse button is pressing.
+     * 
+     * @param {MouseButton} button 
+     */
 
-            event.preventDefault();
-        }
-    }, {
-        key: 'onMouseUp',
-        value: function onMouseUp(event) {
+  }, {
+    key: 'press',
+    value: function press(button) {
+      return this.buttons & (_MouseButton.LogicalMouseButton[button] || 0);
+    }
 
-            if (!this.active) return;
+    /*update() {
+        for (var i = 0; i < this._mouseButtons.length; i++) {
+              if (this._mouseButtonsLocksPressed[i] ==  MouseEvent.PRESSED) {
+                if (this._mouseDownDuration[i] > 0)
+                  this._mouseDownDuration[i]--;
+                else
+                  this._mouseButtonsLocksPressed[i] = MouseEvent.PRESS;
+            } else
+              continue;
+    
+      }
+      }*/
 
-            var value = event.button;
+  }, {
+    key: 'posRelativeTo',
+    value: function posRelativeTo(object) {
 
-            this._mouseButtons[value] = false;
-            this._mouseButtonsLocks[value] = MouseEvent.RELEASE;
-            this._mouseButtonsLocksPressed[value] = MouseEvent.NONE;
+      var vec2 = { x: 0, y: 0 };
 
-            event.preventDefault();
-        }
-    }, {
-        key: 'pressed',
-        value: function pressed(button) {
+      vec2.x = this.x - object.x;
+      vec2.y = this.y - object.y;
 
-            var buttonLock = false;
-
-            if (this._mouseButtonsLocksPressed[button] == MouseEvent.PRESSED) {
-                buttonLock = true;
-                this._mouseButtonsLocksPressed[button] = MouseEvent.PRESS;
-            }
-
-            var hit = this._mouseButtons[button] && buttonLock;
-
-            return hit;
-        }
-    }, {
-        key: 'release',
-        value: function release(button) {
-
-            var buttonLock = false;
-
-            if (this._mouseButtonsLocks[button] == MouseEvent.PRESSED || this._mouseButtonsLocks[button] == MouseEvent.PRESS || this._mouseButtonsLocks[button] == MouseEvent.NONE) buttonLock = false;else buttonLock = true;
-
-            var hit = !this._mouseButtons[button] && buttonLock;
-
-            this._mouseButtonsLocks[button] = MouseEvent.NONE;
-
-            return hit;
-        }
-    }, {
-        key: 'press',
-        value: function press(button) {
-
-            var buttonLock = false;
-
-            if (this._mouseButtonsLocks[button] == MouseEvent.RELEASE || this._mouseButtonsLocks[button] == MouseEvent.NONE) buttonLock = false;else buttonLock = true;
-
-            var hit = this._mouseButtons[button] && buttonLock;
-
-            return hit;
-        }
-    }, {
-        key: 'update',
-        value: function update() {
-
-            for (var i = 0; i < this._mouseButtons.length; i++) {
-
-                if (this._mouseButtonsLocksPressed[i] == MouseEvent.PRESSED) {
-                    if (this._mouseDownDuration[i] > 0) this._mouseDownDuration[i]--;else this._mouseButtonsLocksPressed[i] = MouseEvent.PRESS;
-                } else continue;
-            }
-        }
-    }, {
-        key: 'posRelativeTo',
-        value: function posRelativeTo(object) {
-
-            var vec2 = { x: 0, y: 0 };
-
-            vec2.x = this.x - object.x;
-            vec2.y = this.y - object.y;
-
-            return vec2;
-        }
-    }]);
-    return Mouse;
-}();
+      return vec2;
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this.stop();
+      this.game = null;
+    }
+  }, {
+    key: 'x',
+    get: function get() {
+      return this.position.x;
+    },
+    set: function set(value) {
+      this.position.x = value;
+    }
+  }, {
+    key: 'y',
+    get: function get() {
+      return this.position.y;
+    },
+    set: function set(value) {
+      this.position.y = value;
+    }
+  }]);
+  return Mouse;
+}(_InputSystem3.default);
 
 exports.default = Mouse;
 
@@ -8365,13 +8781,477 @@ exports.default = Mouse;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var MouseButton = exports.MouseButton = {
+exports.LogicalMouseButton = undefined;
+
+var _freeze = __webpack_require__(/*! babel-runtime/core-js/object/freeze */ "../node_modules/babel-runtime/core-js/object/freeze.js");
+
+var _freeze2 = _interopRequireDefault(_freeze);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var LogicalMouseButton = exports.LogicalMouseButton = {
+    Left: 1,
+    Middle: 2,
+    Right: 4,
+    Back: 8,
+    Forward: 16
+};
+
+var MouseButton = {
     Left: 0,
     Middle: 1,
     Right: 2,
-    WheelUp: 3,
-    WheelDown: 4
+    Back: 3,
+    Forward: 4
 };
+
+(0, _freeze2.default)(MouseButton);
+
+exports.default = MouseButton;
+
+/***/ }),
+
+/***/ "./input/mouse/components/DisableContextMenu.js":
+/*!******************************************************!*\
+  !*** ./input/mouse/components/DisableContextMenu.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = DisableContextMenu;
+
+var _Validate = __webpack_require__(/*! ../../../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function DisableContextMenu(game, target) {
+
+    if (!target) {
+        target = document.body;
+    } else if (_Validate2.default.isString(target)) {
+
+        if (target === 'canvas') {
+            target = game.system.render.domCanvas;
+        } else {
+            target = document.getElementsByClassName(target).item(0);
+        }
+    }
+
+    target.addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+        return false;
+    });
+}
+
+/***/ }),
+
+/***/ "./input/mouse/components/InitializeMouse.js":
+/*!***************************************************!*\
+  !*** ./input/mouse/components/InitializeMouse.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = InitializeMouse;
+
+var _StartMouseListener = __webpack_require__(/*! ./StartMouseListener */ "./input/mouse/components/StartMouseListener.js");
+
+var _StartMouseListener2 = _interopRequireDefault(_StartMouseListener);
+
+var _MouseButton = __webpack_require__(/*! ../MouseButton */ "./input/mouse/MouseButton.js");
+
+var _MouseButton2 = _interopRequireDefault(_MouseButton);
+
+var _Button = __webpack_require__(/*! ../../button/Button */ "./input/button/Button.js");
+
+var _Button2 = _interopRequireDefault(_Button);
+
+var _ObjectGet = __webpack_require__(/*! ../../../utils/object/ObjectGet */ "./utils/object/ObjectGet.js");
+
+var _ObjectGet2 = _interopRequireDefault(_ObjectGet);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function InitializeMouse(mouse, game) {
+
+    if (!mouse) return;
+
+    for (var prop in _MouseButton.LogicalMouseButton) {
+
+        if (_MouseButton.LogicalMouseButton.hasOwnProperty(prop)) {
+            var value = _MouseButton.LogicalMouseButton[prop];
+            mouse._buttonsList.push(new _Button2.default(value, game));
+        }
+    }
+
+    var gameConfig = game.config.mouse;
+    var target = _ObjectGet2.default.value(gameConfig, 'target', null);
+    var enable = _ObjectGet2.default.value(gameConfig, 'enable', true);
+
+    if (!target) {
+        target = game.system.render.domCanvas;
+    }
+
+    mouse._enabled = enable;
+    mouse.eventTarget = target;
+    mouse.eventHandler = (0, _StartMouseListener2.default)(mouse, target);
+}
+
+/***/ }),
+
+/***/ "./input/mouse/components/ProcessMouseButtonDown.js":
+/*!**********************************************************!*\
+  !*** ./input/mouse/components/ProcessMouseButtonDown.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ProcessMouseButtonDown;
+
+var _ProcessButtonDown = __webpack_require__(/*! ../../button/components/ProcessButtonDown */ "./input/button/components/ProcessButtonDown.js");
+
+var _ProcessButtonDown2 = _interopRequireDefault(_ProcessButtonDown);
+
+var _Mouse = __webpack_require__(/*! ../Mouse */ "./input/mouse/Mouse.js");
+
+var _Mouse2 = _interopRequireDefault(_Mouse);
+
+var _Button = __webpack_require__(/*! ../../button/Button */ "./input/button/Button.js");
+
+var _Button2 = _interopRequireDefault(_Button);
+
+var _InputData = __webpack_require__(/*! ../../InputData */ "./input/InputData.js");
+
+var _InputData2 = _interopRequireDefault(_InputData);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/*
+ Left button=1, 
+ Right button=2, 
+ Middle (wheel) button=4, 
+ 4th button (typically, "Browser Back" button)=8,
+ 5th button (typically, "Browser Forward" button)=16.
+*/
+
+/**
+ * 
+ * @param {MouseEvent} event 
+ * @param {Button} button 
+ * @param {Mouse} mouse 
+ * @param {InputData} inputData
+ */
+function ProcessMouseButtonDown(event, button, mouse, inputData) {
+
+    if (event.buttons) {
+        mouse.buttons = event.buttons;
+    }
+
+    (0, _ProcessButtonDown2.default)(event, button);
+
+    mouse.event = event;
+
+    mouse.clientPosition.set(inputData.clientRectTransformX(event.pageX), inputData.clientRectTransformY(event.pageY));
+    mouse.x = inputData.transformX(event.clientX);
+    mouse.y = inputData.transformY(event.clientY);
+
+    mouse._isDirty = true;
+    mouse.down = true;
+}
+
+/***/ }),
+
+/***/ "./input/mouse/components/ProcessMouseButtonUp.js":
+/*!********************************************************!*\
+  !*** ./input/mouse/components/ProcessMouseButtonUp.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ProcessMouseButtonUp;
+
+var _ProcessButtonUp = __webpack_require__(/*! ../../button/components/ProcessButtonUp */ "./input/button/components/ProcessButtonUp.js");
+
+var _ProcessButtonUp2 = _interopRequireDefault(_ProcessButtonUp);
+
+var _Button = __webpack_require__(/*! ../../button/Button */ "./input/button/Button.js");
+
+var _Button2 = _interopRequireDefault(_Button);
+
+var _InputData = __webpack_require__(/*! ../../InputData */ "./input/InputData.js");
+
+var _InputData2 = _interopRequireDefault(_InputData);
+
+var _Mouse = __webpack_require__(/*! ../Mouse */ "./input/mouse/Mouse.js");
+
+var _Mouse2 = _interopRequireDefault(_Mouse);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {MouseEvent} event 
+ * @param {Button} button 
+ * @param {Mouse} mouse 
+ * @param {InputData} inputData 
+ */
+function ProcessMouseButtonUp(event, button, mouse, inputData) {
+
+    if (event.buttons) {
+        mouse.buttons = event.buttons;
+    }
+
+    (0, _ProcessButtonUp2.default)(event, button);
+
+    mouse.clientPosition.set(inputData.clientRectTransformX(event.pageX), inputData.clientRectTransformY(event.pageY));
+    mouse.x = inputData.transformX(event.clientX);
+    mouse.y = inputData.transformY(event.clientY);
+
+    mouse.event = event;
+
+    mouse._isDirty = true;
+    mouse.down = false;
+}
+
+/***/ }),
+
+/***/ "./input/mouse/components/ProcessMouseMove.js":
+/*!****************************************************!*\
+  !*** ./input/mouse/components/ProcessMouseMove.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = ProcessMouseMove;
+
+var _Mouse = __webpack_require__(/*! ../Mouse */ "./input/mouse/Mouse.js");
+
+var _Mouse2 = _interopRequireDefault(_Mouse);
+
+var _InputData = __webpack_require__(/*! ../../InputData */ "./input/InputData.js");
+
+var _InputData2 = _interopRequireDefault(_InputData);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {MouseEvent} event 
+ * @param {Mouse} mouse 
+ * @param {InputData} inputData 
+ */
+function ProcessMouseMove(event, mouse, inputData) {
+
+    mouse.event = event;
+
+    //mouse.clientPosition.set(event.clientX, event.clientY);
+
+    mouse.clientPosition.set(inputData.clientRectTransformX(event.pageX), inputData.clientRectTransformY(event.pageY));
+    mouse.x = inputData.transformX(event.clientX);
+    mouse.y = inputData.transformY(event.clientY);
+
+    mouse.moved = true;
+
+    mouse._isDirty = true;
+}
+
+/***/ }),
+
+/***/ "./input/mouse/components/StartMouseListener.js":
+/*!******************************************************!*\
+  !*** ./input/mouse/components/StartMouseListener.js ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = StartMouseListener;
+
+var _Mouse = __webpack_require__(/*! ../Mouse */ "./input/mouse/Mouse.js");
+
+var _Mouse2 = _interopRequireDefault(_Mouse);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {Mouse} mouse 
+ * @param {HTMLElement} target
+ */
+function StartMouseListener(mouse, target) {
+
+    // mouse event handler
+    var eventQueue = mouse._eventQueue;
+
+    var config = {
+        passive: false
+    };
+
+    var handler = function handler(event) {
+
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        if (mouse.preventDefault) {
+            event.preventDefault();
+        }
+
+        eventQueue.push(event);
+    };
+
+    target.addEventListener('mousedown', handler, config);
+    target.addEventListener('mousemove', handler, config);
+    target.addEventListener('mouseup', handler, config);
+    target.addEventListener('mouseenter', handler, config);
+    target.addEventListener('mouseleave', handler, config);
+
+    return handler;
+}
+
+/***/ }),
+
+/***/ "./input/mouse/components/UpdateMouse.js":
+/*!***********************************************!*\
+  !*** ./input/mouse/components/UpdateMouse.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = UpdateMouse;
+
+var _InputData = __webpack_require__(/*! ../../InputData */ "./input/InputData.js");
+
+var _InputData2 = _interopRequireDefault(_InputData);
+
+var _WatchButtons = __webpack_require__(/*! ../../components/WatchButtons */ "./input/components/WatchButtons.js");
+
+var _WatchButtons2 = _interopRequireDefault(_WatchButtons);
+
+var _ButtonStatus = __webpack_require__(/*! ../../button/ButtonStatus */ "./input/button/ButtonStatus.js");
+
+var _ButtonStatus2 = _interopRequireDefault(_ButtonStatus);
+
+var _Mouse = __webpack_require__(/*! ../Mouse */ "./input/mouse/Mouse.js");
+
+var _Mouse2 = _interopRequireDefault(_Mouse);
+
+var _ProcessMouseMove = __webpack_require__(/*! ./ProcessMouseMove */ "./input/mouse/components/ProcessMouseMove.js");
+
+var _ProcessMouseMove2 = _interopRequireDefault(_ProcessMouseMove);
+
+var _ProcessMouseButtonDown = __webpack_require__(/*! ./ProcessMouseButtonDown */ "./input/mouse/components/ProcessMouseButtonDown.js");
+
+var _ProcessMouseButtonDown2 = _interopRequireDefault(_ProcessMouseButtonDown);
+
+var _ProcessMouseButtonUp = __webpack_require__(/*! ./ProcessMouseButtonUp */ "./input/mouse/components/ProcessMouseButtonUp.js");
+
+var _ProcessMouseButtonUp2 = _interopRequireDefault(_ProcessMouseButtonUp);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 
+ * @param {Mouse} mouse 
+ * @param {InputData} inputData 
+ * @param {number} timeStamp 
+ */
+function UpdateMouse(mouse, inputData, timeStamp) {
+
+    if (!mouse) return;
+
+    if (!mouse._enabled) return;
+
+    (0, _WatchButtons2.default)(mouse._buttonWatcher, mouse._buttonGarbage);
+
+    mouse._isDirty = false;
+
+    var eventSize = mouse._eventQueue.size;
+
+    if (eventSize === 0) return;
+
+    // clear and copy queue
+    var queue = mouse._eventQueue.splice(0, eventSize);
+
+    for (var i = 0; i < eventSize; i++) {
+        var event = queue[i];
+        var button = void 0;
+        var buttonCode = event.button;
+
+        if (buttonCode !== undefined) button = mouse._buttonsList.get(buttonCode);
+
+        switch (event.type) {
+            case 'mousemove':
+                {
+                    (0, _ProcessMouseMove2.default)(event, mouse, inputData);
+                    break;
+                }
+            case 'mousedown':
+                {
+
+                    if (button.press === false) {
+                        if (button.status === _ButtonStatus2.default.NONE) {
+                            mouse._buttonWatcher.insert(buttonCode, button);
+                        }
+
+                        (0, _ProcessMouseButtonDown2.default)(event, button, mouse, inputData);
+                    }
+
+                    break;
+                }
+            case 'mouseup':
+                {
+
+                    (0, _ProcessMouseButtonUp2.default)(event, button, mouse, inputData);
+
+                    break;
+                }
+        }
+    }
+}
 
 /***/ }),
 
@@ -13374,7 +14254,7 @@ var ModuleProviderManager = function () {
             (0, _InitializeModuleBase2.default)(newModule, moduleManager.entity);
 
             // attach the new module to manager
-            attached.set(newModule.type, newModule);
+            attached.insert(newModule.type, newModule);
 
             // add to pending initialization list only modules that require this option
             if (newModule.type === 'render') {
@@ -13386,7 +14266,7 @@ var ModuleProviderManager = function () {
     }, {
         key: 'register',
         value: function register(moduleName, func) {
-            if (!ModuleProvider.proxyModules.has(moduleName)) ModuleProvider.proxyModules.set(moduleName, func); // { type: moduleType, func: func }
+            if (!ModuleProvider.proxyModules.has(moduleName)) ModuleProvider.proxyModules.insert(moduleName, func); // { type: moduleType, func: func }
         }
     }]);
     return ModuleProviderManager;
@@ -18590,6 +19470,7 @@ var UIDrawer = function () {
     this.game = game;
     this.cache = null;
     this.context = null;
+    this.canvas = null;
     this.ui = ui;
     this.lastAlpha = 1;
     this.lastColor = '#000';
@@ -18604,6 +19485,7 @@ var UIDrawer = function () {
 
       this.cache = this.game.system.cache;
       this.context = this.game.system.render.context;
+      this.canvas = this.game.system.render.canvas;
 
       return this;
     }
@@ -19235,7 +20117,7 @@ var AnimationMachineResource = function (_Resource) {
 
             //let anim = this._cache.get(animationTag);
             if (animation !== undefined) {
-                this.states.set(state, animation);
+                this.states.insert(state, animation);
             } else {
                 Console.warn("AnimationMachineResource.add: Could not add state with undefined animation.");
             }
@@ -21055,7 +21937,7 @@ var SceneManager = function () {
       }
 
       var newScene = (0, _CreateSceneFrom2.default)(scene, sceneName);
-      this._scenes.set(sceneName, newScene);
+      this._scenes.insert(sceneName, newScene);
       return this;
     }
   }, {
@@ -21067,7 +21949,7 @@ var SceneManager = function () {
       }
 
       var newScene = new _Scene2.default(this.game, sceneName);
-      this._scenes.set(sceneName, newScene);
+      this._scenes.insert(sceneName, newScene);
 
       return newScene;
     }
@@ -22087,16 +22969,28 @@ var DataList = function () {
         }
     }, {
         key: 'each',
-        value: function each(callback) {
-            var params = [];
+        value: function each(callback, context) {
+            //let params = [];
 
             var content = this.childs;
             var r = void 0;
+            // let istart = (context === undefined) ? 1 : 2;
 
-            for (var i = 1; i < arguments.length; i++) {
-                params.push(arguments[i]);
-            }for (var _i3 = 0; _i3 < content.length; _i3++) {
-                r = callback(content[_i3], _i3, params);
+            // for (let i = istart; i < arguments.length; i++)
+            //     params.push(arguments[i]);
+
+            for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+                args[_key - 2] = arguments[_key];
+            }
+
+            for (var i = 0; i < content.length; i++) {
+
+                if (context === undefined) {
+                    r = callback(content[i], i, args);
+                } else {
+                    r = callback.call(context, content[i], i, args);
+                }
+
                 if (r !== undefined) {
                     return r;
                 }
@@ -22239,7 +23133,11 @@ var DataMap = function () {
     value = value
     */
     value: function set(key, value) {
-
+      return this.insert(key, value);
+    }
+  }, {
+    key: "insert",
+    value: function insert(key, value) {
       if (!this.has(key)) {
         this._size++;
       }
@@ -22377,15 +23275,22 @@ var DataMap = function () {
     }
   }, {
     key: "each",
-    value: function each(callback) {
+    value: function each(callback, context) {
       var content = this._content;
-
-      for (var property in content) {
-
-        if (callback(property, content[property]) === false) break;
+      var r = void 0;
+      if (context === undefined) {
+        for (var property in content) {
+          r = callback(property, content[property]);
+          if (r !== undefined) break;
+        }
+      } else {
+        for (var _property in content) {
+          r = callback.call(context, _property, content[_property]);
+          if (r !== undefined) break;
+        }
       }
 
-      return this;
+      return r;
     }
   }, {
     key: "find",
@@ -22503,14 +23408,14 @@ var DataSet = function () {
         }
     }, {
         key: "each",
-        value: function each(callback, scope) {
+        value: function each(callback, context) {
             var content = this._content.slice();
             var size = content.length;
             var i;
 
-            if (scope) {
+            if (context) {
                 for (i = 0; i < size; i++) {
-                    if (callback.call(scope, content[i], i) === false) break;
+                    if (callback.call(context, content[i], i) === false) break;
                 }
             } else {
                 for (i = 0; i < size; i++) {
@@ -23402,7 +24307,7 @@ var UpdateStep = function () {
                         this.previousTime = timeStamp;
 
                         // game loop
-                        this.accumalatorMethod(this.hiDeltaTime);
+                        this.accumalatorMethod(this.hiDeltaTime, timeStamp);
 
                         // game render
                         this.render(this.hiDeltaTime);
@@ -23423,7 +24328,7 @@ var UpdateStep = function () {
                 }
         }, {
                 key: "accumalatorMethod",
-                value: function accumalatorMethod(deltaTime) {
+                value: function accumalatorMethod(deltaTime, timeStamp) {
 
                         if (++this.frameCounter % this.frameRate === 0) {
 
@@ -23441,7 +24346,7 @@ var UpdateStep = function () {
                                         var updateStart = window.performance.now();
 
                                         // UPDATE GAME
-                                        this.loop(deltaUpdate / 1000.0);
+                                        this.loop(deltaUpdate / 1000.0, timeStamp);
 
                                         var updateLast = window.performance.now();
                                         this.updateAverageDelta = updateLast - updateStart;
@@ -24149,8 +25054,6 @@ var Validate = {
 };
 
 (0, _freeze2.default)(Validate);
-
-//export default Validate;
 
 exports.default = Validate;
 
