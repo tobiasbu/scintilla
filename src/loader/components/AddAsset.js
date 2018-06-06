@@ -11,6 +11,9 @@ const webFontLoaderChecker = function(loader, asset) {
     if (webFontLoader !== null)
         return;
 
+    if (WebFont !== undefined)
+        return;
+
     webFontLoader = new ScriptFile('webFontLoader',"https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
     loader._filesQueue.insert(webFontLoader);
     loader._filesQueueCount++;

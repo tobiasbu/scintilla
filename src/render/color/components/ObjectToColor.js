@@ -1,6 +1,6 @@
 import Color from "../Color";
 
-export default function ObjectToColor(value) {
+export default function ObjectToColor(value, source) {
 
     if (source === undefined) {
         return new Color(value.r, value.g, value.b, value.a);

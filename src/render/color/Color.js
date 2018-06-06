@@ -25,10 +25,16 @@ function ColorUpdate(color) {
 class Color {
 
     constructor(r, g, b, a) {
-        this._r = r || 0;
-        this._g = g || 0;
-        this._b = b || 0;
-        this._a = a || 1;
+
+        if (r === undefined) r = 0;
+        if (g === undefined) g = 0;
+        if (b === undefined) b = 0;
+        if (a === undefined) a = 1;
+
+        this._r = r;
+        this._g = g;
+        this._b = b;
+        this._a = a;
         this._css = null;
 
         ColorUpdate(this);
@@ -203,7 +209,7 @@ class Color {
         if (destinationColor === undefined)
             destinationColor = new Color();
 
-        destinationColor.set(
+        destinationColor.setRGBA(
             easer.by(easingType, from.r, to.r, t, easingArg),
             easer.by(easingType, from.g, to.g, t, easingArg),
             easer.by(easingType, from.b, to.b, t, easingArg),

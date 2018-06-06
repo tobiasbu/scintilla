@@ -153,7 +153,7 @@ export default class LoadManager {
   }
 
   downloadIsDone() {
-    return (this._filesQueue.length == (this._successCount + this._fileErrorCount));
+    return (this._filesQueue.length === (this._successCount + this._fileErrorCount));
   }
 
 

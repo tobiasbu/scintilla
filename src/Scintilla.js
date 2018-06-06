@@ -45,6 +45,7 @@ var scintilla = scintilla || {
   BoundingBox : require('./math/BoundingBox').default,
   Matrix3 : require('./math/Matrix3').default,
   Vector2 : require('./math/Vector2').default,
+  Rect : require('./math/Rect').default,
   Ease : require('./math/easing').Ease,
 
   // ENTITIES

@@ -11,8 +11,11 @@ export default class Cache {
 
         let resource = asset;
 
-        if (this.adderWrapper !== undefined)
+        if (this.adderWrapper !== undefined) {
             resource = this.adderWrapper(tag, asset);
+            if (resource === null)
+                return null;
+        }
 
         this.resources.insert(tag, resource);
 
@@ -28,7 +31,8 @@ export default class Cache {
     }
 
     erase(tag) {
-        this.resources.delete(tag);
+        let res = this.resources.erase(tag);
+        res = null;
         return this;
     }
 

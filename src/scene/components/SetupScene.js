@@ -10,7 +10,9 @@ import InjectSystems from "../../core/system/components/InjectSystems";
     this.onUpdateCallback = this.currentScene['update'] || null;
     this.onStartCallback = this.currentScene['start'] || null;
     this.onPreloadCallback = this.currentScene['preload'] || null;    
+    this.onPostloadCallback = this.currentScene['postload'] || null;    
     this.onDestroyCallback = this.currentScene['destroy'] || null;
+    
   
     InjectSystems(this.game, this.currentScene);
     //this.game.system.inject(this.currentScene);

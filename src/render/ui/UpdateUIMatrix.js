@@ -5,8 +5,9 @@ export default function UpdateUIMatrix(gui) {
         return;
 
     gui.matrix.setIdentity()
-    .scale(gui.pixelUnit.x, gui.pixelUnit.y)
-    .translate(gui.viewport.x, gui.viewport.y);
+    .scale(gui.resolution, gui.resolution)
+    //.translate(gui.viewport.x * gui.invertedResolution, gui.viewport.y *  gui.invertedResolution)
+    .translate( gui.viewportOffset.x, gui.viewportOffset.y);
 
     gui._isDirty = false;
 }

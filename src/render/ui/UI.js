@@ -8,6 +8,8 @@ import Debug from './Debug';
 import MathUtils from '../../math/MathUtils';
 import UIDrawer from './UIDrawer';
 import InitializeUI from './InitializeUI';
+import Color from '../color/Color';
+import Vector2 from '../../math/Vector2';
 
 
 
@@ -22,13 +24,13 @@ export default class UI {
         this.viewport = new Rect(0, 0, this.width, this.height);
         this.ratiobox = null;
         this.aspectRatio = this.width / this.height;
-        this.pixelUnit = {x:1,y:1};
+        this.resolution = 1;
         this._isDirty = true;
         this.matrix = new Matrix3(1);
         this.context = null;
         this._alpha = 1;
-        this.backgroundColor = '#000';
-        this.backgroundAlpha = 0;
+        this.viewportOffset = new Vector2();
+        this.backgroundColor = Color.transparent;
         this.debug = null;
         this.draw = new UIDrawer(game, this);
     }
@@ -53,7 +55,7 @@ export default class UI {
 
     setViewportByAspectRatio(aspectRatio) {
 
-        // TODO: IMPROVE THAT
+        // TODO: IMPROVE THAT FUNCTION
         let canvasWidth = this.game.system.render.canvas.width;//this.game.system.render.canvas.clientWidth;
         let canvasHeight = this.game.system.render.canvas.height;//this.game.system.render.canvas.clientHeight
 
@@ -72,27 +74,40 @@ export default class UI {
 
         } else {
 
+            //let areaRatioX = this.width * (canvasWidth / this.width);
+            //let areaRatioY = this.height * (canvasHeight / this.height);
+
             if (this.ratiobox.style === AspectRatio.Pillarbox)
-                borderX = this.ratiobox.x * this.width;//this.canvas.clientWidth;
+                borderX = this.ratiobox.x * canvasWidth;//this.canvas.clientWidth;
             else if (this.ratiobox.style === AspectRatio.Letterbox)
-                borderY = this.ratiobox.y * this.height;//this.canvas.clientHeight;
+                borderY = this.ratiobox.y * canvasHeight;//this.canvas.clientHeight;
             
             this.viewport.set(
                 borderX,
                 borderY,
-                (this.width * (canvasWidth/ this.width)) - (borderX*2),
-                (this.height * (canvasHeight / this.height)) - (borderY*2));
+                canvasWidth - (borderX*2),
+                canvasHeight - (borderY*2));
 
         }
         
         let canvasRatioX = canvasWidth * (this.ratiobox.x * 2);
-        let canvasRatioY =canvasHeight * (this.ratiobox.y * 2);
-        let areaRatio = (this.canvas.clientWidth - canvasRatioX) / canvasHeight;
-        let orthoSize = this.height / 2;
-        let pixelUnit = (canvasHeight / (orthoSize * 2)) * areaRatio;
+        let viewSize = (canvasWidth - canvasRatioX);
+        //let canvasRatioY = canvasHeight * (this.ratiobox.y * 2);
+        //console.log(canvasRatioX);
+        //let areaRatio = (canvasWidth - canvasRatioX); / canvasHeight; // 1.48
+        //console.log(areaRatio);
         
-        this.pixelUnit.x = pixelUnit;//(this.canvas.clientWidth - canvasRatioX) / this.width;
-        this.pixelUnit.y = pixelUnit;//(this.canvas.clientHeight - canvasRatioY) / this.height;
+        //let orthoSize = (this.height / 2);// * 100; // 120
+        //console.log(orthoSize);
+        //let pixelUnit = (canvasHeight / (orthoSize * 2)) * areaRatio;
+        
+        let pixelUnit = viewSize / this.width;//canvasWidth;
+        let invertedResolution = this.width / viewSize;
+        this.viewportOffset.x = invertedResolution * borderX;
+        this.viewportOffset.y = invertedResolution * borderY;
+        this.resolution = pixelUnit;//(this.canvas.clientWidth - canvasRatioX) / this.width;
+        this.invertedResolution = invertedResolution;
+        //(this.canvas.clientHeight - canvasRatioY) / this.height;
 
         this._isDirty = true;
         return this;

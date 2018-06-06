@@ -1,5 +1,6 @@
 //import GameSystemManager from "../core/GameSystemManager";
 import Validate from "../../utils/Validate";
+import MathUtils from "../../math/MathUtils";
 
 
 
@@ -52,25 +53,25 @@ export default class UIDrawer {
     this.context.globalCompositeOperation = 'source-over';
   }
 
-  transformPosition(x, y, w, h) {
+  // transformPosition(x, y, w, h) {
 
-    if (this.disablePointTransform) {
-      return {
-        x: x,
-        y: y,
-        w: w || 0,
-        h: h || 0,
-      };
-    } else {
+  //   if (this.disablePointTransform) {
+  //     return {
+  //       x: x,
+  //       y: y,
+  //       w: w || 0,
+  //       h: h || 0,
+  //     };
+  //   } else {
 
-      return {
-        x: x - this.ui.viewport.x,
-        y: y - this.ui.viewport.y,
-        w: (w - this.ui.viewport.x) || 0,
-        h: (h - this.ui.viewport.y) || 0,
-      };
-    }
-  }
+  //     return {
+  //       x: x, //x - this.ui.viewport.x,
+  //       y: y,//y - this.ui.viewport.y,
+  //       w: w,//(w - this.ui.viewport.x) || 0,
+  //       h: h//(h - this.ui.viewport.y) || 0,
+  //     };
+  //   }
+  // }
 
   font(fontname, size, style) {
 
@@ -90,13 +91,12 @@ export default class UIDrawer {
     if (align !== undefined)
       this.align = align;
 
-    let pos = this.transformPosition(x, y);
 
     this.context.textAlign = align;
 
     //this.context.save();
     //this.context.translate(x, y);
-    this.context.fillText(text, pos.x, pos.y);
+    this.context.fillText(text, x, y);
     //this.context.restore();
 
   }
@@ -104,12 +104,11 @@ export default class UIDrawer {
   image(source, x, y, scalex, scaley) {
 
 
-    let pos = this.transformPosition(x, y);
 
     this.context.drawImage(source,
       0, 0,
       source.width, source.height,
-      pos.x, pos.y,
+      x, y,
       source.width, source.height
     );
   }
@@ -121,12 +120,11 @@ export default class UIDrawer {
     if (halign === undefined) halign = 0;
     if (valign === undefined) valign = 0;
 
-    let pos = this.transformPosition(x, y);
     let dx = source.width * halign;
     let dy = source.height * valign;
 
     this.context.save();
-    this.context.translate(pos.x, pos.y);
+    this.context.translate(x, y);
     this.context.scale(scalex, scaley);
     //this.context.rotate(scalex, scaley);
 
@@ -153,12 +151,11 @@ export default class UIDrawer {
       if (halign === undefined) halign = 0;
       if (valign === undefined) valign = 0;
 
-      let pos = this.transformPosition(x, y);
       let dx = source.width * halign;
       let dy = source.height * valign;
 
       this.context.save();
-      this.context.translate(pos.x, pos.y);
+      this.context.translate(x, y);
       this.context.drawImage(
         source.data,
         0, // sx - pos crop x 
@@ -184,13 +181,43 @@ export default class UIDrawer {
       if (halign === undefined) halign = 0;
       if (valign === undefined) valign = 0;
 
-      let pos = this.transformPosition(x, y);
       let dx = source.width * halign;
       let dy = source.height * valign;
 
       this.context.save();
-      this.context.translate(pos.x, pos.y);
+      this.context.translate(x, y);
       this.context.scale(xscale, yscale);
+      this.context.drawImage(
+        source.data,
+        0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height
+      );
+      this.context.restore();
+
+    }
+  }
+
+  spriteTransformed(tag, x, y, xscale, yscale, angle, halign, valign) {
+
+    let source = this.cache.image.get(tag);
+
+    if (source !== null) {
+
+      if (halign === undefined) halign = 0;
+      if (valign === undefined) valign = 0;
+
+      let dx = source.width * halign;
+      let dy = source.height * valign;
+
+      this.context.save();
+      this.context.translate(x, y);
+      this.context.scale(xscale, yscale);
+      this.context.rotate(angle * MathUtils.toRadian);
       this.context.drawImage(
         source.data,
         0, // sx - pos crop x 
@@ -214,7 +241,6 @@ export default class UIDrawer {
       if (halign === undefined) halign = 0;
       if (valign === undefined) valign = 0;
 
-      let pos = this.transformPosition(x, y);
       let dx = source.width * halign;
       let dy = source.height * valign;
 
@@ -236,6 +262,7 @@ export default class UIDrawer {
     }
   }
 
+
   spriteAskew(tag, x, y, skewX, skewY, halign, valign) {
     let source = this.cache.image.get(tag);
 
@@ -244,7 +271,6 @@ export default class UIDrawer {
       if (halign === undefined) halign = 0;
       if (valign === undefined) valign = 0;
 
-      let pos = this.transformPosition(x, y);
       let dx = source.width * halign;
       let dy = source.height * valign;
 
@@ -274,7 +300,6 @@ export default class UIDrawer {
       if (halign === undefined) halign = 0;
       if (valign === undefined) valign = 0;
 
-      let pos = this.transformPosition(x, y);
       let dx = source.width * halign;
       let dy = source.height * valign;
 
@@ -304,12 +329,11 @@ export default class UIDrawer {
       if (halign === undefined) halign = 0;
       if (valign === undefined) valign = 0;
 
-      let pos = this.transformPosition(x, y);
       let dx = frameWidth * halign;
       let dy = frameHeight * valign;
 
       this.context.save();
-      this.context.translate(pos.x, pos.y);
+      this.context.translate(x, y);
       this.context.drawImage(
         source.data,
         frameX, // sx - pos crop x 
@@ -347,13 +371,12 @@ export default class UIDrawer {
     if (halign === undefined) halign = 0;
     if (valign === undefined) valign = 0;
 
-    let pos = this.transformPosition(x, y);
     let dx = frame.width * halign;
     let dy = frame.height * valign;
 
 
     this.context.save();
-    this.context.translate(pos.x, pos.y);
+    this.context.translate(x, y);
     this.context.scale(scale, scale_y);
     this.context.drawImage(
       key.image.data,
@@ -372,16 +395,51 @@ export default class UIDrawer {
 
   }
 
+  patternTransformed(tag, x, y, width, height, scale_x, scale_y, angle, halign, valign) {
+
+    let source = this.cache.pattern.get(tag);
+
+    if (source === null)
+      return false;
+
+    if (!width) width = source.image.width;
+    if (!height) height = source.image.height;
+    if (scale_x === undefined) scale_x = 1;
+    if (scale_y === undefined) scale_y = scale_x;
+    if (halign === undefined) halign = 0;
+    if (valign === undefined) valign = 0;
+
+    let dx = width * halign;
+    let dy = height * valign;
+    let context = this.context;
+
+
+    context.save();
+    context.translate(x, y);
+    context.scale(scale_x, scale_y);
+
+    if (angle !== undefined)
+      context.rotate(MathUtils.toRadian * angle);
+
+    //context.translate(x - dx, y - dy);
+    context.fillStyle = source.data;
+    context.fillRect(0, 0, width, height);
+    //context.fill();
+    
+    context.restore();
+
+    return true;
+
+  }
+
   rect(x, y, width, height, color) {
 
 
-    let pos = this.transformPosition(x, y, width, height);
-
     this.context.save();
     this.context.fillStyle = color || this.currentColor;
-    this.context.translate(pos.x, pos.y);
+    this.context.translate(x, y);
 
-    this.context.fillRect(0, 0, pos.w, pos.h);
+    this.context.fillRect(0, 0, width, height);
     this.context.restore();
 
   }
@@ -390,13 +448,12 @@ export default class UIDrawer {
 
     color = color || this.currentColor;
 
-    let pos = this.transformPosition(x, y, width, height);
     //this.context.setLineDash([6]);
     this.context.save();
-    this.context.translate(pos.x, pos.y);
+    this.context.translate(x, y);
     this.context.lineWidth = outlineWidth || 1;
     this.context.strokeStyle = color;
-    this.context.strokeRect(0, 0, pos.w, pos.h);
+    this.context.strokeRect(0, 0, width, height);
     this.context.restore();
     //this.context.rect(x,y,width,height);
     //this.context.stroke();

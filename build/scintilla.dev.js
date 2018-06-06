@@ -2701,6 +2701,7 @@ var scintilla = scintilla || {
   BoundingBox: __webpack_require__(/*! ./math/BoundingBox */ "./math/BoundingBox.js").default,
   Matrix3: __webpack_require__(/*! ./math/Matrix3 */ "./math/Matrix3.js").default,
   Vector2: __webpack_require__(/*! ./math/Vector2 */ "./math/Vector2.js").default,
+  Rect: __webpack_require__(/*! ./math/Rect */ "./math/Rect.js").default,
   Ease: __webpack_require__(/*! ./math/easing */ "./math/easing/index.js").Ease,
 
   // ENTITIES
@@ -3868,7 +3869,10 @@ var Cache = function () {
 
             var resource = asset;
 
-            if (this.adderWrapper !== undefined) resource = this.adderWrapper(tag, asset);
+            if (this.adderWrapper !== undefined) {
+                resource = this.adderWrapper(tag, asset);
+                if (resource === null) return null;
+            }
 
             this.resources.insert(tag, resource);
 
@@ -3887,7 +3891,8 @@ var Cache = function () {
     }, {
         key: "erase",
         value: function erase(tag) {
-            this.resources.delete(tag);
+            var res = this.resources.erase(tag);
+            res = null;
             return this;
         }
     }, {
@@ -3963,6 +3968,10 @@ var _AssetsType = __webpack_require__(/*! ../loader/AssetsType */ "./loader/Asse
 
 var _AssetsType2 = _interopRequireDefault(_AssetsType);
 
+var _Validate = __webpack_require__(/*! ../utils/Validate */ "./utils/Validate.js");
+
+var _Validate2 = _interopRequireDefault(_Validate);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CacheTypes = ['image', 'json', 'audio', 'text', 'tilemap', 'animation', 'animMachine'];
@@ -3984,6 +3993,19 @@ var CacheManager = function () {
     this.image = new _Cache2.default(function (tag, data) {
       return new _ImageResource2.default(tag, data);
     });
+
+    this.pattern = new _Cache2.default();
+    this.pattern.create = function (imageTag, patternParameter) {
+
+      var img = self.image.get(imageTag);
+
+      if (img === null) return null;
+
+      if (!_Validate2.default.isString(patternParameter)) patternParameter = 'repeat';
+
+      var pattern = game.system.render.context.createPattern(img.data, patternParameter);
+      return this.add(imageTag, { data: pattern, image: img });
+    };
 
     this.tilemap = new _Cache2.default();
 
@@ -5554,6 +5576,8 @@ var EntityFactory = function () {
     }, {
         key: "sprite",
         value: function sprite(tag, entityName, config) {
+
+            if (config === undefined) config = {};
 
             var entity = this.empty(entityName);
             var spr = entity.modules.attach.sprite(tag, config.x, config.y, config.width, config.height);
@@ -9721,7 +9745,7 @@ var LoadManager = function () {
   }, {
     key: 'downloadIsDone',
     value: function downloadIsDone() {
-      return this._filesQueue.length == this._successCount + this._fileErrorCount;
+      return this._filesQueue.length === this._successCount + this._fileErrorCount;
     }
   }, {
     key: 'totalQueuedFiles',
@@ -11312,6 +11336,8 @@ var webFontLoaderChecker = function webFontLoaderChecker(loader, asset) {
 
     if (webFontLoader !== null) return;
 
+    if (WebFont !== undefined) return;
+
     webFontLoader = new _ScriptFile2.default('webFontLoader', "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js");
     loader._filesQueue.insert(webFontLoader);
     loader._filesQueueCount++;
@@ -11543,21 +11569,24 @@ var _LoaderFinished = __webpack_require__(/*! ./LoaderFinished */ "./loader/comp
 
 var _LoaderFinished2 = _interopRequireDefault(_LoaderFinished);
 
-var _UpdateProgress = __webpack_require__(/*! ./UpdateProgress */ "./loader/components/UpdateProgress.js");
-
-var _UpdateProgress2 = _interopRequireDefault(_UpdateProgress);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//import UpdateProgress from "./UpdateProgress";
+
 
 function NextAsset(concludedFile, hasError) {
 
-    if (hasError) this._failedFiles.insert(concludedFile);else this._successFiles.insert(concludedFile);
+    if (hasError) {
+        this._failedFiles.insert(concludedFile);
+    } else {
+        this._successFiles.insert(concludedFile);
+    }
 
     this._filesLoading.erase(concludedFile);
     this._loadedFilesCount++;
 
     //this.updateProgress();
-    _UpdateProgress2.default.call(this);
+    //UpdateProgress.call(this);
 
     if (this._filesQueue.size > 0) //(this._loadedFilesCount < this._filesQueueCount)
         {
@@ -11776,34 +11805,6 @@ function StartLoadAssets() {
         //this.processFileQueue();
         _ProcessAssetsQueue2.default.call(this);
     }
-}
-
-/***/ }),
-
-/***/ "./loader/components/UpdateProgress.js":
-/*!*********************************************!*\
-  !*** ./loader/components/UpdateProgress.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = UpdateProgress;
-function UpdateProgress() {
-
-    //var progress = 0;
-
-    if (this._filesQueueCount != 0) {
-        this.progress = 1 - this._loadedFilesCount / this._filesQueueCount;
-    }
-    //progress = parseFloat(this._successCount) / parseFloat(this._filesQueueCount);
-
-    //this.progress = progress;
 }
 
 /***/ }),
@@ -15503,7 +15504,7 @@ _ModuleProvider2.default.register('sprite', function (moduleManager, config) {
             if (spr.resource !== null) {
                 if (config[1] === undefined) config[1] = 0; // framex
                 if (config[2] === undefined) config[2] = 0; // framey
-                if (config[2] === undefined) config[3] = spr.resource.width; // framew
+                if (config[3] === undefined) config[3] = spr.resource.width; // framew
                 if (config[4] === undefined) config[4] = spr.resource.height; // frameh
 
                 spr.setFrame(config[1], config[2], config[3], config[4]);
@@ -17224,10 +17225,16 @@ var Color = function () {
     function Color(r, g, b, a) {
         (0, _classCallCheck3.default)(this, Color);
 
-        this._r = r || 0;
-        this._g = g || 0;
-        this._b = b || 0;
-        this._a = a || 1;
+
+        if (r === undefined) r = 0;
+        if (g === undefined) g = 0;
+        if (b === undefined) b = 0;
+        if (a === undefined) a = 1;
+
+        this._r = r;
+        this._g = g;
+        this._b = b;
+        this._a = a;
         this._css = null;
 
         ColorUpdate(this);
@@ -17411,7 +17418,7 @@ var Color = function () {
 
             if (destinationColor === undefined) destinationColor = new Color();
 
-            destinationColor.set(easer.by(easingType, from.r, to.r, t, easingArg), easer.by(easingType, from.g, to.g, t, easingArg), easer.by(easingType, from.b, to.b, t, easingArg), easer.by(easingType, from.a, to.a, t, easingArg));
+            destinationColor.setRGBA(easer.by(easingType, from.r, to.r, t, easingArg), easer.by(easingType, from.g, to.g, t, easingArg), easer.by(easingType, from.b, to.b, t, easingArg), easer.by(easingType, from.a, to.a, t, easingArg));
 
             return destinationColor;
         }
@@ -17660,7 +17667,7 @@ var _Color2 = _interopRequireDefault(_Color);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function ObjectToColor(value) {
+function ObjectToColor(value, source) {
 
     if (source === undefined) {
         return new _Color2.default(value.r, value.g, value.b, value.a);
@@ -17755,6 +17762,22 @@ var _Color = __webpack_require__(/*! ../Color */ "./render/color/Color.js");
 
 var _Color2 = _interopRequireDefault(_Color);
 
+var _IntToColor = __webpack_require__(/*! ./IntToColor */ "./render/color/components/IntToColor.js");
+
+var _IntToColor2 = _interopRequireDefault(_IntToColor);
+
+var _CSSToColor = __webpack_require__(/*! ./CSSToColor */ "./render/color/components/CSSToColor.js");
+
+var _CSSToColor2 = _interopRequireDefault(_CSSToColor);
+
+var _HexToColor = __webpack_require__(/*! ./HexToColor */ "./render/color/components/HexToColor.js");
+
+var _HexToColor2 = _interopRequireDefault(_HexToColor);
+
+var _ObjectToColor = __webpack_require__(/*! ./ObjectToColor */ "./render/color/components/ObjectToColor.js");
+
+var _ObjectToColor2 = _interopRequireDefault(_ObjectToColor);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function SetColor(source, value) {
@@ -17763,21 +17786,21 @@ function SetColor(source, value) {
       source = new Color();
   }*/
 
-  var type = typeof value === 'undefined' ? 'undefined' : (0, _typeof3.default)(value);
+  var type = typeof value === "undefined" ? "undefined" : (0, _typeof3.default)(value);
 
   if (type === 'number') {
 
-    return IntToColor(value, source);
+    return (0, _IntToColor2.default)(value, source);
   } else if (type === 'string') {
 
     if (value.substr(0, 3).toLowerCase() === 'rgb') {
-      return CSSToColor(value, source);
+      return (0, _CSSToColor2.default)(value, source);
     } else {
-      return HexToColor(value, source);
+      return (0, _HexToColor2.default)(value, source);
     }
   } else if (type === 'object') {
 
-    return ObjectToColor(value, source);
+    return (0, _ObjectToColor2.default)(value, source);
   }
 }
 
@@ -19206,15 +19229,15 @@ function DrawUI(gui, sceneManager) {
     if (clip) {
         gui.context.save();
         gui.context.beginPath();
-        gui.context.rect(0, 0, gui.viewport.width, gui.viewport.height);
+        gui.context.rect(gui.viewport.x, gui.viewport.y, gui.viewport.width, gui.viewport.height);
         gui.context.clip();
     }
 
     gui.context.setTransform(gui.matrix.a[0], gui.matrix.a[1], gui.matrix.a[3], gui.matrix.a[4], gui.matrix.a[6], gui.matrix.a[7]);
 
-    if (gui.backgroundAlpha > 0) {
-        gui.context.globalAlpha = gui.backgroundAlpha;
-        gui.context.fillStyle = gui.backgroundColor;
+    if (gui.backgroundColor.a > 0) {
+        //gui.context.globalAlpha = gui.backgroundAlpha;
+        gui.context.fillStyle = gui.backgroundColor.rgba;
         gui.context.fillRect(0, 0, gui.width, gui.height);
     }
 
@@ -19322,6 +19345,14 @@ var _InitializeUI = __webpack_require__(/*! ./InitializeUI */ "./render/ui/Initi
 
 var _InitializeUI2 = _interopRequireDefault(_InitializeUI);
 
+var _Color = __webpack_require__(/*! ../color/Color */ "./render/color/Color.js");
+
+var _Color2 = _interopRequireDefault(_Color);
+
+var _Vector = __webpack_require__(/*! ../../math/Vector2 */ "./math/Vector2.js");
+
+var _Vector2 = _interopRequireDefault(_Vector);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var UI = function () {
@@ -19335,13 +19366,13 @@ var UI = function () {
         this.viewport = new _Rect2.default(0, 0, this.width, this.height);
         this.ratiobox = null;
         this.aspectRatio = this.width / this.height;
-        this.pixelUnit = { x: 1, y: 1 };
+        this.resolution = 1;
         this._isDirty = true;
         this.matrix = new _Matrix2.default(1);
         this.context = null;
         this._alpha = 1;
-        this.backgroundColor = '#000';
-        this.backgroundAlpha = 0;
+        this.viewportOffset = new _Vector2.default();
+        this.backgroundColor = _Color2.default.transparent;
         this.debug = null;
         this.draw = new _UIDrawer2.default(game, this);
     }
@@ -19366,7 +19397,7 @@ var UI = function () {
         key: 'setViewportByAspectRatio',
         value: function setViewportByAspectRatio(aspectRatio) {
 
-            // TODO: IMPROVE THAT
+            // TODO: IMPROVE THAT FUNCTION
             var canvasWidth = this.game.system.render.canvas.width; //this.game.system.render.canvas.clientWidth;
             var canvasHeight = this.game.system.render.canvas.height; //this.game.system.render.canvas.clientHeight
 
@@ -19380,20 +19411,33 @@ var UI = function () {
                 return this;
             } else {
 
-                if (this.ratiobox.style === _AspectRatio2.default.Pillarbox) borderX = this.ratiobox.x * this.width; //this.canvas.clientWidth;
-                else if (this.ratiobox.style === _AspectRatio2.default.Letterbox) borderY = this.ratiobox.y * this.height; //this.canvas.clientHeight;
+                //let areaRatioX = this.width * (canvasWidth / this.width);
+                //let areaRatioY = this.height * (canvasHeight / this.height);
 
-                this.viewport.set(borderX, borderY, this.width * (canvasWidth / this.width) - borderX * 2, this.height * (canvasHeight / this.height) - borderY * 2);
+                if (this.ratiobox.style === _AspectRatio2.default.Pillarbox) borderX = this.ratiobox.x * canvasWidth; //this.canvas.clientWidth;
+                else if (this.ratiobox.style === _AspectRatio2.default.Letterbox) borderY = this.ratiobox.y * canvasHeight; //this.canvas.clientHeight;
+
+                this.viewport.set(borderX, borderY, canvasWidth - borderX * 2, canvasHeight - borderY * 2);
             }
 
             var canvasRatioX = canvasWidth * (this.ratiobox.x * 2);
-            var canvasRatioY = canvasHeight * (this.ratiobox.y * 2);
-            var areaRatio = (this.canvas.clientWidth - canvasRatioX) / canvasHeight;
-            var orthoSize = this.height / 2;
-            var pixelUnit = canvasHeight / (orthoSize * 2) * areaRatio;
+            var viewSize = canvasWidth - canvasRatioX;
+            //let canvasRatioY = canvasHeight * (this.ratiobox.y * 2);
+            //console.log(canvasRatioX);
+            //let areaRatio = (canvasWidth - canvasRatioX); / canvasHeight; // 1.48
+            //console.log(areaRatio);
 
-            this.pixelUnit.x = pixelUnit; //(this.canvas.clientWidth - canvasRatioX) / this.width;
-            this.pixelUnit.y = pixelUnit; //(this.canvas.clientHeight - canvasRatioY) / this.height;
+            //let orthoSize = (this.height / 2);// * 100; // 120
+            //console.log(orthoSize);
+            //let pixelUnit = (canvasHeight / (orthoSize * 2)) * areaRatio;
+
+            var pixelUnit = viewSize / this.width; //canvasWidth;
+            var invertedResolution = this.width / viewSize;
+            this.viewportOffset.x = invertedResolution * borderX;
+            this.viewportOffset.y = invertedResolution * borderY;
+            this.resolution = pixelUnit; //(this.canvas.clientWidth - canvasRatioX) / this.width;
+            this.invertedResolution = invertedResolution;
+            //(this.canvas.clientHeight - canvasRatioY) / this.height;
 
             this._isDirty = true;
             return this;
@@ -19461,8 +19505,13 @@ var _Validate = __webpack_require__(/*! ../../utils/Validate */ "./utils/Validat
 
 var _Validate2 = _interopRequireDefault(_Validate);
 
+var _MathUtils = __webpack_require__(/*! ../../math/MathUtils */ "./math/MathUtils.js");
+
+var _MathUtils2 = _interopRequireDefault(_MathUtils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+//import GameSystemManager from "../core/GameSystemManager";
 var UIDrawer = function () {
   function UIDrawer(game, ui) {
     (0, _classCallCheck3.default)(this, UIDrawer);
@@ -19480,7 +19529,7 @@ var UIDrawer = function () {
   }
 
   (0, _createClass3.default)(UIDrawer, [{
-    key: 'init',
+    key: "init",
     value: function init() {
 
       this.cache = this.game.system.cache;
@@ -19490,33 +19539,33 @@ var UIDrawer = function () {
       return this;
     }
   }, {
-    key: 'defaultComposite',
+    key: "defaultComposite",
     value: function defaultComposite() {
       this.context.globalCompositeOperation = 'source-over';
     }
-  }, {
-    key: 'transformPosition',
-    value: function transformPosition(x, y, w, h) {
 
-      if (this.disablePointTransform) {
-        return {
-          x: x,
-          y: y,
-          w: w || 0,
-          h: h || 0
-        };
-      } else {
+    // transformPosition(x, y, w, h) {
 
-        return {
-          x: x - this.ui.viewport.x,
-          y: y - this.ui.viewport.y,
-          w: w - this.ui.viewport.x || 0,
-          h: h - this.ui.viewport.y || 0
-        };
-      }
-    }
+    //   if (this.disablePointTransform) {
+    //     return {
+    //       x: x,
+    //       y: y,
+    //       w: w || 0,
+    //       h: h || 0,
+    //     };
+    //   } else {
+
+    //     return {
+    //       x: x, //x - this.ui.viewport.x,
+    //       y: y,//y - this.ui.viewport.y,
+    //       w: w,//(w - this.ui.viewport.x) || 0,
+    //       h: h//(h - this.ui.viewport.y) || 0,
+    //     };
+    //   }
+    // }
+
   }, {
-    key: 'font',
+    key: "font",
     value: function font(fontname, size, style) {
 
       if (_Validate2.default.isNumber(size)) size = size.toString() + 'px';
@@ -19526,31 +19575,27 @@ var UIDrawer = function () {
       this.context.font = style + " " + size + " \'" + fontname + "\'";
     }
   }, {
-    key: 'text',
+    key: "text",
     value: function text(_text, x, y, color, align) {
 
       if (color !== undefined) this.color = color;
       if (align !== undefined) this.align = align;
 
-      var pos = this.transformPosition(x, y);
-
       this.context.textAlign = align;
 
       //this.context.save();
       //this.context.translate(x, y);
-      this.context.fillText(_text, pos.x, pos.y);
+      this.context.fillText(_text, x, y);
       //this.context.restore();
     }
   }, {
-    key: 'image',
+    key: "image",
     value: function image(source, x, y, scalex, scaley) {
 
-      var pos = this.transformPosition(x, y);
-
-      this.context.drawImage(source, 0, 0, source.width, source.height, pos.x, pos.y, source.width, source.height);
+      this.context.drawImage(source, 0, 0, source.width, source.height, x, y, source.width, source.height);
     }
   }, {
-    key: 'imageExtra',
+    key: "imageExtra",
     value: function imageExtra(source, x, y, scalex, scaley, halign, valign) {
       if (source === undefined || source === null) return;
       if (scalex === undefined) scalex = 1;
@@ -19558,12 +19603,11 @@ var UIDrawer = function () {
       if (halign === undefined) halign = 0;
       if (valign === undefined) valign = 0;
 
-      var pos = this.transformPosition(x, y);
       var dx = source.width * halign;
       var dy = source.height * valign;
 
       this.context.save();
-      this.context.translate(pos.x, pos.y);
+      this.context.translate(x, y);
       this.context.scale(scalex, scaley);
       //this.context.rotate(scalex, scaley);
 
@@ -19578,7 +19622,7 @@ var UIDrawer = function () {
       this.context.restore();
     }
   }, {
-    key: 'sprite',
+    key: "sprite",
     value: function sprite(tag, x, y, halign, valign) {
 
       var source = this.cache.image.get(tag);
@@ -19588,12 +19632,11 @@ var UIDrawer = function () {
         if (halign === undefined) halign = 0;
         if (valign === undefined) valign = 0;
 
-        var pos = this.transformPosition(x, y);
         var dx = source.width * halign;
         var dy = source.height * valign;
 
         this.context.save();
-        this.context.translate(pos.x, pos.y);
+        this.context.translate(x, y);
         this.context.drawImage(source.data, 0, // sx - pos crop x 
         0, // sy - pos crop y
         source.width, // sWidth - crop width
@@ -19605,7 +19648,7 @@ var UIDrawer = function () {
       }
     }
   }, {
-    key: 'spriteScaled',
+    key: "spriteScaled",
     value: function spriteScaled(tag, x, y, xscale, yscale, halign, valign) {
 
       var source = this.cache.image.get(tag);
@@ -19615,12 +19658,11 @@ var UIDrawer = function () {
         if (halign === undefined) halign = 0;
         if (valign === undefined) valign = 0;
 
-        var pos = this.transformPosition(x, y);
         var dx = source.width * halign;
         var dy = source.height * valign;
 
         this.context.save();
-        this.context.translate(pos.x, pos.y);
+        this.context.translate(x, y);
         this.context.scale(xscale, yscale);
         this.context.drawImage(source.data, 0, // sx - pos crop x 
         0, // sy - pos crop y
@@ -19633,7 +19675,35 @@ var UIDrawer = function () {
       }
     }
   }, {
-    key: 'spriteSkew',
+    key: "spriteTransformed",
+    value: function spriteTransformed(tag, x, y, xscale, yscale, angle, halign, valign) {
+
+      var source = this.cache.image.get(tag);
+
+      if (source !== null) {
+
+        if (halign === undefined) halign = 0;
+        if (valign === undefined) valign = 0;
+
+        var dx = source.width * halign;
+        var dy = source.height * valign;
+
+        this.context.save();
+        this.context.translate(x, y);
+        this.context.scale(xscale, yscale);
+        this.context.rotate(angle * _MathUtils2.default.toRadian);
+        this.context.drawImage(source.data, 0, // sx - pos crop x 
+        0, // sy - pos crop y
+        source.width, // sWidth - crop width
+        source.height, // sHeight - crop height
+        -dx, // destination x
+        -dy, // destination y
+        source.width, source.height);
+        this.context.restore();
+      }
+    }
+  }, {
+    key: "spriteSkew",
     value: function spriteSkew(tag, x, y, skewX, skewY, halign, valign) {
       var source = this.cache.image.get(tag);
 
@@ -19642,7 +19712,6 @@ var UIDrawer = function () {
         if (halign === undefined) halign = 0;
         if (valign === undefined) valign = 0;
 
-        var pos = this.transformPosition(x, y);
         var dx = source.width * halign;
         var dy = source.height * valign;
 
@@ -19660,7 +19729,7 @@ var UIDrawer = function () {
       }
     }
   }, {
-    key: 'spriteAskew',
+    key: "spriteAskew",
     value: function spriteAskew(tag, x, y, skewX, skewY, halign, valign) {
       var source = this.cache.image.get(tag);
 
@@ -19669,7 +19738,6 @@ var UIDrawer = function () {
         if (halign === undefined) halign = 0;
         if (valign === undefined) valign = 0;
 
-        var pos = this.transformPosition(x, y);
         var dx = source.width * halign;
         var dy = source.height * valign;
 
@@ -19687,7 +19755,7 @@ var UIDrawer = function () {
       }
     }
   }, {
-    key: 'spriteRskew',
+    key: "spriteRskew",
     value: function spriteRskew(tag, x, y, skewX, skewY, halign, valign) {
       var source = this.cache.image.get(tag);
 
@@ -19696,7 +19764,6 @@ var UIDrawer = function () {
         if (halign === undefined) halign = 0;
         if (valign === undefined) valign = 0;
 
-        var pos = this.transformPosition(x, y);
         var dx = source.width * halign;
         var dy = source.height * valign;
 
@@ -19714,7 +19781,7 @@ var UIDrawer = function () {
       }
     }
   }, {
-    key: 'spritePart',
+    key: "spritePart",
     value: function spritePart(tag, x, y, frameX, frameY, frameWidth, frameHeight, halign, valign) {
       var source = this.cache.image.get(tag);
 
@@ -19723,12 +19790,11 @@ var UIDrawer = function () {
         if (halign === undefined) halign = 0;
         if (valign === undefined) valign = 0;
 
-        var pos = this.transformPosition(x, y);
         var dx = frameWidth * halign;
         var dy = frameHeight * valign;
 
         this.context.save();
-        this.context.translate(pos.x, pos.y);
+        this.context.translate(x, y);
         this.context.drawImage(source.data, frameX, // sx - pos crop x 
         frameY, // sy - pos crop y
         frameWidth, // sWidth - crop width
@@ -19740,7 +19806,7 @@ var UIDrawer = function () {
       }
     }
   }, {
-    key: 'spritesheet',
+    key: "spritesheet",
     value: function spritesheet(tag, x, y, frameNumber, halign, valign, scale, scale_y) {
 
       var source = this.cache.animation.get(tag);
@@ -19760,12 +19826,11 @@ var UIDrawer = function () {
       if (halign === undefined) halign = 0;
       if (valign === undefined) valign = 0;
 
-      var pos = this.transformPosition(x, y);
       var dx = frame.width * halign;
       var dy = frame.height * valign;
 
       this.context.save();
-      this.context.translate(pos.x, pos.y);
+      this.context.translate(x, y);
       this.context.scale(scale, scale_y);
       this.context.drawImage(key.image.data, frame.x, // sx - pos crop x 
       frame.y, // sy - pos crop y
@@ -19779,37 +19844,68 @@ var UIDrawer = function () {
       return true;
     }
   }, {
-    key: 'rect',
-    value: function rect(x, y, width, height, color) {
+    key: "patternTransformed",
+    value: function patternTransformed(tag, x, y, width, height, scale_x, scale_y, angle, halign, valign) {
 
-      var pos = this.transformPosition(x, y, width, height);
+      var source = this.cache.pattern.get(tag);
+
+      if (source === null) return false;
+
+      if (!width) width = source.image.width;
+      if (!height) height = source.image.height;
+      if (scale_x === undefined) scale_x = 1;
+      if (scale_y === undefined) scale_y = scale_x;
+      if (halign === undefined) halign = 0;
+      if (valign === undefined) valign = 0;
+
+      var dx = width * halign;
+      var dy = height * valign;
+      var context = this.context;
+
+      context.save();
+      context.translate(x, y);
+      context.scale(scale_x, scale_y);
+
+      if (angle !== undefined) context.rotate(_MathUtils2.default.toRadian * angle);
+
+      //context.translate(x - dx, y - dy);
+      context.fillStyle = source.data;
+      context.fillRect(0, 0, width, height);
+      //context.fill();
+
+      context.restore();
+
+      return true;
+    }
+  }, {
+    key: "rect",
+    value: function rect(x, y, width, height, color) {
 
       this.context.save();
       this.context.fillStyle = color || this.currentColor;
-      this.context.translate(pos.x, pos.y);
+      this.context.translate(x, y);
 
-      this.context.fillRect(0, 0, pos.w, pos.h);
+      this.context.fillRect(0, 0, width, height);
       this.context.restore();
     }
   }, {
-    key: 'outlineRect',
+    key: "outlineRect",
     value: function outlineRect(x, y, width, height, outlineWidth, color) {
 
       color = color || this.currentColor;
 
-      var pos = this.transformPosition(x, y, width, height);
       //this.context.setLineDash([6]);
       this.context.save();
-      this.context.translate(pos.x, pos.y);
+      this.context.translate(x, y);
       this.context.lineWidth = outlineWidth || 1;
       this.context.strokeStyle = color;
-      this.context.strokeRect(0, 0, pos.w, pos.h);
+      this.context.strokeRect(0, 0, width, height);
       this.context.restore();
       //this.context.rect(x,y,width,height);
       //this.context.stroke();
     }
   }, {
-    key: 'bounds',
+    key: "bounds",
     value: function bounds(bb, color) {
 
       if (color === undefined) color = 'red';
@@ -19817,26 +19913,26 @@ var UIDrawer = function () {
       this.outlineRectangle(bb.min.x, bb.min.y, bb.max.x - bb.min.x, bb.max.y - bb.min.y, color, 1);
     }
   }, {
-    key: 'color',
+    key: "color",
     set: function set(value) {
       this.lastColor = this.context.fillStyle;
       this.context.fillStyle = value;
       this.currentColor = this.context.fillStyle;
     }
   }, {
-    key: 'alpha',
+    key: "alpha",
     set: function set(value) {
       this.lastAlpha = this.context.globalAlpha;
       this.context.globalAlpha = value;
     }
   }, {
-    key: 'align',
+    key: "align",
     set: function set(value) {
       this.context.textAlign = value;
       this.currentTextAlign = this.context.textAlign;
     }
   }, {
-    key: 'composite',
+    key: "composite",
     set: function set(value) {
       this.context.globalCompositeOperation = value;
     }
@@ -19845,7 +19941,6 @@ var UIDrawer = function () {
 }();
 
 //GameSystemManager.register('UIDrawer',UIDraw,'draw');
-//import GameSystemManager from "../core/GameSystemManager";
 
 
 exports.default = UIDrawer;
@@ -19870,8 +19965,8 @@ function UIResize(gui, w, h) {
     gui.width = w;
     gui.height = h;
     gui.aspectRatio = w / h;
-    gui.pixelUnit.x = gui.canvas.width / w;
-    gui.pixelUnit.y = gui.canvas.height / h;
+    //gui.pixelUnit.x = gui.canvas.width / w;
+    //gui.pixelUnit.y = gui.canvas.height / h;
     gui._isDirty = true;
 }
 
@@ -19895,7 +19990,9 @@ function UpdateUIMatrix(gui) {
 
     if (!gui._isDirty) return;
 
-    gui.matrix.setIdentity().scale(gui.pixelUnit.x, gui.pixelUnit.y).translate(gui.viewport.x, gui.viewport.y);
+    gui.matrix.setIdentity().scale(gui.resolution, gui.resolution)
+    //.translate(gui.viewport.x * gui.invertedResolution, gui.viewport.y *  gui.invertedResolution)
+    .translate(gui.viewportOffset.x, gui.viewportOffset.y);
 
     gui._isDirty = false;
 }
@@ -21761,70 +21858,70 @@ var Scene = function () {
 
 
     this.name = name || 'New Scene';
-    //this.childs = new EntityHierarchy("SceneHierarchy", this.game);
-    /*this.camera = null;
-    this.x = 0;
-    this.y = 0;
-    this.width = 0;
-    this.height = 0;
-    this.view = 0;*/
-
-    /*if (myGame != null) {
-      this.width = myGame.width;
-      this.height = myGame.height;
-    }*/
   }
 
   (0, _createClass3.default)(Scene, [{
-    key: 'preloadDone',
+    key: "preloadDone",
     value: function preloadDone(transition) {
 
       if (this.scene === undefined) return;
 
       (0, _PostPreloadingScene2.default)(this.scene, transition);
     }
-  }, {
-    key: 'instanceDestroy',
-    value: function instanceDestroy(gameObject) {
 
-      if (gameObject['destroy']) gameObject.destroy();
+    // instanceDestroy(gameObject) {
 
-      //console.log("deleted " + gameObject._id)
+    //   if (gameObject['destroy'])
+    //     gameObject.destroy();
 
-      var index = this.instances.indexOf(gameObject);
+    //     //console.log("deleted " + gameObject._id)
 
-      this.instances.splice(index, 1);
-    }
-  }, {
-    key: 'addGameObject',
-    value: function addGameObject(gameObject, clone) {
+    //   let index = this.instances.indexOf( gameObject);
 
-      var obj = void 0;
-      var cl = false;
+    //   this.instances.splice( index, 1 );
 
-      if (arguments.length == 0) obj = new scintilla.GameObject();else {
+    // }
 
-        if (clone === undefined) cl = false;else cl = clone;
+    // addGameObject(gameObject, clone) {
 
-        if (cl) obj = gameObject.clone();else obj = gameObject;
-      }
+    //   let obj;
+    //   let cl = false;
 
-      obj._id = this.instances.length;
-      obj._game = this.game;
-      this.instances.push(obj);
+    //   if (arguments.length == 0)
+    //     obj = new scintilla.GameObject();
+    //   else {
 
-      obj.start();
-      return obj;
-    }
-  }, {
-    key: 'setBounds',
-    value: function setBounds(x, y, width, height) {
+    //     if (clone === undefined)
+    //       cl = false;
+    //     else
+    //       cl = clone;
 
-      this.x = x;
-      this.y = y;
-      this.width = width;
-      this.height = height;
-    }
+
+    //       if (cl)
+    //         obj = gameObject.clone();
+    //       else
+    //         obj = gameObject;
+
+    //   }
+
+    //   obj._id = this.instances.length;
+    //   obj._game = this.game;
+    //   this.instances.push(obj);
+
+    //   obj.start();
+    //   return obj;
+
+    // }
+
+    // setBounds(x,y,width,height) {
+
+    //   this.x = x;
+    //   this.y = y;
+    //   this.width = width;
+    //   this.height = height;
+
+    // }
+
   }]);
   return Scene;
 }();
@@ -21901,7 +21998,7 @@ var SceneManager = function () {
     this._currentSceneName = '';
     this._changeScene = null;
     this._transition = null;
-    this._isTranistioning = false;
+    this._isTransitioning = false;
 
     this._setup = false;
     this._clearCache = false;
@@ -21914,6 +22011,7 @@ var SceneManager = function () {
     this.onLoadingCallback = null;
     this.onLoadingRenderCallback = null;
     this.onPreloadCallback = null;
+    this.onPostloadCallback = null;
     this.onUpdateCallback = null;
     this.onRenderCallback = null;
     this.onDestroyCallback = null;
@@ -22145,9 +22243,12 @@ var ScintillaLoadingScreen = function (_Scene) {
                 draw.font('Verdana', 6);
                 draw.text('WIP - ' + _Define2.default.VERSION, 320 - 4, 240 - 4, '#490c37', 'right');
             }
+
+            //draw.outlineRect(0, 0, 320, 240, 4, 'yellow');
         };
 
         var loadingFunc = function loadingFunc(dt) {
+            var _this2 = this;
 
             if (!this._finished) {
                 this.t += dt / 0.15;
@@ -22170,8 +22271,12 @@ var ScintillaLoadingScreen = function (_Scene) {
                     if (this.wait >= 1.5) {
                         //this.preloadDone(TransitionBehavior.FADEIN);
                         var done = function done() {
-                            this.transition.reset();
-                            this.preloadDone();
+                            _this2.transition.reset();
+                            _this2.preloadDone();
+                            _this2.ui.setSize(_this2.userData.ui.w, _this2.userData.ui.h);
+                            _this2.ui.setViewport(_this2.userData.vp.x, _this2.userData.vp.y, _this2.userData.vp.w, _this2.userData.vp.h);
+                            _this2.ui.resolution = _this2.userData.res;
+                            _this2.ui.viewportOffset.set(0, 0);
                         };
                         this.transition.in();
                         this.events.subscribeOnce('transition_end', done, this);
@@ -22187,12 +22292,35 @@ var ScintillaLoadingScreen = function (_Scene) {
         _this.update = loadingFunc;
         _this.loadingGUI = drawFunc;
         _this.gui = drawFunc;
+
+        _this.userData = {
+            ui: {
+                w: 0,
+                h: 0
+            },
+            vp: {
+                x: 0,
+                y: 0,
+                w: 1,
+                h: 1
+            },
+            res: 1
+        };
         return _this;
     }
 
     (0, _createClass3.default)(ScintillaLoadingScreen, [{
         key: "init",
         value: function init(next) {
+
+            this.userData.ui.w = this.ui.width;
+            this.userData.ui.h = this.ui.height;
+            this.userData.vp.x = this.ui.viewport.x;
+            this.userData.vp.y = this.ui.viewport.y;
+            this.userData.vp.w = this.ui.viewport.width;
+            this.userData.vp.h = this.ui.viewport.height;
+            this.userData.res = this.ui.resolution;
+
             this.nextScene = next;
             this.wait = 0;
             this.t = 0;
@@ -22353,9 +22481,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = PostPreloadingScene;
 
-var _TransitionBetweenScenes = __webpack_require__(/*! ./TransitionBetweenScenes */ "./scene/components/TransitionBetweenScenes.js");
+var _startScene = __webpack_require__(/*! ./startScene */ "./scene/components/startScene.js");
 
-var _TransitionBetweenScenes2 = _interopRequireDefault(_TransitionBetweenScenes);
+var _startScene2 = _interopRequireDefault(_startScene);
 
 var _TranstionBehavior = __webpack_require__(/*! ../../render/transition/TranstionBehavior */ "./render/transition/TranstionBehavior.js");
 
@@ -22372,21 +22500,23 @@ function PostPreloadingScene(sceneManger, transition) {
 
     if (sceneManger.currentScene === undefined || sceneManger.currentScene === null) return;
 
-    function start() {
+    _startScene2.default.call(sceneManger);
 
-        this._isTranistioning = false;
+    // function start() {
 
-        if (this.onStartCallback) {
-            this.onStartCallback.call(this.currentScene, this.game);
-        }
-    }
+    //     this._isTransitioning = false;
 
-    if (transition <= _TranstionBehavior2.default.NONE) {
-        start.call(sceneManger);
-    } else {
+    //     if (this.onStartCallback) {
+    //         this.onStartCallback.call(this.currentScene, this.game);
+    //     }
+    // }
 
-        (0, _TransitionBetweenScenes2.default)(sceneManger, start.bind(sceneManger));
-    }
+    // if (transition <= TransitionBehavior.NONE) {
+    //     start.call(sceneManger);
+    // } else {
+
+    //     TransitionBetweenScenes(sceneManger, start.bind(sceneManger));
+    // }
 }
 
 /***/ }),
@@ -22485,13 +22615,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = PreloadSceneComplete;
 
-var _TranstionBehavior = __webpack_require__(/*! ../../render/transition/TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+var _startScene = __webpack_require__(/*! ./startScene */ "./scene/components/startScene.js");
 
-var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
-
-var _TransitionBetweenScenes = __webpack_require__(/*! ./TransitionBetweenScenes */ "./scene/components/TransitionBetweenScenes.js");
-
-var _TransitionBetweenScenes2 = _interopRequireDefault(_TransitionBetweenScenes);
+var _startScene2 = _interopRequireDefault(_startScene);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22501,21 +22627,28 @@ function PreloadSceneComplete() {
         this.onLoadingCallback.call(this.currentScene, this.game);
     }
 
-    function start() {
-        if (this._scintillaLoading) {
-            this._loadingPlaceHolder.start();
-        } else {
-            if (this.onStartCallback) {
-                this.onStartCallback.call(this.currentScene, this.game);
-            }
-        }
-    }
+    _startScene2.default.call(this);
 
-    if (this._transition <= _TranstionBehavior2.default.NONE) {
-        start.call(this);
-    } else {
-        (0, _TransitionBetweenScenes2.default)(this, start.bind(this));
-    }
+    //   const start = () => {
+    //     if (this._scintillaLoading) {
+    //       this._loadingPlaceHolder.start();
+    //     } else {
+
+    //       if (this.onPostloadCallback) {
+    //         this.onPostloadCallback.call(this.currentScene);
+    //       }
+
+    //       if (this.onStartCallback) {
+    //         this.onStartCallback.call(this.currentScene, this.game);
+    //       }
+    //     }
+    // }
+
+    // if (this._transition <= TransitionBehavior.NONE) {
+    //     start.call(this);
+    // } else {
+    //     TransitionBetweenScenes(this, start.bind(this));
+    // }
 
     this._setup = true;
 }
@@ -22628,6 +22761,7 @@ function SetupScene(sceneName) {
   this.onUpdateCallback = this.currentScene['update'] || null;
   this.onStartCallback = this.currentScene['start'] || null;
   this.onPreloadCallback = this.currentScene['preload'] || null;
+  this.onPostloadCallback = this.currentScene['postload'] || null;
   this.onDestroyCallback = this.currentScene['destroy'] || null;
 
   (0, _InjectSystems2.default)(this.game, this.currentScene);
@@ -22672,7 +22806,7 @@ function TransitionBetweenScenes(sceneManager, delegate) {
         sceneManager.game.system.events.subscribeOnce('transition_end', delegate);
     }
     sceneManager._transition = _TranstionBehavior2.default.NONE;
-    sceneManager._isTranistioning = true;
+    sceneManager._isTransitioning = true;
 }
 
 /***/ }),
@@ -22711,6 +22845,65 @@ function UpdateScene(sceneManager, deltaTime) {
         }
     }
 }
+
+/***/ }),
+
+/***/ "./scene/components/startScene.js":
+/*!****************************************!*\
+  !*** ./scene/components/startScene.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _TransitionBetweenScenes = __webpack_require__(/*! ./TransitionBetweenScenes */ "./scene/components/TransitionBetweenScenes.js");
+
+var _TransitionBetweenScenes2 = _interopRequireDefault(_TransitionBetweenScenes);
+
+var _TranstionBehavior = __webpack_require__(/*! ../../render/transition/TranstionBehavior */ "./render/transition/TranstionBehavior.js");
+
+var _TranstionBehavior2 = _interopRequireDefault(_TranstionBehavior);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @this SceneManager
+ */
+function startScene() {
+  var _this = this;
+
+  var start = function start() {
+
+    if (_this._scintillaLoading) {
+      _this._loadingPlaceHolder.start();
+    } else {
+
+      _this._isTransitioning = false;
+
+      if (_this.onPostloadCallback) {
+        _this.onPostloadCallback.call(_this.currentScene);
+      }
+
+      if (_this.onStartCallback) {
+        _this.onStartCallback.call(_this.currentScene, _this.game);
+      }
+    }
+  };
+
+  if (this._transition <= _TranstionBehavior2.default.NONE) {
+    start();
+  } else {
+    (0, _TransitionBetweenScenes2.default)(this, start);
+  }
+}
+
+exports.default = startScene;
 
 /***/ }),
 
@@ -23217,12 +23410,13 @@ var DataMap = function () {
     key: "erase",
     value: function erase(key) {
 
-      if (!this.has(key)) return false;
+      if (!this.has(key)) return null;
 
+      var content = this._content[key];
       delete this._content[key];
       this._size--;
 
-      return true;
+      return content;
     }
 
     /*eraseAt(key) {

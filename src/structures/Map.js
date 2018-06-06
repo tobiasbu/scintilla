@@ -97,12 +97,13 @@ export default class DataMap {
   erase(key) {
 
     if (!this.has(key))
-      return false;
+      return null;
 
+    let content = this._content[key];
     delete this._content[key];
     this._size--;
 
-    return true;
+    return content;
   }
 
   /*eraseAt(key) {

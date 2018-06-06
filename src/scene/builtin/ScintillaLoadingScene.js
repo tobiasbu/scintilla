@@ -59,7 +59,10 @@ export default class ScintillaLoadingScreen extends Scene {
                 draw.font('Verdana', 6);
                 draw.text('WIP - ' + Version.VERSION, 320 - 4, 240 - 4,'#490c37','right');
                 
+                
             }
+
+            //draw.outlineRect(0, 0, 320, 240, 4, 'yellow');
             
         };
 
@@ -92,9 +95,13 @@ export default class ScintillaLoadingScreen extends Scene {
 
                 if (this.wait >= 1.5) {
                     //this.preloadDone(TransitionBehavior.FADEIN);
-                    let done = function() {
+                    let done = () => {
                         this.transition.reset();
-                        this.preloadDone();                 
+                        this.preloadDone();          
+                        this.ui.setSize(this.userData.ui.w, this.userData.ui.h);
+                        this.ui.setViewport(this.userData.vp.x, this.userData.vp.y, this.userData.vp.w, this.userData.vp.h);       
+                        this.ui.resolution = this.userData.res;
+                        this.ui.viewportOffset.set(0,0);
                     };
                     this.transition.in();
                     this.events.subscribeOnce('transition_end', done, this);
@@ -112,9 +119,32 @@ export default class ScintillaLoadingScreen extends Scene {
         this.update = loadingFunc;
         this.loadingGUI = drawFunc;
         this.gui = drawFunc;
+
+        this.userData = {
+            ui : {
+                w : 0,
+                h : 0
+            },
+            vp : {
+                x : 0,
+                y : 0,
+                w : 1,
+                h : 1,
+            },
+            res : 1
+        }
     }
 
     init(next) {
+
+        this.userData.ui.w = this.ui.width;
+        this.userData.ui.h = this.ui.height;
+        this.userData.vp.x = this.ui.viewport.x;
+        this.userData.vp.y = this.ui.viewport.y;
+        this.userData.vp.w = this.ui.viewport.width;
+        this.userData.vp.h = this.ui.viewport.height;
+        this.userData.res = this.ui.resolution;
+
         this.nextScene = next;
         this.wait = 0;
         this.t = 0;

@@ -96,7 +96,7 @@ ModuleProvider.register('sprite', function(moduleManager, config) {
             if (spr.resource !== null) {
                 if (config[1] === undefined) config[1] = 0; // framex
                 if (config[2] === undefined) config[2] = 0; // framey
-                if (config[2] === undefined) config[3] = spr.resource.width; // framew
+                if (config[3] === undefined) config[3] = spr.resource.width; // framew
                 if (config[4] === undefined) config[4] = spr.resource.height; // frameh
 
                 spr.setFrame(config[1], config[2], config[3], config[4]);

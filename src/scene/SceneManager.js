@@ -19,7 +19,7 @@ export default class SceneManager {
     this._currentSceneName = '';
     this._changeScene = null;
     this._transition = null;
-    this._isTranistioning = false;
+    this._isTransitioning = false;
 
     this._setup = false;
     this._clearCache = false;
@@ -32,6 +32,7 @@ export default class SceneManager {
     this.onLoadingCallback = null;
     this.onLoadingRenderCallback = null;
     this.onPreloadCallback = null;
+    this.onPostloadCallback = null;
     this.onUpdateCallback = null;
     this.onRenderCallback = null;
     this.onDestroyCallback = null;

@@ -18,6 +18,9 @@ export default class EntityFactory {
 
     sprite(tag, entityName, config) {
 
+        if (config === undefined)
+            config = {};
+
         let entity = this.empty(entityName);
         let spr = entity.modules.attach.sprite(tag, config.x, config.y, config.width, config.height);
 

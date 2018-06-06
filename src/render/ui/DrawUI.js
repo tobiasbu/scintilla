@@ -16,23 +16,26 @@ export default function DrawUI(gui, sceneManager) {
         gui.context.save();
         gui.context.beginPath();
         gui.context.rect(
-            0,
-            0,
+            gui.viewport.x,
+            gui.viewport.y,
             gui.viewport.width,
             gui.viewport.height);
         gui.context.clip();
     }
 
+   
+   
     gui.context.setTransform(
         gui.matrix.a[0], gui.matrix.a[1], 
         gui.matrix.a[3], gui.matrix.a[4], 
         gui.matrix.a[6], gui.matrix.a[7]);
 
+        
    
-    if (gui.backgroundAlpha > 0)
+    if (gui.backgroundColor.a > 0)
     {
-        gui.context.globalAlpha = gui.backgroundAlpha;
-        gui.context.fillStyle = gui.backgroundColor;  
+        //gui.context.globalAlpha = gui.backgroundAlpha;
+        gui.context.fillStyle = gui.backgroundColor.rgba;  
         gui.context.fillRect(0, 0, gui.width, gui.height);
     }
 
@@ -43,7 +46,7 @@ export default function DrawUI(gui, sceneManager) {
         gui._alpha = 1;
     }
 
-
+    
         RenderScene(sceneManager, gui.draw);
 
 

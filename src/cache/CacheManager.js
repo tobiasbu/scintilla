@@ -5,6 +5,7 @@ import TilemapResource from "../resources/tilemap/TilemapResource";
 import SpritesheetResource from "../resources/animation/SpritesheetResource";
 import AnimationMachineResource from "../resources/animation/AnimationMachineResource";
 import AssetsType from "../loader/AssetsType";
+import Validate from "../utils/Validate";
 
 
 const CacheTypes = [
@@ -33,6 +34,21 @@ constructor(game) {
   this.image = new Cache((tag, data) => {
     return new ImageResource(tag, data);
   });
+
+  this.pattern = new Cache();
+  this.pattern.create = function(imageTag, patternParameter) {
+    
+      let img = self.image.get(imageTag);
+
+      if (img === null)
+        return null;
+
+      if (!Validate.isString(patternParameter))
+        patternParameter = 'repeat';
+  
+      const pattern = game.system.render.context.createPattern(img.data, patternParameter);
+      return this.add(imageTag, {data:pattern, image:img});
+  }
   
   this.tilemap = new Cache();
 

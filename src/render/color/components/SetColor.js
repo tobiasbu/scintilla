@@ -1,4 +1,8 @@
 import Color from "../Color";
+import IntToColor from "./IntToColor";
+import CSSToColor from "./CSSToColor";
+import HexToColor from "./HexToColor";
+import ObjectToColor from "./ObjectToColor";
 
 
 export default function SetColor(source, value) {
