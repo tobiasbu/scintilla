@@ -2,23 +2,30 @@ import LoaderState from "../LoaderState";
 import DeleteSucceedQueuedAsset from "./DeleteSucceedQueuedAsset";
 
 export default function AssetProcessingUpdate(file) {
-    
-    if (file.state === LoaderState.ERROR)
+
+  if (file.state === LoaderState.ERROR) {
+    this._failedFiles.insert(file);
+
+    /*if (file.linkFile)
     {
-       this._failedFiles.insert(file);
+        this.queue.delete(file.linkFile);
+    }*/
 
-        /*if (file.linkFile)
-        {
-            this.queue.delete(file.linkFile);
-        }*/
+    //return this.deleteFromSuccessQueue(file);
+    // return DeleteSucceedQueuedAsset.call(this, file);
+  } else {
 
-        //return this.deleteFromSuccessQueue(file);
-        return DeleteSucceedQueuedAsset.call(this, file);
+    if (file.multiFile) {
+      if (file.multiFile.isReadyToProcess()) {
+        this._processedFiles.insert(file.multiFile);
+      }
+    } else {
+      this._processedFiles.insert(file);
     }
-
-
-    this._processedFiles.insert(file);
-
-    return  DeleteSucceedQueuedAsset.call(this, file);//this.deleteFromSuccessQueue(file);
-
   }
+
+
+
+  return DeleteSucceedQueuedAsset.call(this, file);//this.deleteFromSuccessQueue(file);
+
+}

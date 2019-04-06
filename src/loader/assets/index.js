@@ -9,5 +9,6 @@ module.exports = {
     JSONFile : require('./JSONFile'),
     TilemapJSON : require('./TilemapJSON'),
     WebFontFile : require('./WebFontFile'),
-    AdditionalResources : require('./AdditionalLoaderResources')
+    BitmapFontFile : require('./BitmapFontFile'),
+    AdditionalResources : require('./AdditionalLoaderResources'),
 }

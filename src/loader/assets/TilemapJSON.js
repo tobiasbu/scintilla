@@ -16,8 +16,6 @@ function CheckImagesSources(loader, source, fullPath) {
 
     let size = source.length;
 
-   
-
     if (size <= 0)
         return;
 

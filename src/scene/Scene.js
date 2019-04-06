@@ -6,6 +6,11 @@ export default class Scene {
 
     this.name = name || 'New Scene';
 
+    /**
+     * @type {UI}
+     */
+    this.ui = undefined;
+
   }
 
 

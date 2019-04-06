@@ -49,6 +49,6 @@ export default function GameInitialize(game) {
     
     Object.seal(game);
 
-    console.log("scintilla started!");
+    console.log("glitter started!");
 
 }

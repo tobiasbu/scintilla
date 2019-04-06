@@ -1,10 +1,6 @@
 
 /// From jQuery
 
-function HasOwn(classToType) {
-    return classToType.hasOwnProperty;
-}
-
 export default function IsPlainObject(obj) {
 
     // Detect obvious negatives
@@ -21,7 +17,6 @@ export default function IsPlainObject(obj) {
     try
     {
         // Objects with prototype are plain if they were constructed by a global Object function
-        //  //!HasOwn.call(proto, 'constructor');
         if ( obj.constructor && !({}).hasOwnProperty.call(obj.constructor.prototype, 'isPrototypeOf')) {
             return false;
         }

@@ -9,8 +9,9 @@ const AssetsType = {
     'json' : 6,
     'webFont' : 7,
     'tilemapJSON' : 8,
-    'spritesheet' : 9,
-    'animMachine' : 10
+    'bitmapFont': 9,
+    'spritesheet' : 10,
+    'animMachine' : 11,
 };
 
 Object.freeze(AssetsType);
