@@ -21,25 +21,35 @@ function StringReader(str) {
     _fw = -1;
     _ew = -1;
     while (_pos < _len) {
-      const char = _str[_pos];
-      if (char === ' ') {
-        if (_fw === -1) {
+      const char = _str.charCodeAt(_pos);
+      if (char === 32 || char == 12 || char == 10) {
+        if (_fw == -1) {
           _fw = _pos;
           continue;
         } else {
-          fdiff = _pos - _fw;
-          if (fdiff >= 1) {
-            _ew = _pos;
-          }
+          // fdiff = _pos - _fw;
+          // if (fdiff >= 1) {
+          //   _ew = _pos;
+          // }
+          _ew = _pos;
+          console.log(_ew)
+        }
+      } else {
+        if (_fw === -1) {
+          _fw = _pos;
+          console.log('fw: ' + _fw)
         }
       }
       _pos += 1;
-      if (_fw || _ew) {
-        _ss = _str.substr(_fw, _ew);
-        _fw = -1;
-        _ew = -1;
+      if (_fw >= 0 && _ew > 0) {
+        _ss = _str.substring(_fw, _ew);
         return _ss;
       }
+      
+    }
+    if (_fw >= 0) {
+      _ss = _str.substring(_fw, _len - 1);
+      return _ss;
     }
     return _ss;
   }
@@ -58,7 +68,7 @@ function StringReader(str) {
    * @returns {boolean}
    */
   this.eof = function () {
-    return _pos >= _len;
+    return _pos >= _len - 1;
   }
 
 }
@@ -91,6 +101,7 @@ export default function ParseFontFile(tag, assets, cache) {
 
     if (current[0] === 'i' && current[1] === 'n' && current[2] === 'f' && current[3] === 'o') {
 
+      console.log(current);
       reader.str(current);
 
       while (!reader.eof()) {
@@ -100,7 +111,10 @@ export default function ParseFontFile(tag, assets, cache) {
 
 
     }
+    
 
   }
+
+  console.log('done');
 
 }

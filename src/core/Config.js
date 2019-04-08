@@ -85,6 +85,10 @@ export default class Config {
             height : callback_2(config, 'camera.height', this.height)
         };
 
+        this.loader = {
+
+        }
+
        
         /* this.loaderEnableParallel = GetValue(config, 'loader.enableParallel', true);
             this.loaderMaxParallelDownloads = GetValue(config, 'loader.maxParallelDownloads', 4);

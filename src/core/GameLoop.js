@@ -103,10 +103,12 @@ export default class GameLoop {
             // Scenes
             DrawRender(this.renderer, this.camera, deltaTime);
 
-            // User Interface
             DrawUI(this.system.ui, this.game.scene);
 
         }
+
+        // User Interface
+       
 
         EndDrawRender(this.system.render);
 
@@ -116,7 +118,7 @@ export default class GameLoop {
         DrawTransition(this.system.transition, this.renderer.canvas, this.renderer.context);
 
         // Debug
-        if (this.system.ui.debug !== null && this.system.ui.debug !== undefined) {
+        if (this.system.ui.debug) {
             this.system.ui.debug.test();
         }
 

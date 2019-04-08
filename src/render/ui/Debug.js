@@ -5,6 +5,9 @@ export default class Debug {
 
     this.game = game;
     this.draw = drawer;
+    /**
+     * @type {CanvasRenderingContext2D}
+     */
     this.context = drawer.context;
     this.x = 8;
     this.y = 12;
@@ -22,12 +25,13 @@ export default class Debug {
     this.draw.disablePointTransform = true;
     this.x = 4;
     this.y = 12;
-    //this.context.setTransform(1, 0, 0, 1, 0, 0);
     this.context.strokeStyle = this.bgcolor;
     this.context.font = this.font;
+    this.context.textAlign = 'left';
     this.draw.alpha = 0.5;
     this.draw.rect(0,0,this.game.width,(14 * 3)+ 4,this.bgcolor);
     this.draw.alpha = 1;
+   
     this.drawLine("FPS: " + Math.round(this.game.time.fps) + " / " + this.game.time.desiredFps);
     //this.drawLine("Instances in view: " + this.game.camera.instancesInView);
     this.drawLine("Instances: " + this.game.system.entityList.length);
@@ -47,11 +51,10 @@ export default class Debug {
     var xx = this.x;
 
             this.context.fillStyle = this.textShadow;
-            this.context.fillText(textLine, xx + 1, this.y + 1);
+            this.context.fillText(textLine, xx + 2, this.y + 1);
             this.context.fillStyle = this.textColor;
 
         this.context.fillText(textLine, xx, this.y);
-
 
     this.y += this.lineHeight;
 

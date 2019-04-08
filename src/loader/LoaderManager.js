@@ -40,11 +40,11 @@ export default class LoadManager {
     let gameConfig = game.config.loader;
 
     this.xhr = XHR.createSettings(
-      ObjectGet.value(config, 'responseType', gameConfig.responseType),
-      ObjectGet.value(config, 'async', gameConfig.async),
+      ObjectGet.value(gameConfig.responseType, 'responseType', gameConfig.responseType),
+      ObjectGet.value(gameConfig.async, 'async', true),
       //scintilla.ObjectGet.propertyValue(config, 'user', gameConfig.loaderUser),
       //scintilla.ObjectGet.propertyValue(config, 'password', gameConfig.loaderPassword),
-      ObjectGet.value(config, 'timeout', gameConfig.timeout)
+      ObjectGet.value(gameConfig.timeout, 'timeout', 1000)
   );
   
 
@@ -73,9 +73,12 @@ export default class LoadManager {
     return this;
   }
 
+
   setBaseURL(baseUrl) {
 
-    if (baseURL === undefined) baseUrl = '';
+    if (baseUrl === undefined) {
+      baseUrl = '';
+    }
 
     if (baseUrl !== '' && baseUrl.substr(-1) !== '/')
     {

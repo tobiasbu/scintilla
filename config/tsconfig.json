@@ -1,0 +1,37 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "types/*.d.ts"
+      ]
+    },
+    "rootDir": "./",
+    "newLine": "LF",
+    "sourceMap": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "noImplicitThis": true,
+    "resolveJsonModule": true,
+    "removeComments": false,
+    "moduleResolution": "node",
+    "target": "es2015",
+    "lib": [
+      "es5",
+      "es2015.collection",
+      "es6",
+    ],
+    "typeRoots": [
+      "../node_modules/@types",
+      "./types"
+    ],
+    "declaration": false,
+    "listEmittedFiles": false,
+  },
+  "include": [
+    "../node_modules/@types",
+  ],
+}

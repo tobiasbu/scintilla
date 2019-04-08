@@ -10,6 +10,7 @@ export default function ProcessDoneAssets() {
   this._filesQueue.clear();
 
   let cache = this.cache;
+  let asset = null;
 
 
   if (this._processedFiles.size > 0) {
@@ -24,7 +25,6 @@ export default function ProcessDoneAssets() {
     // add assets to cache
     this._processedFiles.each(function (file) {
 
-      let asset;
 
       switch (file.type) {
         default:
@@ -63,8 +63,8 @@ export default function ProcessDoneAssets() {
 
         case AssetsType.bitmapFont: {
           // cache.image.add(file.tag, file.image);
-          console.log('parsing');
-          asset = ParseFontFile(file.tag, file.assets, cache);
+          asset = null;
+          ParseFontFile(file.tag, file.assets, cache);
           break;
         }
       }

@@ -4,7 +4,7 @@ var VIEW = {
   h: 600,
 };
 
-var config = {
+const config = {
   width: VIEW.w,
   height: VIEW.h,
   parent: "body",
@@ -17,27 +17,27 @@ var config = {
   }
 };
 
-var game = new scintilla.Game(config);
+
+const game = new glitter.Game(config);
 
 var TestScene = function () {
 
-  var x, y;
-
   this.preload = function () {
 
+    this.load.setBaseURL('assets/');
     this.load.bitmapFont('test', 'font2.fnt', 'font2.png');
 
   }
 
-  this.start = function () {
-    /*var rect = this.create.rectangle();
-    rect.width = 100;
-    rect.height = 100;*/
-  };
+  // this.start = function () {
+  //   /*var rect = this.create.rectangle();
+  //   rect.width = 100;
+  //   rect.height = 100;*/
+  // };
 
-  this.gui = function (drawer) {
+  // this.gui = function (drawer) {
 
-  }
+  // }
 
 };
 

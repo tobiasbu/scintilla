@@ -4,13 +4,13 @@
 *
 * @overview
 *
-* --- Scintilla ---
+* --- Glitter ---
 *
 * v0.0.1
 *
 * tobiasbu.github.io
 *
-* Scintilla is simple 2D game engine for HTML5 games.
+* Glitter is simple 2D game engine for HTML5 games.
 * The first version is only for browsers based in canvas.
 *
 */
@@ -19,9 +19,9 @@ import Defines from './Define';
 import Extend from './utils/object/Extend';
 
 /**
-* @namespace scintilla
+* @namespace glitter
 */
-var scintilla = scintilla || {
+var glitter = glitter || {
   
   Environment : require('./system/PlatformEnvironment').default,
   Core : require('./core'),
@@ -49,7 +49,7 @@ var scintilla = scintilla || {
   Ease : require('./math/easing').Ease,
 
   // ENTITIES
-  Scene : require('./scene/'),
+  Scene : require('./scene'),
   Camera : require('./camera/Camera'),
   Module : require('./modules'),
   Entity : require('./entities'),
@@ -74,8 +74,8 @@ var scintilla = scintilla || {
   WrapMode : require('./resources/animation/WrapMode').default
 };
 
-Extend(Defines, scintilla);
+Extend(Defines, glitter);
 
-module.exports = scintilla;
+module.exports = glitter;
 
-global.scintilla = scintilla;
+global.glitter = glitter;

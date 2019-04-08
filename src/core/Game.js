@@ -13,7 +13,7 @@ export default class Game {
   * @property {string|HTMLElement} parent - The Games DOM parent.
   * @default
   */
- constructor() {
+ constructor(config) {
    
   this.parent = 'body';
   this.width = 800;
