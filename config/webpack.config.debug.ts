@@ -11,7 +11,7 @@ import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin';
 export default function (env: IBundlingSettings) {
 
   const PROJECT_PATH = path.resolve(__dirname, '../');
-  const DEBUG_PATH = path.join(PROJECT_PATH, './debug');
+  const DEBUG_PATH = path.join(PROJECT_PATH, './tests');
   const STATIC_PATH = path.join(DEBUG_PATH, './static');
 
   const PRODUCTION = env.PROD;

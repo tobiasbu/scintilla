@@ -1,4 +1,4 @@
-info face="Sports World" size=-22 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=0 aa=1 padding=0,0,0,0 spacing=0,1 outline=1
+info face="Sports World" size=22 bold=0 italic=0 charset="" unicode=1 stretchH=100 smooth=0 aa=1 padding=0,0,0,0 spacing=-1,1 outline=1
 common lineHeight=25 base=20 scaleW=256 scaleH=256 pages=1 packed=0 alphaChnl=4 redChnl=2 greenChnl=2 blueChnl=2
 page id=0 file="font2_0.png"
 chars count=159

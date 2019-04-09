@@ -24,7 +24,7 @@ export default class UI {
         this.viewport = new Rect(0, 0, this.width, this.height);
         this.ratiobox = null;
         this.aspectRatio = this.width / this.height;
-        this.resolution = 1;
+        this._resolution = 1;
         this._isDirty = true;
         this.matrix = new Matrix3(1);
         this.context = null;
@@ -37,6 +37,15 @@ export default class UI {
 
     get alpha() {return this._alpha; }
     set alpha(value) {this._alpha = value;}
+
+    set resolution(value) {
+      this._resolution = value;
+      this.invertedResolution = 1 / value;
+    }
+
+    get resolution(){
+      return this._resolution;
+    }
 
 
     setSize(width, height) {
@@ -64,13 +73,14 @@ export default class UI {
         let borderY = 0;//rect.y * this.canvas.clientHeight;
 
         if (this.ratiobox.style === AspectRatio.Square) {
+       
             this.viewport.set(
                 0,
                 0,
-                canvasWidth,
-                canvasHeight);
+                this.ratiobox.w * canvasWidth,
+                this.ratiobox.h * canvasHeight);
 
-            return this;
+            // return this;
 
         } else {
 
@@ -105,7 +115,7 @@ export default class UI {
         let invertedResolution = this.width / viewSize;
         this.viewportOffset.x = invertedResolution * borderX;
         this.viewportOffset.y = invertedResolution * borderY;
-        this.resolution = pixelUnit;//(this.canvas.clientWidth - canvasRatioX) / this.width;
+        this._resolution = pixelUnit;//(this.canvas.clientWidth - canvasRatioX) / this.width;
         this.invertedResolution = invertedResolution;
         //(this.canvas.clientHeight - canvasRatioY) / this.height;
 

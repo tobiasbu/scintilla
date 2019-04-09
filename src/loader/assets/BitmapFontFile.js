@@ -9,10 +9,20 @@ class BitmapFontFile extends MultiAsset {
 
   constructor(tag, fontUrl, imageUrl, xhrSettings, config) {
 
-    let image = new ImageFile(tag, imageUrl, '', xhrSettings);
+    let image;
     let data = new TextFile(tag, fontUrl, '', xhrSettings);
+    let files;
+    if (!Array.isArray(imageUrl)) {
+      image = new ImageFile(tag, imageUrl, '', xhrSettings);
+      files = [data, image];
+    } else {
+      files = [data];
+      for (let i = 0; i < imageUrl.length; i += 1) {
+        files.push(new ImageFile(`${tag}_${i}`, imageUrl[i], '', xhrSettings))
+      }
+    }
 
-    super(AssetsType.bitmapFont, tag, [data]);
+    super(AssetsType.bitmapFont, tag, files);
 
   }
 

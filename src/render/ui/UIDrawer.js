@@ -349,6 +349,56 @@ export default class UIDrawer {
     }
   }
 
+  /**
+   * 
+   * @param {string} tag 
+   * @param {string} text 
+   * @param {number} x 
+   * @param {number} y 
+   */
+  bitmapText(tag, text, x, y, index) {
+    let source = this.cache.bitmapFont.get(tag);
+    if (source !== null) {
+      x = x || 0;
+      y = y || 0;
+      index = index || 0;
+      this.context.save();
+      this.context.translate(x, y);
+      let cursorX = 0;
+      let cursorY = 0;
+
+      for (let i = 0; i < text.length; i += 1) {
+
+        if (text[i] !== '\n') {
+
+          const chr = source.getChar(text[i]);
+
+          if (chr !== null) {
+
+            this.context.drawImage(
+              source.images[index].data,
+              chr.x, // sx - pos crop x 
+              chr.y, // sy - pos crop y
+              chr.width, // sWidth - crop width
+              chr.height, // sHeight - crop height
+              cursorX + chr.xoffset, // destination x
+              cursorY + chr.yoffset, // destination y
+              chr.width, chr.height
+            );
+            cursorX += chr.xadvance;
+          }
+        } else {
+          cursorY += source.metadata.baseLine;
+          cursorX = 0;
+        }
+
+
+
+      }
+      this.context.restore();
+    }
+  }
+
   spritesheet(tag, x, y, frameNumber, halign, valign, scale, scale_y) {
 
     let source = this.cache.animation.get(tag);
@@ -425,7 +475,7 @@ export default class UIDrawer {
     context.fillStyle = source.data;
     context.fillRect(0, 0, width, height);
     //context.fill();
-    
+
     context.restore();
 
     return true;

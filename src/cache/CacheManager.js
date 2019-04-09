@@ -14,6 +14,7 @@ const CacheTypes = [
   'audio',
   'text',
   'tilemap',
+  'bitmapFont',
   'animation',
   'animMachine'
 ];
@@ -51,6 +52,7 @@ constructor(game) {
   }
   
   this.tilemap = new Cache();
+  this.bitmapFont = new Cache();
 
   /*
   /// TODO
@@ -104,6 +106,11 @@ constructor(game) {
     return (typeof CacheTypes[cacheType] !== undefined);
   }
 
+  /**
+   * 
+   * @param {string} cacheType 
+   * @param {string} tag 
+   */
   getAsset(cacheType, tag) { // return the cache container
 
     if (!this.hasCache(cacheType))

@@ -21,6 +21,7 @@ function startScene() {
       }
   
       if (this.onStartCallback) {
+        console.log("start")
         this.onStartCallback.call(this.currentScene, this.game);
       }
     }

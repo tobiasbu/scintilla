@@ -77,7 +77,7 @@ export default class DataMap {
     var content = this._content;
 
     for (var key in content)
-      values.push(entries[key]);
+      values.push(content[key]);
 
     return values;
   }

@@ -94,15 +94,16 @@ export default class ScintillaLoadingScreen extends Scene {
         } else {
           this.wait += dt;
 
-          if (this.wait >= 1.5) {
+          if (this.wait >= 1.25) {
             //this.preloadDone(TransitionBehavior.FADEIN);
             let done = () => {
               this.transition.reset();
-              this.preloadDone();
               this.ui.setSize(this.userData.ui.w, this.userData.ui.h);
               this.ui.setViewport(this.userData.vp.x, this.userData.vp.y, this.userData.vp.w, this.userData.vp.h);
               this.ui.resolution = this.userData.res;
               this.ui.viewportOffset.set(0, 0);
+              this.preloadDone();
+              
             };
             this.transition.in();
             this.events.subscribeOnce('transition_end', done, this);

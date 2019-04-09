@@ -1,120 +1,124 @@
 
-/**
- * 
- * @param {string} [str] 
- */
-function StringReader(str) {
-
-  var _str = str || '';
-  var _pos = 0;
-  var _len = (typeof(str) === 'string') ? str.length : 0;
-  var _ss = str || '';
-  var _fw = -1;
-  var _ew = -1;
-
-  function seek() {
-
-  }
-
-  this.read = function () {
-    let fdiff = 0;
-    _fw = -1;
-    _ew = -1;
-    while (_pos < _len) {
-      const char = _str.charCodeAt(_pos);
-      if (char === 32 || char == 12 || char == 10) {
-        if (_fw == -1) {
-          _fw = _pos;
-          continue;
-        } else {
-          // fdiff = _pos - _fw;
-          // if (fdiff >= 1) {
-          //   _ew = _pos;
-          // }
-          _ew = _pos;
-          console.log(_ew)
-        }
-      } else {
-        if (_fw === -1) {
-          _fw = _pos;
-          console.log('fw: ' + _fw)
-        }
-      }
-      _pos += 1;
-      if (_fw >= 0 && _ew > 0) {
-        _ss = _str.substring(_fw, _ew);
-        return _ss;
-      }
-      
-    }
-    if (_fw >= 0) {
-      _ss = _str.substring(_fw, _len - 1);
-      return _ss;
-    }
-    return _ss;
-  }
-
-  /**
-   * 
-   * @param {string} str 
-   */
-  this.str = function (str) {
-    _str = str;
-    _pos = 0;
-    _len = str.length || 0;
-  }
-
-  /**
-   * @returns {boolean}
-   */
-  this.eof = function () {
-    return _pos >= _len - 1;
-  }
-
-}
-
+import StringReader from './StringReader';
+import DataMap from './../../structures/Map';
+import Cache from './../../cache/CacheManager';
+import BitmapFontResource from './BitmapFontResource';
 
 /**
  * 
  * @param {string} tag 
- * @param {[]} data 
+ * @param {[]} assets 
  * @param {Cache} cache 
  */
 export default function ParseFontFile(tag, assets, cache) {
 
-  console.log(assets);
+  if (assets.length === 0) {
+    return null;
+  }
 
-  const fnt = assets[0].data;
+  let images = [];
+  for (let i = 1; i < assets.length; i += 1) {
+    images.push(cache.image.add(assets[i].tag, assets[i].data));
+  }
+
+  const fntFile = assets[0];
   /**
    * @type {string[]}
    */
-  let lines = fnt.split('\n');
+  //let lines = fnt.split('\n');
   let info = {};
+  let glyphs = new DataMap();
+
+  const perf = performance.now();
+
+  const reader = new StringReader({
+    obj: fntFile,
+    name: 'data',
+  });
+
+  reader.addRule('into', {
+    char: '"',
+    ignore: ' ',
+  });
+
+  reader.addRule('split', {
+    char: '=',
+  });
+
+  //while (current = lines.shift()) {
+
+  let key;
+  let keyEditing;
   /**
    * @type {string}
    */
-  let current;
+  let value;
+  let currentObj;
 
-  let reader = new StringReader();
+  while (!reader.eof()) {
+    const str = reader.read();
+    if (str) {
 
-  while (current = lines.shift()) {
+      if (Array.isArray(str)) {
+        key = str[0];
+        value = str[1];
+        if (keyEditing === 'char') {
 
-    if (current[0] === 'i' && current[1] === 'n' && current[2] === 'f' && current[3] === 'o') {
+          if (!currentObj) {
+            currentObj = {}
+          }
 
-      console.log(current);
-      reader.str(current);
+          currentObj[key] = parseInt(value, 10);
 
-      while (!reader.eof()) {
-        const str = reader.read();
-        console.log(str);
+        } else {
+
+          switch (key) {
+            case 'face':
+              info.fontName = value;
+              break;
+            case 'size': {
+              try {
+                info.fontSize = parseInt(value, 10);
+              } catch (e) {
+                info.fontSize = null;
+              }
+              break;
+            }
+            case 'outline': {
+              info.outline = parseInt(value, 10);
+              break;
+            }
+            case 'lineHeight': {
+              info.lineHeight = parseInt(value, 10);
+              break;
+            }
+            case 'base': {
+              info.baseLine = parseInt(value, 10);
+              break;
+            }
+          }
+        }
+      } else {
+        if (str === 'char') { // new char
+          if (currentObj) {
+            glyphs.insert(String.fromCharCode(currentObj.id), currentObj);
+            currentObj = null;
+          }
+        }
+        keyEditing = str;
       }
 
-
+    } else {
+      keyEditing = str;
     }
-    
 
   }
 
-  console.log('done');
+  reader.clear();
 
+  const bitmapFont = new BitmapFontResource(tag, info, glyphs, images);
+
+  cache.bitmapFont.add(tag, bitmapFont);
+
+  return bitmapFont;
 }
